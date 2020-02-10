@@ -2,12 +2,13 @@
 
 set -eu
 
-if [ $# -lt 1 ]; then
-  echo "Usage: build-docker-image.sh browser" 1>&2
+if [ $# -lt 2 ]; then
+  echo "Usage: build-docker-image.sh browser image_name" 1>&2
   exit 1
 fi
 
 BROWSER=$1
+IMAGE_NAME=$2
 
 PROJECT_DIR=$(dirname "${BASH_SOURCE}")
 cd $PROJECT_DIR
@@ -17,9 +18,6 @@ if [[ ! -d ./browsers/${BROWSER} ]]; then
   echo "configuration for ${BROWSER} does not exist" 1>&2
   exit 1
 fi
-
-source "../../cluster/config.sh"
-IMAGE_NAME="gcr.io/${GCLOUD_PROJECT}/${BROWSER}-browser"
 
 ./build.sh $BROWSER
 

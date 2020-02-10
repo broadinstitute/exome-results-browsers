@@ -1,0 +1,6 @@
+# Dependencies
+node_modules
+gnomadjs
+
+# Build output
+dist

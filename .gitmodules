@@ -1,0 +1,3 @@
+[submodule "gnomadjs"]
+	path = gnomadjs
+	url = https://github.com/macarthur-lab/gnomadjs.git

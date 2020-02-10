@@ -1,50 +1,27 @@
 # Exome Results Browsers
 
-Since the browsers for exome results studies share the same data format<sup>[1](#f1)</sup>,
-they can also share most of their code. This project builds the base browser code
-in `./src` with browser specific configuration and components in `./browsers/*`.
+Browsers for results of case-control studies.
 
-<a name="f1">1</a>: https://tarjindersingh.github.io/schema-content/schema.html
+- [Schizophrenia - SCHEMA](https://schema.broadinstitute.org)
 
-Any module located in `./browsers/${BROWSER}/src` can be imported in either the client
-or server using the `@browser` webpack alias. This allows some components to have
-browser-specific implementations.
+  The Schizophrenia Exome Sequencing Meta-analysis (SCHEMA) consortium is a large multi-site
+  collaboration dedicated to aggregating, generating, and analyzing high-throughput sequencing
+  data of schizophrenia patients to improve our understanding of disease architecture and
+  advance gene discovery. The first results of this study have provided genome-wide significant
+  results associating rare variants in individual genes to risk of schizophrenia, and later
+  releases are planned with larger number of samples that will further increase power.
 
-At minimum, each browser must contain in its `src` directory two files:
-* config.js - Exports an object. Configuration schema explained below.
-* help.js - Exports an object.
-* HomePageContent.js - Exports a React component.
+- [Epilepsy - Epi25](https://epi25.broadinstitute.org)
 
-## Getting started
+  The Epi25 collaborative is a global collaboration committed to aggregating, sequencing,
+  and deep-phenotyping up to 25,000 epilepsy patients to advance epilepsy genetics research.
+  The Epi25 whole-exome sequencing (WES) case-control study is one of the collaborative's
+  ongoing endeavors that aims to characterize the contribution of rare genetic variation to
+  a spectrum of epilepsy syndromes to identify individual risk genes.
 
-For each of the scripts below, the `$BROWSER` argument must be the name of one of the
-subdirectories of `./browsers`.
+- [Autism - ASC](https://asc.broadinstitute.org)
 
-### Browser configuration
-
-TODO
-
-### Development
-```
-./start.sh $BROWSER
-```
-
-Runs the server with nodemon and client with webpack-dev-server, so that each is
-rebuilt/reloaded on changes to source files.
-
-### Deployment
-```
-./build.sh $BROWSER
-```
-
-Bundles the server and client into the `dist/${BROWSER}` folder. The resulting bundle can be
-run with `node dist/${BROWSER}/server.js`.
-
-```
-./build-docker-image.sh $BROWSER
-```
-
-Bundles the server and client and builds a Docker image containing them. The image
-is named `${BROWSER}-browser` tagged with the current git revision.
-
-
+  Founded in 2010, the Autism Sequencing Consortium (ASC) is an international group
+  of scientists who share autism spectrum disorder (ASD) samples and genetic data.
+  This portal displays variant and gene-level data from the most recent ASC exome
+  sequencing analysis.

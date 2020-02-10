@@ -1,6 +1,6 @@
 const path = require('path')
 
-const pkg = require('../package.json')
+const pkg = require('../src/server/package.json')
 
 if (process.env.BROWSER === undefined) {
   // eslint-disable-next-line no-console
