@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { BaseTable } from '@broad/ui'
+import { BaseTable } from '@gnomad/ui'
 
 import browserConfig from '@browser/config'
 

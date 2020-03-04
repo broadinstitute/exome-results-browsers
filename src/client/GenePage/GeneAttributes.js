@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { ExternalLink } from '@broad/ui'
+import { ExternalLink } from '@gnomad/ui'
 
 const List = styled.dl`
   dt {

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 
-import { Grid } from '@broad/ui'
+import { Grid } from '@gnomad/ui'
 
 import browserConfig from '@browser/config'
 

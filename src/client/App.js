@@ -3,7 +3,7 @@ import { hot } from 'react-hot-loader/root'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
-import { registerConsequences } from '@broad/utilities'
+import { registerConsequences } from '@gnomad/utilities'
 
 import browserConfig from '@browser/config'
 

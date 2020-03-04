@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import styled from 'styled-components'
 
-import { Button, Combobox, Page as BasePage, PageHeading, SearchInput, Tabs } from '@broad/ui'
+import { Button, Combobox, Page as BasePage, PageHeading, SearchInput, Tabs } from '@gnomad/ui'
 
 import browserConfig from '@browser/config'
 

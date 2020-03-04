@@ -2,7 +2,7 @@ import fetch from 'graphql-fetch'
 import React from 'react'
 import { withRouter } from 'react-router-dom'
 
-import { Searchbox } from '@broad/ui'
+import { Searchbox } from '@gnomad/ui'
 
 const fetchSearchResults = query =>
   fetch('/api')(

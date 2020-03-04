@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import styled from 'styled-components'
 
-import { PageHeading, Tabs } from '@broad/ui'
+import { PageHeading, Tabs } from '@gnomad/ui'
 
 import browserConfig from '@browser/config'
 import GeneResult from '@browser/GeneResult'

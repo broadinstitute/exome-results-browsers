@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { BaseTable } from '@broad/ui'
+import { BaseTable } from '@gnomad/ui'
 
 const renderNumber = (num, precision = 1) =>
   num === null ? '—' : Number(num.toFixed(precision)).toString()

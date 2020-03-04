@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import styled from 'styled-components'
 
-import { Modal } from '@broad/ui'
+import { Modal } from '@gnomad/ui'
 
 import helpConfig from '@browser/help'
 

@@ -2,8 +2,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { ExternalLink } from '@broad/ui'
-import { getLabelForConsequenceTerm } from '@broad/utilities'
+import { ExternalLink } from '@gnomad/ui'
+import { getLabelForConsequenceTerm } from '@gnomad/utilities'
 
 import browserConfig from '@browser/config'
 

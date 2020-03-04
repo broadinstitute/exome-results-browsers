@@ -3,9 +3,9 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { createGlobalStyle } from 'styled-components'
 
-import { Cursor, PositionAxisTrack } from '@broad/region-viewer'
-import VariantTrack from '@broad/track-variant'
-import { Modal } from '@broad/ui'
+import { Cursor, PositionAxisTrack } from '@gnomad/region-viewer'
+import VariantTrack from '@gnomad/track-variant'
+import { Modal } from '@gnomad/ui'
 
 import browserConfig from '@browser/config'
 

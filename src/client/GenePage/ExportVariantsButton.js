@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { Button as BaseButton } from '@broad/ui'
+import { Button as BaseButton } from '@gnomad/ui'
 
 import downloadCSV from '../downloadCSV'
 import columns from './variantTableColumns'

@@ -2,7 +2,7 @@ import React from 'react'
 import { SizeMe } from 'react-sizeme'
 import styled from 'styled-components'
 
-import { RegionViewer } from '@broad/region-viewer'
+import { RegionViewer } from '@gnomad/region-viewer'
 
 const Wrapper = styled.div`
   width: 100%;

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { Page, PageHeading } from '@broad/ui'
+import { Page, PageHeading } from '@gnomad/ui'
 
 import browserConfig from '@browser/config'
 import HomePageContent from '@browser/HomePageContent'

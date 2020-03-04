@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ExternalLink } from '@broad/ui'
+import { ExternalLink } from '@gnomad/ui'
 
 const TermsPageContent = () => (
   <React.Fragment>

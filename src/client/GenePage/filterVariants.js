@@ -1,4 +1,4 @@
-import { getCategoryFromConsequence, getLabelForConsequenceTerm } from '@broad/utilities'
+import { getCategoryFromConsequence, getLabelForConsequenceTerm } from '@gnomad/utilities'
 
 import browserConfig from '@browser/config'
 

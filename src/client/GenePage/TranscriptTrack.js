@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { RegionsTrack } from '@broad/track-regions'
+import { RegionsTrack } from '@gnomad/track-regions'
 
 const Wrapper = styled.div`
   display: flex;

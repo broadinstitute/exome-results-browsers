@@ -3,7 +3,7 @@ import React from 'react'
 import { withSize } from 'react-sizeme'
 import styled from 'styled-components'
 
-import { ManhattanPlot } from '@broad/manhattan'
+import { ManhattanPlot } from '@gnomad/manhattan'
 
 import browserConfig from '@browser/config'
 

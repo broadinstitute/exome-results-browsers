@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ExternalLink, Link } from '@broad/ui'
+import { ExternalLink, Link } from '@gnomad/ui'
 
 export default () => (
   <React.Fragment>

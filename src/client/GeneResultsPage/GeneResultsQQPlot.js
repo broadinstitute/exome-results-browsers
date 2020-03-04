@@ -2,7 +2,7 @@ import React from 'react'
 import { withSize } from 'react-sizeme'
 import styled from 'styled-components'
 
-import { QQPlot } from '@broad/qq-plot'
+import { QQPlot } from '@gnomad/qq-plot'
 
 import browserConfig from '@browser/config'
 

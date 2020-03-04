@@ -2,7 +2,13 @@ import PropTypes from 'prop-types'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
 
-import { CategoryFilterControl, Checkbox, Combobox, KeyboardShortcut, SearchInput } from '@broad/ui'
+import {
+  CategoryFilterControl,
+  Checkbox,
+  Combobox,
+  KeyboardShortcut,
+  SearchInput,
+} from '@gnomad/ui'
 
 import browserConfig from '@browser/config'
 
