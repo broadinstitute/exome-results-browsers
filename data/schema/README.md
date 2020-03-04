@@ -13,7 +13,7 @@
 
    ```
    hailctl dataproc submit schema \
-      ./projects/exome-results-browsers/browsers/schema/data/prepare_gene_results.py \
+      ./data/schema/prepare_gene_results.py \
          gs://schizophrenia-browser/191010/2019-10-10_schema-browser-gene-results-table.ht \
          gs://schizophrenia-browser/191010/gene_results.ht
    ```
@@ -23,7 +23,7 @@
    ```
    hailctl dataproc submit schema \
       --pyfiles ./data/data_utils \
-      ./projects/exome-results-browsers/browsers/schema/data/prepare_variant_results.py \
+      ./data/schema/prepare_variant_results.py \
          --annotations gs://schizophrenia-browser/190415/2019-04-15_schema-browser-variant-annotation-table.ht \
          --results gs://schizophrenia-browser/190415/2019-04-15_schema-browser-variant-results-table-meta-rare-denovos-common-merged.ht \
          --output gs://schizophrenia-browser/200116/variant_results.ht

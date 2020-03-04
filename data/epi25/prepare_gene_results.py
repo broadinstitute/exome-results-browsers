@@ -37,9 +37,7 @@ ds = hl.import_table(
 )
 
 # Rename EE group
-ds = ds.annotate(
-    analysis_group=hl.cond(ds.analysis_group == "EE", "DEE", ds.analysis_group)
-)
+ds = ds.annotate(analysis_group=hl.cond(ds.analysis_group == "EE", "DEE", ds.analysis_group))
 
 # "Meta" p-val was carried over from SCHEMA's data format but isn't descriptive of Epi25
 ds = ds.rename({"pval_meta": "pval", "description": "gene_description"})

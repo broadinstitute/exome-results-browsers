@@ -9,7 +9,7 @@
 
 2. Prepare gene results.
    ```shell
-   cluster submit epi25-data ./projects/exome-results-browsers/browsers/epi25/data/prepare_gene_results.py \
+   cluster submit epi25-data ./data/epi25/prepare_gene_results.py \
       --pyfiles ./hail-elasticsearch-pipelines/hail_scripts \
       --args "--input-url=gs://epi-browser/2018-11-07_epi25-exome-browser-gene-results-table-reduced.csv \
          --output-url=gs://epi-browser/2018-11-07_gene_results.ht"
@@ -57,7 +57,7 @@
    gcloud dataproc jobs submit pyspark \
       --cluster=epi25-data \
       --py-files=./hail-elasticsearch-pipelines/hail_scripts.zip \
-      ./projects/exome-results/browsers/epi25/load_variant_results.py -- \
+      ./data/epi25/load_variant_results.py -- \
          --host=$ELASTICSEARCH_IP \
          --index=epi25_variant_results_2018_11_27
    ```
