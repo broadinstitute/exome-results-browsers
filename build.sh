@@ -18,7 +18,7 @@ if [[ ! -d ./browsers/${BROWSER} ]]; then
   exit 1
 fi
 
-export NODE_ENV="production"
+export NODE_ENV=${NODE_ENV:-"production"}
 export BROWSER=$BROWSER
 
 rm -rf dist

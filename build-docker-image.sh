@@ -19,8 +19,6 @@ if [[ ! -d ./browsers/${BROWSER} ]]; then
   exit 1
 fi
 
-./build.sh $BROWSER
-
 # Tag image with git revision
 COMMIT_HASH=$(git rev-parse --short HEAD)
 IMAGE_TAG=${COMMIT_HASH}
