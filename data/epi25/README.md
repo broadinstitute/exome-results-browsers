@@ -14,8 +14,7 @@
    hailctl dataproc submit epi25-data \
       --pyfiles ./data/data_utils \
       ./data/epi25/prepare_gene_results.py \
-         --input-url=gs://epi-browser/2018-11-07_epi25-exome-browser-gene-results-table-reduced.csv \
-         --output-url=gs://epi-browser/2018-11-07_gene_results.ht
+         gs://epi-browser/2018-11-07_gene_results.ht
    ```
 
 3. Prepare variant results.
