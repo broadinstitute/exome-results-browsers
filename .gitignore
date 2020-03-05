@@ -3,3 +3,11 @@ node_modules
 
 # Build output
 dist
+
+# Byte-compiled / optimized / DLL files
+__pycache__
+*.py[cod]
+*$py.class
+
+# Hail logs
+hail-*.log
