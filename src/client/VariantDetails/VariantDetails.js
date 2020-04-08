@@ -3,10 +3,9 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { ExternalLink } from '@gnomad/ui'
-import { getLabelForConsequenceTerm } from '@gnomad/utilities'
-
 import browserConfig from '@browser/config'
 
+import { getLabelForConsequenceTerm } from '../consequences'
 import Query from '../Query'
 import { VariantAttribute, VariantAttributeList } from './VariantAttributes'
 import variantResultColumns from './variantResultColumns'

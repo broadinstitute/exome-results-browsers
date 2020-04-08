@@ -3,8 +3,6 @@ import { hot } from 'react-hot-loader/root'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
 
-import { registerConsequences } from '@gnomad/utilities'
-
 import browserConfig from '@browser/config'
 
 import ErrorBoundary from './ErrorBoundary'
@@ -24,8 +22,6 @@ const GlobalStyles = createGlobalStyle`
     font-size: 14px;
   }
 `
-
-registerConsequences(browserConfig.variants.consequences)
 
 const renderedPages = browserConfig.pages.map(page => ({
   ...page,

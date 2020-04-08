@@ -1,6 +1,6 @@
-import { getCategoryFromConsequence, getLabelForConsequenceTerm } from '@gnomad/utilities'
-
 import browserConfig from '@browser/config'
+
+import { getCategoryFromConsequence, getLabelForConsequenceTerm } from '../consequences'
 
 const filterVariants = (variants, filter) => {
   let filteredVariants = variants

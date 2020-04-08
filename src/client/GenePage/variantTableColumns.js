@@ -3,8 +3,8 @@ import Highlighter from 'react-highlight-words'
 import styled from 'styled-components'
 
 import { TextButton } from '@gnomad/ui'
-import { getCategoryFromConsequence, getLabelForConsequenceTerm } from '@gnomad/utilities'
 
+import { getCategoryFromConsequence, getLabelForConsequenceTerm } from '../consequences'
 import variantResultColumns from './variantResultColumns'
 
 const VariantIdButton = styled(TextButton)`

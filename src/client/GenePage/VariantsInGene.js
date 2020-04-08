@@ -9,6 +9,7 @@ import { Modal } from '@gnomad/ui'
 
 import browserConfig from '@browser/config'
 
+import { getCategoryFromConsequence } from '../consequences'
 import Query from '../Query'
 import StatusMessage from '../StatusMessage'
 import VariantDetails from '../VariantDetails/VariantDetails'
@@ -18,6 +19,18 @@ import { TrackPageSection } from './TrackPage'
 import VariantFilterControls from './VariantFilterControls'
 import variantResultColumns from './variantResultColumns'
 import VariantTable from './VariantTable'
+
+const consequenceCategoryColors = {
+  lof: 'rgba(255, 88, 63, 0.7)',
+  missense: 'rgba(240, 201, 77, 0.7)',
+  synonymous: 'rgba(0, 128, 0, 0.7)',
+  other: 'rgba(117, 117, 117, 0.7)',
+}
+
+const variantColor = variant => {
+  const category = getCategoryFromConsequence(variant.consequence) || 'other'
+  return consequenceCategoryColors[category]
+}
 
 const ModalStyles = createGlobalStyle`
   #variant-details-modal .modal-content {
@@ -179,8 +192,16 @@ class VariantsInGene extends Component {
 
     return (
       <React.Fragment>
-        <VariantTrack title={`Cases\n(${cases.length} variants)`} variants={cases} />
-        <VariantTrack title={`Controls\n(${controls.length} variants)`} variants={controls} />
+        <VariantTrack
+          title={`Cases\n(${cases.length} variants)`}
+          variants={cases}
+          variantColor={variantColor}
+        />
+        <VariantTrack
+          title={`Controls\n(${controls.length} variants)`}
+          variants={controls}
+          variantColor={variantColor}
+        />
         <Cursor onClick={this.onClickPosition}>
           <VariantTrack
             title="Viewing in table"
@@ -191,6 +212,7 @@ class VariantsInGene extends Component {
                 allele_freq: v.af,
                 isHighlighted: v.variant_id === hoveredVariant,
               }))}
+            variantColor={variantColor}
           />
         </Cursor>
         <PositionAxisTrack />
