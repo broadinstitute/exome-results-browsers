@@ -242,7 +242,7 @@ class VariantsInGene extends Component {
           <Modal
             id="variant-details-modal"
             size="large"
-            title={selectedVariant.variant_id}
+            title={`${selectedVariant.variant_id} (${browserConfig.referenceGenome})`}
             onRequestClose={() => {
               this.setState({ selectedVariant: null })
             }}
