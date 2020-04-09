@@ -81,9 +81,13 @@ const VariantDetails = ({ variant }) => {
   const defaultGroup = browserConfig.variants.groups.options[0]
   const defaultGroupResult = variant.results.find(result => result.analysis_group === defaultGroup)
 
+  const gnomadDataset = browserConfig.referenceGenome === 'GRCh38' ? 'gnomad_r3' : 'gnomad_r2_1'
+
   return (
     <VariantContainer>
-      <ExternalLink href={`https://gnomad.broadinstitute.org/variant/${variant.variant_id}`}>
+      <ExternalLink
+        href={`https://gnomad.broadinstitute.org/variant/${variant.variant_id}?dataset=${gnomadDataset}`}
+      >
         View in gnomAD
       </ExternalLink>
       <Columns>
