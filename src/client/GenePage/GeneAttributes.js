@@ -2,6 +2,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
+import browserConfig from '@browser/config'
+
 import { ExternalLink } from '@gnomad/ui'
 
 const List = styled.dl`
@@ -21,61 +23,72 @@ const ListItem = styled.div`
   margin-bottom: 0.5em;
 `
 
-const GeneAttributes = ({ gene }) => (
-  <List>
-    <ListItem>
-      <dt>Ensembl gene ID</dt>
-      <dd>
-        <ExternalLink
-          href={`https://grch37.ensembl.org/Homo_sapiens/Gene/Summary?g=${gene.gene_id}`}
-        >
-          {gene.gene_id}
-        </ExternalLink>
-      </dd>
-    </ListItem>
-    {gene.canonical_transcript && (
+const { referenceGenome } = browserConfig
+
+const GeneAttributes = ({ gene }) => {
+  const ucscReferenceGenomeId = referenceGenome === 'GRCh38' ? 'hg38' : 'hg19'
+
+  return (
+    <List>
       <ListItem>
-        <dt>Ensembl transcript ID</dt>
+        <dt>Genome build</dt>
+        <dd>
+          {referenceGenome} / {ucscReferenceGenomeId}
+        </dd>
+      </ListItem>
+      <ListItem>
+        <dt>Ensembl gene ID</dt>
         <dd>
           <ExternalLink
-            href={`https://grch37.ensembl.org/Homo_sapiens/Transcript/Summary?t=${gene.canonical_transcript.transcript_id}`}
+            href={`https://grch37.ensembl.org/Homo_sapiens/Gene/Summary?g=${gene.gene_id}`}
           >
-            {gene.canonical_transcript.transcript_id}
+            {gene.gene_id}
           </ExternalLink>
         </dd>
       </ListItem>
-    )}
-    <ListItem>
-      <dt>UCSC Browser</dt>
-      <dd>
-        <ExternalLink
-          href={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&position=chr${gene.chrom}%3A${gene.start}-${gene.stop}`}
-        >{`${gene.chrom}:${gene.start}-${gene.stop}`}</ExternalLink>
-      </dd>
-    </ListItem>
-    <ListItem>
-      <dt>GeneCards</dt>
-      <dd>
-        <ExternalLink href={`https://www.genecards.org/cgi-bin/carddisp.pl?gene=${gene.symbol}`}>
-          {gene.symbol}
-        </ExternalLink>
-      </dd>
-    </ListItem>
-    <ListItem>
-      <dt>OMIM</dt>
-      <dd>
-        {gene.omim_id ? (
-          <ExternalLink href={`https://omim.org/entry/${gene.omim_id}`}>
-            {gene.omim_id}
+      {gene.canonical_transcript && (
+        <ListItem>
+          <dt>Ensembl transcript ID</dt>
+          <dd>
+            <ExternalLink
+              href={`https://grch37.ensembl.org/Homo_sapiens/Transcript/Summary?t=${gene.canonical_transcript.transcript_id}`}
+            >
+              {gene.canonical_transcript.transcript_id}
+            </ExternalLink>
+          </dd>
+        </ListItem>
+      )}
+      <ListItem>
+        <dt>UCSC Browser</dt>
+        <dd>
+          <ExternalLink
+            href={`https://genome.ucsc.edu/cgi-bin/hgTracks?db=${ucscReferenceGenomeId}&position=chr${gene.chrom}%3A${gene.start}-${gene.stop}`}
+          >{`${gene.chrom}:${gene.start}-${gene.stop}`}</ExternalLink>
+        </dd>
+      </ListItem>
+      <ListItem>
+        <dt>GeneCards</dt>
+        <dd>
+          <ExternalLink href={`https://www.genecards.org/cgi-bin/carddisp.pl?gene=${gene.symbol}`}>
+            {gene.symbol}
           </ExternalLink>
-        ) : (
-          '—'
-        )}
-      </dd>
-    </ListItem>
-  </List>
-)
-
+        </dd>
+      </ListItem>
+      <ListItem>
+        <dt>OMIM</dt>
+        <dd>
+          {gene.omim_id ? (
+            <ExternalLink href={`https://omim.org/entry/${gene.omim_id}`}>
+              {gene.omim_id}
+            </ExternalLink>
+          ) : (
+            '—'
+          )}
+        </dd>
+      </ListItem>
+    </List>
+  )
+}
 GeneAttributes.propTypes = {
   gene: PropTypes.shape({
     gene_id: PropTypes.string.isRequired,
