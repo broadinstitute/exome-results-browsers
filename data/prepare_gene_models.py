@@ -14,8 +14,8 @@ def get_exons(gencode):
         gene_id=exons.gene_id.split("\\.")[0],
         chrom=exons.interval.start.seqname[3:],
         strand=exons.strand,
-        start=exons.interval.start.position + 1,
-        stop=exons.interval.end.position + 1,
+        start=exons.interval.start.position,
+        stop=exons.interval.end.position,
     )
 
     return exons
@@ -31,8 +31,8 @@ def get_genes(gencode):
         gene_symbol=genes.gene_name,
         chrom=genes.interval.start.seqname[3:],
         strand=genes.strand,
-        start=genes.interval.start.position + 1,
-        stop=genes.interval.end.position + 1,
+        start=genes.interval.start.position,
+        stop=genes.interval.end.position,
     )
 
     genes = genes.key_by(genes.gene_id).drop("interval")
@@ -50,8 +50,8 @@ def get_transcripts(gencode):
         gene_id=transcripts.gene_id.split("\\.")[0],
         chrom=transcripts.interval.start.seqname[3:],
         strand=transcripts.strand,
-        start=transcripts.interval.start.position + 1,
-        stop=transcripts.interval.end.position + 1,
+        start=transcripts.interval.start.position,
+        stop=transcripts.interval.end.position,
     )
 
     transcripts = transcripts.key_by(transcripts.transcript_id).drop("interval")
