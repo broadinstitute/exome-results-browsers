@@ -3,6 +3,7 @@ export default {
   navBarTitle: 'Epi25 WES browser',
   homePageHeading: 'Epi25: a whole-exome sequencing case-control study of epilepsy',
   navBarColor: '#4e3c81',
+  referenceGenome: 'GRCh37',
   elasticsearch: {
     geneResults: {
       index: 'epi25_gene_results_2018_11_27',

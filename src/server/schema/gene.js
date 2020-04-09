@@ -1,9 +1,19 @@
 import { GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql'
 
+import browserConfig from '@browser/config'
+
 import { UserVisibleError } from '../utilities/errors'
 import { GeneResultType, fetchGeneResultsForGene } from './geneResult'
 import { VariantType, VariantResultGroupIdType, fetchVariantsByGeneId } from './variant'
 import { TranscriptType } from './transcript'
+
+const { referenceGenome } = browserConfig
+
+if (!['GRCh37', 'GRCh38'].includes(referenceGenome)) {
+  throw new Error(`Invalid reference genome "${referenceGenome}"`)
+}
+
+const index = `exome_result_browsers_genes_${referenceGenome.toLowerCase()}`
 
 export const GeneType = new GraphQLObjectType({
   name: 'Gene',
@@ -33,7 +43,7 @@ export const GeneType = new GraphQLObjectType({
 export const fetchGeneById = async (ctx, geneId) => {
   try {
     const response = await ctx.database.elastic.get({
-      index: 'exome_results_genes',
+      index,
       type: 'documents',
       id: geneId,
     })
@@ -49,7 +59,7 @@ export const fetchGeneById = async (ctx, geneId) => {
 
 export const fetchGeneBySymbol = async (ctx, geneSymbol) => {
   const response = await ctx.database.elastic.search({
-    index: 'exome_results_genes',
+    index,
     type: 'documents',
     body: {
       query: {

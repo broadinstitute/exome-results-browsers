@@ -3,6 +3,7 @@ export default {
   navBarTitle: 'Autism Sequencing Consortium exome analysis',
   navBarColor: '#23509c',
   homePageHeading: 'Autism Sequencing Consortium exome analysis',
+  referenceGenome: 'GRCh37',
   elasticsearch: {
     geneResults: {
       index: 'asc_gene_results_2019_04_14',

@@ -3,6 +3,7 @@ export default {
   navBarTitle: 'SCHEMA browser',
   navBarColor: '#0a79bf',
   homePageHeading: 'SCHEMA: Schizophrenia exome meta-analysis consortium',
+  referenceGenome: 'GRCh37',
   elasticsearch: {
     geneResults: {
       index: 'schema_gene_results_2019_10_10',
