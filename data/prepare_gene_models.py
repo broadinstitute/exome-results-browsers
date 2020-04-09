@@ -98,7 +98,7 @@ def load_canonical_transcripts(canonical_transcripts_path, min_partitions=8):
 
 
 def load_hgnc(hgnc_path, min_partitions=8):
-    hgnc = hl.import_table(hgnc_path, min_partitions=min_partitions)
+    hgnc = hl.import_table(hgnc_path, min_partitions=min_partitions, missing="")
     hgnc = hgnc.select(
         hgnc_id=hgnc["HGNC ID"],
         symbol=hgnc["Approved symbol"],
@@ -106,9 +106,9 @@ def load_hgnc(hgnc_path, min_partitions=8):
         previous_symbols=hgnc["Previous symbols"].split(",").map(lambda s: s.strip()),
         alias_symbols=hgnc["Alias symbols"].split(",").map(lambda s: s.strip()),
         omim_id=hgnc["OMIM ID(supplied by OMIM)"],
-        gene_id=hgnc["Ensembl ID(supplied by Ensembl)"],
+        gene_id=hl.or_else(hgnc["Ensembl gene ID"], hgnc["Ensembl ID(supplied by Ensembl)"]),
     )
-    hgnc = hgnc.key_by("gene_id")
+    hgnc = hgnc.filter(hl.is_defined(hgnc.gene_id)).key_by("gene_id")
     return hgnc
 
 
