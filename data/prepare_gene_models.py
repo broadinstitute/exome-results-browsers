@@ -104,7 +104,7 @@ def load_hgnc(hgnc_path, min_partitions=8):
         symbol=hgnc["Approved symbol"],
         name=hgnc["Approved name"],
         previous_symbols=hgnc["Previous symbols"].split(",").map(lambda s: s.strip()),
-        synonyms=hgnc["Synonyms"].split(",").map(lambda s: s.strip()),
+        alias_symbols=hgnc["Alias symbols"].split(",").map(lambda s: s.strip()),
         omim_id=hgnc["OMIM ID(supplied by OMIM)"],
         gene_id=hgnc["Ensembl ID(supplied by Ensembl)"],
     )
@@ -152,8 +152,8 @@ def main():
         search_terms=hl.set(
             hl.empty_array(hl.tstr)
             .append(genes.symbol)
-            .extend(genes.synonyms)
             .extend(genes.previous_symbols)
+            .extend(genes.alias_symbols)
             .append(genes.gencode_gene_symbol)
             .map(lambda s: s.upper())
         ),
