@@ -10,6 +10,9 @@ import browserConfig from '@browser/config'
 import Link from './Link'
 import Searchbox from './Searchbox'
 
+const backgroundColor = browserConfig.navBarColor || '#000'
+const textColor = browserConfig.navBarTextColor || '#fff'
+
 const TopBarWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -17,20 +20,20 @@ const TopBarWrapper = styled.div`
   align-items: center;
   padding: 10px 30px;
   margin-bottom: 20px;
-  background-color: ${browserConfig.navBarColor || '#000'};
+  background-color: ${backgroundColor};
 
   @media (max-width: 900px) {
     flex-direction: column;
   }
 
   ${Link} {
-    color: #fff;
+    color: ${textColor};
     text-decoration: none;
   }
 `
 
 const TitleWrapper = styled.div`
-  color: #fff;
+  color: ${textColor};
   font-size: 1.5em;
 
   @media (max-width: 900px) {
@@ -44,7 +47,7 @@ const TitleWrapper = styled.div`
 `
 
 const ToggleMenuButton = styled(Button)`
-  border: 1px solid #fafafa;
+  border: 1px solid ${textColor};
   background: transparent;
   color: inherit;
   font-size: 1rem;

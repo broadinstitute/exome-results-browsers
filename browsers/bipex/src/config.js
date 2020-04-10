@@ -3,6 +3,7 @@ export default {
   navBarTitle: 'BipEx browser',
   homePageHeading: 'BipEx',
   navBarColor: '#f65200',
+  navBarTextColor: '#000',
   referenceGenome: 'GRCh38',
   elasticsearch: {
     geneResults: {
