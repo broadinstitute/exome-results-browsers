@@ -12,7 +12,7 @@ COPY package.json .
 COPY src/client/package.json src/client/package.json
 COPY yarn.lock .
 COPY gnomadjs ./gnomadjs
-RUN yarn install --frozen-lockfile
+RUN yarn install --production false --frozen-lockfile
 
 # Copy source
 COPY browsers ./browsers
