@@ -83,8 +83,12 @@ const GeneResultsTable = ({ geneResult }) => (
         </tr>
       </tbody>
     </Table>
-    <p>Total cases: {geneResult.n_cases}</p>
-    <p>Total controls: {geneResult.n_controls}</p>
+    <p>
+      <strong>Total cases: {geneResult.n_cases}</strong>
+    </p>
+    <p>
+      <strong>Total controls: {geneResult.n_controls}</strong>
+    </p>
   </div>
 )
 
