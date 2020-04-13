@@ -65,6 +65,19 @@ def prepare_gene_results(gene_results_url, genes_url=None):
                 category_results.select_globals().drop("gene_name", "gene_description", "n_cases", "n_controls"),
                 "outer",
             )
+
+            # N cases/controls should be the same for all consequence categories for a gene/analysis group.
+            # However, if there are no variants of a certain consequence category found in a gene, then
+            # N cases/controls for that gene/analysis group/consequence category will be missing.
+            final_results = final_results.annotate(
+                n_cases=hl.or_else(
+                    final_results.n_cases, category_results[final_results.gene_id, final_results.analysis_group].n_cases
+                ),
+                n_controls=hl.or_else(
+                    final_results.n_controls,
+                    category_results[final_results.gene_id, final_results.analysis_group].n_controls,
+                ),
+            )
         else:
             final_results = category_results
 
