@@ -1,0 +1,11 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: bipex-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: bipex-browser
+spec:
+  backend:
+    serviceName: bipex-browser
+    servicePort: 80

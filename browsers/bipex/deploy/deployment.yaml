@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bipex-browser
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: bipex-browser
+  template:
+    metadata:
+      labels:
+        name: bipex-browser
+    spec:
+      containers:
+      - name: app
+        image: gcr.io/exac-gnomad/bipex-browser:latest
+        env:
+        - name: ELASTICSEARCH_URL
+          value: elasticsearch:9200
+        - name: PORT
+          value: "8000"
+        - name: ENABLE_HTTPS_REDIRECT
+          value: "false"
+        - name: MAX_CONCURRENT_ES_REQUESTS
+          value: "100"
+        - name: MAX_QUEUED_ES_REQUESTS
+          value: "1000"
+        ports:
+        - name: http
+          containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8000
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 20
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
