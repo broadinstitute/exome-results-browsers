@@ -85,7 +85,10 @@ def prepare_gene_results(gene_results_url, genes_url=None):
         genes = hl.read_table(genes_url)
         genes = genes.key_by("gene_id")
         final_results = final_results.annotate(
-            chrom=genes[final_results.gene_id].chrom, pos=genes[final_results.gene_id].start
+            gene_name=genes[final_results.gene_id].symbol,
+            gene_description=genes[final_results.gene_id].name,
+            chrom=genes[final_results.gene_id].chrom,
+            pos=genes[final_results.gene_id].start,
         )
 
     return final_results
