@@ -1,9 +1,8 @@
 export default {
-  browserTitle: 'BipEx browser',
-  navBarTitle: 'BipEx browser',
-  homePageHeading: 'BipEx',
-  navBarColor: '#f65200',
-  navBarTextColor: '#000',
+  browserTitle: 'BipEx: Bipolar Exomes Browser',
+  navBarTitle: 'BipEx: Bipolar Exomes Browser',
+  homePageHeading: 'BipEx: Bipolar Exomes',
+  navBarColor: '#c24100',
   referenceGenome: 'GRCh38',
   elasticsearch: {
     geneResults: {
