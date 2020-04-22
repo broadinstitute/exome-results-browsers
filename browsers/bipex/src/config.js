@@ -4,6 +4,7 @@ export default {
   homePageHeading: 'BipEx: Bipolar Exomes',
   navBarColor: '#c24100',
   referenceGenome: 'GRCh38',
+  showSearchOnHomePage: false,
   elasticsearch: {
     geneResults: {
       index: 'bipex_gene_results_200421',
