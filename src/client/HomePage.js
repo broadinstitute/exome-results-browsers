@@ -15,6 +15,7 @@ const HomePageHeading = styled(PageHeading)`
 `
 
 const HomePageWrapper = styled(Page)`
+  max-width: 740px;
   font-size: 16px;
 
   p {
