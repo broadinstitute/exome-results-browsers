@@ -28,10 +28,14 @@ const HomePage = () => (
   <HomePageWrapper>
     <DocumentTitle />
     <HomePageHeading>{browserConfig.homePageHeading}</HomePageHeading>
-    <Searchbox width="100%" />
-    <p style={{ marginTop: '0.25em' }}>
-      Or <Link to="/results">view all results</Link>
-    </p>
+    {browserConfig.showSearchOnHomePage !== false && (
+      <React.Fragment>
+        <Searchbox width="100%" />
+        <p style={{ marginTop: '0.25em' }}>
+          Or <Link to="/results">view all results</Link>
+        </p>
+      </React.Fragment>
+    )}
     <HomePageContent />
   </HomePageWrapper>
 )
