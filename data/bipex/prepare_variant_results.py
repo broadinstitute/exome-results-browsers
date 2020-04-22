@@ -5,8 +5,8 @@ import hail as hl
 from data_utils.computed_fields import x_position
 
 
-DEFAULT_VARIANT_RESULTS_URL = "gs://bipex-browser/browser_variant_results_table.ht"
-DEFAULT_VARIANT_ANNOTATIONS_URL = "gs://bipex-browser/browser_variant_annotation_table.ht"
+DEFAULT_VARIANT_RESULTS_URL = "gs://bipex-browser/200421/browser_variant_results_table.ht"
+DEFAULT_VARIANT_ANNOTATIONS_URL = "gs://bipex-browser/200421/browser_variant_annotation_table.ht"
 
 
 GROUP_NAMES = hl.literal(

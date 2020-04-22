@@ -3,7 +3,7 @@ import argparse
 import hail as hl
 
 
-DEFAULT_GENE_RESULTS_URL = "gs://bipex-browser/browser_gene_results_table.ht"
+DEFAULT_GENE_RESULTS_URL = "gs://bipex-browser/200421/browser_gene_results_table.ht"
 
 
 GROUP_NAMES = hl.literal(
@@ -29,10 +29,14 @@ def prepare_gene_results(gene_results_url, genes_url=None):
         "control_count",
         "n_cases",
         "n_controls",
-        "fisher_log_pval",
-        "fisher_gnom_non_psych_log_pval",
-        "CMH_log_pval",
-        "CMH_gnom_non_psych_log_pval",
+        "fisher_pval",
+        "fisher_OR",
+        "fisher_gnom_non_psych_pval",
+        "fisher_gnom_non_psych_OR",
+        "CMH_pval",
+        "CMH_OR",
+        "CMH_gnom_non_psych_pval",
+        "CMH_gnom_non_psych_OR",
     )
 
     # Rename analysis groups to be Elasticsearch-friendly
@@ -44,10 +48,14 @@ def prepare_gene_results(gene_results_url, genes_url=None):
     per_category_fields = [
         "case_count",
         "control_count",
-        "fisher_log_pval",
-        "fisher_gnom_non_psych_log_pval",
-        "CMH_log_pval",
-        "CMH_gnom_non_psych_log_pval",
+        "fisher_pval",
+        "fisher_OR",
+        "fisher_gnom_non_psych_pval",
+        "fisher_gnom_non_psych_OR",
+        "CMH_pval",
+        "CMH_OR",
+        "CMH_gnom_non_psych_pval",
+        "CMH_gnom_non_psych_OR",
     ]
     for category in consequence_categories:
         category_results = results.filter(results.consequence_category == category)

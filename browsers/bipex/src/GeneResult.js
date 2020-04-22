@@ -8,6 +8,20 @@ const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
+const renderOddsRatio = value => {
+  if (value === null) {
+    return '-'
+  }
+  if (value === 'Inf') {
+    return '∞'
+  }
+  const n = Number(value)
+  if (n === 0) {
+    return '0'
+  }
+  return n.toPrecision(3)
+}
+
 const GeneResultsTable = ({ geneResult }) => (
   <div>
     <Table>
@@ -16,10 +30,8 @@ const GeneResultsTable = ({ geneResult }) => (
           <th scope="col">Category</th>
           <th scope="col">Case Count</th>
           <th scope="col">Control Count</th>
-          <th scope="col">Fisher log p-val</th>
-          <th scope="col">Fisher gnomAD (non-psych) log p-val</th>
-          <th scope="col">CMH Log p-val</th>
-          <th scope="col">CMH gnomAD (non-psych) log p-val</th>
+          <th scope="col">Fisher p-val</th>
+          <th scope="col">Fisher odds ratio</th>
         </tr>
       </thead>
       <tbody>
@@ -28,25 +40,11 @@ const GeneResultsTable = ({ geneResult }) => (
           <td>{geneResult.ptv_case_count === null ? '-' : geneResult.ptv_case_count}</td>
           <td>{geneResult.ptv_control_count === null ? '-' : geneResult.ptv_control_count}</td>
           <td>
-            {geneResult.ptv_fisher_log_pval === null
+            {geneResult.ptv_fisher_gnom_non_psych_pval === null
               ? '-'
-              : geneResult.ptv_fisher_log_pval.toPrecision(3)}
+              : geneResult.ptv_fisher_gnom_non_psych_pval.toPrecision(3)}
           </td>
-          <td>
-            {geneResult.ptv_fisher_gnom_non_psych_log_pval === null
-              ? '-'
-              : geneResult.ptv_fisher_gnom_non_psych_log_pval.toPrecision(3)}
-          </td>
-          <td>
-            {geneResult.ptv_CMH_log_pval === null
-              ? '-'
-              : geneResult.ptv_CMH_log_pval.toPrecision(3)}
-          </td>
-          <td>
-            {geneResult.ptv_CMH_gnom_non_psych_log_pval === null
-              ? '-'
-              : geneResult.ptv_CMH_gnom_non_psych_log_pval.toPrecision(3)}
-          </td>
+          <td>{renderOddsRatio(geneResult.ptv_fisher_gnom_non_psych_OR)}</td>
         </tr>
         <tr>
           <th scope="row">Damaging Missense</th>
@@ -61,25 +59,11 @@ const GeneResultsTable = ({ geneResult }) => (
               : geneResult.damaging_missense_control_count}
           </td>
           <td>
-            {geneResult.damaging_missense_fisher_log_pval === null
+            {geneResult.damaging_missense_fisher_gnom_non_psych_pval === null
               ? '-'
-              : geneResult.damaging_missense_fisher_log_pval.toPrecision(3)}
+              : geneResult.damaging_missense_fisher_gnom_non_psych_pval.toPrecision(3)}
           </td>
-          <td>
-            {geneResult.damaging_missense_fisher_gnom_non_psych_log_pval === null
-              ? '-'
-              : geneResult.damaging_missense_fisher_gnom_non_psych_log_pval.toPrecision(3)}
-          </td>
-          <td>
-            {geneResult.damaging_missense_CMH_log_pval === null
-              ? '-'
-              : geneResult.damaging_missense_CMH_log_pval.toPrecision(3)}
-          </td>
-          <td>
-            {geneResult.damaging_missense_CMH_gnom_non_psych_log_pval === null
-              ? '-'
-              : geneResult.damaging_missense_CMH_gnom_non_psych_log_pval.toPrecision(3)}
-          </td>
+          <td>{renderOddsRatio(geneResult.damaging_missense_fisher_gnom_non_psych_OR)}</td>
         </tr>
       </tbody>
     </Table>
@@ -98,16 +82,12 @@ GeneResultsTable.propTypes = {
     n_controls: PropTypes.number,
     ptv_case_count: PropTypes.number,
     ptv_control_count: PropTypes.number,
-    ptv_fisher_log_pval: PropTypes.number,
-    ptv_fisher_gnom_non_psych_log_pval: PropTypes.number,
-    ptv_CMH_log_pval: PropTypes.number,
-    ptv_CMH_gnom_non_psych_log_pval: PropTypes.number,
+    ptv_fisher_gnom_non_psych_pval: PropTypes.number,
+    ptv_fisher_gnom_non_psych_OR: PropTypes.string,
     damaging_missense_case_count: PropTypes.number,
     damaging_missense_control_count: PropTypes.number,
-    damaging_missense_fisher_log_pval: PropTypes.number,
-    damaging_missense_fisher_gnom_non_psych_log_pval: PropTypes.number,
-    damaging_missense_CMH_log_pval: PropTypes.number,
-    damaging_missense_CMH_gnom_non_psych_log_pval: PropTypes.number,
+    damaging_missense_fisher_gnom_non_psych_pval: PropTypes.number,
+    damaging_missense_fisher_gnom_non_psych_OR: PropTypes.string,
   }).isRequired,
 }
 

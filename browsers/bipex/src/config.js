@@ -6,11 +6,11 @@ export default {
   referenceGenome: 'GRCh38',
   elasticsearch: {
     geneResults: {
-      index: 'bipex_gene_results',
+      index: 'bipex_gene_results_200421',
       type: 'documents',
     },
     variants: {
-      index: 'bipex_variant_results',
+      index: 'bipex_variant_results_200421',
       type: 'documents',
     },
   },
@@ -38,7 +38,7 @@ export default {
         bipolar_disorder_including_schizoaffective: 'Bipolar Disorder (including Schizoaffective)',
       },
     },
-    defaultSortColumn: 'ptv_fisher_gnom_non_psych_log_pval',
+    defaultSortColumn: 'ptv_fisher_gnom_non_psych_pval',
     columns: [
       {
         key: 'n_cases',
@@ -69,28 +69,19 @@ export default {
         type: 'int',
       },
       {
-        key: 'ptv_fisher_log_pval',
-        heading: 'PTV Fisher log p-val',
+        key: 'ptv_fisher_gnom_non_psych_pval',
+        heading: 'PTV Fisher p\u2011val',
         minWidth: 85,
         grow: 0,
       },
       {
-        key: 'ptv_fisher_gnom_non_psych_log_pval',
-        heading: 'PTV Fisher gnomAD (non-psych) log p-val',
+        key: 'ptv_fisher_gnom_non_psych_OR',
+        heading: 'PTV Fisher odds ratio',
         minWidth: 85,
         grow: 0,
-      },
-      {
-        key: 'ptv_CMH_log_pval',
-        heading: 'PTV CMH log p-val',
-        minWidth: 85,
-        grow: 0,
-      },
-      {
-        key: 'ptv_CMH_gnom_non_psych_log_pval',
-        heading: 'PTV CMH gnomAD (non-psych) log p-val',
-        minWidth: 85,
-        grow: 0,
+        type: 'string',
+        // eslint-disable-next-line no-nested-ternary
+        render: val => (val === 'Inf' ? '∞' : Number(val) === 0 ? '0' : Number(val).toPrecision(3)),
       },
       {
         key: 'damaging_missense_case_count',
@@ -107,28 +98,19 @@ export default {
         type: 'int',
       },
       {
-        key: 'damaging_missense_fisher_log_pval',
-        heading: 'Damaging Missense Fisher log p-val',
+        key: 'damaging_missense_fisher_gnom_non_psych_pval',
+        heading: 'Damaging Missense Fisher p\u2011val',
         minWidth: 85,
         grow: 0,
       },
       {
-        key: 'damaging_missense_fisher_gnom_non_psych_log_pval',
-        heading: 'Damaging Missense Fisher gnomAD (non-psych) log p-val',
+        key: 'damaging_missense_fisher_gnom_non_psych_OR',
+        heading: 'Damaging Missense Fisher odds ratio',
         minWidth: 85,
         grow: 0,
-      },
-      {
-        key: 'damaging_missense_CMH_log_pval',
-        heading: 'Damaging Missense CMH log p-val',
-        minWidth: 85,
-        grow: 0,
-      },
-      {
-        key: 'damaging_missense_CMH_gnom_non_psych_log_pval',
-        heading: 'Damaging Missense CMH gnomAD (non-psych) log p-val',
-        minWidth: 85,
-        grow: 0,
+        type: 'string',
+        // eslint-disable-next-line no-nested-ternary
+        render: val => (val === 'Inf' ? '∞' : Number(val) === 0 ? '0' : Number(val).toPrecision(3)),
       },
     ],
   },
@@ -198,7 +180,7 @@ export default {
       },
       {
         key: 'p_value',
-        heading: 'P-Value',
+        heading: 'P\u2011Value',
         minWidth: 65,
         showOnGenePage: true,
       },
