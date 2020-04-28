@@ -39,7 +39,5 @@ RUN yarn install --production --frozen-lockfile
 # Copy results from build stage
 COPY --from=0 /app/dist/${BROWSER} /app/dist
 
-USER node
-
 # Run
 CMD ["node", "dist/server.js"]
