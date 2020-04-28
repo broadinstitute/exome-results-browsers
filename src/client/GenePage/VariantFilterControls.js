@@ -183,12 +183,10 @@ const VariantFilterControls = ({
                 />
               </React.Fragment>
             )}
-            {!browserConfig.variants.hideExport && (
-              <ExportVariantsButton
-                exportFileName={`${selectedAnalysisGroup}_${geneId}_variants`}
-                variants={renderedVariants}
-              />
-            )}
+            <ExportVariantsButton
+              exportFileName={`${selectedAnalysisGroup}_${geneId}_variants`}
+              variants={renderedVariants}
+            />
           </AnalysisGroupMenuWrapper>
         </FiltersFirstColumn>
 
