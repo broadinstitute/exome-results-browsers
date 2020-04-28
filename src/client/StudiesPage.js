@@ -22,6 +22,14 @@ export default () => (
       displays variant and gene-level data from the most recent ASC exome sequencing analysis.
     </p>
     <h2>
+      Bipolar disorder - <ExternalLink href="http://bipex.broadinstitute.org">BipEx</ExternalLink>
+    </h2>
+    <p>
+      The Bipolar Exome (BipEx) sequencing project is a collaboration between multiple institutions
+      across the globe, which aims to increase our understanding of the disease architecture of
+      bipolar disorder.
+    </p>
+    <h2>
       Epilepsy - <ExternalLink href="https://epi25.broadinstitute.org">Epi25</ExternalLink>
     </h2>
     <p>
