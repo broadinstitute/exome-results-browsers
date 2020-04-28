@@ -36,7 +36,6 @@ export default {
       labels: {},
     },
     defaultSortColumn: 'pval_meta',
-    hideExport: true,
     columns: [
       {
         key: 'x_case_lof',
@@ -103,7 +102,6 @@ export default {
     ],
   },
   variants: {
-    hideExport: true,
     filters: [
       {
         id: 'onlyDeNovo',
