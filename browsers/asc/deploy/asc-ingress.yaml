@@ -4,9 +4,8 @@ kind: Ingress
 metadata:
   name: asc-ingress
   annotations:
-    ingress.kubernetes.io/ssl-redirect: "true"
     kubernetes.io/ingress.global-static-ip-name: asc-browser-https
-    ingress.gcp.kubernetes.io/pre-shared-cert: asc-cert
+    ingress.gcp.kubernetes.io/pre-shared-cert: asc-2020
 spec:
   rules:
   - host: asc.broadinstitute.org
