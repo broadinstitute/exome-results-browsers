@@ -20,8 +20,10 @@ spec:
           value: elasticsearch:9200
         - name: PORT
           value: "8000"
+        - name: TRUST_PROXY
+          value: "2"
         - name: ENABLE_HTTPS_REDIRECT
-          value: "false"
+          value: "true"
         - name: MAX_CONCURRENT_ES_REQUESTS
           value: "100"
         - name: MAX_QUEUED_ES_REQUESTS

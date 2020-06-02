@@ -5,7 +5,13 @@ metadata:
   name: bipex-ingress
   annotations:
     kubernetes.io/ingress.global-static-ip-name: bipex-browser
+    ingress.gcp.kubernetes.io/pre-shared-cert: bipex-2020
 spec:
-  backend:
-    serviceName: bipex-browser
-    servicePort: 80
+  rules:
+  - host: bipex.broadinstitute.org
+    http:
+      paths:
+      - path:
+        backend:
+          serviceName: bipex-browser
+          servicePort: 80
