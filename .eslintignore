@@ -3,4 +3,4 @@ node_modules
 gnomadjs
 
 # Build output
-dist
+src/server/public

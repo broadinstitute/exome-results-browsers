@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+
+  <title>Results Browser</title>
+
+  <link rel="stylesheet" href="/normalize.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700" />
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+      background-color: #fafafa;
+      font-family: Roboto, sans-serif;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <% if (gaTrackingId) { %>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaTrackingId %>"></script>
+  <script>
+    window.gaTrackingId = '<%= gaTrackingId %>'
+    window.dataLayer = window.dataLayer || []
+    function gtag() {
+      dataLayer.push(arguments)
+    }
+    gtag('js', new Date())
+
+    gtag('config', '<%= gaTrackingId %>', { send_page_view: false })
+    window.gtag = gtag
+  </script>
+  <% } %>
+
+  <script src="/config.js"></script>
+</body>
+
+</html>

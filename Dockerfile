@@ -1,43 +1,52 @@
-FROM node:12.16.1
+FROM node:12.18.1-alpine
 
-ARG BROWSER
+RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
+WORKDIR /home/node/app
 
-ENV BROWSER=${BROWSER}
+USER node
+
 ENV NODE_ENV=production
 
-WORKDIR /app
-
 # Install dependencies
-COPY package.json .
-COPY src/client/package.json src/client/package.json
-COPY yarn.lock .
-COPY gnomadjs ./gnomadjs
-RUN yarn install --production false --frozen-lockfile
+COPY --chown=node:node package.json .
+COPY --chown=node:node src/browsers/package.json src/browsers/package.json
+COPY --chown=node:node yarn.lock .
+COPY --chown=node:node gnomadjs ./gnomadjs
+RUN yarn install --production false --frozen-lockfile && yarn cache clean
 
-# Copy source
-COPY browsers ./browsers
-COPY config ./config
-COPY src ./src
-COPY babel.config.js .
+# Copy frontend source
+COPY --chown=node:node babel.config.js .
+COPY --chown=node:node src/browsers ./src/browsers
 
-# Build
-RUN yarn run webpack --config=./config/webpack.config.client.js && \
-  yarn run webpack --config=./config/webpack.config.server.js
+# Build frontend
+COPY build.env .
+RUN export $(cat build.env | xargs); \
+  for BROWSER in ASC BipEx Epi25 SCHEMA; do \
+    BROWSER=$BROWSER yarn run webpack --config=./src/browsers/webpack.config.js; \
+  done
 
 ###############################################################################
-FROM node:12.16.1
+FROM node:12.18.1-alpine
 
-ARG BROWSER
+RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
+WORKDIR /home/node/app
 
-WORKDIR /app
+USER node
+
+ENV NODE_ENV=production
+
+ENV PORT=8000
 
 # Install dependencies
-COPY src/server/package.json .
-COPY yarn.lock .
-RUN yarn install --production --frozen-lockfile
+COPY --chown=node:node src/server/package.json .
+COPY --chown=node:node yarn.lock .
+RUN yarn install --production --frozen-lockfile && yarn cache clean
 
-# Copy results from build stage
-COPY --from=0 /app/dist/${BROWSER} /app/dist
+# Copy frontend from build stage
+COPY --chown=node:node --from=0 /home/node/app/src/server/public ./public
+
+# Copy server source
+COPY --chown=node:node src/server .
 
 # Run
-CMD ["node", "dist/server.js"]
+CMD ["node", "server.js"]

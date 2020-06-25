@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -eu
 
@@ -9,40 +9,29 @@ fi
 
 BROWSER=$1
 
-PROJECT_DIR=$(dirname "${BASH_SOURCE}")
-cd $PROJECT_DIR
+PROJECT_DIR=$(dirname "$0")
+cd "$PROJECT_DIR"
 
 # Validate browser argument
-if [[ ! -d ./browsers/${BROWSER} ]]; then
-  echo "configuration for ${BROWSER} does not exist" 1>&2
+BROWSER_DIRECTORY=$(echo "$BROWSER" | tr '[:upper:]' '[:lower:]')
+if [ ! -f "./src/browsers/${BROWSER_DIRECTORY}/${BROWSER}Browser.js" ]; then
+  echo "did not find ${BROWSER}Browser.js in src/browsers/${BROWSER_DIRECTORY}" 1>&2
   exit 1
 fi
 
 export NODE_ENV="development"
 export BROWSER=$BROWSER
 
-# Connect to local databases
-DEFAULT_ELASTICSEARCH_URL="http://localhost:8001/api/v1/namespaces/default/services/elasticsearch:9200/proxy"
-export ELASTICSEARCH_URL=${ELASTICSEARCH_URL:-$DEFAULT_ELASTICSEARCH_URL}
+DEFAULT_WDS_PORT=8000
+WDS_PORT=${2:-$DEFAULT_WDS_PORT}
+export PORT=$((WDS_PORT + 10))
 
-DEFAULT_PORT=8000
-WEBPACK_DEV_SERVER_PORT=${2:-$DEFAULT_PORT}
-export PORT=$(expr $WEBPACK_DEV_SERVER_PORT + 10)
+yarn run nodemon src/server/server.js &
+SERVER_PID=$!
 
-rm -rf "dist/${BROWSER}"
+yarn run webpack-dev-server --config=./src/browsers/webpack.config.js --hot --port "$WDS_PORT" &
+WDS_PID=$!
 
-# Bundle server once before starting nodemon
-yarn run webpack --config=./config/webpack.config.server.js --display=errors-only
-
-yarn run webpack-dev-server --config=./config/webpack.config.client.js --hot --port $WEBPACK_DEV_SERVER_PORT &
-PID[0]=$!
-
-yarn run webpack --config=./config/webpack.config.server.js --display=errors-only --watch &
-PID[1]=$!
-
-yarn run nodemon dist/${BROWSER}/server.js &
-PID[2]=$!
-
-trap "kill ${PID[0]} ${PID[1]} ${PID[2]}; exit 1" INT
+trap "kill $SERVER_PID $WDS_PID; exit 1" INT
 
 wait

@@ -1,181 +1,309 @@
-import path from 'path'
+const fs = require('fs')
+const path = require('path')
+const process = require('process')
+const readline = require('readline')
 
-import Bottleneck from 'bottleneck'
-import compression from 'compression'
-import elasticsearch from 'elasticsearch'
-import express from 'express'
-import graphQLHTTP from 'express-graphql'
-import { GraphQLSchema } from 'graphql'
+const compression = require('compression')
+const express = require('express')
+const morgan = require('morgan')
 
-import browserConfig from '@browser/config'
+const { PrefixTrie } = require('./search')
 
-import { RootType } from './schema/root'
-import renderTemplate from './template'
-import { UserVisibleError } from './utilities/errors'
-import logger, { throttledWarning } from './utilities/logging'
+// ================================================================================================
+// Configuration
+// ================================================================================================
 
-const requiredSettings = ['ELASTICSEARCH_URL', 'PORT']
-const missingSettings = requiredSettings.filter(setting => !process.env[setting])
-if (missingSettings.length) {
-  throw Error(`Missing required environment variables: ${missingSettings.join(', ')}`)
+const isDevelopment = process.env.NODE_ENV === 'development'
+
+const requiredConfig = ['RESULTS_DATA_DIRECTORY']
+if (isDevelopment) {
+  requiredConfig.push('BROWSER')
+}
+const missingConfig = requiredConfig.filter((option) => !process.env[option])
+if (missingConfig.length) {
+  throw Error(`Missing required environment variables: ${missingConfig.join(', ')}`)
 }
 
+const config = {
+  dataDirectory: path.resolve(process.env.RESULTS_DATA_DIRECTORY),
+  enableHttpsRedirect: JSON.parse(process.env.ENABLE_HTTPS_REDIRECT || 'false'),
+  port: process.env.PORT || 8000,
+  trustProxy: JSON.parse(process.env.TRUST_PROXY || 'false'),
+}
+
+// ================================================================================================
+// Express app
+// ================================================================================================
+
 const app = express()
+app.set('trust proxy', config.trustProxy)
+
 app.use(compression())
+app.use(morgan(isDevelopment ? 'dev' : 'combined'))
 
-app.set('trust proxy', JSON.parse(process.env.TRUST_PROXY || 'false'))
+// ================================================================================================
+// Kubernetes readiness probe
+// ================================================================================================
 
-// Redirect HTTP requests to HTTPS
-const httpsRedirectMiddleware = JSON.parse(process.env.ENABLE_HTTPS_REDIRECT || 'false')
-  ? (request, response, next) => {
-      if (request.protocol === 'http') {
-        response.redirect(`https://${request.get('host')}${request.url}`)
-      } else {
-        next()
-      }
-    }
-  : (request, response, next) => {
+// This must be registered before the HTTP => HTTPS redirect because it must return 200, not 30x.
+app.use('/ready', (request, response) => {
+  response.send('true')
+})
+
+// ================================================================================================
+// HTTP => HTTPS redirect
+// ================================================================================================
+
+if (config.enableHttpsRedirect) {
+  app.use('/', (req, res, next) => {
+    if (req.protocol === 'http') {
+      res.redirect(`https://${req.get('host')}${req.url}`)
+    } else {
       next()
     }
-
-// eslint-disable-line
-;(async () => {
-  const elastic = new elasticsearch.Client({
-    apiVersion: '5.5',
-    host: process.env.ELASTICSEARCH_URL,
   })
+}
 
-  const esLimiter = new Bottleneck({
-    maxConcurrent: JSON.parse(process.env.MAX_CONCURRENT_ES_REQUESTS || '100'),
-    highWater: JSON.parse(process.env.MAX_QUEUED_ES_REQUESTS || '1000'),
-    strategy: Bottleneck.strategy.OVERFLOW,
-  })
+// ================================================================================================
+// Gene search
+// ================================================================================================
 
-  esLimiter.on('error', error => {
-    logger.error(error)
-  })
+const geneSearch = new PrefixTrie()
 
-  const warnRequestTimedOut = throttledWarning(n => `${n} ES requests timed out`, 60000)
-  const warnRequestDropped = throttledWarning(n => `${n} ES requests dropped`, 60000)
-
-  const scheduleElasticsearchRequest = fn => {
-    return new Promise((resolve, reject) => {
-      let canceled = false
-
-      // If task sits in the queue for more than 30s, cancel it and notify the user.
-      const timeout = setTimeout(() => {
-        canceled = true
-        warnRequestTimedOut()
-        reject(new UserVisibleError('Request timed out'))
-      }, 30000)
-
-      esLimiter
-        .schedule(() => {
-          // When the request is taken out of the queue...
-
-          // Cancel timeout timer.
-          clearTimeout(timeout)
-
-          // If the timeout has expired since the request was queued, do nothing.
-          if (canceled) {
-            return Promise.resolve(undefined)
-          }
-
-          // Otherwise, make the request.
-          return fn()
-        })
-        .then(resolve, err => {
-          // If Bottleneck refuses to schedule the request because the queue is full,
-          // notify the user and cancel the timeout timer.
-          if (err.message === 'This job has been dropped by Bottleneck') {
-            clearTimeout(timeout)
-            warnRequestDropped()
-            reject(new UserVisibleError('Service overloaded'))
-          }
-
-          // Otherwise, forward the error.
-          reject(err)
-        })
+const indexGenes = () => {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({
+      input: fs.createReadStream(path.join(config.dataDirectory, 'gene_search_terms.json.txt')),
+      crlfDelay: Infinity,
     })
+
+    rl.on('line', (line) => {
+      const [geneId, searchTerms] = JSON.parse(line)
+      for (const searchTerm of searchTerms) {
+        geneSearch.add(searchTerm, geneId)
+      }
+    })
+
+    rl.on('close', resolve)
+  })
+}
+
+app.use('/api/search', (req, res) => {
+  if (!req.query.q) {
+    return res.status(400).json({ error: 'Query required' })
   }
 
-  // This wraps the ES methods used by the API and sends them through the rate limiter
-  const limitedElastic = {
-    clearScroll: elastic.clearScroll.bind(elastic),
-    search: (...args) => scheduleElasticsearchRequest(() => elastic.search(...args)),
-    scroll: (...args) => scheduleElasticsearchRequest(() => elastic.scroll(...args)),
-    count: (...args) => scheduleElasticsearchRequest(() => elastic.count(...args)),
-    get: (...args) => scheduleElasticsearchRequest(() => elastic.get(...args)),
-  }
+  const results = geneSearch
+    .search(req.query.q.toUpperCase())
+    .flatMap(({ word, docs: geneIds }) => {
+      if (geneIds.length > 1) {
+        return geneIds.map((geneId) => ({
+          label: `${word} (${geneId})`,
+          url: `/gene/${geneId}`,
+        }))
+      }
 
-  const html = await renderTemplate({
-    gaTrackingId: process.env.GA_TRACKING_ID,
-    title: browserConfig.browserTitle,
-  })
-
-  // Endpoint for Kubernetes readiness probe.
-  // This does not use the httpsRedirectMiddleware because it must return 200.
-  app.use('/ready', (request, response) => {
-    response.send('true')
-  })
-
-  app.use(
-    '/api',
-    httpsRedirectMiddleware,
-    graphQLHTTP({
-      schema: new GraphQLSchema({ query: RootType }),
-      graphiql: true,
-      context: {
-        database: {
-          elastic: limitedElastic,
+      return [
+        {
+          label: word,
+          url: `/gene/${geneIds[0]}`,
         },
-      },
-      customFormatErrorFn: error => {
-        // graphql-js doesn't distinguish between different error types, so this is the
-        // only way to determine what errors come from query validation (and thus should
-        // be shown to the user)
-        // See https://github.com/graphql/graphql-js/issues/1847
-        const isQueryValidationError =
-          (error.message.startsWith('Syntax Error') &&
-            error.stack.includes('graphql/error/syntaxError')) ||
-          (error.message.startsWith('Cannot query field') &&
-            error.stack.includes('graphql/validation/rules'))
-
-        if (isQueryValidationError) {
-          return { message: error.message, locations: error.locations }
-        }
-
-        const isUserVisible = error.extensions && error.extensions.isUserVisible
-
-        // User visible errors (such as variant not found) are expected to occur during
-        // normal use of the browser and don't need to be logged.
-        if (!isUserVisible) {
-          logger.warn(error)
-        }
-
-        const message = isUserVisible ? error.message : 'An unknown error occurred'
-        return { message }
-      },
+      ]
     })
+    .slice(0, 5)
+
+  return res.json({ results })
+})
+
+// ================================================================================================
+// Dataset
+// ================================================================================================
+
+const metadata = JSON.parse(
+  fs.readFileSync(path.join(config.dataDirectory, 'metadata.json'), { encoding: 'utf8' })
+)
+
+// In development, serve the browser specified by the BROWSER environment variable.
+// In production, determine the browser/dataset to show based on the subdomain.
+let getDatasetForRequest
+
+if (isDevelopment) {
+  const devDataset = Object.keys(metadata.datasets).find(
+    (dataset) => dataset.toLowerCase() === process.env.BROWSER.toLowerCase()
   )
+  getDatasetForRequest = () => devDataset
+} else {
+  const datasetBySubdomain = Object.keys(metadata.datasets).reduce(
+    (acc, dataset) => ({
+      ...acc,
+      [dataset.toLowerCase()]: dataset,
+    }),
+    {}
+  )
+  getDatasetForRequest = (req) => datasetBySubdomain[req.subdomains[0]]
+}
 
-  const publicDir = path.resolve(__dirname, 'public')
-  app.use(httpsRedirectMiddleware, express.static(publicDir))
+// Store dataset on request object so other route handlers can use it.
+app.use('/', (req, res, next) => {
+  let dataset
+  try {
+    dataset = getDatasetForRequest(req)
+  } catch (err) {} // eslint-disable-line no-empty
 
-  const pagePaths = browserConfig.pages.map(page => page.path)
-  app.get(
-    ['/', '/gene/:gene', '/results', ...pagePaths],
-    httpsRedirectMiddleware,
-    (request, response) => {
-      response.send(html)
+  if (!dataset) {
+    res.status(500).json({ message: 'Unknown dataset' })
+  }
+
+  req.dataset = dataset
+  next()
+})
+
+const datasetConfig = {}
+const getDatasetConfigJs = (dataset) => {
+  if (!datasetConfig[dataset]) {
+    const datasetMetadata = {
+      datasetId: dataset,
+      ...metadata,
+      ...metadata.datasets[dataset],
     }
+    datasetConfig[dataset] = `window.datasetConfig = ${JSON.stringify(datasetMetadata)}`
+  }
+  return datasetConfig[dataset]
+}
+
+app.use('/config.js', (req, res) => {
+  res.type('text/javascript').send(getDatasetConfigJs(req.dataset))
+})
+
+// ================================================================================================
+// File paths
+// ================================================================================================
+
+const geneDataDirectory = (geneId) => {
+  const n = Number(geneId.replace(/^ENSGR?/, ''))
+  const geneDataPath = path.join('genes', String(n % 1000).padStart(3, '0'))
+
+  return geneDataPath
+}
+
+// ================================================================================================
+// Gene results
+// ================================================================================================
+
+app.get('/api/results', (req, res) => {
+  const resultsPath = path.join('results', `${req.dataset.toLowerCase()}.json`)
+
+  return res.sendFile(resultsPath, { root: config.dataDirectory }, (err) => {
+    if (err) {
+      res.status(404).json({ error: 'Results not found' })
+    }
+  })
+})
+
+// ================================================================================================
+// Gene
+// ================================================================================================
+
+app.get('/api/gene/:geneIdOrName', (req, res) => {
+  const { geneIdOrName } = req.params
+
+  let geneId
+  if (geneIdOrName.match(/^ENSGR?\d+/)) {
+    geneId = geneIdOrName
+  } else {
+    const geneIds = geneSearch.get(geneIdOrName.toUpperCase())
+    if (geneIds.length === 1) {
+      geneId = geneIds[0] // eslint-disable-line prefer-destructuring
+    } else if (geneIds.length === 0) {
+      return res.status(404).json({ error: 'Gene not found' })
+    } else {
+      return res.status(400).json({ error: 'Gene symbol matches multiple genes' })
+    }
+  }
+
+  const referenceGenome = metadata.datasets[req.dataset].reference_genome
+  const genePath = path.join(geneDataDirectory(geneId), `${geneId}_${referenceGenome}.json`)
+
+  return res.sendFile(genePath, { root: config.dataDirectory }, (err) => {
+    if (err) {
+      res.status(404).json({ error: 'Gene not found' })
+    }
+  })
+})
+
+// ================================================================================================
+// Variants
+// ================================================================================================
+
+app.get('/api/gene/:geneIdOrName/variants', (req, res) => {
+  const { geneIdOrName } = req.params
+
+  let geneId
+  if (geneIdOrName.match(/^ENSGR?\d+/)) {
+    geneId = geneIdOrName
+  } else {
+    const geneIds = geneSearch.get(geneIdOrName.toUpperCase())
+    if (geneIds.length === 1) {
+      geneId = geneIds[0] // eslint-disable-line prefer-destructuring
+    } else if (geneIds.length === 0) {
+      return res.status(404).json({ error: 'Gene not found' })
+    } else {
+      return res.status(400).json({ error: 'Gene symbol matches multiple genes' })
+    }
+  }
+
+  const variantsPath = path.join(
+    geneDataDirectory(geneId),
+    `${geneId}_${req.dataset.toLowerCase()}_variants.json`
   )
 
-  app.use(httpsRedirectMiddleware, (request, response) => {
-    response.status(404).send(html)
+  return res.sendFile(variantsPath, { root: config.dataDirectory }, (err) => {
+    if (err) {
+      res.status(404).json({ error: 'Gene not found' })
+    }
   })
+})
 
-  app.listen(process.env.PORT, () => {
-    logger.info(`Listening on ${process.env.PORT}`)
-  })
-})()
+// ================================================================================================
+// API error handling
+// ================================================================================================
+
+// Return 404 for unknown API paths.
+app.use('/api', (request, response) => {
+  response.status(404).json({ error: 'not found' })
+})
+
+// ================================================================================================
+// Static files
+// ================================================================================================
+
+// Serve static files from the appropriate dataset's directory.
+app.use((req, res, next) => {
+  req.url = `/${req.dataset}${req.url}`
+  next()
+}, express.static(path.join(__dirname, 'public')))
+
+// Return index.html for unknown paths and let client side routing handle it.
+app.use((req, res) => {
+  res.sendFile(path.resolve(__dirname, 'public', req.dataset, 'index.html'))
+})
+
+// ================================================================================================
+// Start
+// ================================================================================================
+
+indexGenes().then(() => {
+  const server = app.listen(config.port)
+
+  const shutdown = () => {
+    server.close((err) => {
+      if (err) {
+        process.exitCode = 1
+      }
+      process.exit()
+    })
+  }
+
+  process.on('SIGINT', shutdown)
+  process.on('SIGTERM', shutdown)
+})

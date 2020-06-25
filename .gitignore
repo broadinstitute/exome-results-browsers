@@ -1,8 +1,11 @@
 # Dependencies
 node_modules
 
+# Build variables
+build.env
+
 # Build output
-dist
+src/server/public
 
 # Byte-compiled / optimized / DLL files
 __pycache__

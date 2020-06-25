@@ -1,6 +1,6 @@
 # Exome Results Browsers
 
-Browsers for results of case-control studies.
+Results browsers for case-control studies of psychiatric diseases done at the Broad Institute.
 
 - [Schizophrenia - SCHEMA](https://schema.broadinstitute.org)
 
@@ -25,3 +25,9 @@ Browsers for results of case-control studies.
   of scientists who share autism spectrum disorder (ASD) samples and genetic data.
   This portal displays variant and gene-level data from the most recent ASC exome
   sequencing analysis.
+
+- [Bipolar Disorder - BipEx](https://bipex.broadinstitute.org)
+
+  The Bipolar Exome (BipEx) sequencing project is a collaboration between multiple institutions
+  across the globe, which aims to increase our understanding of the disease architecture of
+  bipolar disorder.

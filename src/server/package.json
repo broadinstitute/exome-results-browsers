@@ -1,15 +1,13 @@
 {
-  "name": "exome-browsers-server",
+  "name": "exome-results-browsers-api",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "bottleneck": "^2.19.5",
     "compression": "^1.7.4",
-    "ejs": "^2.6.1",
-    "elasticsearch": "15.4.0",
     "express": "^4.16.4",
-    "express-graphql": "^0.8.0",
-    "graphql": "^14.2.1",
-    "lodash.throttle": "^4.1.1"
+    "morgan": "^1.10.0"
+  },
+  "engines": {
+    "node": ">=11"
   }
 }

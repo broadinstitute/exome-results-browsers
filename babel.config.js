@@ -10,12 +10,7 @@ module.exports = {
         modules: process.env.NODE_ENV === 'test' ? 'auto' : false,
       },
     ],
-    [
-      '@babel/preset-react',
-      {
-        useBuiltIns: false,
-      },
-    ],
+    '@babel/preset-react',
   ],
   plugins: [
     '@babel/plugin-proposal-class-properties',
