@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: exome-results-browsers
+  labels:
+    service: exome-results-browsers
+spec:
+  type: NodePort
+  selector:
+    name: exome-results-browsers
+  ports:
+    - port: 80
+      targetPort: 8000

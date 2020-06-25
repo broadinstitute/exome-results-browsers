@@ -1,0 +1,35 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: exome-results-browsers-ingress
+  annotations:
+    networking.gke.io/managed-certificates: asc-cert,bipex-cert,epi25-cert,schema-cert
+  labels:
+    service: exome-results-browsers
+spec:
+  rules:
+    - host: asc.broadinstitute.org
+      http:
+        paths:
+          - backend:
+              serviceName: exome-results-browsers
+              servicePort: 80
+    - host: bipex.broadinstitute.org
+      http:
+        paths:
+          - backend:
+              serviceName: exome-results-browsers
+              servicePort: 80
+    - host: epi25.broadinstitute.org
+      http:
+        paths:
+          - backend:
+              serviceName: exome-results-browsers
+              servicePort: 80
+    - host: schema.broadinstitute.org
+      http:
+        paths:
+          - backend:
+              serviceName: exome-results-browsers
+              servicePort: 80

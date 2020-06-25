@@ -1,0 +1,47 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: exome-results-browsers
+  labels:
+    service: exome-results-browsers
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: exome-results-browsers
+  template:
+    metadata:
+      labels:
+        name: exome-results-browsers
+    spec:
+      containers:
+        - name: app
+          image: gcr.io/exac-gnomad/exome-results-browsers
+          env:
+            - name: RESULTS_DATA_DIRECTORY
+              value: /mnt/disks/data/200624
+            - name: TRUST_PROXY
+              value: '2'
+            - name: ENABLE_HTTPS_REDIRECT
+              value: 'true'
+          ports:
+            - name: http
+              containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          volumeMounts:
+            - name: data
+              mountPath: /mnt/disks/data
+      nodeSelector:
+        cloud.google.com/gke-nodepool: 'default-pool'
+      volumes:
+        - name: data
+          gcePersistentDisk:
+            fsType: ext4
+            pdName: exome-results-browsers-data
+            readOnly: true
