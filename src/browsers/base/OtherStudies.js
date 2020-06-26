@@ -5,28 +5,38 @@ import { Route, Switch } from 'react-router-dom'
 import { ExternalLink } from '@gnomad/ui'
 
 import datasetConfig from '../datasetConfig'
+import Fetch from './Fetch'
 
 const BrowserLink = ({ dataset }) => (
   <Switch>
     <Route
       path="/results"
       render={() => (
-        <ExternalLink href={`https://${dataset}.broadinstitute.org/results`}>
+        <ExternalLink href={`https://${dataset.toLowerCase()}.broadinstitute.org/results`}>
           View results in {dataset} browser
         </ExternalLink>
       )}
     />
     <Route
       path="/gene/:geneIdOrName"
-      render={({ location }) => (
-        <ExternalLink href={`https://${dataset}.broadinstitute.org${location.pathname}`}>
-          View this gene in {dataset} browser
-        </ExternalLink>
+      render={({ location, match }) => (
+        <Fetch path={`/gene/${match.params.geneIdOrName}`}>
+          {({ data }) => {
+            const label = data && data.gene ? data.gene.symbol : 'this gene'
+            return (
+              <ExternalLink
+                href={`https://${dataset.toLowerCase()}.broadinstitute.org${location.pathname}`}
+              >
+                View {label} in {dataset} browser
+              </ExternalLink>
+            )
+          }}
+        </Fetch>
       )}
     />
     <Route
       render={() => (
-        <ExternalLink href={`https://${dataset}.broadinstitute.org`}>
+        <ExternalLink href={`https://${dataset.toLowerCase()}.broadinstitute.org`}>
           Open {dataset} browser
         </ExternalLink>
       )}
