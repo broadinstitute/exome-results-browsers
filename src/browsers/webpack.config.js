@@ -59,7 +59,9 @@ const config = {
     filename: isDev ? '[name].js' : '[name]-[contenthash].js',
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      cleanAfterEveryBuildPatterns: ['!index.html'],
+    }),
     new CopyPlugin({
       patterns: [
         {
