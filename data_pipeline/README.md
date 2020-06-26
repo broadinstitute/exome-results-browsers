@@ -17,6 +17,46 @@ The data pipeline for the results browsers has 4 main steps.
 The output location of `prepare_gene_models`, `prepare_datasets`, and `combine_datasets` is
 controlled by the `output.staging_path` option in `pipeline_config.ini`.
 
+## Configuration
+
+Pipeline configuration is stored in `pipeline_config.ini`.
+
+Configuration is divided into sections:
+
+- `datasets`
+
+  - `datasets` - comma separated list of all datasets
+
+- `reference_data` - paths to data files used by `prepare_gene_models`
+
+- `output`
+
+  - `staging_path` - path of the directory where pipelines should write Hail Tables
+
+    After running data pipelines, this directory will contain:
+
+    ```
+    dataset1/
+      gene_results.ht
+      variant_results.ht
+    dataset2/
+      gene_results.ht
+      variant_results.ht
+    ...
+    gene_models.ht
+    combined.ht
+    ```
+
+- `dataproc` - configuration for Dataproc cluster used by `start_dataproc_cluster.py`,
+  `stop_dataproc_cluster.py`, and `run_pipeline.py`
+
+  - `project`
+  - `region`
+  - `zone`
+
+- Other sections contain paths to files for individual datasets and are used by those
+  datasets' data preparation pipelines.
+
 ## Running pipelines
 
 ### Local
