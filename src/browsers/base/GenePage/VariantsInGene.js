@@ -208,7 +208,7 @@ class VariantsInGene extends Component {
       filteredVariants = filteredVariants.filter(
         (v) =>
           v.variant_id.toLowerCase().includes(query) ||
-          (v.consequence.label || '').toLowerCase().includes(query) ||
+          (v.consequence || '').toLowerCase().includes(query) ||
           (v.hgvsc || '').toLowerCase().includes(query) ||
           (v.hgvsp || '').toLowerCase().includes(query)
       )
