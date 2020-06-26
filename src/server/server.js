@@ -39,7 +39,6 @@ const app = express()
 app.set('trust proxy', config.trustProxy)
 
 app.use(compression())
-app.use(morgan(isDevelopment ? 'dev' : 'combined'))
 
 // ================================================================================================
 // Kubernetes readiness probe
@@ -49,6 +48,12 @@ app.use(morgan(isDevelopment ? 'dev' : 'combined'))
 app.use('/ready', (request, response) => {
   response.send('true')
 })
+
+// ================================================================================================
+// Logging
+// ================================================================================================
+
+app.use(morgan(isDevelopment ? 'dev' : 'combined'))
 
 // ================================================================================================
 // HTTP => HTTPS redirect
