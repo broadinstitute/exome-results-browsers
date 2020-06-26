@@ -43,6 +43,13 @@ This runs the server with nodemon and frontend with webpack-dev-server, so that 
 rebuilt/reloaded when a source file is changed. `RESULTS_DATA_DIRECTORY` should be the path
 to a directory where the data pipeline results files were written.
 
+For frontend development, instead of running a server locally, API requests can be proxied
+to the production environment.
+
+```
+./start.sh $BROWSER_NAME --proxy-api
+```
+
 ### Docker
 
 The Docker build copies a `build.env` file and reads environment variables from it. Currently,

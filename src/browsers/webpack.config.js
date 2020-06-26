@@ -14,12 +14,26 @@ const currentBrowser = process.env.BROWSER
 
 const isDev = process.env.NODE_ENV === 'development'
 
+const useRemoteApi = JSON.parse(process.env.USE_REMOTE_API || 'false')
+const serverPort = JSON.parse(process.env.PORT || '8010')
+
+const proxyConfig = useRemoteApi
+  ? [
+      {
+        context: ['/api', '/config.js'],
+        target: `https://${currentBrowser.toLowerCase()}.broadinstitute.org`,
+        changeOrigin: true,
+      },
+    ]
+  : {
+      '/': `http://localhost:${serverPort}`,
+    }
+
 const config = {
   devServer: {
+    historyApiFallback: useRemoteApi,
     port: 8000,
-    proxy: {
-      '/': `http://localhost:${process.env.PORT}`,
-    },
+    proxy: proxyConfig,
     publicPath: '/',
     stats: 'errors-only',
     // Write files to disk so that server.js can respond with index.html.

@@ -2,12 +2,46 @@
 
 set -eu
 
-if [ $# -lt 1 ]; then
-  echo "Usage: start.sh browser [port]" 1>&2
+print_usage() {
+  echo "Usage: start.sh BROWSER [--proxy-api] [--port PORT]" 1>&2
+}
+
+while [ $# -ne 0 ]; do
+  arg="$1"
+  case "$arg" in
+    --proxy-api)
+      USE_REMOTE_API=true
+      ;;
+    --port)
+      if [ -z "${2:-}" ] || ! echo "$2" | grep -Eq '^[0-9]+$'; then
+        print_usage
+        exit 1
+      else
+        WDS_PORT=$2
+        shift
+      fi
+      ;;
+    *)
+      if [ -n "${BROWSER:-}" ]; then
+        print_usage
+        exit 1
+      else
+        BROWSER=$1
+      fi
+      ;;
+  esac
+  shift
+done
+
+export BROWSER
+export USE_REMOTE_API=${USE_REMOTE_API:-false}
+WDS_PORT=${WDS_PORT:-8000}
+export PORT=$((WDS_PORT + 10))
+
+if [ -z "${BROWSER:-}" ]; then
+  print_usage
   exit 1
 fi
-
-BROWSER=$1
 
 PROJECT_DIR=$(dirname "$0")
 cd "$PROJECT_DIR"
@@ -20,18 +54,17 @@ if [ ! -f "./src/browsers/${BROWSER_DIRECTORY}/${BROWSER}Browser.js" ]; then
 fi
 
 export NODE_ENV="development"
-export BROWSER=$BROWSER
 
-DEFAULT_WDS_PORT=8000
-WDS_PORT=${2:-$DEFAULT_WDS_PORT}
-export PORT=$((WDS_PORT + 10))
+if [ "${USE_REMOTE_API:-false}" = "true" ]; then
+  yarn run webpack-dev-server --config=./src/browsers/webpack.config.js --hot --port "$WDS_PORT"
+else
+  yarn run nodemon src/server/server.js &
+  SERVER_PID=$!
 
-yarn run nodemon src/server/server.js &
-SERVER_PID=$!
+  yarn run webpack-dev-server --config=./src/browsers/webpack.config.js --hot --port "$WDS_PORT" &
+  WDS_PID=$!
 
-yarn run webpack-dev-server --config=./src/browsers/webpack.config.js --hot --port "$WDS_PORT" &
-WDS_PID=$!
+  trap "kill $SERVER_PID $WDS_PID; exit 1" INT
 
-trap "kill $SERVER_PID $WDS_PID; exit 1" INT
-
-wait
+  wait
+fi
