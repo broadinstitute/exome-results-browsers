@@ -199,7 +199,7 @@ class VariantsInGene extends Component {
 
     if (!isEveryConsequenceCategorySelected) {
       filteredVariants = variants.filter((variant) => {
-        return filter.includeCategories[variant.consequence.category]
+        return filter.includeCategories[variant.consequenceCategory]
       })
     }
 
