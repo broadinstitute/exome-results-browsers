@@ -9,7 +9,7 @@ const DatasetGeneResultComponent = geneResultComponents[datasetConfig.datasetId]
 const GeneResults = DatasetGeneResultComponent
   ? ({ results }) => {
       const { [datasetConfig.datasetId]: datasetResults } = results
-      return <DatasetGeneResultComponent results={datasetResults} />
+      return <DatasetGeneResultComponent results={datasetResults || {}} />
     }
   : () => null
 
