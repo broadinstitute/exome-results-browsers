@@ -5,9 +5,7 @@
   "private": true,
   "workspaces": [
     "src/browsers",
-    "src/server",
-    "gnomadjs/packages/*",
-    "gnomadjs/scripts"
+    "src/server"
   ],
   "scripts": {
     "start": "./start.sh",

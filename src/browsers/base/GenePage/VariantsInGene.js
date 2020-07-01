@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import { createGlobalStyle } from 'styled-components'
 
 import { Cursor, PositionAxisTrack } from '@gnomad/region-viewer'
-import VariantTrack from '@gnomad/track-variant'
+import VariantTrack from '@gnomad/track-variants'
 import { Modal } from '@gnomad/ui'
 
 import datasetConfig from '../../datasetConfig'

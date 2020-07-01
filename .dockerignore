@@ -1,5 +1,4 @@
 *
-!gnomadjs
 !src
 src/server/public
 !babel.config.js

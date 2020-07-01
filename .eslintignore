@@ -1,6 +1,5 @@
 # Dependencies
 node_modules
-gnomadjs
 
 # Build output
 src/server/public

@@ -11,7 +11,6 @@ ENV NODE_ENV=production
 COPY --chown=node:node package.json .
 COPY --chown=node:node src/browsers/package.json src/browsers/package.json
 COPY --chown=node:node yarn.lock .
-COPY --chown=node:node gnomadjs ./gnomadjs
 RUN yarn install --production false --frozen-lockfile && yarn cache clean
 
 # Copy frontend source
