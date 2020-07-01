@@ -1,9 +1,20 @@
-import QuestionMark from '@fortawesome/fontawesome-free/svgs/solid/question-circle.svg'
 import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { Modal } from '@gnomad/ui'
+
+const HelpIcon = styled.span`
+  width: 1em;
+  height: 1em;
+  border-radius: 0.5em;
+  background: #424242;
+  color: #fff;
+  font-size: 0.75em;
+  font-weight: bold;
+  line-height: 1.1em;
+  text-align: center;
+`
 
 const Button = styled.button`
   display: inline-flex;
@@ -15,15 +26,7 @@ const Button = styled.button`
   cursor: pointer;
   font-size: inherit;
 
-  svg {
-    position: relative;
-    top: 0.11em;
-    width: 0.9em;
-    height: 0.9em;
-    border-radius: 0.45em;
-  }
-
-  &:focus svg {
+  &:focus ${HelpIcon} {
     box-shadow: 0 0 0 0.2em rgba(70, 130, 180, 0.5);
   }
 `
@@ -46,7 +49,7 @@ const HelpButton = ({ popupContent, popupTitle }) => {
           setIsOpen(true)
         }}
       >
-        <QuestionMark />
+        <HelpIcon>&#8202;?</HelpIcon>
       </Button>
       {isOpen && (
         <Modal

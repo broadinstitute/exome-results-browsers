@@ -1,5 +1,3 @@
-import LeftArrow from '@fortawesome/fontawesome-free/svgs/solid/arrow-circle-left.svg'
-import RightArrow from '@fortawesome/fontawesome-free/svgs/solid/arrow-circle-right.svg'
 import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
@@ -20,14 +18,20 @@ const LeftPanel = styled.div`
   box-sizing: border-box;
   width: 100%;
   padding-right: 10px;
+`
 
-  svg {
-    fill: #424242;
-  }
+const StrandIcon = styled.span`
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: #424242;
+  color: #fff;
+  font-size: 18px;
+  line-height: 20px;
+  text-align: center;
 `
 
 const TranscriptTrack = ({ exons, strand }) => {
-  const StrandIcon = strand === '-' ? LeftArrow : RightArrow
   return (
     <Wrapper>
       <RegionsTrack
@@ -36,7 +40,7 @@ const TranscriptTrack = ({ exons, strand }) => {
         regionAttributes={() => ({ fill: '#424242' })}
         renderLeftPanel={() => (
           <LeftPanel>
-            <StrandIcon height={20} width={20} />
+            <StrandIcon>{strand === '-' ? <span>&larr;</span> : <span>&rarr;</span>}</StrandIcon>
           </LeftPanel>
         )}
       />

@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.8.1",
     "@gnomad/manhattan-plot": "^1.0.0",
     "@gnomad/qq-plot": "^1.0.0",
     "@gnomad/region-viewer": "^1.0.0",

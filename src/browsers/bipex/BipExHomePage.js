@@ -9,7 +9,7 @@ import Searchbox from '../base/Searchbox'
 
 import BipExLogo from './BipExLogo.svg'
 
-const StyledBipExLogo = styled(BipExLogo)`
+const StyledLogo = styled.img`
   display: block;
   height: 200px;
   margin: 0 auto 2em;
@@ -34,7 +34,7 @@ export default () => (
     <DocumentTitle title="BipEx: Bipolar Exomes Browser" />
     <HomePageHeading>BipEx: Bipolar Exomes</HomePageHeading>
 
-    <StyledBipExLogo />
+    <StyledLogo src={BipExLogo} />
 
     <Searchbox width="100%" />
     <p style={{ marginTop: '0.25em' }}>
