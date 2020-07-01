@@ -40,7 +40,7 @@ const Epi25Browser = () => (
       {
         key: 'pval_lof',
         heading: 'P\u2011Val LoF',
-        minWidth: 80,
+        minWidth: 90,
       },
       {
         key: 'xcase_mpc',
@@ -57,7 +57,7 @@ const Epi25Browser = () => (
       {
         key: 'pval_mpc',
         heading: 'P\u2011Val MPC',
-        minWidth: 80,
+        minWidth: 90,
       },
       {
         key: 'xcase_infrIndel',
@@ -74,12 +74,12 @@ const Epi25Browser = () => (
       {
         key: 'pval_infrIndel',
         heading: 'P\u2011Val Inframe Indel',
-        minWidth: 80,
+        minWidth: 90,
       },
       {
         key: 'pval',
         heading: 'P\u2011Val',
-        minWidth: 80,
+        minWidth: 90,
       },
     ]}
     geneResultTabs={[

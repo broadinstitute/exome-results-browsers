@@ -39,13 +39,13 @@ const BipExBrowser = () => (
       {
         key: 'n_cases',
         heading: 'Cases',
-        minWidth: 80,
+        minWidth: 90,
         render: renderCount,
       },
       {
         key: 'n_controls',
         heading: 'Controls',
-        minWidth: 80,
+        minWidth: 90,
         render: renderCount,
       },
       {
