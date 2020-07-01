@@ -157,10 +157,10 @@ app.use('/', (req, res, next) => {
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
+  } else {
+    req.dataset = dataset
+    next()
   }
-
-  req.dataset = dataset
-  next()
 })
 
 const datasetConfig = {}
