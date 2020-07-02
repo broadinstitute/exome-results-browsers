@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { withRouter } from 'react-router-dom'
 
 import { ExternalLink, Link as StyledLink, Page, PageHeading } from '@gnomad/ui'
 
@@ -17,12 +16,12 @@ class ErrorBoundary extends React.Component {
   }
 
   render() {
-    const { children, location } = this.props
+    const { children } = this.props
     const { hasError } = this.state
 
     if (hasError) {
       const issueURL = `https://github.com/broadinstitute/exome-results-browsers/issues/new?title=${encodeURIComponent(
-        `Render error on ${location.pathname}${location.search}`
+        `Render error on ${window.location.href}`
       )}`
 
       return (
@@ -45,10 +44,6 @@ class ErrorBoundary extends React.Component {
 
 ErrorBoundary.propTypes = {
   children: PropTypes.node.isRequired,
-  location: PropTypes.shape({
-    pathname: PropTypes.string,
-    search: PropTypes.string,
-  }).isRequired,
 }
 
-export default withRouter(ErrorBoundary)
+export default ErrorBoundary
