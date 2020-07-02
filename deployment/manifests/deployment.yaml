@@ -20,7 +20,7 @@ spec:
           image: gcr.io/exac-gnomad/exome-results-browsers
           env:
             - name: RESULTS_DATA_DIRECTORY
-              value: /mnt/disks/data/200624
+              value: /mnt/disks/data/results
             - name: TRUST_PROXY
               value: '2'
             - name: ENABLE_HTTPS_REDIRECT
@@ -43,5 +43,5 @@ spec:
         - name: data
           gcePersistentDisk:
             fsType: ext4
-            pdName: exome-results-browsers-data
+            pdName: exome-results-browsers-data-200702
             readOnly: true
