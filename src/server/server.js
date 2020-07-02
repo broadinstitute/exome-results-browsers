@@ -98,24 +98,31 @@ app.use('/api/search', (req, res) => {
     return res.status(400).json({ error: 'Query required' })
   }
 
-  const results = geneSearch
-    .search(req.query.q.toUpperCase())
-    .flatMap(({ word, docs: geneIds }) => {
-      if (geneIds.length > 1) {
-        return geneIds.map((geneId) => ({
-          label: `${word} (${geneId})`,
-          url: `/gene/${geneId}`,
-        }))
-      }
+  const query = req.query.q.toUpperCase()
 
-      return [
-        {
-          label: word,
-          url: `/gene/${geneIds[0]}`,
-        },
-      ]
-    })
-    .slice(0, 5)
+  let results
+  if (query.match(/^ENSG\d{11}$/)) {
+    results = [{ label: query, url: `/gene/${query}` }]
+  } else {
+    results = geneSearch
+      .search(query)
+      .flatMap(({ word, docs: geneIds }) => {
+        if (geneIds.length > 1) {
+          return geneIds.map((geneId) => ({
+            label: `${word} (${geneId})`,
+            url: `/gene/${geneId}`,
+          }))
+        }
+
+        return [
+          {
+            label: word,
+            url: `/gene/${geneIds[0]}`,
+          },
+        ]
+      })
+      .slice(0, 5)
+  }
 
   return res.json({ results })
 })
