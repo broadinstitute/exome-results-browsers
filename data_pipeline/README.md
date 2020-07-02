@@ -5,10 +5,9 @@ The data pipeline for the results browsers has 4 main steps.
 - `prepare_gene_models` imports gene information from Gencode GTF files, canonical transcript
   lists, and HGNC data into Hail format. It also joins gnomAD and ExAC constraint data.
 
-- `prepare_dataset` runs a dataset-specific data pipeline for preparing gene-level and
-  variant-level results. This must be run on each dataset individually. This also validates
-  that the dataset-specific pipelines produce a Hail table with the schema required for the
-  next step.
+- `prepare_datasets` runs dataset-specific data pipelines for preparing gene-level and
+  variant-level results. It also validates that the dataset-specific pipelines produce
+  a Hail table with the schema required for the next step.
 
 - `combine_datasets` combines gene models and results from multiple datasets into one Hail Table.
 
@@ -104,9 +103,7 @@ section of `pipeline_config.ini`.
   This takes a few minutes per dataset on a default 2 worker cluster.
 
   ```
-  for DATASET in ASC BipEx Epi25 SCHEMA; do
-     ./data_pipeline/run_pipeline.py --environment dataproc prepare_dataset $DATASET
-  done
+  ./data_pipeline/run_pipeline.py --environment dataproc prepare_datasets
   ```
 
 - Combine all datasets into one Hail Table.

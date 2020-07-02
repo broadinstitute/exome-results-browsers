@@ -1,6 +1,7 @@
 import argparse
 import importlib
 import os
+import sys
 
 import hail as hl
 
@@ -27,11 +28,27 @@ def prepare_dataset(dataset_id):
     variant_results.write(os.path.join(output_path, dataset_id.lower(), "variant_results.ht"), overwrite=True)
 
 
-if __name__ == "__main__":
+def main():
+    all_datasets = pipeline_config.get("datasets", "datasets").split(",")
     parser = argparse.ArgumentParser()
-    parser.add_argument("dataset", choices=pipeline_config.get("datasets", "datasets").split(","))
+    parser.add_argument("datasets", nargs="*", metavar=f"{{{','.join(all_datasets)}}}")
     args = parser.parse_args()
+
+    if args.datasets:
+        for dataset in args.datasets:
+            if dataset not in all_datasets:
+                print(f"error: invalid dataset '{dataset}' (choose from {', '.join(all_datasets)})", file=sys.stderr)
+                return 1
+
+        datasets_to_prepare = args.datasets
+    else:
+        datasets_to_prepare = all_datasets
 
     hl.init()
 
-    prepare_dataset(args.dataset)
+    for dataset in datasets_to_prepare:
+        prepare_dataset(dataset)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

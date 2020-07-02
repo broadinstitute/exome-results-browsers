@@ -114,7 +114,7 @@ With those lines added to `/etc/hosts`, the browsers can be accessed at
     `group_results` keys should be names of analysis groups and values the gene-level results
     for those groups. The result struct may contain string, number, or boolean fields.
 
-    The `prepare_dataset` pipeline validates the schema of the Hail Table returned by this function.
+    The `prepare_datasets` pipeline validates the schema of the Hail Table returned by this function.
 
   - Create a file `data_pipeline/data_pipeline/datasets/<dataset>/<dataset>_variant_results.py`,
     where `<dataset>` is the lowercase dataset/browser name.
@@ -149,7 +149,7 @@ With those lines added to `/etc/hosts`, the browsers can be accessed at
 
     `info` may contain additional variant level data (string, number, or boolean fields).
 
-    The `prepare_dataset` pipeline validates the schema of the Hail Table returned by this function.
+    The `prepare_datasets` pipeline validates the schema of the Hail Table returned by this function.
 
   - Add dataset name to the `datasets.datasets` configuration in `data_pipeline/pipeline_config.ini`.
 

@@ -11,7 +11,7 @@ import zipfile
 
 PIPELINES = [
     "prepare_gene_models",
-    "prepare_dataset",
+    "prepare_datasets",
     "combine_datasets",
 ]
 
