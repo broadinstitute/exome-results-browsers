@@ -18,11 +18,8 @@ COPY --chown=node:node babel.config.js .
 COPY --chown=node:node src/browsers ./src/browsers
 
 # Build frontend
-COPY build.env .
-RUN export $(cat build.env | xargs); \
-  for BROWSER in ASC BipEx Epi25 SCHEMA; do \
-    BROWSER=$BROWSER yarn run webpack --config=./src/browsers/webpack.config.js; \
-  done
+COPY --chown=node:node build.env .
+RUN export $(cat build.env | xargs); yarn run build
 
 ###############################################################################
 FROM node:12.18.1-alpine

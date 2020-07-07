@@ -168,7 +168,7 @@ With those lines added to `/etc/hosts`, the browsers can be accessed at
 
     Add this component to `src/browsers/geneResultComponents.js`.
 
-  - Add the dataset name to list of browsers in Dockerfile.
+  - Add the dataset name to list of browsers in `src/browsers/webpack.config.js`.
 
 ## Browser configuration
 

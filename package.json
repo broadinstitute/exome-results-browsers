@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "start": "./start.sh",
+    "build": "webpack --config=src/browsers/webpack.config.js",
     "lint:js": "eslint .",
     "lint:css": "stylelint 'src/**/*.js'"
   },
