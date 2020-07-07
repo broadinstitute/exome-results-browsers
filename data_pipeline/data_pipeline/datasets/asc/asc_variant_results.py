@@ -121,7 +121,10 @@ def prepare_variant_results():
 
     annotations = annotations.select(
         "gene_id",
-        consequence=hl.sorted(annotations.csq_analysis.split(","), lambda c: CONSEQUENCE_TERM_RANKS.get(c))[0],  # pylint: disable=unnecessary-lambda
+        consequence=hl.sorted(
+            annotations.csq_analysis.split(","),
+            lambda c: CONSEQUENCE_TERM_RANKS.get(c),  # pylint: disable=unnecessary-lambda
+        )[0],
         hgvsc=annotations.hgvsc.split(":")[-1],
         hgvsp=annotations.hgvsp.split(":")[-1],
         info=hl.struct(mpc=annotations.mpc, polyphen=annotations.polyphen),
