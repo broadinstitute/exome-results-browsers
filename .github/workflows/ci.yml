@@ -31,6 +31,8 @@ jobs:
         run: yarn run lint:js
       - name: Run stylelint
         run: yarn run lint:css
+      - name: Build browsers
+        run: yarn run build
   data-pipeline-checks:
     name: Data pipeline checks
     runs-on: ubuntu-latest
