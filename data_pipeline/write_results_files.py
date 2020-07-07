@@ -13,6 +13,7 @@ from tqdm import tqdm
 
 INFINITY = float("inf")
 
+
 class ResultEncoder(json.JSONEncoder):
     """
     JSON encoder that supports Hail Structs and limits precision of floats.

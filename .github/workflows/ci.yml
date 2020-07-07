@@ -1,0 +1,59 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+jobs:
+  browser-checks:
+    name: Browser Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Get yarn cache
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Use yarn cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --non-interactive --no-progress
+      - name: Run ESLint
+        run: yarn run lint:js
+      - name: Run stylelint
+        run: yarn run lint:css
+  data-pipeline-checks:
+    name: Data pipeline checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Use pip cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: |
+            pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r data_pipeline/requirements.txt
+          pip install -r data_pipeline/requirements-dev.txt
+      - name: Run Black
+        run: black --check data_pipeline
+      - name: Run Pylint
+        run: pylint --disable=R,C data_pipeline/data_pipeline data_pipeline/*.py

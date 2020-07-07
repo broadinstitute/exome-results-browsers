@@ -85,7 +85,7 @@ def main():
 
             command.extend(
                 [
-                    f"--cluster=exome-results",
+                    "--cluster=exome-results",
                     f"--py-files={tmp_file.name}",
                     "--files=pipeline_config.ini",
                     f"data_pipeline/pipelines/{args.pipeline}.py",
