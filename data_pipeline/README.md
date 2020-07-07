@@ -28,6 +28,37 @@ Configuration is divided into sections:
 
 - `reference_data` - paths to data files used by `prepare_gene_models`
 
+  Some files are obtained or computed from external sources.
+
+  - `grch37_gencode_path`
+
+    Copy of ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_19/gencode.v19.annotation.gtf.gz
+    compressed with blocked gzip.
+
+  - `grch38_gencode_path`
+
+    Copy of ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.annotation.gtf.gz
+    compressed with blocked gzip.
+
+  - `grch37_canonical_transcripts_path` and `grch38_canonical_transcripts_path`
+
+    Derived from VEP annotations in gnomAD.
+
+    ```python
+    gnomad_sites_table.aggregate(
+        hl.agg.explode(
+            lambda csq: hl.agg.collect_as_set((csq.gene_id, csq.transcript_id)),
+            gnomad_sites_table.vep.transcript_consequences.filter(lambda csq: csq.canonical == 1),
+        )
+    )
+    ```
+
+  - `hgnc_path`
+
+    Generated from https://www.genenames.org/download/custom/ including Ensembl gene IDs and OMIM IDs.
+
+    https://www.genenames.org/cgi-bin/download/custom?col=gd_hgnc_id&col=gd_app_sym&col=gd_app_name&col=gd_prev_sym&col=gd_aliases&col=gd_pub_ensembl_id&col=md_ensembl_id&col=md_mim_id&status=Approved&hgnc_dbtag=on&order_by=gd_app_sym_sort&format=text&submit=submit
+
 - `output`
 
   - `staging_path` - path of the directory where pipelines should write Hail Tables
