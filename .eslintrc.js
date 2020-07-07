@@ -8,10 +8,19 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     'react/jsx-filename-extension': ['error', { extensions: ['.js'] }],
-    'import/no-extraneous-dependencies': 'off',
     'react/jsx-props-no-spreading': 'off',
   },
   overrides: [
+    {
+      // Allow importing workspace's dev dependencies in webpack config
+      files: ['src/browsers/webpack.config.js'],
+      rules: {
+        'import/no-extraneous-dependencies': [
+          'error',
+          { devDependencies: true, packageDir: __dirname },
+        ],
+      },
+    },
     {
       // Set environment for server-side code
       files: ['src/server/**/*.js'],
