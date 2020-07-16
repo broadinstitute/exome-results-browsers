@@ -172,4 +172,86 @@ With those lines added to `/etc/hosts`, the browsers can be accessed at
 
 ## Browser configuration
 
-TODO
+- browserTitle (string) - Title displayed in navigation bar.
+
+- navBarBackgroundColor (string) - Background color of navigation bar.
+
+- homePage (Component) - React component for home page content.
+
+- extraPages (array of objects) - Additional browser pages.
+
+  - path (string) - URL path for page.
+
+  - label (string) - Label for page in navigation bar.
+
+  - component (Component) - React component for page content.
+
+### Gene results configuration
+
+- geneResultsPageHeading (string) - Heading for all gene results page.
+
+- geneResultAnalysisGroupOptions (array of strings) - Groups to include in analysis group menu on all gene results page.
+
+- defaultGeneResultAnalysisGroup (string) - Analysis group to show by default on all gene results page.
+
+- defaultGeneResultSortKey (string) - Default field to sort gene results table by.
+
+- geneResultColumns (array of objects) - Column definitions for gene results table.
+
+  - key (string) - Unique identifier for field.
+
+  - heading (string) - Column label.
+
+  - minWidth (number) - Minimum width (in pixels) for column.
+
+  - tooltip (string) - Tooltip text for column heading.
+
+  - render (function) - Function to render cell content.
+
+  - renderForCSV (function) - Function to render cell content in CSV export.
+
+- geneResultTabs (array of objects) - Define additional tabs for content on all gene results page.
+
+  - label (string) - Tab label.
+
+  - render (function) - Function to render tab content.
+
+### Variant results configuration
+
+- variantAnalysisGroupOptions (array of strings) - Groups to include in analysis group menu for variants table on gene page.
+
+- defaultVariantAnalysisGroup (string) - Analysis group to show by default in variants table.
+
+- variantResultColumns (array of objects) - Column definitions for variants table.
+
+  - key (string) - Unique identifier for field.
+
+  - heading (string) - Column label.
+
+  - minWidth (number) - Minimum width (in pixels) for column.
+
+  - tooltip (string) - Tooltip text for column heading.
+
+  - render (function) - Function to render cell content.
+
+  - renderForCSV (function) - Function to render cell content in CSV export.
+
+  - showOnGenePage (boolean) - Include this column in variants table on gene page.
+
+  - showOnDetails (boolean) - Include this column in table in variant details popup.
+
+- variantConsequences (array of objects) - List of variant consequences used in analysis.
+
+  - term (string) - Consequence term in variant results.
+
+  - category (one of lof, missense, synonymous, other) - Consequence category
+
+- variantCustomFilter (object) - Definition for browser specific variant filter controls.
+
+  - component (Component) - React component to render filter controls.
+
+  - defaultFilter (any) - Default filter settings.
+
+  - applyFilter (function) - Function to filter list of variants based on current filter settings.
+
+- renderVariantAttributes (function) - Function to render `info` field of a variant.
