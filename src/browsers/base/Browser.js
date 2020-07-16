@@ -134,8 +134,6 @@ Browser.propTypes = {
       tooltip: PropTypes.string,
       render: PropTypes.func,
       renderForCSV: PropTypes.func,
-      showOnGenePage: PropTypes.bool,
-      showOnDetails: PropTypes.bool,
     })
   ),
   geneResultTabs: PropTypes.arrayOf(
@@ -156,6 +154,8 @@ Browser.propTypes = {
       tooltip: PropTypes.string,
       render: PropTypes.func,
       renderForCSV: PropTypes.func,
+      showOnGenePage: PropTypes.bool,
+      showOnDetails: PropTypes.bool,
     })
   ),
   variantConsequences: PropTypes.arrayOf(
