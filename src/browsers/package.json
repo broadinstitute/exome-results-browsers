@@ -10,7 +10,7 @@
     "@gnomad/track-variants": "^1.0.0",
     "@gnomad/ui": "^1.0.0",
     "core-js": "^3.0.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
