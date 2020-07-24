@@ -121,7 +121,7 @@ def write_data_files(table_path, output_directory, genes=None):
     csv.field_size_limit(sys.maxsize)
     os.makedirs(f"{output_directory}/genes", exist_ok=True)
 
-    with multiprocessing.get_context("spawn").Pool(processes=4) as pool:
+    with multiprocessing.get_context("spawn").Pool() as pool:
         with open(f"{output_directory}/{temp_file_name}") as data_file:
 
             reader = csv.reader(data_file, delimiter="\t")
