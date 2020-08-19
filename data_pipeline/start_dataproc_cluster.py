@@ -23,7 +23,7 @@ def main():
         "--max-idle=1h",
     ]
 
-    for option in ["project", "region", "zone"]:
+    for option in ["project", "region", "zone", "service-account"]:
         value = pipeline_config.get("dataproc", option, fallback=None)
         if value:
             command.append(f"--{option}={value}")
