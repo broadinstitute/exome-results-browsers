@@ -103,7 +103,7 @@ To run data pipelines on Dataproc, use:
 
 ```
 ./data_pipeline/start_dataproc_cluster.py
-./data_pipeline/run_pipeline.py --environment dataproc piepline_name pipeline_args
+./data_pipeline/run_pipeline.py --environment dataproc pipeline_name pipeline_args
 ./data_pipeline/stop_dataproc_cluster.py
 ```
 
