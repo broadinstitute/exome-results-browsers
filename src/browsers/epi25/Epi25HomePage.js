@@ -86,14 +86,14 @@ const Epi25HomePage = () => (
       All{' '}
       <StyledLink
         download
-        href="https://storage.googleapis.com/epi-browser/downloads/Epi25_all_gene_results_2018_11_07.tsv.gz"
+        href="https://storage.googleapis.com/exome-results-browsers-public/epi25/Epi25_all_gene_results_2018_11_07.tsv.gz"
       >
         gene-level
       </StyledLink>{' '}
       and{' '}
       <StyledLink
         download
-        href="https://storage.googleapis.com/epi-browser/downloads/Epi25_all_variant_results_2018_11_27.tsv.gz"
+        href="https://storage.googleapis.com/exome-results-browsers-public/epi25/Epi25_all_variant_results_2018_11_27.tsv.gz"
       >
         variant-level
       </StyledLink>{' '}
