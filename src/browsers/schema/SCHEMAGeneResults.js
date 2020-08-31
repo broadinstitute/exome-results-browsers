@@ -8,62 +8,137 @@ const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
+const renderOddsRatio = (value) => {
+  if (value === null) {
+    return '-'
+  }
+  if (value === 'Infinity') {
+    return '∞'
+  }
+  if (value === 0) {
+    return '0'
+  }
+  return value.toPrecision(3)
+}
+
 const SCHEMAGeneResult = ({ result }) => (
   <div>
     <Table>
       <thead>
         <tr>
-          <th scope="col">Category</th>
-          <th scope="col">Cases</th>
+          <th scope="col" style={{ width: '50px' }}>
+            Class
+          </th>
+          <th scope="col">Consequence</th>
+          <th scope="col" style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+            Cases
+          </th>
           <th scope="col">Controls</th>
+          <th scope="col" style={{ paddingLeft: '10px' }}>
+            Odds Ratio
+          </th>
+          <th scope="col" style={{ paddingLeft: '10px' }}>
+            Case/Control <span style={{ fontStyle: 'italic' }}>P</span>-value
+          </th>
+          <th scope="col" style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+            <span style={{ fontStyle: 'italic' }}>De Novos</span>
+          </th>
+          <th scope="col">
+            <span style={{ fontStyle: 'italic' }}>De Novo</span>{' '}
+            <span style={{ paddingLeft: '10px', fontStyle: 'italic' }}>P</span>-value
+          </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <th scope="row">LoF</th>
-          <td>{result.x_case_lof === null ? '—' : result.x_case_lof}</td>
-          <td>{result.x_ctrl_lof === null ? '—' : result.x_ctrl_lof}</td>
+          <td rowSpan={2}>{'\u2160'}</td>
+          <th scope="row">PTV</th>
+          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+            {result['Case PTV'] === null ? '—' : result['Case PTV']}
+          </td>
+          <td>{result['Ctrl PTV'] === null ? '—' : result['Ctrl PTV']}</td>
+          <td rowSpan={2} style={{ paddingLeft: '10px' }}>
+            {renderOddsRatio(result['OR (Class I)'])}
+          </td>
+          <td rowSpan={2} style={{ paddingLeft: '10px' }}>
+            {result['P ca/co (Class 1)'] === null
+              ? '—'
+              : result['P ca/co (Class 1)'].toPrecision(3)}
+          </td>
+          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+            {result['De novo PTV'] === null ? '—' : result['De novo PTV']}
+          </td>
+          <td rowSpan={3} style={{ paddingLeft: '10px' }}>
+            {result['P de novo'] === null ? '—' : result['P de novo'].toPrecision(3)}
+          </td>
         </tr>
         <tr>
           <th scope="row">Missense (MPC&nbsp;&ge;&nbsp;3)</th>
-          <td>{result.x_case_mis3 === null ? '—' : result.x_case_mis3}</td>
-          <td>{result.x_ctrl_mis3 === null ? '—' : result.x_ctrl_mis3}</td>
+          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+            {result['Case mis3'] === null ? '—' : result['Case mis3']}
+          </td>
+          <td>{result['Ctrl mis3'] === null ? '—' : result['Ctrl mis3']}</td>
+          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+            {result['De novo mis3'] === null ? '—' : result['De novo mis3']}
+          </td>
         </tr>
         <tr>
+          <td>{'\u2161'}</td>
           <th scope="row">Missense (3&nbsp;&gt;&nbsp;MPC&nbsp;&ge;&nbsp;2)</th>
-          <td>{result.x_case_mis2 === null ? '—' : result.x_case_mis2}</td>
-          <td>{result.x_ctrl_mis2 === null ? '—' : result.x_ctrl_mis2}</td>
+          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+            {result['Case mis2'] === null ? '—' : result['Case mis2']}
+          </td>
+          <td>{result['Ctrl mis2'] === null ? '—' : result['Ctrl mis2']}</td>
+
+          <td style={{ paddingLeft: '10px' }}>{renderOddsRatio(result['OR (Class II)'])}</td>
+          <td style={{ paddingLeft: '10px' }}>
+            {result['P ca/co (Class 2)'] === null
+              ? '—'
+              : result['P ca/co (Class 2)'].toPrecision(3)}
+          </td>
+          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+            {result['De novo mis2'] === null ? '—' : result['De novo mis2']}
+          </td>
         </tr>
       </tbody>
-      <tfoot>
-        <tr>
-          <th scope="row">De Novo LoF</th>
-          <td colSpan={2}>{result.dn_lof === null ? '—' : result.dn_lof}</td>
-        </tr>
-        <tr>
-          <th scope="row">De Novo Missense</th>
-          <td colSpan={2}>{result.dn_mis === null ? '—' : result.dn_mis}</td>
-        </tr>
-        <tr>
-          <th scope="row">Meta-analysis P-value</th>
-          <td colSpan={2}>{result.pval_meta === null ? '—' : result.pval_meta.toPrecision(3)}</td>
-        </tr>
-      </tfoot>
     </Table>
+    <p style={{ fontWeight: 'bold' }}>
+      Meta-analysis <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
+      {result['P meta'] === null ? '—' : result['P meta'].toPrecision(3)}
+    </p>
+    <p style={{ fontWeight: 'bold' }}>
+      Meta-analysis <span style={{ fontStyle: 'italic' }}>Q</span>-value:{' '}
+      {result['Q meta'] === null ? '—' : result['Q meta'].toPrecision(3)}
+    </p>
   </div>
 )
 
 SCHEMAGeneResult.propTypes = {
   result: PropTypes.shape({
-    x_case_lof: PropTypes.number,
-    x_ctrl_lof: PropTypes.number,
-    dn_lof: PropTypes.number,
-    x_case_mis2: PropTypes.number,
-    x_ctrl_mis2: PropTypes.number,
-    x_case_mis3: PropTypes.number,
-    x_ctrl_mis3: PropTypes.number,
-    dn_mis: PropTypes.number,
-    pval_meta: PropTypes.number,
+    'Case PTV': PropTypes.number,
+    'Ctrl PTV': PropTypes.number,
+    'Case mis3': PropTypes.number,
+    'Ctrl mis3': PropTypes.number,
+    'Case mis2': PropTypes.number,
+    'Ctrl mis2': PropTypes.number,
+    'P ca/co (Class 1)': PropTypes.number,
+    'P ca/co (Class 2)': PropTypes.number,
+    'P ca/co (comb)': PropTypes.number,
+    'De novo PTV': PropTypes.number,
+    'De novo mis3': PropTypes.number,
+    'De novo mis2': PropTypes.number,
+    'P de novo': PropTypes.number,
+    'P meta': PropTypes.number,
+    'Q meta': PropTypes.number,
+    'OR (PTV)': PropTypes.number,
+    'OR (Class I)': PropTypes.number,
+    'OR (Class II)': PropTypes.number,
+    'OR (PTV) lower bound': PropTypes.number,
+    'OR (PTV) upper bound': PropTypes.number,
+    'OR (Class I) lower bound': PropTypes.number,
+    'OR (Class I) upper bound': PropTypes.number,
+    'OR (Class II) lower bound': PropTypes.number,
+    'OR (Class II) upper bound': PropTypes.number,
   }).isRequired,
 }
 

@@ -8,6 +8,19 @@ import { renderCount } from '../base/tableCells'
 import SCHEMAHomePage from './SCHEMAHomePage'
 import SCHEMAVariantFilter from './SCHEMAVariantFilter'
 
+const renderOddsRatio = (value) => {
+  if (value === null) {
+    return ''
+  }
+  if (value === 'Infinity') {
+    return '∞'
+  }
+  if (value === 0) {
+    return '0'
+  }
+  return value.toPrecision(3)
+}
+
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
     browserTitle="SCHEMA browser"
@@ -16,60 +29,80 @@ const SCHEMABrowser = () => (
     geneResultsPageHeading="Exome meta-analysis results"
     geneResultAnalysisGroupOptions={['meta']}
     defaultGeneResultAnalysisGroup="meta"
-    defaultGeneResultSortKey="pval_meta"
+    defaultGeneResultSortKey="P meta"
     geneResultColumns={[
       {
-        key: 'x_case_lof',
-        heading: 'Case LoF',
+        key: 'Case PTV',
+        heading: 'Case PTV',
         minWidth: 70,
         render: renderCount,
       },
       {
-        key: 'x_ctrl_lof',
-        heading: 'Control LoF',
+        key: 'Ctrl PTV',
+        heading: 'Control PTV',
         minWidth: 70,
         render: renderCount,
       },
       {
-        key: 'x_case_mis3',
+        key: 'Case mis3',
         heading: 'Case Missense (MPC\u00a0≥\u00a03)',
         minWidth: 100,
         render: renderCount,
       },
       {
-        key: 'x_ctrl_mis3',
-        heading: 'Control Missense 3 (MPC\u00a0≥\u00a03)',
+        key: 'Ctrl mis3',
+        heading: 'Control Missense (MPC\u00a0≥\u00a03)',
         minWidth: 100,
         render: renderCount,
       },
       {
-        key: 'x_case_mis2',
+        key: 'Case mis2',
         heading: 'Case Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
         minWidth: 110,
         render: renderCount,
       },
       {
-        key: 'x_ctrl_mis2',
+        key: 'Ctrl mis2',
         heading: 'Control Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
         minWidth: 110,
         render: renderCount,
       },
       {
-        key: 'dn_lof',
-        heading: 'De Novo LoF',
-        minWidth: 80,
+        key: 'De novo PTV',
+        minWidth: 90,
         render: renderCount,
       },
       {
-        key: 'dn_mis',
-        heading: 'De Novo Missense',
-        minWidth: 80,
+        key: 'De novo mis3',
+        heading: 'De Novo Missense (MPC\u00a0≥\u00a03)',
+        minWidth: 100,
         render: renderCount,
       },
       {
-        key: 'pval_meta',
-        heading: 'Meta\u2011analysis P\u2011Val',
-        minWidth: 120,
+        key: 'De novo mis2',
+        heading: 'De Novo Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
+        minWidth: 110,
+        render: renderCount,
+      },
+      {
+        key: 'P meta',
+        minWidth: 100,
+      },
+      {
+        key: 'Q meta',
+        minWidth: 100,
+      },
+      {
+        key: 'OR (Class I)',
+        heading: 'OR (Class\u00a0I)',
+        minWidth: 110,
+        render: renderOddsRatio,
+      },
+      {
+        key: 'OR (Class II)',
+        heading: 'OR (Class\u00a0II)',
+        minWidth: 110,
+        render: renderOddsRatio,
       },
     ]}
     geneResultTabs={[
@@ -78,7 +111,7 @@ const SCHEMABrowser = () => (
         render: (results) => (
           <GeneResultsManhattanPlot
             results={results}
-            pValueColumn="pval_meta"
+            pValueColumn="P meta"
             thresholds={[
               {
                 label: 'Genome-wide significance (p = 2.2e-6)',
@@ -97,7 +130,7 @@ const SCHEMABrowser = () => (
         render: (results) => (
           <GeneResultsQQPlot
             results={results}
-            pValueColumn="pval_meta"
+            pValueColumn="P meta"
             thresholds={[
               {
                 label: 'Genome-wide significance (p = 2.2e-6)',

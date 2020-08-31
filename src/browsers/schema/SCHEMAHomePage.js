@@ -70,7 +70,7 @@ export default () => (
       effort.
     </p>
 
-    <p>Analysis data last updated October 14th, 2019.</p>
+    <p>Analysis data last updated August 31st, 2020.</p>
 
     <Logo alt="Stanley Center logo" src={StanleyCenterLogo} />
   </HomePageWrapper>
