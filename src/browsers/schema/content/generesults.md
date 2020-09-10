@@ -10,18 +10,6 @@ For a full description and justification of the approach, please consider the ma
 
 FIX: space between De novo and P-value
 
-
-# Constraint [question mark]
-
-Genic constraint metrics: metrics for quantification intolerance to protein-truncating variation as calculated by the gnomAD consortium. For more information, please visit the [gnomAD browser](https://gnomad.broadinstitute.org/). Please note that insertions and deletions are excluded in the aggregated counts and calculated metrics.
-
-o/e ratio: ratio of the observed / expected (oe) number of loss-of-function variants in that gene. The expected counts are based on a mutational model that takes sequence context, coverage and methylation into account.
-Exp. SNVs: expected number of loss-of-function variants
-Obs. SNVs: observed number of loss-of-function variants
-pLI: probability of being loss-of-function intolerant (pLI). A score closer to 1 indicates more intolerance to protein-truncating variation. For a set of transcripts intolerant of protein-truncating variation, we suggest pLI ≥ 0.9.
-
-Change LoF to PTV.
-
 ====
 Selection flags
 
