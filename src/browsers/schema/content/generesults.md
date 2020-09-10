@@ -17,7 +17,7 @@ PTV variants [hover]
 Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants.
 
 MPC missense variants [hover]
-MPC-prioritized missense variants: missense variants with a MPC score above the described threshold (see [Samocha _et al_. 2017]())
+MPC-prioritized missense variants: missense variants with a MPC score above the described threshold (see [Samocha _et al_. 2017](https://www.biorxiv.org/content/10.1101/148353v1))
 
 ## Variant table
 
