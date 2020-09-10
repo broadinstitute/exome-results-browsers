@@ -2,6 +2,8 @@ import { get } from 'lodash'
 import React from 'react'
 import Highlighter from 'react-highlight-words'
 
+import { TooltipAnchor } from '@gnomad/ui'
+
 import Link from '../Link'
 import { renderFloat } from '../tableCells'
 
@@ -27,13 +29,14 @@ const baseColumns = [
     isSortable: true,
     minWidth: 200,
     grow: 4,
-    render: (row, key, { highlightWords }) => (
-      <Highlighter
-        className="grid-cell-content"
-        searchWords={highlightWords}
-        textToHighlight={row[key] || ''}
-      />
-    ),
+    render: (row, key, { highlightWords }) =>
+      row[key] && (
+        <TooltipAnchor tooltip={row[key]}>
+          <span className="grid-cell-content">
+            <Highlighter searchWords={highlightWords} textToHighlight={row[key]} />
+          </span>
+        </TooltipAnchor>
+      ),
     renderForCSV: get,
   },
 ]
