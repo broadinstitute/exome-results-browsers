@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { BaseTable } from '@gnomad/ui'
+import { BaseTable, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 
 const renderNumber = (num, precision = 1) =>
   num === null ? '—' : Number(num.toFixed(precision)).toString()
@@ -66,8 +66,16 @@ export const GnomadConstraintTable = ({ constraint }) => (
     <thead>
       <tr>
         <th scope="col">Category</th>
-        <th scope="col">Exp. SNVs</th>
-        <th scope="col">Obs. SNVs</th>
+        <th scope="col">
+          <TooltipAnchor tooltip="Expected variant counts were predicted using a depth corrected probability of mutation for each gene.">
+            <TooltipHint>Exp. SNVs</TooltipHint>
+          </TooltipAnchor>
+        </th>
+        <th scope="col">
+          <TooltipAnchor tooltip="Includes single nucleotide changes that occurred in the canonical transcript that were found at a frequency of <0.1%, passed all filters, and at sites with a median depth ≥1.">
+            <TooltipHint>Obs. SNVs</TooltipHint>
+          </TooltipAnchor>
+        </th>
         <th colSpan={2} scope="col">
           Constraint metrics
         </th>

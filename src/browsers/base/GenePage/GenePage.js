@@ -2,10 +2,11 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { PageHeading, Tabs } from '@gnomad/ui'
+import { ExternalLink, PageHeading, Tabs } from '@gnomad/ui'
 
 import DocumentTitle from '../DocumentTitle'
 import Fetch from '../Fetch'
+import HelpButton from '../HelpButton'
 import StatusMessage from '../StatusMessage'
 import RegionViewer from './AutosizedRegionViewer'
 import { ExacConstraintTable, GnomadConstraintTable } from './Constraint'
@@ -59,7 +60,23 @@ const GenePage = ({
             <GeneResults gene={gene} geneResults={gene.gene_results} />
           </div>
           <ConstraintWrapper>
-            <h2>Constraint</h2>
+            <h2>
+              Constraint{' '}
+              <HelpButton
+                popupTitle="Constraint"
+                popupContent={
+                  <p>
+                    Metrics for quantification intolerance to protein-truncating variation as
+                    calculated by the gnomAD consortium. For more information, please visit the{' '}
+                    <ExternalLink href="https://gnomad.broadinstitute.org">
+                      gnomAD browser
+                    </ExternalLink>
+                    . Please note that insertions and deletions are excluded in the aggregated
+                    counts and calculated metrics.
+                  </p>
+                }
+              />
+            </h2>
             <Tabs
               tabs={[
                 {
