@@ -36,6 +36,12 @@ let config = BROWSERS.map((browser) => {
             },
           },
         },
+        {
+          test: /\.md$/,
+          use: {
+            loader: '@gnomad/markdown-loader',
+          },
+        },
       ],
     },
     output: {
