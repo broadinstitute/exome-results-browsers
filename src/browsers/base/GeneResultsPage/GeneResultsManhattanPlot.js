@@ -15,6 +15,7 @@ const GeneResultsManhattanPlot = ({ pValueColumn, results, ...otherProps }) => {
       {...otherProps}
       dataPoints={renderedDataPoints}
       pointLabel={(d) => `${d.gene_symbol || d.gene_id} (p = ${d.pval.toExponential(3)})`}
+      yLabel={'-log\u2081\u2080(p)'}
       onClickPoint={(d) => {
         window.open(`/gene/${d.gene_id}`)
       }}

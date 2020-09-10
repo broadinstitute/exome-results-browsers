@@ -15,6 +15,8 @@ const GeneResultsQQPlot = ({ pValueColumn, results, ...otherProps }) => {
       {...otherProps}
       dataPoints={renderedDataPoints}
       pointLabel={(d) => d.gene_symbol || d.gene_id}
+      xLabel={'Expected -log\u2081\u2080(p)'}
+      yLabel={'Observed -log\u2081\u2080(p)'}
       onClickPoint={(d) => {
         window.open(`/gene/${d.gene_id}`)
       }}
