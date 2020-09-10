@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { BaseTable } from '@gnomad/ui'
+import { BaseTable, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -45,14 +45,18 @@ const SCHEMAGeneResult = ({ result }) => (
           </th>
           <th scope="col">
             <span style={{ fontStyle: 'italic' }}>De Novo</span>{' '}
-            <span style={{ paddingLeft: '10px', fontStyle: 'italic' }}>P</span>-value
+            <span style={{ fontStyle: 'italic' }}>P</span>-value
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td rowSpan={2}>{'\u2160'}</td>
-          <th scope="row">PTV</th>
+          <th scope="row">
+            <TooltipAnchor tooltip="Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants.">
+              <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>PTV</TooltipHint>
+            </TooltipAnchor>
+          </th>
           <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
             {result['Case PTV'] === null ? '—' : result['Case PTV']}
           </td>
@@ -73,7 +77,13 @@ const SCHEMAGeneResult = ({ result }) => (
           </td>
         </tr>
         <tr>
-          <th scope="row">Missense (MPC&nbsp;&ge;&nbsp;3)</th>
+          <th scope="row">
+            <TooltipAnchor tooltip="MPC-prioritized missense variants: missense variants with an MPC score above the described threshold.">
+              <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>
+                Missense (MPC&nbsp;&ge;&nbsp;3)
+              </TooltipHint>
+            </TooltipAnchor>
+          </th>
           <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
             {result['Case mis3'] === null ? '—' : result['Case mis3']}
           </td>
@@ -84,7 +94,13 @@ const SCHEMAGeneResult = ({ result }) => (
         </tr>
         <tr>
           <td>{'\u2161'}</td>
-          <th scope="row">Missense (3&nbsp;&gt;&nbsp;MPC&nbsp;&ge;&nbsp;2)</th>
+          <th scope="row">
+            <TooltipAnchor tooltip="MPC-prioritized missense variants: missense variants with an MPC score in the described range.">
+              <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>
+                Missense (3&nbsp;&gt;&nbsp;MPC&nbsp;&ge;&nbsp;2)
+              </TooltipHint>
+            </TooltipAnchor>
+          </th>
           <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
             {result['Case mis2'] === null ? '—' : result['Case mis2']}
           </td>

@@ -48,73 +48,94 @@ const SCHEMABrowser = () => (
       {
         key: 'Case PTV',
         heading: 'Case PTV',
+        tooltip:
+          'Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
         minWidth: 70,
         render: renderCount,
       },
       {
         key: 'Ctrl PTV',
         heading: 'Control PTV',
+        tooltip:
+          'Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
         minWidth: 70,
         render: renderCount,
       },
       {
         key: 'Case mis3',
         heading: 'Case Missense (MPC\u00a0≥\u00a03)',
+        tooltip:
+          'MPC-prioritized missense variants: missense variants with an MPC score above the described threshold. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
         minWidth: 100,
         render: renderCount,
       },
       {
         key: 'Ctrl mis3',
         heading: 'Control Missense (MPC\u00a0≥\u00a03)',
+        tooltip:
+          'MPC-prioritized missense variants: missense variants with an MPC score above the described threshold. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
         minWidth: 100,
         render: renderCount,
       },
       {
         key: 'Case mis2',
         heading: 'Case Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
+        tooltip:
+          'MPC-prioritized missense variants: missense variants with an MPC score in the described range. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
         minWidth: 110,
         render: renderCount,
       },
       {
         key: 'Ctrl mis2',
         heading: 'Control Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
+        tooltip:
+          'MPC-prioritized missense variants: missense variants with an MPC score in the described range. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
         minWidth: 110,
         render: renderCount,
       },
       {
         key: 'De novo PTV',
+        tooltip: 'Determined to be de novo of origin in 3,402 parent-proband trios.',
         minWidth: 90,
         render: renderCount,
       },
       {
         key: 'De novo mis3',
         heading: 'De Novo Missense (MPC\u00a0≥\u00a03)',
+        tooltip: 'Determined to be de novo of origin in 3,402 parent-proband trios.',
         minWidth: 100,
         render: renderCount,
       },
       {
         key: 'De novo mis2',
         heading: 'De Novo Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
+        tooltip: 'Determined to be de novo of origin in 3,402 parent-proband trios.',
         minWidth: 110,
         render: renderCount,
       },
       {
         key: 'P meta',
+        tooltip: 'Study-wide meta-analysis P-value.',
         minWidth: 100,
       },
       {
         key: 'Q meta',
+        tooltip: 'P-value adjusted for the False Discovery Rate.',
         minWidth: 100,
       },
       {
         key: 'OR (Class I)',
         heading: 'OR (Class\u00a0I)',
+        tooltip:
+          'In-sample odds ratio of Class I variants, defined as PTVs and MPC > 3 missense variants.',
         minWidth: 110,
         render: renderOddsRatio,
       },
       {
         key: 'OR (Class II)',
         heading: 'OR (Class\u00a0II)',
+        tooltip:
+          'In-sample odds ratio of Class II variants, defined as MPC 2 - 3 missense variants.',
         minWidth: 110,
         render: renderOddsRatio,
       },
@@ -167,7 +188,7 @@ const SCHEMABrowser = () => (
         heading: 'No. de novos',
         minWidth: 80,
         type: 'int',
-        tooltip: 'Number of genotypes determined to de novo in origin.',
+        tooltip: 'Out of AC case, the number of genotypes determined to de novo in origin.',
       },
       {
         key: 'group_result.p',
@@ -206,7 +227,8 @@ const SCHEMABrowser = () => (
         key: 'group_result.in_analysis',
         heading: 'In Analysis',
         minWidth: 85,
-        tooltip: 'Was this variant used in gene burden analysis.',
+        tooltip:
+          'Was this variant included in the analysis. Must have MAC ≤ 5 and is either a PTV or MPC > 2 missense variant.',
         type: 'boolean',
         render: (value) => (value ? 'yes' : ''),
         renderForCSV: (value) => (value ? 'yes' : ''),
