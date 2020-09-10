@@ -5,7 +5,9 @@ import GeneResultsManhattanPlot from '../base/GeneResultsPage/GeneResultsManhatt
 import GeneResultsQQPlot from '../base/GeneResultsPage/GeneResultsQQPlot'
 import { renderCount } from '../base/tableCells'
 
+import SCHEMAAboutPage from './SCHEMAAboutPage'
 import SCHEMAHomePage from './SCHEMAHomePage'
+import SCHEMATermsPage from './SCHEMATermsPage'
 import SCHEMAVariantFilter from './SCHEMAVariantFilter'
 
 const renderOddsRatio = (value) => {
@@ -26,6 +28,18 @@ const SCHEMABrowser = () => (
     browserTitle="SCHEMA browser"
     navBarBackgroundColor="#0a79bf"
     homePage={SCHEMAHomePage}
+    extraPages={[
+      {
+        path: '/about',
+        label: 'About',
+        component: SCHEMAAboutPage,
+      },
+      {
+        path: '/terms',
+        label: 'Terms',
+        component: SCHEMATermsPage,
+      },
+    ]}
     geneResultsPageHeading="Exome meta-analysis results"
     geneResultAnalysisGroupOptions={['meta']}
     defaultGeneResultAnalysisGroup="meta"

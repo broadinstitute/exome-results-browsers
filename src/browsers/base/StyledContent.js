@@ -15,6 +15,10 @@ const StyledContent = styled.div`
     font-size: 20px;
   }
 
+  h3 {
+    font-size: 18px;
+  }
+
   p {
     margin-top: 15px;
     margin-bottom: 15px;
