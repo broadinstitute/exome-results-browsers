@@ -4,6 +4,10 @@ import styled from 'styled-components'
 
 import { BaseTable, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 
+import HelpButton from '../base/HelpButton'
+import StyledContent from '../base/StyledContent'
+import geneResultsDescription from './content/generesults.md'
+
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
@@ -160,7 +164,15 @@ SCHEMAGeneResult.propTypes = {
 
 const SCHEMAGeneResults = ({ results }) => (
   <>
-    <h2>Gene Result</h2>
+    <h2>
+      Gene Result{' '}
+      <HelpButton
+        popupTitle="Gene Result"
+        popupContent={
+          <StyledContent dangerouslySetInnerHTML={{ __html: geneResultsDescription.html }} />
+        }
+      />
+    </h2>
     {results.meta ? <SCHEMAGeneResult result={results.meta} /> : <p>No result for this gene.</p>}
   </>
 )
