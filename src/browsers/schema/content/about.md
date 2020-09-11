@@ -6,7 +6,7 @@ The Schizophrenia Exome Sequencing Meta-analysis (SCHEMA) consortium is a large 
 
 The SCHEMA Phase I dataset (GRCh37/hg19) contains the analysis of exomes from 24,248 cases and 97,322 controls, and _de novo_ mutations from 3,402 parent-proband trios. Our study has actively recruited from diverse global populations, and includes individuals of European, Latin American, East Asian, Ashkenazi Jewish, and African American ancestry. Because the sequence data was generated with various capture technologies over a span of seven years, we adapted and developed methods to reduce possible confounders, and incorporated this information during the quality control and analysis steps. The first results have provided genome-wide significant results associating ultra-rare protein-coding variants in individual genes to risk of schizophrenia. Later releases are planned with larger number of samples that will further increase power, and will be released here before any publication.  
 
-We would also like to thank the many tens of thousands of patients and families who generously contributed to our effort. This project is made possible by the generosity of many funders, including the [Stanley Foundation](https://www.broadinstitute.org/stanley), [National Institutes of Mental Health (NIMH)](https://www.nimh.nih.gov/index.shtml), Kent and Elizabeth Dauten, and The Dalio Foundation, and the leadership of its members.  
+We would like to thank the many tens of thousands of patients and families who generously contributed to our effort. This project is made possible by the generosity of many funders, including the [Stanley Family Foundation](https://www.broadinstitute.org/stanley), [National Institutes of Mental Health (NIMH)](https://www.nimh.nih.gov/index.shtml), [National Human Genome Research Institute (NHGRI)](https://www.genome.gov/), [Kent and Elizabeth Dauten Foundation](https://dautenbipolarcenter.org/about/dauten-family), the [Dalio Foundation](https://www.daliophilanthropies.org/initiatives/mental-health-and-wellness/), and the leadership of its members.  
 
 ## Contributing scientists  
 
@@ -44,7 +44,7 @@ Tim B. Bigdeli, Michael Boehnke, Evelyn J. Bromet, Peter F. Buckley, Michael A. 
 
 We would like to thank the patients and families who participated in our studies in the past two decades, without whom our research and findings would not be possible. Research reported in this publication was supported by the National Institute of Mental Health, and the National Human Genome Research Institute of the National Institutes of Health under award numbers: U01MH10564, U01MH105578, R01MH085548 and U54HG003067.  
 
-We would also like to acknowledge the generous support from the Stanley Family Foundation, Kent and Elizabeth Dauten, and The Dalio Foundation who have enabled us to rapidly expand our data generation collections with the goal of moving towards better treatments for schizophrenia and other psychiatric disorders.   
+We would also like to acknowledge the generous support from the [Stanley Family Foundation](https://www.broadinstitute.org/stanley), the [Kent and Elizabeth Dauten Foundation](https://dautenbipolarcenter.org/about/dauten-family), and the [Dalio Foundation](https://www.daliophilanthropies.org/initiatives/mental-health-and-wellness/) who have enabled us to rapidly expand our data generation collections with the goal of moving towards better treatments for schizophrenia and other psychiatric disorders.   
 
 
 
