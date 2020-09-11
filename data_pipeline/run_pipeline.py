@@ -47,7 +47,10 @@ def main():
             try:
                 subprocess.check_call(
                     command,
-                    env={"PYTHONPATH": ":".join(sys.path), "PYSPARK_SUBMIT_ARGS": "--driver-memory 4g pyspark-shell",},
+                    env={
+                        **os.environ,
+                        "PYSPARK_SUBMIT_ARGS": "--driver-memory 4g pyspark-shell",
+                    },
                 )
 
                 elapsed_time = time.time() - start_time
