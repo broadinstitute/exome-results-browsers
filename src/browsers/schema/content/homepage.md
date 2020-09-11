@@ -1,4 +1,4 @@
-Examples - Gene name: [SETD1A](https://schema.broadinstitute.org/gene/ENSG00000099381), Ensembl gene ID: [ENSG00000055130](https://schema.broadinstitute.org/gene/ENSG00000055130)
+Examples - Gene name: [SETD1A](/gene/ENSG00000099381), Ensembl gene ID: [ENSG00000055130](/gene/ENSG00000055130)
 
 The Schizophrenia Exome Sequencing Meta-analysis (SCHEMA) consortium is a large multi-site collaboration dedicated to aggregating, generating, and analyzing high-throughput sequencing data of schizophrenia patients to improve our understanding of disease architecture and advance gene discovery.  
 
