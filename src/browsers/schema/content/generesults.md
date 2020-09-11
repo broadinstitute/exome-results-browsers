@@ -7,20 +7,3 @@ Given empirically observed exome-wide burden, we focused on protein-truncating o
 PTVs and MPC > 3 missense variants (defined as Class I variants) were jointly analyzed in a single case-control burden test. MPC 2 - 3 variants (defined as Class II variants) were analyzed in a separate burden test before meta-analyzed with the Class I burden P-value using Stouffer's weighted Z-score method. Case-control significance was evaluated using a permutation-based Fisher's Exact Test. For genes with case-control P-value < 0.01, _de novo_ Class I and II P values were calculated using the Poisson rate test and meta-analyzed with our case-control test statistic using a Stouffer's weighted Z-score method. The Q-value is the P-value adjusted for the False Discovery Rate.
 
 For a full description and justification of the approach, please consider the main text and supplementary materials and methods of the SCHEMA pre-print manuscript.  
-
-FIX: space between De novo and P-value
-
-====
-Selection flags
-
-PTV variants [hover]
-Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants.
-
-MPC missense variants [hover]
-MPC-prioritized missense variants: missense variants with a MPC score above the described threshold (see [Samocha _et al_. 2017](https://www.biorxiv.org/content/10.1101/148353v1))
-
-## Variant table
-
-In Analysis: Was this variant included in the analysis. Must have MAC ≤ 5 and is either a PTV or MPC > 2 missense variant.
-
-Fix: No. de novo: Out of AC case, the number of genotypes determined to be _de novo_ of origin.
