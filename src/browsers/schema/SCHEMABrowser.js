@@ -4,11 +4,33 @@ import ExomeResultsBrowser from '../base/Browser'
 import GeneResultsManhattanPlot from '../base/GeneResultsPage/GeneResultsManhattanPlot'
 import GeneResultsQQPlot from '../base/GeneResultsPage/GeneResultsQQPlot'
 import { renderCount } from '../base/tableCells'
+import vepConsequences from '../base/vepConsequences'
 
 import SCHEMAAboutPage from './SCHEMAAboutPage'
 import SCHEMAHomePage from './SCHEMAHomePage'
 import SCHEMATermsPage from './SCHEMATermsPage'
 import SCHEMAVariantFilter from './SCHEMAVariantFilter'
+
+const variantConsequences = [...vepConsequences]
+variantConsequences.splice(
+  vepConsequences.findIndex(({ term }) => term === 'missense_variant'),
+  1,
+  {
+    term: 'missense_variant_mpc_>=3',
+    label: 'missense (MPC\u00a0≥\u00a03)',
+    category: 'missense',
+  },
+  {
+    term: 'missense_variant_mpc_2-3',
+    label: 'missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
+    category: 'missense',
+  },
+  {
+    term: 'missense_variant_mpc_<2',
+    label: 'missense (MPC\u00a0<\u00a02)',
+    category: 'missense',
+  }
+)
 
 const renderOddsRatio = (value) => {
   if (value === null) {
@@ -236,53 +258,7 @@ const SCHEMABrowser = () => (
         showOnGenePage: true,
       },
     ]}
-    variantConsequences={[
-      {
-        term: 'lof',
-        label: 'loss of function',
-        category: 'lof',
-      },
-      {
-        term: 'stoplost',
-        label: 'stop lost',
-        category: 'missense',
-      },
-      {
-        term: 'startlost',
-        label: 'start lost',
-        category: 'missense',
-      },
-      {
-        term: 'mis',
-        label: 'missense (MPC\u00a0<\u00a02)',
-        category: 'missense',
-      },
-      {
-        term: 'mis2',
-        label: 'missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
-        category: 'missense',
-      },
-      {
-        term: 'mis3',
-        label: 'missense (MPC\u00a0≥\u00a03)',
-        category: 'missense',
-      },
-      {
-        term: 'ns',
-        label: 'inframe indel',
-        category: 'missense',
-      },
-      {
-        term: 'syn',
-        label: 'synonymous',
-        category: 'synonymous',
-      },
-      {
-        term: 'splice',
-        label: 'splice region',
-        category: 'other',
-      },
-    ]}
+    variantConsequences={variantConsequences}
     variantCustomFilter={{
       component: SCHEMAVariantFilter,
       defaultFilter: {

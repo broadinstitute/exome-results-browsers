@@ -29,9 +29,10 @@ def prepare_variant_results():
     variants = variants.select(
         gene_id=variants.gene_id,
         consequence=hl.case()
-        .when((variants.csq_canonical == "mis") & (variants.mpc >= 3), "mis3")
-        .when((variants.csq_canonical == "mis") & (variants.mpc >= 2), "mis2")
-        .default(variants.csq_canonical),
+        .when((variants.canonical_term == "missense_variant") & (variants.mpc >= 3), "missense_variant_mpc_>=3")
+        .when((variants.canonical_term == "missense_variant") & (variants.mpc >= 2), "missense_variant_mpc_2-3")
+        .when(variants.canonical_term == "missense_variant", "missense_variant_mpc_<2")
+        .default(variants.canonical_term),
         hgvsc=variants.hgvsc_canonical.split(":")[-1],
         hgvsp=variants.hgvsp_canonical.split(":")[-1],
         info=hl.struct(cadd=variants.cadd, mpc=variants.mpc, polyphen=variants.polyphen),
