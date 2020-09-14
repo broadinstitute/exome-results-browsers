@@ -66,8 +66,9 @@ const GenePage = ({
                 popupTitle="Constraint"
                 popupContent={
                   <p>
-                    Metrics for quantification intolerance to protein-truncating variation as
-                    calculated by the gnomAD consortium. For more information, please visit the{' '}
+                    Metrics for quantification intolerance to loss-of-function / protein-truncating
+                    variation as calculated by the gnomAD consortium. For more information, please
+                    visit the{' '}
                     <ExternalLink href="https://gnomad.broadinstitute.org">
                       gnomAD browser
                     </ExternalLink>
