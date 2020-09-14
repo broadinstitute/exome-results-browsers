@@ -246,6 +246,8 @@ With those lines added to `/etc/hosts`, the browsers can be accessed at
 
   - category (one of lof, missense, synonymous, other) - Consequence category
 
+- variantConsequenceCategoryLabels (object) - Labels for consequence categories in variant filter controls.
+
 - variantCustomFilter (object) - Definition for browser specific variant filter controls.
 
   - component (Component) - React component to render filter controls.

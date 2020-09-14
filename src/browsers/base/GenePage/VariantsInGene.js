@@ -250,6 +250,7 @@ class VariantsInGene extends Component {
       variantAnalysisGroupLabels,
       variantAnalysisGroupOptions,
       variantResultColumns,
+      variantConsequenceCategoryLabels,
       variantCustomFilter,
       renderVariantAttributes,
     } = this.props
@@ -301,6 +302,7 @@ class VariantsInGene extends Component {
         <PositionAxisTrack />
         <TrackPageSection style={{ fontSize: '14px', marginTop: '1em' }}>
           <VariantFilterControls
+            consequenceCategoryLabels={variantConsequenceCategoryLabels}
             filter={filter}
             onChangeFilter={this.onChangeFilter}
             customFilterComponent={(variantCustomFilter || {}).component}
@@ -366,6 +368,7 @@ VariantsInGene.propTypes = {
       showOnGenePage: PropTypes.bool,
     })
   ).isRequired,
+  variantConsequenceCategoryLabels: PropTypes.any, // eslint-disable-line react/forbid-prop-types
   variantCustomFilter: PropTypes.shape({
     component: PropTypes.func.isRequired,
     defaultFilter: PropTypes.any.isRequired,
@@ -401,6 +404,7 @@ VariantsInGene.propTypes = {
 
 VariantsInGene.defaultProps = {
   variantAnalysisGroupLabels: {},
+  variantConsequenceCategoryLabels: undefined,
   variantCustomFilter: undefined,
   renderVariantAttributes: undefined,
 }

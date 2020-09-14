@@ -13,13 +13,6 @@ const consequenceCategoryColors = {
   other: '#757575',
 }
 
-const consequenceCategoryLabels = {
-  lof: 'LoF',
-  missense: 'Missense',
-  synonymous: 'Synonymous',
-  other: 'Other',
-}
-
 const SettingsWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -114,6 +107,7 @@ const keyboardShortcuts = {
 }
 
 const VariantFilterControls = ({
+  consequenceCategoryLabels,
   customFilterComponent: CustomFilterComponent,
   filter,
   geneId,
@@ -211,6 +205,12 @@ const VariantFilterControls = ({
 }
 
 VariantFilterControls.propTypes = {
+  consequenceCategoryLabels: PropTypes.shape({
+    lof: PropTypes.string.isRequired,
+    missense: PropTypes.string.isRequired,
+    synonymous: PropTypes.string.isRequired,
+    other: PropTypes.string.isRequired,
+  }).isRequired,
   filter: PropTypes.shape({
     includeCategories: PropTypes.shape({
       lof: PropTypes.bool.isRequired,

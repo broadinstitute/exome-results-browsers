@@ -31,6 +31,7 @@ const Browser = ({
   variantAnalysisGroupLabels,
   variantResultColumns,
   variantConsequences,
+  variantConsequenceCategoryLabels,
   variantCustomFilter,
   renderVariantAttributes,
 }) => (
@@ -84,6 +85,7 @@ const Browser = ({
               variantAnalysisGroupLabels={variantAnalysisGroupLabels}
               variantResultColumns={variantResultColumns}
               variantConsequences={variantConsequences}
+              variantConsequenceCategoryLabels={variantConsequenceCategoryLabels}
               variantCustomFilter={variantCustomFilter}
               renderVariantAttributes={renderVariantAttributes}
             />
@@ -164,6 +166,12 @@ Browser.propTypes = {
       category: PropTypes.oneOf(['lof', 'missense', 'synonymous', 'other']).isRequired,
     })
   ),
+  variantConsequenceCategoryLabels: PropTypes.shape({
+    lof: PropTypes.string.isRequired,
+    missense: PropTypes.string.isRequired,
+    synonymous: PropTypes.string.isRequired,
+    other: PropTypes.string.isRequired,
+  }),
   variantCustomFilter: PropTypes.shape({
     component: PropTypes.func.isRequired,
     defaultFilter: PropTypes.any.isRequired,
@@ -191,6 +199,12 @@ Browser.defaultProps = {
   variantAnalysisGroupLabels: undefined,
   variantResultColumns: [],
   variantConsequences: vepConsequences,
+  variantConsequenceCategoryLabels: {
+    lof: 'LoF',
+    missense: 'Missense',
+    synonymous: 'Synonymous',
+    other: 'Other',
+  },
   variantCustomFilter: undefined,
   renderVariantAttributes: undefined,
 }

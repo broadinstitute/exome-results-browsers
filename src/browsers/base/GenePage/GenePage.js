@@ -41,6 +41,7 @@ const GenePage = ({
   variantAnalysisGroupLabels,
   variantAnalysisGroupOptions,
   variantConsequences,
+  variantConsequenceCategoryLabels,
   variantResultColumns,
   variantCustomFilter,
   renderVariantAttributes,
@@ -117,6 +118,7 @@ const GenePage = ({
           variantAnalysisGroupLabels={variantAnalysisGroupLabels}
           variantAnalysisGroupOptions={variantAnalysisGroupOptions}
           variantConsequences={variantConsequences}
+          variantConsequenceCategoryLabels={variantConsequenceCategoryLabels}
           variantCustomFilter={variantCustomFilter}
           variantResultColumns={variantResultColumns}
         />
@@ -132,6 +134,7 @@ GenePage.propTypes = {
   variantAnalysisGroupLabels: PropTypes.objectOf(PropTypes.string),
   variantResultColumns: PropTypes.arrayOf(PropTypes.object).isRequired,
   variantConsequences: PropTypes.arrayOf(PropTypes.object).isRequired,
+  variantConsequenceCategoryLabels: PropTypes.any, // eslint-disable-line react/forbid-prop-types
   variantCustomFilter: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   renderVariantAttributes: PropTypes.func,
   gene: PropTypes.shape({
@@ -158,6 +161,7 @@ GenePage.defaultProps = {
   variantAnalysisGroupLabels: undefined,
   variantCustomFilter: undefined,
   renderVariantAttributes: undefined,
+  variantConsequenceCategoryLabels: undefined,
 }
 
 const GenePageContainer = ({ geneIdOrSymbol, ...otherProps }) => {
