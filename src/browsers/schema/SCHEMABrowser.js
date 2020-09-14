@@ -259,6 +259,12 @@ const SCHEMABrowser = () => (
       },
     ]}
     variantConsequences={variantConsequences}
+    variantConsequenceCategoryLabels={{
+      lof: 'PTV',
+      missense: 'Missense',
+      synonymous: 'Synonymous',
+      other: 'Other',
+    }}
     variantCustomFilter={{
       component: SCHEMAVariantFilter,
       defaultFilter: {
