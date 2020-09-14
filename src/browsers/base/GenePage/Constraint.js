@@ -37,7 +37,7 @@ export const ExacConstraintTable = ({ constraint }) => (
         <td>Z = {renderNumber(constraint.mis_z, 2)}</td>
       </tr>
       <tr>
-        <th scope="row">LoF</th>
+        <th scope="row">pLoF</th>
         <td>{renderNumber(constraint.exp_lof)}</td>
         <td>{constraint.obs_lof === null ? '—' : constraint.obs_lof}</td>
         <td>pLI = {renderNumber(constraint.pLI, 2)}</td>
@@ -97,7 +97,7 @@ export const GnomadConstraintTable = ({ constraint }) => (
         <td>o/e = {renderNumber(constraint.oe_mis, 2)}</td>
       </tr>
       <tr>
-        <th scope="row">LoF</th>
+        <th scope="row">pLoF</th>
         <td>{renderNumber(constraint.exp_lof)}</td>
         <td>{constraint.obs_lof === null ? '—' : constraint.obs_lof}</td>
         <td>pLI = {renderNumber(constraint.pLI, 2)}</td>
