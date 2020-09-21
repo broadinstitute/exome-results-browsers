@@ -8,4 +8,4 @@ If you are uncertain which category your analysis falls into, please [contact us
 
 ## Citations in publications
 
-We request that any use of data from the SCHEMA browser cite the consortium's flagship paper, and any online resources that include the data set provide a link to the browser.  
+We request that any use of data from the SCHEMA browser cite the consortium's flagship paper: [_Exome sequencing identifies rare coding variants in 10 genes which confer substantial risk for schizophrenia_](https://doi.org/10.1101/2020.09.18.20192815), and that any online resources that include the data set provide a link to this browser.  
