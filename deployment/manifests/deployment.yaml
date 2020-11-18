@@ -44,8 +44,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /mnt/disks/data
-      nodeSelector:
-        cloud.google.com/gke-nodepool: 'default-pool'
       volumes:
         - name: data
           gcePersistentDisk:
