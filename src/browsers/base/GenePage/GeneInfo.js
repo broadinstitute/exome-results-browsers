@@ -4,6 +4,8 @@ import styled from 'styled-components'
 
 import { ExternalLink, List, ListItem, Modal, TextButton } from '@gnomad/ui'
 
+import datasetConfig from '../../datasetConfig'
+
 const GeneReferences = ({ gene }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -122,6 +124,10 @@ const DescriptionListItem = styled.div`
 const GeneInfo = ({ gene }) => {
   const ucscReferenceGenomeId = gene.reference_genome === 'GRCh38' ? 'hg38' : 'hg19'
 
+  const otherStudies = [{ id: 'ASC' }, { id: 'BipEx' }, { id: 'Epi25' }, { id: 'SCHEMA' }].filter(
+    ({ id }) => id !== datasetConfig.datasetId
+  )
+
   return (
     <DescriptionList>
       <DescriptionListItem>
@@ -138,6 +144,22 @@ const GeneInfo = ({ gene }) => {
         <dt>References</dt>
         <dd>
           <GeneReferences gene={gene} />
+        </dd>
+      </DescriptionListItem>
+      <DescriptionListItem>
+        <dt>Other studies</dt>
+        <dd>
+          {otherStudies
+            .map(({ id }) => (
+              <ExternalLink
+                key={id}
+                href={`https://${id.toLowerCase()}.broadinstitute.org/gene/${gene.gene_id}`}
+              >
+                {id}
+              </ExternalLink>
+            ))
+            .reduce((acc, link) => [...acc, ', ', link], [])
+            .slice(1)}
         </dd>
       </DescriptionListItem>
     </DescriptionList>
