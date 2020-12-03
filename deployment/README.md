@@ -55,6 +55,12 @@ Build the Docker image. The build script tags the image with the current git rev
   kubectl apply -f manifests/deployment.yaml
   ```
 
+- Reserve IP address.
+
+  ```
+  gcloud compute addresses create exome-results-browsers --global
+  ```
+
 - Expose deployment with an [Ingress](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress).
 
   Use [Google-managed SSL certificates](https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs)
