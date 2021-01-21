@@ -14,9 +14,9 @@ fi
 COMMIT_HASH=$(git rev-parse --short HEAD)
 IMAGE_TAG=${COMMIT_HASH}
 
-# Add current branch name to tag if not on master branch
+# Add current branch name to tag if not on main branch
 BRANCH=$(git symbolic-ref --short -q HEAD)
-if [ "$BRANCH" != "master" ]; then
+if [ "$BRANCH" != "main" ]; then
   TAG_BRANCH=$(echo "$BRANCH" | sed 's/[^A-Za-z0-9_\-\.]/_/g')
   IMAGE_TAG="${IMAGE_TAG}-${TAG_BRANCH}"
 fi
