@@ -98,6 +98,10 @@ app.use('/api/search', (req, res) => {
     return res.status(400).json({ error: 'Query required' })
   }
 
+  if (Array.isArray(req.query.q)) {
+    return res.status(400).json({ error: 'One query required' })
+  }
+
   const query = req.query.q.toUpperCase()
 
   let results
