@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React, { Component } from 'react'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { Combobox, Page as BasePage, PageHeading, SearchInput, Tabs } from '@gnomad/ui'
@@ -27,117 +27,106 @@ const AnalysisGroupMenuWrapper = styled.div`
   margin-bottom: 1em;
 `
 
-class GeneResultsPage extends Component {
-  constructor(props) {
-    super(props)
+const GeneResultsPage = ({
+  browserTitle,
+  analysisGroupOptions,
+  defaultAnalysisGroup,
+  defaultSortKey,
+  geneResultColumns,
+  pageHeading,
+  geneResults,
+  tabs,
+}) => {
+  const tableColumns = useMemo(() => getTableColumns(geneResultColumns), [geneResultColumns])
+  const [searchText, setSearchText] = useState('')
+  const [selectedAnalysisGroup, setSelectedAnalysisGroup] = useState(defaultAnalysisGroup)
 
-    this.state = {
-      searchText: '',
-      selectedAnalysisGroup: props.defaultAnalysisGroup,
-    }
-
-    this.tableColumns = getTableColumns(props.geneResultColumns)
-  }
-
-  render() {
-    const {
-      browserTitle,
-      analysisGroupOptions,
-      defaultSortKey,
-      pageHeading,
-      geneResults,
-      tabs,
-    } = this.props
-
-    const { selectedAnalysisGroup, searchText } = this.state
-
-    const results = geneResults
-      .filter(
-        (result) =>
-          (result.gene_id || '').includes(searchText) ||
-          (result.gene_symbol || '').includes(searchText) ||
-          (result.gene_name || '').toUpperCase().includes(searchText)
-      )
-      .map((result) => ({
-        ...result,
-        ...result.group_results[selectedAnalysisGroup],
-      }))
-
-    return (
-      <Page>
-        <DocumentTitle title={`Results | ${browserTitle}`} />
-        <PageHeading>{pageHeading}</PageHeading>
-        <div>
-          <ControlSection>
-            <div>
-              {analysisGroupOptions.length > 1 && (
-                <AnalysisGroupMenuWrapper>
-                  {/* eslint-disable-next-line jsx-a11y/label-has-for,jsx-a11y/label-has-associated-control */}
-                  <label htmlFor="analysis-group-menu">Current analysis group </label>
-                  <Combobox
-                    id="analysis-group-menu"
-                    options={analysisGroupOptions.map((group) => ({
-                      id: group,
-                      label: group,
-                    }))}
-                    value={selectedAnalysisGroup}
-                    onSelect={(option) => {
-                      this.setState({ selectedAnalysisGroup: option.id })
-                    }}
-                  />
-                </AnalysisGroupMenuWrapper>
-              )}
-
-              <CSVExportButton
-                data={results}
-                columns={this.tableColumns}
-                filename={`${selectedAnalysisGroup}_results`}
-              >
-                Export results to CSV
-              </CSVExportButton>
-            </div>
-
-            <SearchInput
-              placeholder="Search results by gene"
-              onChange={(value) => {
-                this.setState({ searchText: value.toUpperCase() })
-              }}
-            />
-          </ControlSection>
-          {tabs && tabs.length > 0 ? (
-            <Tabs
-              tabs={[
-                {
-                  id: 'table',
-                  label: 'Table',
-                  render: () => (
-                    <GeneResultsTable
-                      defaultSortKey={defaultSortKey}
-                      geneResultColumns={this.tableColumns}
-                      geneResults={results}
-                      highlightText={searchText}
-                    />
-                  ),
-                },
-                ...tabs.map(({ id, label, render }) => ({
-                  id,
-                  label,
-                  render: () => render(results),
-                })),
-              ]}
-            />
-          ) : (
-            <GeneResultsTable
-              defaultSortKey={defaultSortKey}
-              geneResultColumns={this.tableColumns}
-              geneResults={results}
-              highlightText={searchText}
-            />
-          )}
-        </div>
-      </Page>
+  const results = geneResults
+    .filter(
+      (result) =>
+        (result.gene_id || '').includes(searchText) ||
+        (result.gene_symbol || '').includes(searchText) ||
+        (result.gene_name || '').toUpperCase().includes(searchText)
     )
-  }
+    .map((result) => ({
+      ...result,
+      ...result.group_results[selectedAnalysisGroup],
+    }))
+
+  return (
+    <Page>
+      <DocumentTitle title={`Results | ${browserTitle}`} />
+      <PageHeading>{pageHeading}</PageHeading>
+      <div>
+        <ControlSection>
+          <div>
+            {analysisGroupOptions.length > 1 && (
+              <AnalysisGroupMenuWrapper>
+                {/* eslint-disable-next-line jsx-a11y/label-has-for,jsx-a11y/label-has-associated-control */}
+                <label htmlFor="analysis-group-menu">Current analysis group </label>
+                <Combobox
+                  id="analysis-group-menu"
+                  options={analysisGroupOptions.map((group) => ({
+                    id: group,
+                    label: group,
+                  }))}
+                  value={selectedAnalysisGroup}
+                  onSelect={(option) => {
+                    setSelectedAnalysisGroup(option.id)
+                  }}
+                />
+              </AnalysisGroupMenuWrapper>
+            )}
+
+            <CSVExportButton
+              data={results}
+              columns={tableColumns}
+              filename={`${selectedAnalysisGroup}_results`}
+            >
+              Export results to CSV
+            </CSVExportButton>
+          </div>
+
+          <SearchInput
+            placeholder="Search results by gene"
+            onChange={(value) => {
+              setSearchText(value.toUpperCase())
+            }}
+          />
+        </ControlSection>
+        {tabs && tabs.length > 0 ? (
+          <Tabs
+            tabs={[
+              {
+                id: 'table',
+                label: 'Table',
+                render: () => (
+                  <GeneResultsTable
+                    defaultSortKey={defaultSortKey}
+                    geneResultColumns={tableColumns}
+                    geneResults={results}
+                    highlightText={searchText}
+                  />
+                ),
+              },
+              ...tabs.map(({ id, label, render }) => ({
+                id,
+                label,
+                render: () => render(results),
+              })),
+            ]}
+          />
+        ) : (
+          <GeneResultsTable
+            defaultSortKey={defaultSortKey}
+            geneResultColumns={tableColumns}
+            geneResults={results}
+            highlightText={searchText}
+          />
+        )}
+      </div>
+    </Page>
+  )
 }
 
 GeneResultsPage.propTypes = {
