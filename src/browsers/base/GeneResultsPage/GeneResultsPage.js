@@ -119,8 +119,8 @@ class GeneResultsPage extends Component {
                     />
                   ),
                 },
-                ...tabs.map(({ label, render }) => ({
-                  id: label,
+                ...tabs.map(({ id, label, render }) => ({
+                  id,
                   label,
                   render: () => render(results),
                 })),
@@ -161,6 +161,7 @@ GeneResultsPage.propTypes = {
   pageHeading: PropTypes.string,
   tabs: PropTypes.arrayOf(
     PropTypes.shape({
+      id: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
       render: PropTypes.func.isRequired,
     })

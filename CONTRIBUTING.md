@@ -212,6 +212,8 @@ With those lines added to `/etc/hosts`, the browsers can be accessed at
 
 - geneResultTabs (array of objects) - Define additional tabs for content on all gene results page.
 
+  - id (string) - Tab ID.
+
   - label (string) - Tab label.
 
   - render (function) - Function to render tab content.

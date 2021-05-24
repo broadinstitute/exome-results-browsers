@@ -164,6 +164,7 @@ const SCHEMABrowser = () => (
     ]}
     geneResultTabs={[
       {
+        id: 'manhattan-plot',
         label: 'Manhattan Plot',
         render: (results) => (
           <GeneResultsManhattanPlot
@@ -183,6 +184,7 @@ const SCHEMABrowser = () => (
         ),
       },
       {
+        id: 'qq-plot',
         label: 'QQ Plot',
         render: (results) => (
           <GeneResultsQQPlot

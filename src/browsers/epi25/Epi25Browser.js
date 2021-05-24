@@ -84,6 +84,7 @@ const Epi25Browser = () => (
     ]}
     geneResultTabs={[
       {
+        id: 'manhattan-plot',
         label: 'Manhattan Plot',
         render: (results) => (
           <GeneResultsManhattanPlot

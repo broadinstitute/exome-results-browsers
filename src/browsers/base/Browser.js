@@ -140,6 +140,7 @@ Browser.propTypes = {
   ),
   geneResultTabs: PropTypes.arrayOf(
     PropTypes.shape({
+      id: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
       render: PropTypes.func.isRequired,
     })
