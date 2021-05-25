@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { useMemo, useState } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { Combobox, Page as BasePage, PageHeading, SearchInput, Tabs } from '@gnomad/ui'
@@ -40,6 +41,13 @@ const GeneResultsPage = ({
   const tableColumns = useMemo(() => getTableColumns(geneResultColumns), [geneResultColumns])
   const [searchText, setSearchText] = useState('')
   const [selectedAnalysisGroup, setSelectedAnalysisGroup] = useState(defaultAnalysisGroup)
+
+  const location = useLocation()
+  const selectedTabId =
+    ['table', ...tabs.map((tab) => tab.id)].find((tabId) => tabId === location.hash.slice(1)) ||
+    'table'
+
+  const history = useHistory()
 
   const results = geneResults
     .filter(
@@ -96,6 +104,7 @@ const GeneResultsPage = ({
         </ControlSection>
         {tabs && tabs.length > 0 ? (
           <Tabs
+            activeTabId={selectedTabId}
             tabs={[
               {
                 id: 'table',
@@ -115,6 +124,11 @@ const GeneResultsPage = ({
                 render: () => render(results),
               })),
             ]}
+            onChange={(tabId) => {
+              history.replace(
+                `${location.pathname}${location.search}${tabId === 'table' ? '' : `#${tabId}`}`
+              )
+            }}
           />
         ) : (
           <GeneResultsTable
