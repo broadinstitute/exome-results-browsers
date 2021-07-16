@@ -3,6 +3,7 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import DefaultHomePage from './DefaultHomePage'
+import DownloadsPage from './DownloadsPage'
 import ErrorBoundary from './ErrorBoundary'
 import GenePage from './GenePage/GenePage'
 import GeneResultsPage from './GeneResultsPage/GeneResultsPage'
@@ -95,6 +96,8 @@ const Browser = ({
         {extraPages.map(({ path, component }) => (
           <Route key={path} path={path} component={component} />
         ))}
+
+        <Route path="/downloads" component={DownloadsPage} />
 
         <Route
           path="/other-studies"

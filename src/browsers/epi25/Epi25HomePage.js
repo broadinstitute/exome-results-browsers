@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { ExternalLink, Link as StyledLink, Page, PageHeading } from '@gnomad/ui'
+import { ExternalLink, Page, PageHeading } from '@gnomad/ui'
 
 import DocumentTitle from '../base/DocumentTitle'
 import Link from '../base/Link'
@@ -83,21 +83,8 @@ const Epi25HomePage = () => (
     </p>
 
     <p>
-      All{' '}
-      <StyledLink
-        download
-        href="https://storage.googleapis.com/exome-results-browsers-public/epi25/Epi25_all_gene_results_2018_11_07.tsv.gz"
-      >
-        gene-level
-      </StyledLink>{' '}
-      and{' '}
-      <StyledLink
-        download
-        href="https://storage.googleapis.com/exome-results-browsers-public/epi25/Epi25_all_variant_results_2018_11_27.tsv.gz"
-      >
-        variant-level
-      </StyledLink>{' '}
-      results are available for download.
+      All gene-level and variant-level results are{' '}
+      <Link to="/downloads">available for download</Link>.
     </p>
 
     <p>Analysis data last updated November 27th, 2018.</p>

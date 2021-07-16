@@ -121,6 +121,11 @@ const TopBar = ({ title, links, backgroundColor, textColor }) => {
           </li>
         ))}
         <li>
+          <Link to="/downloads" onClick={closeMenu}>
+            Downloads
+          </Link>
+        </li>
+        <li>
           <Link
             to="/other-studies"
             onClick={(e) => {
