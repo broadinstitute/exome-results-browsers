@@ -137,6 +137,14 @@ section of `pipeline_config.ini`.
   ./data_pipeline/run_pipeline.py --environment dataproc prepare_datasets
   ```
 
+- Prepare downloads.
+
+  This takes less than a minute per dataset on a default 2 worker cluster.
+
+  ```
+  ./data_pipeline/run_pipeline.py --environment dataproc prepare_downloads
+  ```
+
 - Combine all datasets into one Hail Table.
 
   This takes 5-10 minutes on a default 2 worker cluster.
