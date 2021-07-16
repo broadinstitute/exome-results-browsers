@@ -30,7 +30,7 @@ def prepare_gene_results():
 
     ds = ds.drop("gene_name", "description")
 
-    ds = ds.group_by("gene_id").aggregate(group_results=hl.agg.collect(ds.row_value))
+    ds = ds.group_by("gene_id").aggregate(group_results=hl.agg.collect(ds.row_value.drop("gene_id")))
     ds = ds.annotate(
         group_results=hl.dict(
             ds.group_results.map(
