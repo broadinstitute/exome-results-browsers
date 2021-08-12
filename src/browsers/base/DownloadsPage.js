@@ -12,7 +12,7 @@ const otherDatasets = Object.keys(datasetConfig.datasets)
   .sort()
 
 const downloadUrl = (datasetId, file) => {
-  return `https://storage.googleapis.com/exome-results-browsers-public/${datasetId}/${datasetId}_${file}`
+  return `https://atgu-exome-browser-data.s3.amazonaws.com/${datasetId}/${datasetId}_${file}`
 }
 
 const DatasetDownloadLinks = ({ datasetId }) => {
