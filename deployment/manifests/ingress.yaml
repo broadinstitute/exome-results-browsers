@@ -1,5 +1,5 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: exome-results-browsers-ingress
@@ -14,23 +14,35 @@ spec:
       http:
         paths:
           - backend:
-              serviceName: exome-results-browsers
-              servicePort: 80
+              service:
+                name: exome-results-browsers
+                port:
+                  number: 80
+            pathType: ImplementationSpecific
     - host: bipex.broadinstitute.org
       http:
         paths:
           - backend:
-              serviceName: exome-results-browsers
-              servicePort: 80
+              service:
+                name: exome-results-browsers
+                port:
+                  number: 80
+            pathType: ImplementationSpecific
     - host: epi25.broadinstitute.org
       http:
         paths:
           - backend:
-              serviceName: exome-results-browsers
-              servicePort: 80
+              service:
+                name: exome-results-browsers
+                port:
+                  number: 80
+            pathType: ImplementationSpecific
     - host: schema.broadinstitute.org
       http:
         paths:
           - backend:
-              serviceName: exome-results-browsers
-              servicePort: 80
+              service:
+                name: exome-results-browsers
+                port:
+                  number: 80
+            pathType: ImplementationSpecific
