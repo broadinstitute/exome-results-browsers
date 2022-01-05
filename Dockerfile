@@ -1,4 +1,4 @@
-FROM node:12.18.1-alpine
+FROM node:12.18.1-alpine AS build
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 WORKDIR /home/node/app
@@ -39,7 +39,7 @@ COPY --chown=node:node yarn.lock .
 RUN yarn install --production --frozen-lockfile && yarn cache clean
 
 # Copy frontend from build stage
-COPY --chown=node:node --from=0 /home/node/app/src/server/public ./public
+COPY --chown=node:node --from=build /home/node/app/src/server/public ./public
 
 # Copy server source
 COPY --chown=node:node src/server .
