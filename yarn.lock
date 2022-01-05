@@ -939,10 +939,10 @@
     unist-util-visit "^1.4.0"
     yaml "^1.4.0"
 
-"@gnomad/qq-plot@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@gnomad/qq-plot/-/qq-plot-1.0.0.tgz#9389125ac71867126281a6e9d6488f4c3a22201d"
-  integrity sha512-wCYTEz6Z9FvnxszjTZm+XQqWsxbTBNh01oz+a0ouOIiTqU9epw2LVYrsv/4sb9oIe+zFNUfC2q/ZA1C4as2T2A==
+"@gnomad/qq-plot@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@gnomad/qq-plot/-/qq-plot-1.2.0.tgz#85a4ab6c6552a07259010e1fdb92864d05f12d04"
+  integrity sha512-vtXku6wFrsZlXr5mayZaAPLOMHOm/FuqhZ0Jcyhf6v7ixepyHKhSBMY6T1tSBoFjeM/Yn09S3oRNUvZzNQokZw==
   dependencies:
     d3-array "^1.2.4"
     d3-scale "^2.2.2"
