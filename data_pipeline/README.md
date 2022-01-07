@@ -172,3 +172,9 @@ by the `write_results_files.py` script.
 versions of the gene) and 1 per dataset per gene with variant-level results. In development, it is
 likely preferable to use `--genes` argument with `write_results_files.py` to only write variant-level
 results files for a few specific genes.
+
+## Downloads files
+
+Some generated files are intended to be available for download. These are written to a "downloads"
+directory in the staging path set in `pipeline_config.ini`. This directory should be copied to a
+public location and links on the browser downloads page updated accordingly.
