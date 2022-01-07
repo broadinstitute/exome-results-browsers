@@ -122,7 +122,15 @@ const BipExBrowser = () => (
       },
       {
         key: 'group_result.in_analysis',
-        heading: 'In Analysis',
+        heading: 'MAC ≤ 5',
+        minWidth: 85,
+        render: (value) => (value ? 'yes' : ''),
+        renderForCSV: (value) => (value ? 'yes' : ''),
+        showOnDetails: false,
+      },
+      {
+        key: 'group_result.in_gnomad_non_neuro',
+        heading: 'In gnomAD non-neuro?',
         minWidth: 85,
         render: (value) => (value ? 'yes' : ''),
         renderForCSV: (value) => (value ? 'yes' : ''),

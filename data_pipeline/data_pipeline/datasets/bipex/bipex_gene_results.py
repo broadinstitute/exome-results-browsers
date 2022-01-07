@@ -16,24 +16,16 @@ def prepare_gene_results():
         "control_count",
         "n_cases",
         "n_controls",
-        "fisher_pval",
-        "fisher_OR",
         "fisher_gnom_non_psych_pval",
         "fisher_gnom_non_psych_OR",
-        "CMH_pval",
-        "CMH_OR",
-        "CMH_gnom_non_psych_pval",
-        "CMH_gnom_non_psych_OR",
+        "fisher_gnom_non_psych_case_count",
+        "fisher_gnom_non_psych_case_no_count",
+        "fisher_gnom_non_psych_control_count",
+        "fisher_gnom_non_psych_control_no_count",
     )
 
-    # Drop result fields not shown in browser
-    results = results.drop("fisher_pval", "fisher_OR", "CMH_pval", "CMH_OR")
-
     results = results.annotate(
-        # fisher_OR=hl.float(results.fisher_OR),
         fisher_gnom_non_psych_OR=hl.float(results.fisher_gnom_non_psych_OR),
-        # CMH_OR=hl.float(results.CMH_OR),
-        CMH_gnom_non_psych_OR=hl.float(results.CMH_gnom_non_psych_OR),
     )
 
     final_results = None
@@ -42,14 +34,12 @@ def prepare_gene_results():
     per_category_fields = [
         "case_count",
         "control_count",
-        # "fisher_pval",
-        # "fisher_OR",
         "fisher_gnom_non_psych_pval",
         "fisher_gnom_non_psych_OR",
-        # "CMH_pval",
-        # "CMH_OR",
-        "CMH_gnom_non_psych_pval",
-        "CMH_gnom_non_psych_OR",
+        "fisher_gnom_non_psych_case_count",
+        "fisher_gnom_non_psych_case_no_count",
+        "fisher_gnom_non_psych_control_count",
+        "fisher_gnom_non_psych_control_no_count",
     ]
     for category in consequence_categories:
         category_results = results.filter(results.consequence_category == category)
@@ -61,7 +51,10 @@ def prepare_gene_results():
         )
 
         if final_results:
-            final_results = final_results.join(category_results.drop("n_cases", "n_controls"), "outer",)
+            final_results = final_results.join(
+                category_results.drop("n_cases", "n_controls"),
+                "outer",
+            )
 
             # N cases/controls should be the same for all consequence categories for a gene/analysis group.
             # However, if there are no variants of a certain consequence category found in a gene, then
