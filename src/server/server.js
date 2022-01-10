@@ -26,7 +26,6 @@ if (missingConfig.length) {
 
 const config = {
   dataDirectory: path.resolve(process.env.RESULTS_DATA_DIRECTORY),
-  enableHttpsRedirect: JSON.parse(process.env.ENABLE_HTTPS_REDIRECT || 'false'),
   port: process.env.PORT || 8000,
   trustProxy: JSON.parse(process.env.TRUST_PROXY || 'false'),
 }
@@ -54,20 +53,6 @@ app.use('/ready', (request, response) => {
 // ================================================================================================
 
 app.use(morgan(isDevelopment ? 'dev' : 'combined'))
-
-// ================================================================================================
-// HTTP => HTTPS redirect
-// ================================================================================================
-
-if (config.enableHttpsRedirect) {
-  app.use('/', (req, res, next) => {
-    if (req.protocol === 'http') {
-      res.redirect(`https://${req.get('host')}${req.url}`)
-    } else {
-      next()
-    }
-  })
-}
 
 // ================================================================================================
 // Gene search

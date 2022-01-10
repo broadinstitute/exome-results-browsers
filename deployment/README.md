@@ -16,7 +16,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
 
 1. Create a temporary GCE instance.
 
-  Debian 11 is used here to get a more up to date version of Python (Debian 10 is the default at the time of this writing).
+   Debian 11 is used here to get a more up to date version of Python (Debian 10 is the default at the time of this writing).
 
    ```
    gcloud --quiet compute instances create erb-temp-instance \
@@ -150,5 +150,6 @@ Build the Docker image. The build script tags the image with the current git rev
 
   ```
   kubectl apply -f manifests/service.yaml
+  kubectl apply -f manifests/frontendconfig.yaml
   kubectl apply -f manifests/ingress.yaml
   ```
