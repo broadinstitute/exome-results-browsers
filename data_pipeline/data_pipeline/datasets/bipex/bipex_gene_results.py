@@ -24,9 +24,7 @@ def prepare_gene_results():
         "fisher_gnom_non_psych_control_no_count",
     )
 
-    results = results.annotate(
-        fisher_gnom_non_psych_OR=hl.float(results.fisher_gnom_non_psych_OR),
-    )
+    results = results.annotate(fisher_gnom_non_psych_OR=hl.float(results.fisher_gnom_non_psych_OR))
 
     final_results = None
 
@@ -51,10 +49,7 @@ def prepare_gene_results():
         )
 
         if final_results:
-            final_results = final_results.join(
-                category_results.drop("n_cases", "n_controls"),
-                "outer",
-            )
+            final_results = final_results.join(category_results.drop("n_cases", "n_controls"), "outer")
 
             # N cases/controls should be the same for all consequence categories for a gene/analysis group.
             # However, if there are no variants of a certain consequence category found in a gene, then
