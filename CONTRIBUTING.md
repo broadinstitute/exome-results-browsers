@@ -1,5 +1,28 @@
 # Contributing
 
+## Setting up a development environment
+
+- Install [Node.js](https://nodejs.org/) and [Yarn (v1)](https://classic.yarnpkg.com/).
+
+- Install dependencies.
+
+  ```
+  yarn
+  ```
+
+- Install [pre-commit](https://pre-commit.com/) and configure hooks.
+
+  ```
+  pre-commit install
+  ```
+
+- For data pipeline development, install [Python](https://www.python.org/), dependencies, and development tools.
+
+  ```
+  pip install -r data_pipeline/requirements.txt
+  pip install -r data_pipeline/requirements-dev.txt
+  ```
+
 ## Organization
 
 The exome results browsers are structured as a single application that serves a different dataset
