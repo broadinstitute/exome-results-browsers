@@ -139,13 +139,16 @@ Build the Docker image. The build script tags the image with the current git rev
   gcloud compute addresses create exome-results-browsers --global
   ```
 
-- Expose deployment with an [Ingress](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress).
+- Create a [Google-managed SSL certificate](https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs).
 
-  Use [Google-managed SSL certificates](https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs)
-  for HTTPS.
+  ```
+  gcloud compute ssl-certificates create exome-results-browsers-cert --global \
+    --domains=asc.broadinstitute.org,bipex.broadinstitute.org,epi25.broadinstitute.org,schema.broadinstitute.org
+  ```
+
+- Expose deployment with an [Ingress](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress).
 
   ```
   kubectl apply -f manifests/service.yaml
-  kubectl apply -f manifests/certificates.yaml
   kubectl apply -f manifests/ingress.yaml
   ```
