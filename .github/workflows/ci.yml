@@ -58,4 +58,4 @@ jobs:
       - name: Run Black
         run: black --check data_pipeline
       - name: Run Pylint
-        run: pylint --disable=R,C data_pipeline/data_pipeline data_pipeline/*.py
+        run: pylint data_pipeline/data_pipeline data_pipeline/*.py
