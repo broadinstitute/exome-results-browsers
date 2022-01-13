@@ -213,13 +213,13 @@ app.get('/api/gene/:geneIdOrName', (req, res) => {
     geneId = geneIdOrName
   } else {
     const geneIds = geneSearch.get(geneIdOrName.toUpperCase())
-    if (geneIds.length === 1) {
-      geneId = geneIds[0] // eslint-disable-line prefer-destructuring
-    } else if (geneIds.length === 0) {
+    if (geneIds === undefined || geneIds.length === 0) {
       return res.status(404).json({ error: 'Gene not found' })
-    } else {
+    }
+    if (geneIds.length > 1) {
       return res.status(400).json({ error: 'Gene symbol matches multiple genes' })
     }
+    geneId = geneIds[0] // eslint-disable-line prefer-destructuring
   }
 
   const referenceGenome = metadata.datasets[req.dataset].reference_genome
