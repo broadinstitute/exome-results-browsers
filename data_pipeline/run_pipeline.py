@@ -47,7 +47,11 @@ def main():
             sys.path.insert(1, os.getcwd())
             try:
                 subprocess.check_call(
-                    command, env={**os.environ, "PYSPARK_SUBMIT_ARGS": "--driver-memory 4g pyspark-shell",},
+                    command,
+                    env={
+                        **os.environ,
+                        "PYSPARK_SUBMIT_ARGS": "--driver-memory 4g pyspark-shell",
+                    },
                 )
 
                 elapsed_time = time.time() - start_time
@@ -65,7 +69,8 @@ def main():
                     for name in files:
                         if name.endswith(".py"):
                             zip_file.write(
-                                os.path.join(root, name), os.path.relpath(os.path.join(root, name)),
+                                os.path.join(root, name),
+                                os.path.relpath(os.path.join(root, name)),
                             )
 
             # `hailctl dataproc submit` does not support project/region/zone arguments,
