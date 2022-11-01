@@ -79,7 +79,7 @@ def write_data_files(table_path, output_directory, genes=None):
 
     os.makedirs(output_directory, exist_ok=True)
 
-    with open(f"{output_directory}/metadata.json", "w") as output_file:
+    with open(f"{output_directory}/metadata.json", mode="w", encoding="utf-8") as output_file:
         output_file.write(hl.eval(hl.json(ds.globals.meta)))
 
     gene_search_terms = ds.select(data=hl.json(hl.tuple([ds.gene_id, ds.search_terms])))
@@ -108,7 +108,7 @@ def write_data_files(table_path, output_directory, genes=None):
 
         gene_results = [r.result for r in gene_results]
 
-        with open(f"{output_directory}/results/{dataset.lower()}.json", "w") as output_file:
+        with open(f"{output_directory}/results/{dataset.lower()}.json", mode="w", encoding="utf-8") as output_file:
             output_file.write(json.dumps({"results": gene_results}, cls=ResultEncoder))
 
     if genes:
@@ -122,7 +122,7 @@ def write_data_files(table_path, output_directory, genes=None):
     os.makedirs(f"{output_directory}/genes", exist_ok=True)
 
     with multiprocessing.get_context("spawn").Pool() as pool:
-        with open(f"{output_directory}/{temp_file_name}") as data_file:
+        with open(f"{output_directory}/{temp_file_name}", encoding="utf-8") as data_file:
 
             reader = csv.reader(data_file, delimiter="\t")
             for gene_id, gene_grch37, gene_grch38, all_variants in tqdm(pool.imap(split_data, reader), total=n_rows):
@@ -131,16 +131,18 @@ def write_data_files(table_path, output_directory, genes=None):
                 os.makedirs(gene_dir, exist_ok=True)
 
                 if gene_grch37:
-                    with open(f"{gene_dir}/{gene_id}_GRCh37.json", "w") as out_file:
+                    with open(f"{gene_dir}/{gene_id}_GRCh37.json", mode="w", encoding="utf-8") as out_file:
                         out_file.write(gene_grch37)
 
                 if gene_grch38:
-                    with open(f"{gene_dir}/{gene_id}_GRCh38.json", "w") as out_file:
+                    with open(f"{gene_dir}/{gene_id}_GRCh38.json", mode="w", encoding="utf-8") as out_file:
                         out_file.write(gene_grch38)
 
                 for dataset, dataset_variants in all_variants.items():
                     if dataset_variants:
-                        with open(f"{gene_dir}/{gene_id}_{dataset.lower()}_variants.json", "w") as out_file:
+                        with open(
+                            f"{gene_dir}/{gene_id}_{dataset.lower()}_variants.json", mode="w", encoding="utf-8"
+                        ) as out_file:
                             out_file.write(dataset_variants)
 
     os.remove(f"{output_directory}/{temp_file_name}")

@@ -18,5 +18,5 @@ try:
     for section, option in REQUIRED_CONFIGURATION:
         value = pipeline_config.get(section, option)
         assert value
-except (configparser.NoOptionError, AssertionError):
-    raise Exception(f"Missing required configuration '{section}.{option}'")
+except (configparser.NoOptionError, AssertionError) as exc:
+    raise Exception(f"Missing required configuration '{section}.{option}'") from exc

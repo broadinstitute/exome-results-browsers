@@ -69,7 +69,11 @@ def combine_datasets(dataset_ids):
                         variant_results.group_results.get(group),
                         lambda group_result: hl.or_missing(
                             hl.is_defined(group_result),
-                            hl.tuple([group_result[field] for field in variant_group_result_field_names]),
+                            hl.tuple(
+                                # pylint: disable=cell-var-from-loop
+                                [group_result[field] for field in variant_group_result_field_names]
+                                # pylint: enable=cell-var-from-loop
+                            ),
                         ),
                     )
                     for group in variant_result_analysis_groups
