@@ -75,13 +75,13 @@ const Epi25Browser = () => (
       {
         key: 'damaging_missense_case_count',
         heading: 'Damaging Missense Case Count',
-        minWidth: 70,
+        minWidth: 85,
         render: renderCount,
       },
       {
         key: 'damaging_missense_control_count',
         heading: 'Damaging Missense Control Count',
-        minWidth: 70,
+        minWidth: 85,
         render: renderCount,
       },
       {
@@ -143,6 +143,11 @@ const Epi25Browser = () => (
       {
         term: 'ptv',
         label: 'Protein-truncating',
+        category: 'lof',
+      },
+      {
+        term: 'pLoF',
+        label: 'Probably Loss-of-Function',
         category: 'lof',
       },
       {

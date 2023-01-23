@@ -81,7 +81,7 @@ const Epi25HomePage = () => (
       <Link to="/downloads">available for download</Link>.
     </p>
 
-    <p>Analysis data last updated November January 23, 2023.</p>
+    <p>Analysis data last updated January 23, 2023.</p>
   </HomePageWrapper>
 )
 
