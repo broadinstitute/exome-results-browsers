@@ -72,12 +72,13 @@ the browsers and so cannot be attached to another instance in read-write mode.
    apt-get -qq install adoptopenjdk-8-hotspot
    apt-get -qq install python3-pip
    pip3 install hail
+   pip3 install tqdm
    ```
 
 6. Copy results data from GCS.
 
    ```
-   gsutil -q cp -r gs://exome-results-browsers/data/combined.ht /tmp
+   gsutil -q cp -r gs://exome-results-browsers/data/<DATA-DATE>/combined.ht /tmp
    ```
 
 7. Write results files to persistent disk.
@@ -122,6 +123,22 @@ Build the Docker image. The build script tags the image with the current git rev
 ```
 ./deployment/build-docker-image.sh
 ```
+
+## Updating Production Deployment
+
+Build the Docker image. When the Docker image is finished building, the script prints the name and tag to the console
+
+```
+./deployment/build-docker-image.sh
+```
+
+Update the production deployment to the desired Docker image with
+
+```
+./deployment/deploy-image.sh <IMAGE-TAG>
+```
+
+To update both the production front/backend and the data at the same time, modify the `pdName` value in the volumes section of `deployment/manifests/deployment.yaml` before running the `deploy-image` script.
 
 ## GKE resources
 
