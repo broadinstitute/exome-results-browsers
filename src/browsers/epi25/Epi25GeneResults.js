@@ -10,61 +10,82 @@ const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
+const renderOddsRatio = (value) => {
+  if (value === null) {
+    return '-'
+  }
+  if (value === 'Infinity') {
+    return '∞'
+  }
+  if (value === 0) {
+    return '0'
+  }
+  return value.toPrecision(3)
+}
+
 const Epi25GeneResult = ({ result }) => (
   <div>
     <Table>
       <thead>
         <tr>
           <th scope="col">Category</th>
-          <th scope="col">Cases</th>
-          <th scope="col">Controls</th>
+          <th scope="col">Case Count</th>
+          <th scope="col">Control Count</th>
           <th scope="col">P-Val</th>
+          <th scope="col">Odds Ratio</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <th scope="row">LoF</th>
-          <td>{result.xcase_lof === null ? '—' : result.xcase_lof}</td>
-          <td>{result.xctrl_lof === null ? '—' : result.xctrl_lof}</td>
-          <td>{result.pval_lof === null ? '—' : result.pval_lof.toPrecision(3)}</td>
+          <th scope="row">Protein-truncating</th>
+          <td>{result.ptv_case_count === null ? '-' : result.ptv_case_count}</td>
+          <td>{result.ptv_control_count === null ? '-' : result.ptv_control_count}</td>
+          <td>{result.ptv_pval === null ? '-' : result.ptv_pval.toPrecision(3)}</td>
+          <td>{renderOddsRatio(result.ptv_OR)}</td>
         </tr>
         <tr>
-          <th scope="row">MPC</th>
-          <td>{result.xcase_mpc === null ? '—' : result.xcase_mpc}</td>
-          <td>{result.xctrl_mpc === null ? '—' : result.xctrl_mpc}</td>
-          <td>{result.pval_mpc === null ? '—' : result.pval_mpc.toPrecision(3)}</td>
-        </tr>
-        <tr>
-          <th scope="row">Inframe Indel</th>
-          <td>{result.xcase_infrIndel === null ? '—' : result.xcase_infrIndel}</td>
-          <td>{result.xctrl_infrIndel === null ? '—' : result.xctrl_infrIndel}</td>
-          <td>{result.pval_infrIndel === null ? '—' : result.pval_infrIndel.toPrecision(3)}</td>
+          <th scope="row">Damaging Missense</th>
+          <td>
+            {result.damaging_missense_case_count === null
+              ? '-'
+              : result.damaging_missense_case_count}
+          </td>
+          <td>
+            {result.damaging_missense_control_count === null
+              ? '-'
+              : result.damaging_missense_control_count}
+          </td>
+          <td>
+            {result.damaging_missense_pval === null
+              ? '-'
+              : result.damaging_missense_pval.toPrecision(3)}
+          </td>
+          <td>{renderOddsRatio(result.damaging_missense_OR)}</td>
         </tr>
       </tbody>
-      <tfoot>
-        <tr>
-          <th scope="row">Overall</th>
-          <td />
-          <td />
-          <td>{result.pval === null ? '—' : result.pval.toPrecision(3)}</td>
-        </tr>
-      </tfoot>
     </Table>
+
+    <p style={{ marginTop: '2em' }}>
+      <strong>Total cases: {result.n_cases}</strong>
+    </p>
+    <p>
+      <strong>Total controls: {result.n_controls}</strong>
+    </p>
   </div>
 )
 
 Epi25GeneResult.propTypes = {
   result: PropTypes.shape({
-    xcase_lof: PropTypes.number,
-    xctrl_lof: PropTypes.number,
-    pval_lof: PropTypes.number,
-    xcase_mpc: PropTypes.number,
-    xctrl_mpc: PropTypes.number,
-    pval_mpc: PropTypes.number,
-    xcase_infrIndel: PropTypes.number,
-    xctrl_infrIndel: PropTypes.number,
-    pval_infrIndel: PropTypes.number,
-    pval: PropTypes.number,
+    n_cases: PropTypes.number,
+    n_controls: PropTypes.number,
+    damaging_missense_case_count: PropTypes.number,
+    damaging_missense_control_count: PropTypes.number,
+    damaging_missense_pval: PropTypes.number,
+    damaging_missense_OR: PropTypes.number,
+    ptv_case_count: PropTypes.number,
+    ptv_control_count: PropTypes.number,
+    ptv_pval: PropTypes.number,
+    ptv_OR: PropTypes.number,
   }).isRequired,
 }
 
@@ -79,19 +100,17 @@ const Epi25GeneResults = ({ results }) => (
             <p>
               These tables display the case-control gene burden for the full epilepsy cohort (EPI)
               and for each of the primary epilepsy types (DEE, GGE, and NAFE). Cases in the EPI
-              table includes all 9,170 epilepsy patients (1,021 with DEE, 3,108 with GGE, 3,597 with
-              NAFE, and 1,444 with other epilepsy syndromes). Each of the case groups is compared
-              against 8,364 controls without known neuropsychiatric conditions.
+              table includes all 20,979 epilepsy patients (1,938 with DEE, 5,499 with GGE, 9,219
+              with NAFE, and 4,323 with other epilepsy syndromes). Each of the case groups is
+              compared against 33,444 controls without known neuropsychiatric conditions.
             </p>
             <p>
               Given a functional category of deleterious variants, the numbers in the tables are the
-              carrier counts of singletons (AC=1) absent in the DiscovEHR database (“ultra-rare”
-              singletons) aggregated at the gene level. LoF stands for loss-of-function or
-              protein-truncating variants; MPC for missense variants with an MPC score &ge;2; and
-              Inframe indel for inframe insertions or deletions. DiscovEHR is a population allele
-              frequency reference that contains 50,726 whole-exome sequences from a largely European
-              and non-diseased adult population. The difference in the proportion of carriers
-              between cases and controls is assessed using a two-tailed Fisher’s exact test.
+              carrier counts of ultra-rare (allele count [AC]&ge;5) variants aggregated at the gene
+              level. The burden of ultra-rare, deleterious SNVs and indels - protein-truncating or
+              damaging missense (with an MPC score&le;2) variants - in cases versus controls is
+              assessed using a Firth logistic regression test with adjustment for sex and genetic
+              ancestry.
             </p>
           </>
         }

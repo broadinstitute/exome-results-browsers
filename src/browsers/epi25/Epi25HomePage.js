@@ -37,38 +37,32 @@ const Epi25HomePage = () => (
       The <ExternalLink href="https://epi-25.org">Epi25 collaborative</ExternalLink> is a global
       collaboration committed to aggregating, sequencing, and deep-phenotyping up to 25,000 epilepsy
       patients to advance epilepsy genetics research. Partnering with the Broad Institute, Epi25 has
-      sequenced more than 14,000 patients as of 2018 from 40 research cohorts across the world.
+      sequenced more than 20,000 patients as of 2022 from 59 research cohorts across the world.
     </p>
 
     <p>
       The Epi25 whole-exome sequencing (WES) case-control study is one of the collaborative&apos;s
       ongoing endeavors that aims to characterize the contribution of rare genetic variation to a
       spectrum of epilepsy syndromes to identify individual risk genes. The browser displays the
-      latest findings from the study—as part of the consortium’s deep dedication to data and
+      latest findings from the study—as part of the consortium&apos;s deep dedication to data and
       resource sharing—with the hope of engaging the scientific community to generate hypotheses and
       facilitate discoveries.
     </p>
 
     <p>
       In the current release, we report gene burden results of ultra-rare deleterious variants
-      (PTVs, missense variants with MPC&ge;2, and inframe indels not present in the DiscovEHR
-      database) in three primary epilepsy types: developmental and epileptic encephalopathy (DEE,
-      N=1,021), genetic generalized epilepsy (GGE, N=3,108), non-acquired focal epilepsy (NAFE,
-      N=3,597), as well as the full epilepsy cohort (EPI, N=9,170). Each subgroup was compared
-      against 8,364 controls aggregated from independent sources. Due to differences in ancestry and
-      exome capture technologies across cohorts, we implemented stringent QC procedures to minimize
-      confounding between cases and controls to arrive at the current dataset of 17,606 unrelated
-      individuals of European descent. Details of variant-calling, QC, and analysis pipelines can be
-      found in{' '}
-      <ExternalLink href="https://www.cell.com/ajhg/fulltext/S0002-9297(19)30207-1">
-        AJHG
-      </ExternalLink>{' '}
-      or on{' '}
-      <ExternalLink href="https://www.biorxiv.org/content/10.1101/525683v1">bioRxiv</ExternalLink>.
-      The current findings recapitulate candidate genes for screened DEE patients and highlight a
-      growing evidence of cation channel genes in the etiology of GGE and NAFE. With the continuing
-      effort to recruit samples, many from non-European populations, we anticipate a boost in the
-      detection power to identify risk-conferring genes in the coming years.
+      (protein-truncating and damaging missense variants) in three primary epilepsy types:
+      developmental and epileptic encephalopathy (DEE, N=1,938), genetic generalized epilepsy (GGE,
+      N=5,499), non-acquired focal epilepsy (NAFE, N=9,219), as well as the full epilepsy cohort
+      (EPI, N=20,979). Each subgroup was compared against 33,444 controls aggregated from
+      independent sources. With the enlarged sample size, we discovered exome-wide significant genes
+      for different types of epilepsies, implicating both shared and distinct rare variant risk
+      factors. Integrating these findings with associations implicated by copy number variants
+      (CNVs) and genome-wide association study (GWAS), we further identified convergence of
+      different types of genetic risk factor in the same genes. Details of the WES analyses as well
+      as the variant-calling and QC pipelines can be found in our latest preprint on bioRxiv. With
+      the continuing effort to recruit samples, many from non-European populations, we anticipate a
+      boost in the detection power to identify risk-conferring genes in the coming years.
     </p>
 
     <p>
@@ -87,7 +81,7 @@ const Epi25HomePage = () => (
       <Link to="/downloads">available for download</Link>.
     </p>
 
-    <p>Analysis data last updated November 27th, 2018.</p>
+    <p>Analysis data last updated November January 23, 2023.</p>
   </HomePageWrapper>
 )
 

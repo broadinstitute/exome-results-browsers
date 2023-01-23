@@ -20,7 +20,7 @@ spec:
           image: gcr.io/exac-gnomad/exome-results-browsers
           env:
             - name: RESULTS_DATA_DIRECTORY
-              value: /mnt/disks/data/results
+              value: /mnt/disks/erb-data/results
             - name: TRUST_PROXY
               value: '2'
           ports:
@@ -41,10 +41,10 @@ spec:
             periodSeconds: 30
           volumeMounts:
             - name: data
-              mountPath: /mnt/disks/data
+              mountPath: /mnt/disks/erb-data
       volumes:
         - name: data
           gcePersistentDisk:
             fsType: ext4
-            pdName: exome-results-browsers-data-220107-1330
+            pdName: exome-results-browsers-data-230123-1052
             readOnly: true
