@@ -23,6 +23,16 @@ const renderOddsRatio = (value) => {
   return value.toPrecision(3)
 }
 
+const renderPVal = (pval) => {
+  if (pval === null) {
+    return '-'
+  }
+  if (pval === 0) {
+    return '2.2e-16'
+  }
+  return pval.toPrecision(3)
+}
+
 const Epi25GeneResult = ({ result }) => (
   <div>
     <Table>
@@ -40,7 +50,7 @@ const Epi25GeneResult = ({ result }) => (
           <th scope="row">Protein-truncating</th>
           <td>{result.ptv_case_count === null ? '-' : result.ptv_case_count}</td>
           <td>{result.ptv_control_count === null ? '-' : result.ptv_control_count}</td>
-          <td>{result.ptv_pval === null ? '-' : result.ptv_pval.toPrecision(3)}</td>
+          <td>{renderPVal(result.ptv_pval)}</td>
           <td>{renderOddsRatio(result.ptv_OR)}</td>
         </tr>
         <tr>
@@ -55,11 +65,7 @@ const Epi25GeneResult = ({ result }) => (
               ? '-'
               : result.damaging_missense_control_count}
           </td>
-          <td>
-            {result.damaging_missense_pval === null
-              ? '-'
-              : result.damaging_missense_pval.toPrecision(3)}
-          </td>
+          <td>{renderPVal(result.damaging_missense_pval)}</td>
           <td>{renderOddsRatio(result.damaging_missense_OR)}</td>
         </tr>
       </tbody>
@@ -110,7 +116,7 @@ const Epi25GeneResults = ({ results }) => (
               level. The burden of ultra-rare, deleterious SNVs and indels - protein-truncating or
               damaging missense (with an MPC score&le;2) variants - in cases versus controls is
               assessed using a Firth logistic regression test with adjustment for sex and genetic
-              ancestry.
+              ancestry (P-value is capped at 2.2e-16).
             </p>
           </>
         }
