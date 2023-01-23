@@ -1,4 +1,4 @@
-FROM node:16.13.1-alpine AS build
+FROM --platform=linux/amd64 node:16.13.1-alpine AS build
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 WORKDIR /home/node/app
@@ -22,7 +22,7 @@ COPY --chown=node:node build.env .
 RUN export $(cat build.env | xargs); yarn run build
 
 ###############################################################################
-FROM node:16.13.1-alpine
+FROM --platform=linux/amd64 node:16.13.1-alpine
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 WORKDIR /home/node/app
