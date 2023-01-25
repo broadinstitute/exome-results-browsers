@@ -141,13 +141,8 @@ const Epi25Browser = () => (
         category: 'missense',
       },
       {
-        term: 'ptv',
-        label: 'Protein-truncating',
-        category: 'lof',
-      },
-      {
         term: 'pLoF',
-        label: 'Probably Loss-of-Function',
+        label: 'Protein-truncating',
         category: 'lof',
       },
       {
