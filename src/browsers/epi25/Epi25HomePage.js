@@ -72,8 +72,8 @@ const Epi25HomePage = () => (
       <ExternalLink href="https://epi-25.org/epi25-members/">consortium members</ExternalLink> and
       patients for their gracious contribution to make this collaboration possible. We welcome any
       feedback! You can contact us by{' '}
-      <ExternalLink href="mailto:yfeng@broadinstitute.org">email</ExternalLink> if you have any
-      questions or suggestions.
+      <ExternalLink href="mailto:epi25browser@broadinstitute.org">email</ExternalLink> if you have
+      any questions or suggestions.
     </p>
 
     <p>
