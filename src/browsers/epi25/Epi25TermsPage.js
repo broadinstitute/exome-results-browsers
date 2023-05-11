@@ -21,7 +21,7 @@ const TermsPageContent = () => (
     <p>
       We request that any publications or reports of results obtained from using the information
       available in this browser cite the{' '}
-      <ExternalLink href="https://www.cell.com/ajhg/fulltext/S0002-9297(19)30207-1">
+      <ExternalLink href="https://www.medrxiv.org/content/10.1101/2023.02.22.23286310">
         primary manuscript
       </ExternalLink>{' '}
       that reports on the Epi25 WES analyses. Epi25 does not need to be included as co-authors on
