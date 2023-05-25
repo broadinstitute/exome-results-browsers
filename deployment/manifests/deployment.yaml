@@ -46,5 +46,5 @@ spec:
         - name: data
           gcePersistentDisk:
             fsType: ext4
-            pdName: exome-results-browsers-data-230123-1052
+            pdName: exome-results-browsers-data-230123-1052-east1c
             readOnly: true

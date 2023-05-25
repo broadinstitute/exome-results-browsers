@@ -4,7 +4,7 @@ kind: Ingress
 metadata:
   name: exome-results-browsers-ingress
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: exome-results-browsers
+    kubernetes.io/ingress.global-static-ip-name: prod-exome-results-browsers-ip
     ingress.gcp.kubernetes.io/pre-shared-cert: exome-results-browsers-cert
     networking.gke.io/v1beta1.FrontendConfig: exome-results-browsers-frontend-config
   labels:
