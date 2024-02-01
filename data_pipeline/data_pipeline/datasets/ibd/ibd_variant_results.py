@@ -9,14 +9,15 @@ def prepare_variant_results():
     # Get unique variants from results table
     variants = results.group_by(results.locus, results.alleles).aggregate()
 
-    # Looks like ac_control was mistakenly encoded as a string, e.g. "[83198, 0]"
-    results = results.annotate(
-        # pylint: disable-next=anomalous-backslash-in-string, unnecessary-lambda
-        ac_control=hl.map(lambda x: hl.int(x), results.ac_control.replace("\[", "").replace("\]", "").split(", "))
-    )
+    # Select AC/AF numbers for the reference and alternate alleles
+    results = results.annotate(ac_case=results.ac_case[1], ac_ctrl=results.ac_control[1], an_case=results.ac_case[0], an_ctrl=results.ac_control[0])
 
-    # Select AC/AF numbers for the alternate allele
-    results = results.annotate(ac_case=results.ac_case[1], ac_ctrl=results.ac_control[1])
+    # TODO: I also should do some renaming and filtering here:
+    # the three sub-things I have coming in are lowercase, and end in -control
+
+    # TODO: also, in gene results I should figure out what is going on with all the
+    # bajillion fields I'm returning (0_001_03, etc)
+    # need to check the input schema of something like Epi25 vs IBD
 
     results = results.drop("ac_control")
 
