@@ -141,7 +141,7 @@ if (isDevelopment) {
     }),
     {}
   )
-  getDatasetForRequest = () => datasetBySubdomain['ibd']
+  getDatasetForRequest = () => datasetBySubdomain.ibd
 }
 
 // Store dataset on request object so other route handlers can use it.
