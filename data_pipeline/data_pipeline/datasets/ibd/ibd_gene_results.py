@@ -24,6 +24,7 @@ def prepare_gene_results():
         "HetP",
     )
 
+    # pylint: disable-next=anomalous-backslash-in-string
     results = results.annotate(burden_test=results.burden_test.replace("\.", "_").replace("\+", "_").lower())
 
     final_results = None

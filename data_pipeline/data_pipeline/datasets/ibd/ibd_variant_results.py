@@ -11,6 +11,7 @@ def prepare_variant_results():
 
     # Looks like ac_control was mistakenly encoded as a string, e.g. "[83198, 0]"
     results = results.annotate(
+        # pylint: disable-next=anomalous-backslash-in-string, unnecessary-lambda
         ac_control=hl.map(lambda x: hl.int(x), results.ac_control.replace("\[", "").replace("\]", "").split(", "))
     )
 
