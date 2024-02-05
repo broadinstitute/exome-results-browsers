@@ -24,13 +24,15 @@ const renderOddsRatio = (value) => {
 }
 
 const renderPVal = (pval) => {
-  if (pval === null) {
-    return '-'
-  }
-  if (pval === 0) {
-    return '2.2e-16'
-  }
-  return pval.toPrecision(3)
+  console.log(pval)
+  // if (pval === null) {
+  //   return '-'
+  // }
+  // if (pval === 0) {
+  //   return '2.2e-16'
+  // }
+  // return pval.toPrecision(3)
+  return 1
 }
 
 const IBDGeneResult = ({ result }) => (
@@ -48,14 +50,15 @@ const IBDGeneResult = ({ result }) => (
       <tbody>
         <tr>
           <th scope="row">Protein-truncating</th>
-          <td>{result.ptv_case_count === null ? '-' : result.ptv_case_count}</td>
-          <td>{result.ptv_control_count === null ? '-' : result.ptv_control_count}</td>
-          <td>{renderPVal(result.ptv_pval)}</td>
-          <td>{renderOddsRatio(result.ptv_OR)}</td>
+          {/* <td>{result.ptv_case_count === null ? '-' : result.ptv_case_count}</td> */}
+          {/* <td>{result.ptv_control_count === null ? '-' : result.ptv_control_count}</td> */}
+          {/* <td>{renderPVal(result.ptv_pval)}</td> */}
+          {/* <td>{renderPVal(result)}</td> */}
+          {/* <td>{renderOddsRatio(result.ptv_OR)}</td> */}
         </tr>
         <tr>
           <th scope="row">Damaging Missense</th>
-          <td>
+          {/* <td>
             {result.damaging_missense_case_count === null
               ? '-'
               : result.damaging_missense_case_count}
@@ -66,7 +69,7 @@ const IBDGeneResult = ({ result }) => (
               : result.damaging_missense_control_count}
           </td>
           <td>{renderPVal(result.damaging_missense_pval)}</td>
-          <td>{renderOddsRatio(result.damaging_missense_OR)}</td>
+          <td>{renderOddsRatio(result.damaging_missense_OR)}</td> */}
         </tr>
       </tbody>
     </Table>
@@ -123,7 +126,7 @@ const IBDGeneResults = ({ results }) => (
       />
     </h2>
     <Tabs
-      tabs={['EPI', 'DEE', 'GGE', 'NAFE'].map((group) => ({
+      tabs={['cd', 'ibd', 'uc'].map((group) => ({
         id: group,
         label: group,
         render: () =>
