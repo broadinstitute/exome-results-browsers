@@ -1,0 +1,22 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-exome-results-browsers-ingress
+  annotations:
+    kubernetes.io/ingress.demo-static-ip-name: demo-exome-results-browsers-ip
+    networking.gke.io/v1beta1.FrontendConfig: demo-exome-results-browsers-frontend-config
+  labels:
+    service: demo-exome-results-browsers
+    environment: qa
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+            service:
+              name: demo-exome-results-browsers
+              port:
+                number: 80
+              pathType: ImplementationSpecific
+    

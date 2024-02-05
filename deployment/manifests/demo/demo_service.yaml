@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-exome-results-browsers
+  labels:
+    service: demo-exome-results-browsers
+    environment: qa
+spec:
+  type: NodePort
+  selector:
+    name: demo-exome-results-browsers
+  ports:
+    - port: 80
+      targetPort: 8000
