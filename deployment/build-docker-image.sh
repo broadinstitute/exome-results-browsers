@@ -39,7 +39,7 @@ docker build . \
 
 echo "gcr.io/exac-gnomad/exome-results-browsers:${IMAGE_TAG}"
 
-# Push the docker image to the container registry if 'push' was passed
+# Push image to the container registry if 'push' was passed
 if [ "$PUSH_IMAGE" = true ]; then
   docker push "gcr.io/exac-gnomad/exome-results-browsers:${IMAGE_TAG}"
   docker push "gcr.io/exac-gnomad/exome-results-browsers:latest"
