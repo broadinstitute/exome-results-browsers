@@ -129,6 +129,7 @@ ASC_BROWSER_GA_TRACKING_ID=
 BipEx_BROWSER_GA_TRACKING_ID=
 Epi25_BROWSER_GA_TRACKING_ID=
 SCHEMA_BROWSER_GA_TRACKING_ID=
+IBD_BROWSER_GA_TRACKING_ID=
 EOF
 ```
 
@@ -180,7 +181,24 @@ To update both the production front/backend and the data at the same time, modif
 - Expose deployment with an [Ingress](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress).
 
   ```
-  kubectl apply -f manifests/service.yaml
-  kubectl apply -f manifests/frontendconfig.yaml
-  kubectl apply -f manifests/ingress.yaml
+  kubectl apply -f deployment/manifests/service.yaml
+  kubectl apply -f deployment/manifests/frontendconfig.yaml
+  kubectl apply -f deployment/manifests/ingress.yaml
+  ```
+
+
+## Creating a Demo Deployment
+
+- Create deployment.
+
+  ```
+  kubectl apply -f deployment/manifests/demo/demo_deployment.yaml
+  ```
+
+- Expose deployment with an [Ingress](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress).
+
+  ```
+  kubectl apply -f deployment/manifests/demo/demo_service.yaml
+  kubectl apply -f deployment/manifests/demo/demo_frontendconfig.yaml
+  kubectl apply -f deployment/manifests/demo/demo_ingress.yaml
   ```

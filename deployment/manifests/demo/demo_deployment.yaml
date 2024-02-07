@@ -18,8 +18,8 @@ spec:
     spec:
       containers:
         - name: app
-          image: gcr.io/exac-gnomad/exome-results-browsers
-          imagePullPulicy: Always
+          image: gcr.io/exac-gnomad/exome-results-browsers:6c842d4-rg_add_demo_kubernetes_yaml
+          imagePullPolicy: Always
           env:
             - name: RESULTS_DATA_DIRECTORY
               value: /mnt/disks/erb-data/results
@@ -48,5 +48,5 @@ spec:
         - name: data
           gcePersistentDisk:
             fsType: ext4
-            pdName: exome-results-browsers-data-230123-1052-east1c
+            pdName: exome-results-browsers-data-240207-1325
             readOnly: true

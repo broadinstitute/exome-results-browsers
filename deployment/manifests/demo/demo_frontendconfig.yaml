@@ -4,4 +4,4 @@ metadata:
   name: demo-exome-results-browsers-frontend-config
 spec:
   redirectToHttps:
-    enabled: true
+    enabled: false

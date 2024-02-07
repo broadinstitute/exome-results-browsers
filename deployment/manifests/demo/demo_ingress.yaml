@@ -14,9 +14,9 @@ spec:
     - http:
         paths:
           - backend:
-            service:
-              name: demo-exome-results-browsers
-              port:
-                number: 80
-              pathType: ImplementationSpecific
+              service:
+                name: demo-exome-results-browsers
+                port:
+                  number: 80
+            pathType: ImplementationSpecific
     
