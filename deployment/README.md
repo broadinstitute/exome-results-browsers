@@ -55,6 +55,14 @@ the browsers and so cannot be attached to another instance in read-write mode.
    gcloud compute ssh erb-temp-instance
    ```
 
+   Start a shell with root permissions
+
+   ```
+   sudo -i
+   ```
+
+   Format the disk
+
    ```
    mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/disk/by-id/google-erb-data
 
@@ -65,14 +73,20 @@ the browsers and so cannot be attached to another instance in read-write mode.
 5. Install Hail.
 
    ```
-   apt-get -qq install wget software-properties-common
-   wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
-   add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
-   apt-get -qq update
-   apt-get -qq install adoptopenjdk-8-hotspot
+   apt-get -qq update && \
+   apt-get -qq install gnupg software-properties-common wget && \
+   apt install -y wget apt-transport-https && \
+   mkdir -p /etc/apt/keyrings && \
+   wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | tee /etc/apt/keyrings/adoptium.asc && \
+   echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list && \
+   apt update && \
+   apt install -y temurin-8-jdk && \
+   rm -rf /var/lib/apt/lists/*
+   add-apt-repository universe
+   apt-get update
    apt-get -qq install python3-pip
-   pip3 install hail
-   pip3 install tqdm
+   pip3 install hail==0.2.126
+   pip3 install tqdm==4.66.1
    ```
 
 6. Copy results data from GCS.
@@ -147,7 +161,7 @@ To update both the production front/backend and the data at the same time, modif
 - Create deployment.
 
   ```
-  kubectl apply -f manifests/deployment.yaml
+  kubectl apply -f deployment/manifests/deployment.yaml
   ```
 
 - Reserve IP address.
