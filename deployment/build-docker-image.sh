@@ -10,6 +10,12 @@ if [ ! -f build.env ]; then
   exit 1
 fi
 
+PUSH_IMAGE=false
+
+if [ "$1" = "push" ]; then
+  PUSH_IMAGE=true
+fi
+
 # Tag image with git revision
 COMMIT_HASH=$(git rev-parse --short HEAD)
 IMAGE_TAG=${COMMIT_HASH}
@@ -32,3 +38,10 @@ docker build . \
   --tag "gcr.io/exac-gnomad/exome-results-browsers:latest"
 
 echo "gcr.io/exac-gnomad/exome-results-browsers:${IMAGE_TAG}"
+
+# Push the docker image to the container registry if 'push' was passed
+if [ "$PUSH_IMAGE" = true ]; then
+  docker push "gcr.io/exac-gnomad/exome-results-browsers:${IMAGE_TAG}"
+  docker push "gcr.io/exac-gnomad/exome-results-browsers:latest"
+  echo "Pushed gcr.io/exac-gnomad/exome-results-browsers:${IMAGE_TAG}"
+fi

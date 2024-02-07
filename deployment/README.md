@@ -129,7 +129,7 @@ Build the Docker image. The build script tags the image with the current git rev
 Build the Docker image. When the Docker image is finished building, the script prints the name and tag to the console
 
 ```
-./deployment/build-docker-image.sh
+./deployment/build-docker-image.sh push
 ```
 
 Update the production deployment to the desired Docker image with
