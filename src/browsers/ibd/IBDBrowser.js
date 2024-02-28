@@ -3,6 +3,7 @@ import React from 'react'
 import Browser from '../base/Browser'
 import { renderCount, renderFloat } from '../base/tableCells'
 
+import IBDAboutPage from './IBDAboutPage'
 import IBDHomePage from './IBDHomePage'
 import IBDTermsPage from './IBDTermsPage'
 import IBDVariantFilter from './IBDVariantFilter'
@@ -29,6 +30,11 @@ const IBDBrowser = () => (
     navBarBackgroundColor="#7b558c"
     homePage={IBDHomePage}
     extraPages={[
+      {
+        path: '/about',
+        label: 'About',
+        component: IBDAboutPage,
+      },
       {
         path: '/terms',
         label: 'Terms',
