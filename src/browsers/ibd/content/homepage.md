@@ -1,4 +1,4 @@
-Examples - Gene name: [TODO:](/gene/ENSG00000099381), Ensembl gene ID: [ENSG00000055130](/gene/ENSG00000055130)
+Examples - Gene name: [NOD2](/gene/ENSG00000167207), Ensembl gene ID: [ENSG00000167207](/gene/ENSG00000167207)
 
 The IBD Sequencing Consortium is a global collaboration dedicated to aggregating, generating, and analyzing high-throughput sequencing data of inflammatory bowel disease patients to improve our understanding of disease architecture and advance gene discovery. The consortium was formed in 2014 with a commitment of data sharing, diversity and inclusivity - our hope is that the findings form theis study and others like it will provide a foundation for further investigation of disease mechanism and theraputic discovery.  This browser is part of that overall effor to display and share these results with the wider scientific community.  Partnering with the Broad Institute, the IBD Sequencing Consortium has sequenced more than XX patients as of 2024 from XX research cohorts across the world.
 
