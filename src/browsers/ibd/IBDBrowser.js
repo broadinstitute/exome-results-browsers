@@ -1,11 +1,14 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount } from '../base/tableCells'
+import { renderCount, renderFloat } from '../base/tableCells'
 
 import IBDHomePage from './IBDHomePage'
 import IBDTermsPage from './IBDTermsPage'
 import IBDVariantFilter from './IBDVariantFilter'
+import vepConsequences from '../base/vepConsequences'
+
+const variantConsequences = [...vepConsequences]
 
 const renderOddsRatio = (value) => {
   if (value === null) {
@@ -23,7 +26,7 @@ const renderOddsRatio = (value) => {
 const IBDBrowser = () => (
   <Browser
     browserTitle="IBD Browser"
-    navBarBackgroundColor="#4e3c81"
+    navBarBackgroundColor="#7b558c"
     homePage={IBDHomePage}
     extraPages={[
       {
@@ -73,7 +76,8 @@ const IBDBrowser = () => (
         {
           key: 'group_result.p',
           heading: 'P\u2011Value',
-          minWidth: 65,
+          minWidth: 75,
+          render: (value) => renderFloat(value),
         },
       ]
       //   [
@@ -88,11 +92,6 @@ const IBDBrowser = () => (
       //     minWidth: 65,
       //   },
       //   {
-      //     key: 'group_result.p_value',
-      //     heading: 'P\u2011Value',
-      //     minWidth: 65,
-      //   },
-      //   {
       //     key: 'group_result.in_analysis',
       //     heading: 'In Analysis',
       //     minWidth: 85,
@@ -103,41 +102,7 @@ const IBDBrowser = () => (
       //   },
       // ]
     }
-    variantConsequences={
-      [{ term: 'missense_variant', label: 'Missense variant', category: 'missense' }]
-      //   [
-      //   {
-      //     term: 'damaging_missense',
-      //     label: 'Damaging Missense',
-      //     category: 'missense',
-      //   },
-      //   {
-      //     term: 'non_coding',
-      //     label: 'Non-coding',
-      //     category: 'other',
-      //   },
-      //   {
-      //     term: 'other_missense',
-      //     label: 'Other Missense',
-      //     category: 'missense',
-      //   },
-      //   {
-      //     term: 'pLoF',
-      //     label: 'Protein-truncating',
-      //     category: 'lof',
-      //   },
-      //   {
-      //     term: 'synonymous',
-      //     label: 'Synonymous',
-      //     category: 'synonymous',
-      //   },
-      //   {
-      //     term: 'NA',
-      //     label: '',
-      //     category: 'other',
-      //   },
-      // ]
-    }
+    variantConsequences={variantConsequences}
     variantCustomFilter={{
       component: IBDVariantFilter,
       defaultFilter: {
