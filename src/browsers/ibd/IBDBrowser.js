@@ -11,18 +11,18 @@ import vepConsequences from '../base/vepConsequences'
 
 const variantConsequences = [...vepConsequences]
 
-const renderOddsRatio = (value) => {
-  if (value === null) {
-    return ''
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-  return value.toPrecision(3)
-}
+// const renderOddsRatio = (value) => {
+//   if (value === null) {
+//     return ''
+//   }
+//   if (value === 'Infinity') {
+//     return '∞'
+//   }
+//   if (value === 0) {
+//     return '0'
+//   }
+//   return value.toPrecision(3)
+// }
 
 const IBDBrowser = () => (
   <Browser

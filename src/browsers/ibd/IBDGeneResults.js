@@ -10,30 +10,30 @@ const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
-const renderOddsRatio = (value) => {
-  if (value === null) {
-    return '-'
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-  return value.toPrecision(3)
-}
+// const renderOddsRatio = (value) => {
+//   if (value === null) {
+//     return '-'
+//   }
+//   if (value === 'Infinity') {
+//     return '∞'
+//   }
+//   if (value === 0) {
+//     return '0'
+//   }
+//   return value.toPrecision(3)
+// }
 
-const renderPVal = (pval) => {
-  console.log(pval)
-  // if (pval === null) {
-  //   return '-'
-  // }
-  // if (pval === 0) {
-  //   return '2.2e-16'
-  // }
-  // return pval.toPrecision(3)
-  return 1
-}
+// const renderPVal = (pval) => {
+//   console.log(pval)
+//   // if (pval === null) {
+//   //   return '-'
+//   // }
+//   // if (pval === 0) {
+//   //   return '2.2e-16'
+//   // }
+//   // return pval.toPrecision(3)
+//   return 1
+// }
 
 const IBDGeneResult = ({ result }) => (
   <div>
