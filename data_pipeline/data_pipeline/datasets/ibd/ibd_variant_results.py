@@ -10,7 +10,12 @@ def prepare_variant_results():
     variants = results.group_by(results.locus, results.alleles).aggregate()
 
     # Select AC/AF numbers for the reference and alternate alleles
-    results = results.annotate(ac_case=results.ac_case[1], ac_ctrl=results.ac_control[1], an_case=results.ac_case[0], an_ctrl=results.ac_control[0])
+    results = results.annotate(
+        ac_case=results.ac_case[1],
+        ac_ctrl=results.ac_control[1],
+        an_case=results.ac_case[0],
+        an_ctrl=results.ac_control[0],
+    )
 
     # TODO: I also should do some renaming and filtering here:
     # the three sub-things I have coming in are lowercase, and end in -control
