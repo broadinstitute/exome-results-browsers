@@ -16,11 +16,11 @@ def prepare_variant_results():
         an_case=results.ac_case[0],
         an_ctrl=results.ac_control[0],
     )
-   
+
     # pylint: disable=fixme
     # TODO: I also should do some renaming and filtering here:
     # the three sub-things I have coming in are lowercase, and end in -control
-    
+
     # pylint: disable=broad-exception-raised
     # TODO: also, in gene results I should figure out what is going on with all the
     # bajillion fields I'm returning (0_001_03, etc)
