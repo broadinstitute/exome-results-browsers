@@ -73,6 +73,7 @@ def split_data(row):
 
 def write_data_files(table_path, output_directory, genes=None):
     if output_directory.startswith("gs://"):
+        # pylint: disable=broad-exception-raised
         raise Exception("Cannot write output to Google Storage")
 
     ds = hl.read_table(table_path)
