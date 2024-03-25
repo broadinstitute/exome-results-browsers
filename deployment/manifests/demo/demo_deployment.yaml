@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: gcr.io/exac-gnomad/exome-results-browsers:6c842d4-rg_add_demo_kubernetes_yaml
+          image: gcr.io/exac-gnomad/exome-results-browsers:a017321-rg_add_demo_kubernetes_yaml
           imagePullPolicy: Always
           env:
             - name: RESULTS_DATA_DIRECTORY
