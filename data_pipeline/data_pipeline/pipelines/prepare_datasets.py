@@ -39,6 +39,9 @@ def prepare_dataset(dataset_id, test_gene_symbol, output_local):
     validate_variant_results_table(variant_results)
     variant_results.write(os.path.join(output_path, "variant_results.ht"), overwrite=True)
 
+    print("exiting!")
+    exit(0)
+
 
 def main():
     all_datasets = pipeline_config.get("datasets", "datasets").split(",")
