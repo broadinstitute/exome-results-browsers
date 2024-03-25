@@ -75,7 +75,14 @@ def prepare_gene_results():
         final_results = final_results.annotate(
             group_results=hl.dict(
                 final_results.group_results.map(
-                    lambda group_result: (group_result.analysis_group, group_result.drop("analysis_group"))
+                    lambda group_result: (
+                        hl.switch(group_result.analysis_group)
+                        .when("ibd", "IBD")
+                        .when("cd", "CD")
+                        .when("uc", "UC")
+                        .or_missing(),
+                        group_result.drop("analysis_group"),
+                    )
                 )
             )
         )
