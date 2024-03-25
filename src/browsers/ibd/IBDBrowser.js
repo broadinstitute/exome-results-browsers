@@ -80,23 +80,30 @@ const IBDBrowser = () => (
     variantResultColumns={
       [
         {
-          key: 'group_result.p',
+          // TODO: change back to p value when new data is uploaded
+          //   columns were mistakenly swapped in old input data
+          // key: 'group_result.p',
+          key: 'group_result.chi_sq_stat',
           heading: 'P\u2011Value',
           minWidth: 75,
           render: (value) => renderFloat(value),
         },
+        //   [
+        //   {
+        //     key: 'group_result.estimate',
+        //     heading: 'Estimate',
+        //     minWidth: 80,
+        //   },
+        {
+          // TODO: change back to chi_sq when new data is uploaded
+          //   columns were mistakenly swapped in old input data
+          // key: 'group_result.chi_sq_stat',
+          key: 'group_result.p',
+          heading: 'χ²',
+          minWidth: 65,
+          render: (value) => renderFloat(value),
+        },
       ]
-      //   [
-      //   {
-      //     key: 'group_result.estimate',
-      //     heading: 'Estimate',
-      //     minWidth: 80,
-      //   },
-      //   {
-      //     key: 'group_result.chi_sq_stat',
-      //     heading: 'χ²',
-      //     minWidth: 65,
-      //   },
       //   {
       //     key: 'group_result.in_analysis',
       //     heading: 'In Analysis',
