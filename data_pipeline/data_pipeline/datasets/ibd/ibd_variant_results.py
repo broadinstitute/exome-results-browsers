@@ -17,10 +17,6 @@ def prepare_variant_results():
         an_ctrl=results.ac_control[0],
     )
 
-    # pylint: disable=fixme
-    # TODO: I also should do some renaming and filtering here:
-    # the three sub-things I have coming in are lowercase, and end in -control
-
     # pylint: disable=broad-exception-raised
     # TODO: also, in gene results I should figure out what is going on with all the
     # bajillion fields I'm returning (0_001_03, etc)
@@ -30,12 +26,19 @@ def prepare_variant_results():
 
     results = results.filter((results.ac_case > 0) | (results.ac_ctrl > 0))
 
-    # Annotate variants with a struct for each analysis group
+    # Annotate variants with a struct for each analysis group, rename the analysis groups
     results = results.group_by("locus", "alleles").aggregate(group_results=hl.agg.collect(results.row_value))
     results = results.annotate(
         group_results=hl.dict(
             results.group_results.map(
-                lambda group_result: (group_result.analysis_group, group_result.drop("analysis_group"))
+                lambda group_result: (
+                    hl.switch(group_result.analysis_group)
+                    .when("ibd-control", "IBD")
+                    .when("cd-control", "CD")
+                    .when("uc-control", "UC")
+                    .or_missing(),
+                    group_result.drop("analysis_group"),
+                )
             )
         )
     )
