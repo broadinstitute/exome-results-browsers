@@ -47,32 +47,53 @@ const IBDBrowser = () => (
     defaultGeneResultAnalysisGroup="ibd"
     defaultGeneResultSortKey="todo"
     geneResultColumns={[
+      // {
+      //   key: 'n_cases',
+      //   heading: 'Cases',
+      //   minWidth: 90,
+      //   render: renderCount,
+      // },
+      // {
+      //   key: 'n_controls',
+      //   heading: 'Controls',
+      //   minWidth: 90,
+      //   render: renderCount,
+      // },
       {
-        key: 'n_cases',
-        heading: 'Cases',
-        minWidth: 90,
-        render: renderCount,
+        key: 'lof_singleton_P',
+        heading: 'lof singleton P',
+        minWidth: 110,
+        // render: renderCount,
+        render: (value) => renderFloat(value),
       },
       {
-        key: 'n_controls',
-        heading: 'Controls',
-        minWidth: 90,
-        render: renderCount,
+        key: 'lof_missense_singleton_P',
+        heading: 'lof missense singleton P',
+        minWidth: 110,
+        // render: renderCount,
+        render: (value) => renderFloat(value),
       },
-      // TODO: add more below
+      {
+        key: 'lof_0_001_P',
+        heading: 'lof 0_001 P',
+        minWidth: 110,
+        // render: renderCount,
+        render: (value) => renderFloat(value),
+      },
       {
         key: 'lof_missense_0_001_P',
-        heading: 'lof missense P',
+        heading: 'lof missense 0_001 P',
         minWidth: 110,
-        render: renderCount,
+        // render: renderCount,
+        render: (value) => renderFloat(value),
       },
       {
         key: 'lof_missense_0_001_BETA',
-        heading: 'lof missense beta',
+        heading: 'lof missense 0_001 beta',
         minWidth: 110,
-        render: renderCount,
+        // render: renderCount,
+        render: (value) => renderFloat(value),
       },
-      // TODO: add more above
     ]}
     // TODO:
     defaultVariantAnalysisGroup="ibd-control"
