@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount, renderFloat } from '../base/tableCells'
+import { renderFloat } from '../base/tableCells'
 
 import IBDAboutPage from './IBDAboutPage'
 import IBDHomePage from './IBDHomePage'
