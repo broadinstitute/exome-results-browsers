@@ -12,20 +12,23 @@ from data_pipeline.validation import validate_gene_results_table, validate_varia
 def prepare_dataset(dataset_id):
     output_path = pipeline_config.get("output", "staging_path")
 
-    gene_results_module = importlib.import_module(
-        f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_gene_results"
-    )
+    # gene_results_module = importlib.import_module(
+    #     f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_gene_results"
+    # )
     variant_results_module = importlib.import_module(
         f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_variant_results"
     )
 
-    gene_results = gene_results_module.prepare_gene_results()
-    validate_gene_results_table(gene_results)
-    gene_results.write(os.path.join(output_path, dataset_id.lower(), "gene_results.ht"), overwrite=True)
+    # gene_results = gene_results_module.prepare_gene_results()
+    # validate_gene_results_table(gene_results)
+    # gene_results.write(os.path.join(output_path, dataset_id.lower(), "gene_results.ht"), overwrite=True)
 
     variant_results = variant_results_module.prepare_variant_results()
     validate_variant_results_table(variant_results)
     variant_results.write(os.path.join(output_path, dataset_id.lower(), "variant_results.ht"), overwrite=True)
+
+    print("exiting!")
+    exit(0)
 
 
 def main():
