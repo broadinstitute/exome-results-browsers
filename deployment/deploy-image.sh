@@ -16,9 +16,3 @@ IMAGE_NAME="gcr.io/exac-gnomad/exome-results-browsers"
 
 # Push image to container registry
 docker push "${IMAGE_NAME}:${DEPLOY_TAG}"
-
-# Replace image name in manifest and update deployment
-awk "{ sub(\"${IMAGE_NAME}\",\"${IMAGE_NAME}:${DEPLOY_TAG}\") }1" < ./manifests/deployment.yaml | kubectl apply -f -
-
-# Wait for rollout to finish
-kubectl rollout status "deployment/exome-results-browsers"

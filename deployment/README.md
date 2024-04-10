@@ -124,7 +124,30 @@ Build the Docker image. The build script tags the image with the current git rev
 ./deployment/build-docker-image.sh
 ```
 
-## Updating Production Deployment
+## Deployments
+
+This repository contains a base [kubernetes deployment](./manifests/), that is appropriate for extending to your needs using [kustomize](https://kustomize.io/). You can deploy the base configuration as-is, with:
+
+```bash
+kubectl apply -k deployment/manifests
+```
+
+If you would like to extend your deployment with things like an Ingress, additional environment variables, different docker image tags, etc, you can create a new kustomization in [gnomad-deployments](https://github.com/broadinstitute/gnomad-deployments/blob/main/exome-results-browsers), or a new local directory on your laptop if you don't want to check the kustomization into source control.
+
+### Production Deployment
+
+The production deployment, including its ingress and managed certificate, can be found in [gnomad-deployments](https://github.com/broadinstitute/gnomad-deployments/blob/main/exome-results-browsers/prod). To update the production deployment, update the image tag in the [prod kustomization](https://github.com/broadinstitute/gnomad-deployments/blob/main/exome-results-browsers/prod/kustomization.yaml) and apply it:
+
+```bash
+# view/inspect the deployment
+cd gnomad-deployments/exome-results-browsers/prod
+kustomize build .
+
+# if all looks as expected, apply it with
+kubectl apply -k .
+```
+
+## Building the Docker image
 
 Build the Docker image. When the Docker image is finished building, the script prints the name and tag to the console
 
@@ -138,35 +161,12 @@ Update the production deployment to the desired Docker image with
 ./deployment/deploy-image.sh <IMAGE-TAG>
 ```
 
-To update both the production front/backend and the data at the same time, modify the `pdName` value in the volumes section of `deployment/manifests/deployment.yaml` before running the `deploy-image` script.
-
 ## GKE resources
 
-- Build Docker image and [push it to Container Registry](https://cloud.google.com/container-registry/docs/pushing-and-pulling).
+- If you don't already have one, create a GKE cluster, e.g. https://cloud.google.com/kubernetes-engine/docs/how-to/creating-a-zonal-cluster. Our environments are managed in [terraform](https://github.com/broadinstitute/gnomad-terraform).
 
-- Create deployment.
-
-  ```
-  kubectl apply -f manifests/deployment.yaml
-  ```
-
-- Reserve IP address.
+- If exposing your deployment to the internet, reserve IP address. This is preferably done via terraform in [gnomad-terraform](https://github.com/broadinstitute/gnomad-terraform), but for reference, a global IP address could be reserved with:
 
   ```
   gcloud compute addresses create exome-results-browsers --global
-  ```
-
-- Create a [Google-managed SSL certificate](https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs).
-
-  ```
-  gcloud compute ssl-certificates create exome-results-browsers-cert --global \
-    --domains=asc.broadinstitute.org,bipex.broadinstitute.org,epi25.broadinstitute.org,schema.broadinstitute.org
-  ```
-
-- Expose deployment with an [Ingress](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress).
-
-  ```
-  kubectl apply -f manifests/service.yaml
-  kubectl apply -f manifests/frontendconfig.yaml
-  kubectl apply -f manifests/ingress.yaml
   ```
