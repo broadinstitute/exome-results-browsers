@@ -22,7 +22,7 @@ spec:
             - name: RESULTS_DATA_DIRECTORY
               value: /mnt/disks/erb-data/results
             - name: TRUST_PROXY
-              value: '2'
+              value: "2"
           ports:
             - name: http
               containerPort: 8000
