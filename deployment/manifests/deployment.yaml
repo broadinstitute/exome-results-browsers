@@ -17,12 +17,12 @@ spec:
     spec:
       containers:
         - name: app
-          image: gcr.io/exac-gnomad/exome-results-browsers
+          image: us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers
           env:
             - name: RESULTS_DATA_DIRECTORY
               value: /mnt/disks/erb-data/results
             - name: TRUST_PROXY
-              value: "2"
+              value: '2'
           ports:
             - name: http
               containerPort: 8000
