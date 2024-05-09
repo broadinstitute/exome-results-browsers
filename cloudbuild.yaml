@@ -16,11 +16,12 @@ steps:
       [
         "build",
         "-t",
-        "us-docker.pkg.dev/gnomadev/gnomad/exome-results-browsers:$SHORT_SHA",
+        "us-docker.pkg.dev/$PROJECT_ID/gnomad/exome-results-browsers:$SHORT_SHA",
         ".",
       ]
-images: ["us-docker.pkg.dev/gnomadev/gnomad/exome-results-browsers:$SHORT_SHA"]
+images:
+  ["us-docker.pkg.dev/$PROJECT_ID/gnomad/exome-results-browsers:$SHORT_SHA"]
 availableSecrets:
   secretManager:
-    - versionName: projects/gnomadev/secrets/ERB_GA_ID/versions/latest
+    - versionName: projects/$PROJECT_ID/secrets/ERB_GA_ID/versions/latest
       env: "ERB_GA_ID"
