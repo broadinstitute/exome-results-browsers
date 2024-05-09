@@ -28,7 +28,7 @@ if [ -n "$GIT_STATUS" ]; then
 fi
 
 docker build . \
-  --tag "gcr.io/exac-gnomad/exome-results-browsers:${IMAGE_TAG}" \
-  --tag "gcr.io/exac-gnomad/exome-results-browsers:latest"
+  --tag "us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:${IMAGE_TAG}" \
+  --tag "us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:latest"
 
-echo "gcr.io/exac-gnomad/exome-results-browsers:${IMAGE_TAG}"
+echo "us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:${IMAGE_TAG}"

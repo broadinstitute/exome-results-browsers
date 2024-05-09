@@ -12,7 +12,7 @@ DEPLOY_TAG=$1
 DEPLOYMENT_DIR=$(dirname "${0}")
 cd "${DEPLOYMENT_DIR}"
 
-IMAGE_NAME="gcr.io/exac-gnomad/exome-results-browsers"
+IMAGE_NAME="us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers"
 
 # Push image to container registry
 docker push "${IMAGE_NAME}:${DEPLOY_TAG}"
