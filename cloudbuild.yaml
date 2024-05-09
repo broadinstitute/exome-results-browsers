@@ -1,0 +1,25 @@
+steps:
+  - name: "ubuntu"
+    entrypoint: "bash"
+    args:
+      - -c
+      - |
+        echo Epi25_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-1 > build.env
+        echo SCHEMA_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-2 >> build.env
+        echo ASC_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-3 >> build.env
+        echo BipEx_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-4 >> build.env
+    secretEnv:
+      - "ERB_GA_ID"
+
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "us-docker.pkg.dev/gnomadev/gnomad/exome-results-browsers",
+        ".",
+      ]
+availableSecrets:
+  secretManager:
+    - versionName: projects/gnomadev/secrets/ERB_GA_ID/versions/latest
+      env: "ERB_GA_ID"
