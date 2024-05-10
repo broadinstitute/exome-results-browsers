@@ -1,6 +1,6 @@
 steps:
-  - name: "ubuntu"
-    entrypoint: "bash"
+  - name: 'ubuntu'
+    entrypoint: 'bash'
     args:
       - -c
       - |
@@ -9,19 +9,14 @@ steps:
         echo ASC_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-3 >> build.env
         echo BipEx_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-4 >> build.env
     secretEnv:
-      - "ERB_GA_ID"
+      - 'ERB_GA_ID'
 
-  - name: "gcr.io/cloud-builders/docker"
+  - name: 'gcr.io/kaniko-project/executor:latest'
     args:
-      [
-        "build",
-        "-t",
-        "us-docker.pkg.dev/$PROJECT_ID/gnomad/exome-results-browsers:$SHORT_SHA",
-        ".",
-      ]
-images:
-  ["us-docker.pkg.dev/$PROJECT_ID/gnomad/exome-results-browsers:$SHORT_SHA"]
+      - --destination=us-docker.pkg.dev/$PROJECT_ID/gnomad/exome-results-browsers:$SHORT_SHA
+      - --cache=true
+      - --cache-ttl=168h
 availableSecrets:
   secretManager:
     - versionName: projects/$PROJECT_ID/secrets/ERB_GA_ID/versions/latest
-      env: "ERB_GA_ID"
+      env: 'ERB_GA_ID'
