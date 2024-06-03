@@ -17,7 +17,10 @@ steps:
       - --cache=true
       - --cache-ttl=168h
 
-  - name: 'us-docker.pkg.dev/gnomadev/gnomad/kustomize'
+  # Note: we use a custom image here to get the latest version of kustomize. See:
+  # https://github.com/GoogleCloudPlatform/cloud-builders-community/tree/master/kustomize
+  # for instructions on how to build that image.
+  - name: 'us-docker.pkg.dev/exac-gnomad/gnomad/kustomize:v5.4.1'
     entrypoint: bash
     args:
       - -c
