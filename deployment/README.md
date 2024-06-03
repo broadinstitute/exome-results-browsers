@@ -138,20 +138,20 @@ If you would like to extend your deployment with things like an Ingress, additio
 
 ## Building the Docker image
 
-For production, docker images are automatically built after a push to the main branch. Once the build succeeds, retrieve the image tag from the build in Cloud Build, and update update the deployment spec in the [gnomad-deployments](https://github.com/broadinstitute/gnoma-deployments) repository.
+For production, docker images are automatically built after a push to the main branch. After a successful image build, the cloudbuild runs a task to update update the prod deployment manifest in the [gnomad-deployments](https://github.com/broadinstitute/gnoma-deployments) repository.
 
 ## Updating the production kustomization
 
-The production deployment, including its ingress and managed certificate, can be found in [gnomad-deployments](https://github.com/broadinstitute/gnomad-deployments/blob/main/exome-results-browsers/prod). To update the production deployment, update the image tag in the [prod kustomization](https://github.com/broadinstitute/gnomad-deployments/blob/main/exome-results-browsers/prod/kustomization.yaml) and apply it:
+Updates to the production deployment should happen automatically via Cloudbuild, however, if you need to manually update the production deployment, including its ingress and managed certificate, that can be done in [gnomad-deployments](https://github.com/broadinstitute/gnomad-deployments/blob/main/exome-results-browsers/prod). To update the production deployment, update the image tag or make other changes in the [prod kustomization](https://github.com/broadinstitute/gnomad-deployments/blob/main/exome-results-browsers/prod/kustomization.yaml) and view the changes:
 
 ```bash
-# view/inspect the deployment
+# view/inspect the updated deployment
 cd gnomad-deployments/exome-results-browsers/prod
 kustomize build .
 
-# if all looks as expected, apply it with
-kubectl apply -k .
 ```
+
+if all looks as expected, commit the changes back to the main branch of the deployments repository, and our deployment tool will apply them.
 
 ## GKE resources
 
