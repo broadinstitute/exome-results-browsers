@@ -1,0 +1,48 @@
+steps:
+  - name: 'ubuntu'
+    entrypoint: 'bash'
+    args:
+      - -c
+      - |
+        echo Epi25_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-1 > build.env && \
+        echo SCHEMA_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-2 >> build.env && \
+        echo ASC_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-3 >> build.env && \
+        echo BipEx_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-4 >> build.env
+    secretEnv:
+      - 'ERB_GA_ID'
+
+  - name: 'gcr.io/kaniko-project/executor:v1.23.0'
+    args:
+      - --destination=us-docker.pkg.dev/$PROJECT_ID/gnomad/exome-results-browsers:$SHORT_SHA
+      - --cache=true
+      - --cache-ttl=168h
+
+  # Note: we use a custom image here to get the latest version of kustomize. See:
+  # https://github.com/GoogleCloudPlatform/cloud-builders-community/tree/master/kustomize
+  # for instructions on how to build that image.
+  - name: 'us-docker.pkg.dev/${PROJECT_ID}/gnomad/kustomize:v5.4.1'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        mkdir -p /root/.ssh && chmod 0700 /root/.ssh && \
+        echo "$$DEPLOY_KEY" > /root/.ssh/id_rsa && \
+        chmod 400 /root/.ssh/id_rsa && \
+        ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts && \
+        git clone git@github.com:broadinstitute/gnomad-deployments.git && \
+        cd gnomad-deployments/exome-results-browsers/prod && \
+        /usr/bin/kustomize --stack-trace edit set image "us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers=us-docker.pkg.dev/${PROJECT_ID}/gnomad/exome-results-browsers:${SHORT_SHA}" && \
+        git add kustomization.yaml && \
+        git -c user.name="TGG Automation" -c user.email="tgg-automation@broadinstitute.org" commit -m "Deploying us-docker.pkg.dev/$PROJECT_ID/gnomad/exome-results-browsers:${SHORT_SHA}\n
+        Built from exome-results-browsers ${COMMIT_SHA}" && \
+        git push origin main
+
+    secretEnv:
+      - 'DEPLOY_KEY'
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/ERB_GA_ID/versions/latest
+      env: 'ERB_GA_ID'
+    - versionName: projects/$PROJECT_ID/secrets/GITHUB_DEPLOY_KEY/versions/latest
+      env: 'DEPLOY_KEY'
