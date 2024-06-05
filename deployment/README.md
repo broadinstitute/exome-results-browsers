@@ -138,7 +138,7 @@ If you would like to extend your deployment with things like an Ingress, additio
 
 ## Building the Docker image
 
-For production, docker images are automatically built after a push to the main branch. After a successful image build, the cloudbuild runs a task to update update the prod deployment manifest in the [gnomad-deployments](https://github.com/broadinstitute/gnoma-deployments) repository.
+For production, docker images are automatically built after a push to the main branch. After a successful image build, the cloudbuild runs a task to update update the prod deployment manifest in the [gnomad-deployments](https://github.com/broadinstitute/gnomad-deployments) repository.
 
 ## Updating the production kustomization
 

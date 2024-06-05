@@ -11,7 +11,7 @@ steps:
     secretEnv:
       - 'ERB_GA_ID'
 
-  - name: 'gcr.io/kaniko-project/executor:latest'
+  - name: 'gcr.io/kaniko-project/executor:v1.23.0'
     args:
       - --destination=us-docker.pkg.dev/$PROJECT_ID/gnomad/exome-results-browsers:$SHORT_SHA
       - --cache=true
