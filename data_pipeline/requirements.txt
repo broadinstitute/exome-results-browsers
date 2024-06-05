@@ -16,8 +16,6 @@ async-timeout==4.0.2
     # via aiohttp
 asyncinit==0.2.4
     # via hail
-asynctest==0.13.0
-    # via aiohttp
 attrs==22.1.0
     # via aiohttp
 avro==1.11.1
@@ -124,7 +122,7 @@ multidict==6.0.2
     #   yarl
 nest-asyncio==1.5.6
     # via hail
-numpy==1.21.6
+numpy==1.22.0
     # via
     #   bokeh
     #   hail
@@ -223,13 +221,8 @@ tqdm==4.64.1
     # via -r requirements.in
 typing-extensions==4.4.0
     # via
-    #   aiohttp
-    #   async-timeout
-    #   avro
     #   azure-core
     #   janus
-    #   rich
-    #   yarl
 urllib3==1.26.12
     # via
     #   botocore
