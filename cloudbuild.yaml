@@ -31,7 +31,7 @@ steps:
         ssh-keyscan -t rsa github.com > /root/.ssh/known_hosts && \
         git clone git@github.com:broadinstitute/gnomad-deployments.git && \
         cd gnomad-deployments/exome-results-browsers/prod && \
-        /usr/bin/kustomize --stack-trace edit set image "us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers=us-docker.pkg.dev/${PROJECT_ID}/gnomad/exome-results-browsers:${SHORT_SHA}" && \
+        /usr/bin/kustomize --stack-trace edit set image "exome-results-browsers=us-docker.pkg.dev/${PROJECT_ID}/gnomad/exome-results-browsers:${SHORT_SHA}" && \
         git add kustomization.yaml && \
         git -c user.name="TGG Automation" -c user.email="tgg-automation@broadinstitute.org" commit -m "Deploying us-docker.pkg.dev/$PROJECT_ID/gnomad/exome-results-browsers:${SHORT_SHA}\n
         Built from exome-results-browsers ${COMMIT_SHA}" && \
