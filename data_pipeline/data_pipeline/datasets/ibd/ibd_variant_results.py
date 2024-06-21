@@ -9,25 +9,36 @@ def prepare_variant_results():
     # Get unique variants from results table
     variants = results.group_by(results.locus, results.alleles).aggregate()
 
-    # Looks like ac_control was mistakenly encoded as a string, e.g. "[83198, 0]"
+    # Select AC/AF numbers for the reference and alternate alleles
     results = results.annotate(
-        # pylint: disable-next=anomalous-backslash-in-string, unnecessary-lambda
-        ac_control=hl.map(lambda x: hl.int(x), results.ac_control.replace("\[", "").replace("\]", "").split(", "))
+        ac_case=results.ac_case[1],
+        ac_ctrl=results.ac_control[1],
+        an_case=results.ac_case[0],
+        an_ctrl=results.ac_control[0],
     )
 
-    # Select AC/AF numbers for the alternate allele
-    results = results.annotate(ac_case=results.ac_case[1], ac_ctrl=results.ac_control[1])
+    # pylint: disable=broad-exception-raised
+    # TODO: also, in gene results I should figure out what is going on with all the
+    # bajillion fields I'm returning (0_001_03, etc)
+    # need to check the input schema of something like Epi25 vs IBD
 
     results = results.drop("ac_control")
 
     results = results.filter((results.ac_case > 0) | (results.ac_ctrl > 0))
 
-    # Annotate variants with a struct for each analysis group
+    # Annotate variants with a struct for each analysis group, rename the analysis groups
     results = results.group_by("locus", "alleles").aggregate(group_results=hl.agg.collect(results.row_value))
     results = results.annotate(
         group_results=hl.dict(
             results.group_results.map(
-                lambda group_result: (group_result.analysis_group, group_result.drop("analysis_group"))
+                lambda group_result: (
+                    hl.switch(group_result.analysis_group)
+                    .when("ibd-control", "IBD")
+                    .when("cd-control", "CD")
+                    .when("uc-control", "UC")
+                    .or_missing(),
+                    group_result.drop("analysis_group"),
+                )
             )
         )
     )
