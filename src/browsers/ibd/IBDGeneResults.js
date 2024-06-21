@@ -6,71 +6,131 @@ import { BaseTable, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
 
+const ibdAnalysisGroups = ['IBD', 'CD', 'UC']
+
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
-// const renderOddsRatio = (value) => {
-//   if (value === null) {
-//     return '-'
-//   }
-//   if (value === 'Infinity') {
-//     return '∞'
-//   }
-//   if (value === 0) {
-//     return '0'
-//   }
-//   return value.toPrecision(3)
-// }
+const formatToDecimals = (value, decimals = 3) => {
+  if (value == null) return '-'
+  return Number(value).toFixed(decimals)
+}
+const formatDecimal = (value) => formatToDecimals(value, 3)
+const formatWholeNumber = (value) => formatToDecimals(value, 0)
 
-// const renderPVal = (pval) => {
-//   console.log(pval)
-//   // if (pval === null) {
-//   //   return '-'
-//   // }
-//   // if (pval === 0) {
-//   //   return '2.2e-16'
-//   // }
-//   // return pval.toPrecision(3)
-//   return 1
-// }
+const formatScientific = (value, decimals = 2) => {
+  if (value == null) return '-'
+  if (value < 0.01) {
+    return Number(value).toExponential(decimals)
+  }
+  return formatToDecimals(value)
+}
+
+const formatPVal = (value) => {
+  if (value === 0) {
+    return '2.2e-16'
+  }
+  return formatScientific(value)
+}
+
+const columnConfig = {
+  'P-Value': {
+    schemaName: 'P',
+    renderFunction: formatPVal,
+  },
+  Beta: {
+    schemaName: 'BETA',
+    renderFunction: formatDecimal,
+  },
+  'Standard Error': {
+    schemaName: 'SE',
+    renderFunction: formatDecimal,
+  },
+  Frequency: {
+    schemaName: 'freq',
+    renderFunction: formatDecimal,
+  },
+  'Case Allele Count': {
+    schemaName: 'n_alleles_case',
+    renderFunction: formatWholeNumber,
+  },
+  'Control Allele Count': {
+    schemaName: 'n_alleles_control',
+    renderFunction: formatWholeNumber,
+  },
+  'Case Sample Count': {
+    schemaName: 'n_samples_case',
+    renderFunction: formatWholeNumber,
+  },
+  'Control Sample Count': {
+    schemaName: 'n_samples_control',
+    renderFunction: formatWholeNumber,
+  },
+  'Heterozygous P-Value': {
+    schemaName: 'HetP',
+    renderFunction: formatDecimal,
+  },
+}
+
+const columnsWanted = [
+  'Category',
+  'Case Allele Count',
+  'Control Allele Count',
+  'P-Value',
+  'Beta',
+  'Standard Error',
+]
+
+const rowOptions = {
+  'LoF 0.001': 'lof_0_001',
+  '(3) LoF 0.001': '3_lof_0_001',
+  'LoF Missense Singleton': 'lof_missense_singleton',
+  'LoF Missense 0.001': 'lof_missense_0_001',
+  '(3) LoF Missense 0.001': '3_lof_missense_0_001',
+  'LoF Singleton': 'lof_singleton',
+  'Nonsynonymous 0.001': 'nsyn_0_001',
+  '(2) Nonsynonymous 0.001': '2_nsyn_0_001',
+  '(3) Nonsynonymous 0.001': '3_nsyn_0_001',
+  'Nonsynonymous singleton': 'nsyn_singleton',
+}
+
+const rowsWanted = [
+  'LoF 0.001',
+  'LoF Singleton',
+  'LoF Missense 0.001',
+  'LoF Missense Singleton',
+  'Nonsynonymous 0.001',
+  'Nonsynonymous singleton',
+]
 
 const IBDGeneResult = ({ result }) => (
   <div>
     <Table>
       <thead>
         <tr>
-          <th scope="col">Category</th>
-          <th scope="col">Case Count</th>
-          <th scope="col">Control Count</th>
-          <th scope="col">P-Val</th>
-          <th scope="col">Odds Ratio</th>
+          {columnsWanted.map((column) => {
+            return <th scope="col">{column}</th>
+          })}
         </tr>
       </thead>
+
       <tbody>
-        <tr>
-          <th scope="row">Protein-truncating</th>
-          {/* <td>{result.ptv_case_count === null ? '-' : result.ptv_case_count}</td> */}
-          {/* <td>{result.ptv_control_count === null ? '-' : result.ptv_control_count}</td> */}
-          {/* <td>{renderPVal(result.ptv_pval)}</td> */}
-          {/* <td>{renderPVal(result)}</td> */}
-          {/* <td>{renderOddsRatio(result.ptv_OR)}</td> */}
-        </tr>
-        <tr>
-          <th scope="row">Damaging Missense</th>
-          {/* <td>
-            {result.damaging_missense_case_count === null
-              ? '-'
-              : result.damaging_missense_case_count}
-          </td>
-          <td>
-            {result.damaging_missense_control_count === null
-              ? '-'
-              : result.damaging_missense_control_count}
-          </td>
-          <td>{renderPVal(result.damaging_missense_pval)}</td>
-          <td>{renderOddsRatio(result.damaging_missense_OR)}</td> */}
-        </tr>
+        {rowsWanted.map((row) => (
+          <tr key={row}>
+            <th scope="row">{row}</th>
+            {columnsWanted
+              .filter((column) => column !== 'Category')
+              .map((column) => (
+                <td key={column}>
+                  {(() => {
+                    const toCheck = result[`${rowOptions[row]}_${columnConfig[column].schemaName}`]
+                    return toCheck === null ? '-' : columnConfig[column].renderFunction(toCheck)
+                  })()}
+                </td>
+              ))}
+          </tr>
+        ))}
       </tbody>
     </Table>
 
@@ -118,7 +178,7 @@ const IBDGeneResults = ({ results }) => (
       />
     </h2>
     <Tabs
-      tabs={['cd', 'ibd', 'uc'].map((group) => ({
+      tabs={ibdAnalysisGroups.map((group) => ({
         id: group,
         label: group,
         render: () =>
