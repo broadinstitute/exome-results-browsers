@@ -107,19 +107,11 @@ const IBDGeneResults = ({ results }) => (
         popupContent={
           <>
             <p>
-              These tables display the case-control gene burden for the full epilepsy cohort (EPI)
-              and for each of the primary epilepsy types (DEE, GGE, and NAFE). Cases in the EPI
-              table includes all 20,979 epilepsy patients (1,938 with DEE, 5,499 with GGE, 9,219
-              with NAFE, and 4,323 with other epilepsy syndromes). Each of the case groups is
-              compared against 33,444 controls without known neuropsychiatric conditions.
-            </p>
-            <p>
-              Given a functional category of deleterious variants, the numbers in the tables are the
-              carrier counts of ultra-rare (allele count [AC]&ge;5) variants aggregated at the gene
-              level. The burden of ultra-rare, deleterious SNVs and indels - protein-truncating or
-              damaging missense (with an MPC score&le;2) variants - in cases versus controls is
-              assessed using a Firth logistic regression test with adjustment for sex and genetic
-              ancestry (P-value is capped at 2.2e-16).
+              These tables display the case-control gene burden for the full IBD cohort (IBD) and
+              for each of the primary irritable bowel disease types (Crohn's Disease, CD; and
+              Ulcerative Colitis, UC). Cases in the IBD table include all 50,126 IBD patients
+              (28,718 with CD, 17,991 with CD, and 3,417 with other IBD syndromes). Each of the case
+              groups is compared against over 97,000 control samples.
             </p>
           </>
         }
