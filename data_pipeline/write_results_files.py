@@ -73,7 +73,7 @@ def split_data(row):
 
 def write_data_files(table_path, output_directory, genes=None):
     if output_directory.startswith("gs://"):
-        raise Exception("Cannot write output to Google Storage")
+        raise ValueError("Google Storage paths are not supported for output_directory")
 
     ds = hl.read_table(table_path)
 
