@@ -21,12 +21,10 @@ const TermsPageContent = () => (
     <p>
       We request that any publications or reports of results obtained from using the information
       available in this browser cite the{' '}
-      <ExternalLink href="https://www.nature.com/articles/s41593-024-01747-8">
-        primary manuscript
-      </ExternalLink>{' '}
-      that reports on the Epi25 WES analyses. Epi25 does not need to be included as co-authors on
-      your manuscript, unless we contributed specific advice or analysis for your work. However, we
-      ask that you acknowledge the Epi25 Collaborative as follows:
+      <ExternalLink href="https://rdcu.be/dVS4z">primary manuscript</ExternalLink> that reports on
+      the Epi25 WES analyses. Epi25 does not need to be included as co-authors on your manuscript,
+      unless we contributed specific advice or analysis for your work. However, we ask that you
+      acknowledge the Epi25 Collaborative as follows:
     </p>
     <blockquote>
       <p>

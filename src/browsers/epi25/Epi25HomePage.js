@@ -61,12 +61,9 @@ const Epi25HomePage = () => (
       (CNVs) and genome-wide association study (GWAS), we further identified convergence of
       different types of genetic risk factor in the same genes. Details of the WES analyses as well
       as the variant-calling and QC pipelines can be found in our{' '}
-      <ExternalLink href="https://www.nature.com/articles/s41593-024-01747-8">
-        flagship paper
-      </ExternalLink>
-      . With the continuing effort to recruit samples, many from non-European populations, we
-      anticipate a boost in the detection power to identify risk-conferring genes in the coming
-      years.
+      <ExternalLink href="https://rdcu.be/dVS4z">flagship paper</ExternalLink>. With the continuing
+      effort to recruit samples, many from non-European populations, we anticipate a boost in the
+      detection power to identify risk-conferring genes in the coming years.
     </p>
 
     <p>
