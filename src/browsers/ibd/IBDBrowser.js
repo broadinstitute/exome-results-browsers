@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderFloat } from '../base/tableCells'
+import { renderFloatAsScientific, renderFloatAsDecimal } from '../base/tableCells'
 
 import IBDAboutPage from './IBDAboutPage'
 import IBDHomePage from './IBDHomePage'
@@ -31,40 +31,52 @@ const IBDBrowser = () => (
         component: IBDTermsPage,
       },
     ]}
-    geneResultsPageHeading="IBD: gene burden results"
+    geneResultsPageHeading="IBD: results by gene"
     geneResultAnalysisGroupOptions={ibdAnalysisGroups}
     defaultGeneResultAnalysisGroup={defaultIBDAnalysisGroup}
-    defaultGeneResultSortKey="todo"
+    defaultGeneResultSortKey="lof_0_001_P"
     geneResultColumns={[
       {
-        key: 'lof_singleton_P',
-        heading: 'lof singleton P',
+        key: 'variant_p',
+        heading: 'Variant P-val',
         minWidth: 110,
-        render: (value) => renderFloat(value),
+        render: (value) => renderFloatAsScientific(value),
       },
       {
-        key: 'lof_missense_singleton_P',
-        heading: 'lof missense singleton P',
+        key: 'variant_beta',
+        heading: 'Variant Beta',
         minWidth: 110,
-        render: (value) => renderFloat(value),
+        render: (value) => renderFloatAsDecimal(value),
+      },
+      {
+        key: 'variant_af_case',
+        heading: 'Variant AF Case',
+        minWidth: 110,
+        render: (value) => renderFloatAsScientific(value),
       },
       {
         key: 'lof_0_001_P',
-        heading: 'lof 0_001 P',
+        heading: 'LoF 0.001 P-val',
         minWidth: 110,
-        render: (value) => renderFloat(value),
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'lof_0_001_BETA',
+        heading: 'LoF 0.001 Beta',
+        minWidth: 110,
+        render: (value) => renderFloatAsDecimal(value),
       },
       {
         key: 'lof_missense_0_001_P',
-        heading: 'lof missense 0_001 P',
+        heading: 'LoF Missense 0.001 P-val',
         minWidth: 110,
-        render: (value) => renderFloat(value),
+        render: (value) => renderFloatAsScientific(value),
       },
       {
         key: 'lof_missense_0_001_BETA',
-        heading: 'lof missense 0_001 beta',
+        heading: 'LoF Missense 0.001 Beta',
         minWidth: 110,
-        render: (value) => renderFloat(value),
+        render: (value) => renderFloatAsDecimal(value),
       },
     ]}
     variantAnalysisGroupOptions={ibdAnalysisGroups}
@@ -73,14 +85,15 @@ const IBDBrowser = () => (
       {
         key: 'group_result.p',
         heading: 'P\u2011Value',
-        minWidth: 75,
-        render: (value) => renderFloat(value),
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
       },
+
       {
-        key: 'group_result.chi_sq_stat',
-        heading: 'χ²',
+        key: 'group_result.beta',
+        heading: 'Beta',
         minWidth: 65,
-        render: (value) => renderFloat(value),
+        render: (value) => renderFloatAsDecimal(value),
       },
     ]}
     variantConsequences={variantConsequences}
