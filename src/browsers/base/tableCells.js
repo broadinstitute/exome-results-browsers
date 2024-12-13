@@ -21,13 +21,22 @@ const NumberCell = styled.span`
   white-space: nowrap;
 `
 
-export const renderFloat = (value) => {
+export const renderFloatAsScientific = (value) => {
   if (value === null) {
     return ''
   }
+
   const truncated = Number(value.toPrecision(3))
   if (truncated === 0) {
     return <NumberCell>0</NumberCell>
   }
   return <NumberCell>{truncated.toExponential()}</NumberCell>
+}
+
+export const renderFloatAsDecimal = (value) => {
+  if (value === null) {
+    return ''
+  }
+
+  return <NumberCell>{value.toFixed(3)}</NumberCell>
 }
