@@ -5,7 +5,7 @@ import Highlighter from 'react-highlight-words'
 import { TooltipAnchor } from '@gnomad/ui'
 
 import Link from '../Link'
-import { renderFloat } from '../tableCells'
+import { renderFloatAsScientific } from '../tableCells'
 
 const baseColumns = [
   {
@@ -51,7 +51,7 @@ const getTableColumns = (geneResultColumns) => {
     grow: 0,
     render: column.render
       ? (row, key) => column.render(get(row, key))
-      : (row, key) => renderFloat(get(row, key)),
+      : (row, key) => renderFloatAsScientific(get(row, key)),
     renderForCSV: column.renderForCSV ? (row, key) => column.renderForCSV(get(row, key)) : get,
   }))
 
