@@ -134,14 +134,15 @@ if (isDevelopment) {
   )
   getDatasetForRequest = () => devDataset
 } else {
-  const datasetBySubdomain = Object.keys(metadata.datasets).reduce(
-    (acc, dataset) => ({
-      ...acc,
-      [dataset.toLowerCase()]: dataset,
-    }),
-    {}
-  )
-  getDatasetForRequest = (req) => datasetBySubdomain[req.subdomains[0]]
+  // const datasetBySubdomain = Object.keys(metadata.datasets).reduce(
+  //   (acc, dataset) => ({
+  //     ...acc,
+  //     [dataset.toLowerCase()]: dataset,
+  //   }),
+  //   {}
+  // )
+  // getDatasetForRequest = (req) => datasetBySubdomain[req.subdomains[0]]
+  getDatasetForRequest = () => 'IBD'
 }
 
 // Store dataset on request object so other route handlers can use it.
