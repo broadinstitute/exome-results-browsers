@@ -27,7 +27,7 @@ if [ -n "$GIT_STATUS" ]; then
   IMAGE_TAG="${IMAGE_TAG}-modified"
 fi
 
-docker build . \
+podman build . \
   --tag "us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:${IMAGE_TAG}" \
   --tag "us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:latest"
 

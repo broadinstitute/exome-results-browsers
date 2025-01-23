@@ -15,4 +15,4 @@ cd "${DEPLOYMENT_DIR}"
 IMAGE_NAME="us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers"
 
 # Push image to container registry
-docker push "${IMAGE_NAME}:${DEPLOY_TAG}"
+podman push "${IMAGE_NAME}:${DEPLOY_TAG}"

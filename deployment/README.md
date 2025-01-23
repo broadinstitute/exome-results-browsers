@@ -121,7 +121,7 @@ EOF
 Build the Docker image. The build script tags the image with the current git revision.
 
 ```
-./deployment/build-docker-image.sh
+./deployment/build-container-image.sh
 ```
 
 ## Deployments

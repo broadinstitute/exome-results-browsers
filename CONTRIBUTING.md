@@ -73,9 +73,9 @@ to the production environment.
 ./start.sh $BROWSER_NAME --proxy-api
 ```
 
-### Docker
+### Podman 
 
-The Docker build copies a `build.env` file and reads environment variables from it. Currently,
+The Podman build copies a `build.env` file and reads environment variables from it. Currently,
 the only values in `build.env` are Google Analytics tracking IDs for the production deployment.
 Thus, an empty file will work for development.
 
@@ -83,25 +83,25 @@ Thus, an empty file will work for development.
 touch build.env
 ```
 
-Build the Docker image.
+Build the container image.
 
 ```
-docker build -t exome-results-browsers .
+podman build -t exome-results-browsers .
 ```
 
-Run the Docker image. A directory containing results files output from the data pipeline must
+Run the container image. A directory containing results files output from the data pipeline must
 be attached as a volume and the `RESULTS_DATA_DIRECTORY` environment variable set to that
 volume's mount point.
 
 ```
-docker run --rm -ti --init \
+podman run --rm -ti --init \
    -v /path/to/results/data:/var/lib/results \
    -e RESULTS_DATA_DIRECTORY=/var/lib/results \
    -p 8000:8000 \
    exome-results-browsers
 ```
 
-The Docker image is configured to run the application in production mode, where the current
+The container image is configured to run the application in production mode, where the current
 dataset/browser is determined by the subdomain of the requested URL. One way to make this
 work locally is adding hostnames to `/etc/hosts`:
 

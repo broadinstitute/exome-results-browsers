@@ -17,3 +17,6 @@ __pycache__
 
 # Hail logs
 hail-*.log
+
+# Data dir
+data
