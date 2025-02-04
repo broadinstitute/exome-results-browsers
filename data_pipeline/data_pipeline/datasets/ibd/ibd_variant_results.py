@@ -59,7 +59,9 @@ def prepare_variant_results():
             revel=annotations.revel_score,
             polyphen=annotations.polyphen_score_canonical,
             splice_ai=annotations.splice_ai_score,
-            primate_ai=annotations.primate_ai_score,
+            # TODO: ask about which annotations we want to display?
+            sift=annotations.sift_score_canonical,
+            # primate_ai=annotations.primate_ai_score,
         ),
     )
 
