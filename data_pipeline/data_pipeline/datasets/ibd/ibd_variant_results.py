@@ -54,7 +54,7 @@ def prepare_variant_results():
             revel=annotations.revel_score,
             polyphen=annotations.polyphen_score_canonical,
             splice_ai=annotations.splice_ai_score,
-            primate_ai=annotations.primate_ai_score,
+            sift=annotations.sift_score_canonical,
         ),
     )
 
