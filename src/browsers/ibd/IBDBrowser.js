@@ -81,6 +81,8 @@ const IBDBrowser = () => (
     ]}
     variantAnalysisGroupOptions={ibdAnalysisGroups}
     defaultVariantAnalysisGroup={defaultIBDAnalysisGroup}
+    defaultVariantTableSortKey="group_result.p"
+    defaultVariantTableSortOrder="ascending"
     variantResultColumns={[
       {
         key: 'group_result.p',
