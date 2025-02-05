@@ -52,9 +52,6 @@ class VariantsInGene extends Component {
       custom: (props.variantCustomFilter || {}).defaultFilter,
     }
 
-    const defaultSortKey = 'variant_id'
-    const defaultSortOrder = 'ascending'
-
     this.tableColumns = getVariantTableColumns(
       props.variantResultColumns.filter((c) => c.showOnGenePage !== false)
     )
@@ -65,8 +62,8 @@ class VariantsInGene extends Component {
         defaultFilter
       ),
       {
-        sortKey: defaultSortKey,
-        sortOrder: defaultSortOrder,
+        sortKey: props.variantSortKey,
+        sortOrder: props.variantSortOrder,
       }
     )
 
@@ -77,8 +74,8 @@ class VariantsInGene extends Component {
       renderedVariants,
       selectedAnalysisGroup: props.defaultVariantAnalysisGroup,
       selectedVariant: null,
-      sortKey: defaultSortKey,
-      sortOrder: defaultSortOrder,
+      sortKey: props.variantSortKey,
+      sortOrder: props.variantSortOrder,
       visibleVariantWindow: [0, 19],
     }
   }
@@ -356,6 +353,8 @@ VariantsInGene.propTypes = {
   variantAnalysisGroupOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
   defaultVariantAnalysisGroup: PropTypes.string.isRequired,
   variantAnalysisGroupLabels: PropTypes.objectOf(PropTypes.string),
+  variantSortKey: PropTypes.string,
+  variantSortOrder: PropTypes.string,
   variantResultColumns: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string.isRequired,
@@ -404,6 +403,8 @@ VariantsInGene.propTypes = {
 
 VariantsInGene.defaultProps = {
   variantAnalysisGroupLabels: {},
+  variantSortKey: 'variant_id',
+  variantSortOrder: 'ascending',
   variantConsequenceCategoryLabels: undefined,
   variantCustomFilter: undefined,
   renderVariantAttributes: undefined,

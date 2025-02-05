@@ -31,6 +31,8 @@ const Browser = ({
   variantAnalysisGroupOptions,
   variantAnalysisGroupLabels,
   variantResultColumns,
+  defaultVariantTableSortKey,
+  defaultVariantTableSortOrder,
   variantConsequences,
   variantConsequenceCategoryLabels,
   variantCustomFilter,
@@ -85,6 +87,8 @@ const Browser = ({
               variantAnalysisGroupOptions={variantAnalysisGroupOptions}
               variantAnalysisGroupLabels={variantAnalysisGroupLabels}
               variantResultColumns={variantResultColumns}
+              variantSortKey={defaultVariantTableSortKey}
+              variantSortOrder={defaultVariantTableSortOrder}
               variantConsequences={variantConsequences}
               variantConsequenceCategoryLabels={variantConsequenceCategoryLabels}
               variantCustomFilter={variantCustomFilter}
@@ -164,6 +168,8 @@ Browser.propTypes = {
       showOnDetails: PropTypes.bool,
     })
   ),
+  defaultVariantTableSortKey: PropTypes.string,
+  defaultVariantTableSortOrder: PropTypes.string,
   variantConsequences: PropTypes.arrayOf(
     PropTypes.shape({
       term: PropTypes.string.isRequired,
@@ -202,6 +208,8 @@ Browser.defaultProps = {
   defaultVariantAnalysisGroup: undefined,
   variantAnalysisGroupLabels: undefined,
   variantResultColumns: [],
+  defaultVariantTableSortKey: undefined,
+  defaultVariantTableSortOrder: undefined,
   variantConsequences: vepConsequences,
   variantConsequenceCategoryLabels: {
     lof: 'LoF',
