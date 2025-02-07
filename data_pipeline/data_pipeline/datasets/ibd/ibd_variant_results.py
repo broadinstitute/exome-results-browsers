@@ -36,7 +36,12 @@ def prepare_variant_results():
                     .when("cd-control", "CD")
                     .when("uc-control", "UC")
                     .or_missing(),
-                    group_result.drop("analysis_group"),
+                    group_result.drop("analysis_group").annotate(
+                        # these fields were mistakenly changed to string types
+                        #   upstream in the November 2024 data handoff
+                        p=hl.float(group_result.p),
+                        chi_sq_stat=hl.float(group_result.chi_sq_stat),
+                    ),
                 )
             )
         )
