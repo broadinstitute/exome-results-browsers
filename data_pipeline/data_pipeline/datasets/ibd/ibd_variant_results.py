@@ -21,11 +21,6 @@ def prepare_variant_results():
         an_ctrl=results.ac_control[0],
     )
 
-    # pylint: disable=broad-exception-raised
-    # TODO: also, in gene results I should figure out what is going on with all the
-    # bajillion fields I'm returning (0_001_03, etc)
-    # need to check the input schema of something like Epi25 vs IBD
-
     results = results.drop("ac_control")
 
     results = results.filter((results.ac_case > 0) | (results.ac_ctrl > 0))
@@ -42,11 +37,10 @@ def prepare_variant_results():
                     .when("uc-control", "UC")
                     .or_missing(),
                     group_result.drop("analysis_group").annotate(
-
-                        # these fields were mistakenly changed to string types 
+                        # these fields were mistakenly changed to string types
                         #   upstream in the November 2024 data handoff
                         p=hl.float(group_result.p),
-                        chi_sq_stat=hl.float(group_result.chi_sq_stat)
+                        chi_sq_stat=hl.float(group_result.chi_sq_stat),
                     ),
                 )
             )
@@ -58,9 +52,8 @@ def prepare_variant_results():
     # Merge variant annotations for canonical transcripts
     annotations = hl.read_table(pipeline_config.get("IBD", "variant_annotations_path"))
 
-
     # add vep to annotations to store in info field
-    vepped_path = os.path.join(staging_output_path, 'ibd', 'variants_vepped.ht')
+    vepped_path = os.path.join(staging_output_path, "ibd", "variants_vepped.ht")
     if not hl.hadoop_exists(vepped_path):
         print("no vepped table found")
         variants_to_vep = variants.select()
@@ -69,26 +62,26 @@ def prepare_variant_results():
 
     vepped_variants_ht = hl.read_table(vepped_path)
 
-    # annotations = annotations.annotate(vep=hl.json(vepped_variants_ht[annotations.locus, annotations.alleles].vep))
     annotations = annotations.annotate(vep=vepped_variants_ht[annotations.locus, annotations.alleles].vep)
 
     annotations = annotations.annotate(
         transcript_consequences=annotations.vep.transcript_consequences.map(
             lambda tc: hl.struct(
-                consequence_terms = tc.consequence_terms,
-                domains = tc.domains,
-                gene_id = tc.gene_id,
-                gene_symbol = tc.gene_symbol,
-                hgnc_id = tc.hgnc_id,
-                hgvsc = tc.hgvsc,
-                hgvsp = tc.hgvsp,
-                canonical = tc.canonical,
-                lof = tc.lof,
-                lof_flags = tc.lof_flags,
-                lof_filter = tc.lof_filter,
-                polyphen_prediction = tc.polyphen_prediction,
-                sift_prediction = tc.sift_prediction,
-                transcript_id = tc.transcript_id
+                consequence_terms=tc.consequence_terms,
+                domains=tc.domains,
+                gene_id=tc.gene_id,
+                gene_symbol=tc.gene_symbol,
+                hgnc_id=tc.hgnc_id,
+                hgvsc=tc.hgvsc,
+                hgvsp=tc.hgvsp,
+                canonical=tc.canonical,
+                mane_select=tc.mane_select,
+                lof=tc.lof,
+                lof_flags=tc.lof_flags,
+                lof_filter=tc.lof_filter,
+                polyphen_prediction=tc.polyphen_prediction,
+                sift_prediction=tc.sift_prediction,
+                transcript_id=tc.transcript_id,
             )
         )
     )
@@ -103,29 +96,48 @@ def prepare_variant_results():
         hgvsp=annotations.hgvsp_canonical.split(":")[-1],
         info=hl.struct(
             cadd=annotations.cadd_phred,
+            splice_ai=annotations.splice_ai_score,
             revel=annotations.revel_score,
             polyphen=annotations.polyphen_score_canonical,
-            splice_ai=annotations.splice_ai_score,
-            # TODO: ask about which annotations we want to display?
             sift=annotations.sift_score_canonical,
             transcript_consequences=annotations.transcript_consequences,
-            # vep=annotations.vep,
-            # primate_ai=annotations.primate_ai_score,
         ),
     )
 
     variants = variants.annotate(**annotations[variants.locus, variants.alleles])
 
+    most_significant_variant_per_gene = os.path.join(staging_output_path, "ibd", "genes_most_significant_variants.ht")
+    if not hl.hadoop_exists(most_significant_variant_per_gene):
+        exploded = variants.annotate(
+            group_entries=hl.array(hl.zip(variants.group_results.keys(), variants.group_results.values()))
+        ).explode("group_entries")
 
-    vepped_path = os.path.join(staging_output_path, 'ibd', 'variants_vepped.ht')
-    if not hl.hadoop_exists(vepped_path):
-        print("no vepped table found")
-        exit(1)
-        variants_to_vep = variants.select()
-        vepped_variants = hl.vep(variants_to_vep)
-        vepped_variants.write(vepped_path, overwrite=True)
-    vepped_variants_ht = hl.read_table(vepped_path)
+        exploded = exploded.annotate(group_name=exploded.group_entries[0], group_data=exploded.group_entries[1])
 
-    variants = variants.annotate(vep=vepped_variants_ht[variants.locus, variants.alleles].vep)
+        exploded.drop("group_results", "group_entries")
+
+        grouped = exploded.group_by(gene_id=exploded.gene_id, group_name=exploded.group_name,).aggregate(
+            most_significant_variant=hl.agg.take(
+                hl.struct(
+                    p=exploded.group_data.p,
+                    variant_data=exploded.group_data,
+                ),
+                1,
+                ordering=exploded.group_data.p,
+            )[0]
+        )
+
+        grouped.write(
+            os.path.join(staging_output_path, "ibd", "gene_most_significant_variant_per_analysis_group.ht"),
+            overwrite=True,
+        )
+
+        final_table = grouped.group_by(grouped.gene_id).aggregate(
+            most_significant_variant_per_group=hl.dict(
+                hl.agg.collect((grouped.group_name, grouped.most_significant_variant.variant_data))
+            )
+        )
+
+        final_table.write(most_significant_variant_per_gene, overwrite=True)
 
     return variants
