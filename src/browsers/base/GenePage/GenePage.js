@@ -47,6 +47,7 @@ const GenePage = ({
   variantResultColumns,
   variantCustomFilter,
   renderVariantAttributes,
+  renderVariantTranscriptConsequences,
 }) => {
   return (
     <TrackPage>
@@ -117,6 +118,7 @@ const GenePage = ({
           defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
           gene={gene}
           renderVariantAttributes={renderVariantAttributes}
+          renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
           variantAnalysisGroupLabels={variantAnalysisGroupLabels}
           variantAnalysisGroupOptions={variantAnalysisGroupOptions}
           variantSortKey={variantSortKey}
@@ -143,6 +145,7 @@ GenePage.propTypes = {
   variantConsequenceCategoryLabels: PropTypes.any, // eslint-disable-line react/forbid-prop-types
   variantCustomFilter: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   renderVariantAttributes: PropTypes.func,
+  renderVariantTranscriptConsequences: PropTypes.bool,
   gene: PropTypes.shape({
     reference_genome: PropTypes.oneOf(['GRCh37', 'GRCh38']).isRequired,
     gene_id: PropTypes.string.isRequired,
@@ -169,6 +172,7 @@ GenePage.defaultProps = {
   variantSortOrder: 'ascending',
   variantCustomFilter: undefined,
   renderVariantAttributes: undefined,
+  renderVariantTranscriptConsequences: false,
   variantConsequenceCategoryLabels: undefined,
 }
 

@@ -250,6 +250,7 @@ class VariantsInGene extends Component {
       variantConsequenceCategoryLabels,
       variantCustomFilter,
       renderVariantAttributes,
+      renderVariantTranscriptConsequences,
     } = this.props
 
     const {
@@ -341,6 +342,7 @@ class VariantsInGene extends Component {
               variantAnalysisGroupLabels={variantAnalysisGroupLabels}
               variantResultColumns={variantResultColumns.filter((c) => c.showOnDetails !== false)}
               renderVariantAttributes={renderVariantAttributes}
+              renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
             />
           </Modal>
         )}
@@ -374,6 +376,7 @@ VariantsInGene.propTypes = {
     applyFilter: PropTypes.func.isRequired,
   }),
   renderVariantAttributes: PropTypes.func,
+  renderVariantTranscriptConsequences: PropTypes.bool,
   gene: PropTypes.shape({
     reference_genome: PropTypes.oneOf(['GRCh37', 'GRCh38']).isRequired,
     gene_id: PropTypes.string.isRequired,
@@ -408,6 +411,7 @@ VariantsInGene.defaultProps = {
   variantConsequenceCategoryLabels: undefined,
   variantCustomFilter: undefined,
   renderVariantAttributes: undefined,
+  renderVariantTranscriptConsequences: false,
 }
 
 const VariantsInGeneContainer = ({
