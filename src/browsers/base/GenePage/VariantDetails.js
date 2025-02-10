@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { BaseTable, ExternalLink } from '@gnomad/ui'
+import { BaseTable, ExternalLink, ListItem } from '@gnomad/ui'
 
 import { VariantAttribute, VariantAttributeList } from './VariantAttributes'
 
@@ -32,6 +32,245 @@ const Columns = styled.div`
   }
 `
 
+const CSQ_CODING_HIGH_IMPACT = [
+  'transcript_ablation',
+  'splice_acceptor_variant',
+  'splice_donor_variant',
+  'stop_gained',
+  'frameshift_variant',
+  'stop_lost',
+]
+
+const CSQ_CODING_MEDIUM_IMPACT = [
+  'start_lost',
+  'initiator_codon_variant',
+  'transcript_amplification',
+  'inframe_insertion',
+  'inframe_deletion',
+  'missense_variant',
+  'protein_altering_variant',
+]
+
+const CSQ_CODING_LOW_IMPACT = [
+  'splice_donor_5th_base_variant',
+  'splice_region_variant',
+  'splice_donor_region_variant',
+  'splice_polypyrimidine_tract_variant',
+  'incomplete_terminal_codon_variant',
+  'start_retained_variant',
+  'stop_retained_variant',
+  'synonymous_variant',
+  'coding_sequence_variant',
+  'coding_transcript_variant',
+]
+
+const CSQ_NON_CODING = [
+  'mature_miRNA_variant',
+  '5_prime_UTR_variant',
+  '3_prime_UTR_variant',
+  'non_coding_transcript_exon_variant',
+  'non_coding_exon_variant',
+  'intron_variant',
+  'NMD_transcript_variant',
+  'non_coding_transcript_variant',
+  'nc_transcript_variant',
+  'upstream_gene_variant',
+  'downstream_gene_variant',
+  'TFBS_ablation',
+  'TFBS_amplification',
+  'TF_binding_site_variant',
+  'regulatory_region_ablation',
+  'regulatory_region_amplification',
+  'feature_elongation',
+  'regulatory_region_variant',
+  'feature_truncation',
+  'intergenic_variant',
+  'sequence_variant',
+]
+
+const CSQ_ORDER = [
+  ...CSQ_CODING_HIGH_IMPACT,
+  ...CSQ_CODING_MEDIUM_IMPACT,
+  ...CSQ_CODING_LOW_IMPACT,
+  ...CSQ_NON_CODING,
+]
+
+const findMostSevereConsequence = (consequences) => {
+  return consequences.reduce((mostSevere, current) => {
+    const currentIndex = CSQ_ORDER.indexOf(current)
+    const mostSevereIndex = CSQ_ORDER.indexOf(mostSevere)
+    return currentIndex < mostSevereIndex ? current : mostSevere
+  })
+}
+
+const parseTranscriptConsequences = (transcriptConsequences) => {
+  const reshaped = transcriptConsequences.map((tc) => ({
+    geneId: tc.gene_id,
+    geneSymbol: tc.gene_symbol,
+    transcriptId: tc.transcript_id,
+    isCanonical: tc.canonical === 1,
+    isManeSelect: tc.mane_select === 1,
+    hgvsp: tc.hgvsp && tc.hgvsp.indexOf(':') !== -1 ? tc.hgvsp.split(':')[1] : tc.hgvsp,
+    hgvsc: tc.hgvsc && tc.hgvsc.indexOf(':') !== -1 ? tc.hgvsc.split(':')[1] : tc.hgvsc,
+    hgncID: tc.hgnc_id,
+    domains: tc.domains,
+    majorConsequence: findMostSevereConsequence(tc.consequence_terms),
+    siftPrediction: tc.sift_prediction,
+    polyphenPrediction: tc.polyphen_prediction,
+  }))
+
+  const groupedByConsequence = reshaped.reduce((acc, transcript) => {
+    const consequence = transcript.majorConsequence
+
+    if (!acc[consequence]) {
+      acc[consequence] = {
+        consequence,
+        genes: {},
+      }
+    }
+
+    const geneKey = `${transcript.geneId}-${transcript.geneSymbol}`
+
+    if (!acc[consequence].genes[geneKey]) {
+      acc[consequence].genes[geneKey] = {
+        geneId: transcript.geneId,
+        geneSymbol: transcript.geneSymbol ? transcript.geneSymbol : transcript.geneId,
+        transcripts: [],
+      }
+    }
+
+    const { geneId, geneSymbol, consequence: _, ...transcriptData } = transcript
+    acc[consequence].genes[geneKey].transcripts.push(transcriptData)
+
+    return acc
+  }, {})
+
+  const result = Object.values(groupedByConsequence)
+    .map((consequenceGroup) => ({
+      consequence: consequenceGroup.consequence,
+      genes: Object.values(consequenceGroup.genes),
+    }))
+    .sort((a, b) => CSQ_ORDER.indexOf(a.consequence) - CSQ_ORDER.indexOf(b.consequence))
+
+  return result
+}
+
+const TranscriptConsequencesWrapper = styled.div`
+  margin-top: 2em;
+`
+
+const ConsequenceListWrapper = styled.ol`
+  display: flex;
+  flex-flow: row wrap;
+  padding: 0;
+  list-style-type: none;
+  margin-bottom: 1em;
+
+  h3,
+  h4 {
+    margin: 0 0 0.5em;
+  }
+`
+
+const ConsequenceListItem = styled.li`
+  margin-right: 2em;
+`
+
+const GeneList = styled.ol`
+  margin-bottom: 1em;
+`
+
+const TranscriptList = styled.ol`
+  margin-bottom: 1em;
+`
+
+const TranscriptDetails = ({ transcript }) => {
+  return (
+    <ListItem>
+      <div>
+        {
+          <ExternalLink
+            href={`https://gnomad.broadinstitute.org/transcript/${transcript.transcriptId}`}
+          >
+            {transcript.transcriptId}
+          </ExternalLink>
+        }
+        {transcript.isManeSelect && <div>Mane Select transcript</div>}
+        {transcript.isCanonical && <div>Canonical transcript</div>}
+        {transcript.hgvsp && <div>{`HGVSp: ${transcript.hgvsp}`}</div>}
+        {transcript.hgvsc && <div>{`HGVSc: ${transcript.hgvsc}`}</div>}
+      </div>
+    </ListItem>
+  )
+}
+
+TranscriptDetails.propTypes = {
+  transcript: PropTypes.shape({
+    transcriptId: PropTypes.string.isRequired,
+    isManeSelect: PropTypes.bool.isRequired,
+    isCanonical: PropTypes.bool.isRequired,
+    hgvsp: PropTypes.string.isRequired,
+    hgvsc: PropTypes.string.isRequired,
+  }).isRequired,
+}
+
+const TranscriptConsequences = ({ transcriptConsequencesString }) => {
+  const transcriptConsequences = JSON.parse(transcriptConsequencesString).filter((tc) =>
+    tc.gene_id.startsWith('ENSG')
+  )
+  const numTranscripts = transcriptConsequences.length
+  const numGenes = Array.from(new Set(transcriptConsequences.map((csq) => csq.gene_id))).length
+
+  const parsedTranscriptConsequences = parseTranscriptConsequences(transcriptConsequences)
+
+  return (
+    <TranscriptConsequencesWrapper>
+      <h2>Transcript Consequences</h2>
+      <p>
+        This variant falls on {numTranscripts} transcript{numTranscripts !== 1 && 's'} in {numGenes}{' '}
+        gene{numGenes !== 1 && 's'}.
+      </p>
+      <br />
+
+      <ConsequenceListWrapper>
+        {parsedTranscriptConsequences.map((consequence) => {
+          return (
+            <ConsequenceListItem key={consequence.consequence}>
+              <h4>{consequence.consequence}</h4>
+              <GeneList>
+                {consequence.genes.map((gene) => {
+                  return (
+                    <ListItem key={gene.geneId}>
+                      <h4>
+                        <ExternalLink
+                          href={`https://gnomad.broadinstitute.org/gene/${gene.geneId}`}
+                        >
+                          {gene.geneSymbol}
+                        </ExternalLink>
+                      </h4>
+                      <TranscriptList>
+                        {gene.transcripts
+                          .sort((transcript) => (transcript.isManeSelect ? 0 : 1))
+                          .map((transcript) => (
+                            <TranscriptDetails transcript={transcript} />
+                          ))}
+                      </TranscriptList>
+                    </ListItem>
+                  )
+                })}
+              </GeneList>
+            </ConsequenceListItem>
+          )
+        })}
+      </ConsequenceListWrapper>
+    </TranscriptConsequencesWrapper>
+  )
+}
+
+TranscriptConsequences.propTypes = {
+  transcriptConsequencesString: PropTypes.string.isRequired,
+}
+
 const renderNumber = (num, precision = 3) =>
   num === null ? '–' : Number(num.toPrecision(precision)).toString()
 
@@ -45,6 +284,7 @@ const VariantDetails = ({
   variantAnalysisGroupLabels,
   variantResultColumns,
   renderVariantAttributes,
+  renderVariantTranscriptConsequences,
 }) => {
   const defaultGroupResult = inputVariant.group_results[defaultVariantAnalysisGroup]
   // Select default analysis group so that column render methods work correctly
@@ -153,6 +393,14 @@ const VariantDetails = ({
             })}
         </tbody>
       </BaseTable>
+
+      {renderVariantTranscriptConsequences && variant.info && variant.info.transcript_consequences && (
+        <>
+          <TranscriptConsequences
+            transcriptConsequencesString={variant.info.transcript_consequences}
+          />
+        </>
+      )}
     </VariantContainer>
   )
 }
@@ -180,10 +428,12 @@ VariantDetails.propTypes = {
     })
   ).isRequired,
   renderVariantAttributes: PropTypes.func,
+  renderVariantTranscriptConsequences: PropTypes.bool,
 }
 
 VariantDetails.defaultProps = {
   renderVariantAttributes: undefined,
+  renderVariantTranscriptConsequences: false,
 }
 
 export default VariantDetails
