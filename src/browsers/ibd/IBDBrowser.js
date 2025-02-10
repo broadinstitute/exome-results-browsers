@@ -37,24 +37,6 @@ const IBDBrowser = () => (
     defaultGeneResultSortKey="lof_0_001_P"
     geneResultColumns={[
       {
-        key: 'TODO:',
-        heading: 'Variant P-val',
-        minWidth: 110,
-        render: () => renderFloatAsScientific(null),
-      },
-      {
-        key: 'TODO:',
-        heading: 'Variant Beta',
-        minWidth: 110,
-        render: () => renderFloatAsDecimal(null),
-      },
-      {
-        key: 'TODO:',
-        heading: 'Variant AF',
-        minWidth: 110,
-        render: () => renderFloatAsScientific(null),
-      },
-      {
         key: 'lof_0_001_P',
         heading: 'LoF 0.001 P-val',
         minWidth: 110,
@@ -75,6 +57,24 @@ const IBDBrowser = () => (
       {
         key: 'lof_missense_0_001_BETA',
         heading: 'LoF Missense 0.001 Beta',
+        minWidth: 110,
+        render: (value) => renderFloatAsDecimal(value),
+      },
+      {
+        key: 'variant_af_case',
+        heading: 'Variant AF Case',
+        minWidth: 110,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'variant_p',
+        heading: 'Variant P-val',
+        minWidth: 110,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'variant_beta',
+        heading: 'Variant Beta',
         minWidth: 110,
         render: (value) => renderFloatAsDecimal(value),
       },
