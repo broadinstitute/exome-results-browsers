@@ -106,4 +106,41 @@ def prepare_variant_results():
 
     variants = variants.annotate(**annotations[variants.locus, variants.alleles])
 
+    # generate and save most significant variant per analysis group for each Gene
+    most_significant_variant_per_gene = os.path.join(staging_output_path, "ibd", "genes_most_significant_variants.ht")
+
+    if not hl.hadoop_exists(most_significant_variant_per_gene):
+
+        exploded = variants.annotate(
+            group_entries=hl.array(hl.zip(variants.group_results.keys(), variants.group_results.values()))
+        ).explode("group_entries")
+
+        exploded = exploded.annotate(group_name=exploded.group_entries[0], group_data=exploded.group_entries[1])
+
+        exploded.drop("group_results", "group_entries")
+
+        grouped = exploded.group_by(gene_id=exploded.gene_id, group_name=exploded.group_name).aggregate(
+            most_significant_variant=hl.agg.take(
+                hl.struct(
+                    p=exploded.group_data.p,
+                    variant_data=exploded.group_data,
+                ),
+                1,
+                ordering=exploded.group_data.p,
+            )[0]
+        )
+
+        grouped.write(
+            os.path.join(staging_output_path, "ibd", "gene_most_significant_variant_per_analysis_group.ht"),
+            overwrite=True,
+        )
+
+        final_table = grouped.group_by(grouped.gene_id).aggregate(
+            most_significant_variant_per_group=hl.dict(
+                hl.agg.collect((grouped.group_name, grouped.most_significant_variant.variant_data))
+            )
+        )
+
+        final_table.write(most_significant_variant_per_gene, overwrite=True)
+
     return variants
