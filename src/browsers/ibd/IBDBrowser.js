@@ -118,6 +118,7 @@ const IBDBrowser = () => (
       { label: 'Splice AI', content: spliceAi === null ? '–' : spliceAi },
       { label: 'Sift', content: sift === null ? '–' : sift },
     ]}
+    renderVariantTranscriptConsequences
   />
 )
 

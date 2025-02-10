@@ -37,6 +37,7 @@ const Browser = ({
   variantConsequenceCategoryLabels,
   variantCustomFilter,
   renderVariantAttributes,
+  renderVariantTranscriptConsequences,
 }) => (
   <Router>
     <TopBar
@@ -93,6 +94,7 @@ const Browser = ({
               variantConsequenceCategoryLabels={variantConsequenceCategoryLabels}
               variantCustomFilter={variantCustomFilter}
               renderVariantAttributes={renderVariantAttributes}
+              renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
             />
           )}
         />
@@ -188,6 +190,7 @@ Browser.propTypes = {
     applyFilter: PropTypes.func.isRequired,
   }),
   renderVariantAttributes: PropTypes.func,
+  renderVariantTranscriptConsequences: PropTypes.bool,
 }
 
 Browser.defaultProps = {
@@ -219,6 +222,7 @@ Browser.defaultProps = {
   },
   variantCustomFilter: undefined,
   renderVariantAttributes: undefined,
+  renderVariantTranscriptConsequences: false,
 }
 
 export default Browser
