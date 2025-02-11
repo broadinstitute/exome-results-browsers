@@ -95,14 +95,7 @@ const rowOptions = {
   'Nonsynonymous singleton': 'nsyn_singleton',
 }
 
-const rowsWanted = [
-  'LoF 0.001',
-  'LoF Singleton',
-  'LoF Missense 0.001',
-  'LoF Missense Singleton',
-  'Nonsynonymous 0.001',
-  'Nonsynonymous singleton',
-]
+const rowsWanted = ['LoF 0.001', 'LoF Missense 0.001']
 
 const IBDGeneResult = ({ result }) => (
   <div>
