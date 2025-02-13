@@ -87,7 +87,7 @@ const IBDBrowser = () => (
       {
         key: 'group_result.p',
         heading: 'P\u2011Value',
-        minWidth: 75,
+        minWidth: 85,
         render: (value) => renderFloatAsScientific(value),
       },
 
