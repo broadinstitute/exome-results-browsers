@@ -8,7 +8,7 @@ from data_pipeline.config import pipeline_config
 def prepare_variant_results():
     staging_output_path = pipeline_config.get("output", "staging_path")
 
-    results = hl.read_table(pipeline_config.get("IBD", "variant_results_path"))
+    results = hl.read_table(pipeline_config.get("IBD", "variant_results_path")).drop("filter")
 
     # Get unique variants from results table
     variants = results.group_by(results.locus, results.alleles).aggregate()
@@ -21,7 +21,7 @@ def prepare_variant_results():
         an_ctrl=results.ac_control[0],
     )
 
-    results = results.drop("ac_control")
+    results = results.drop("ac_control", "an_control")
 
     results = results.filter((results.ac_case > 0) | (results.ac_ctrl > 0))
 
@@ -37,10 +37,24 @@ def prepare_variant_results():
                     .when("uc-control", "UC")
                     .or_missing(),
                     group_result.drop("analysis_group").annotate(
-                        # these fields were mistakenly changed to string types
-                        #   upstream in the November 2024 data handoff
-                        p=hl.float(group_result.p),
-                        chi_sq_stat=hl.float(group_result.chi_sq_stat),
+                        # explicitly cast these as  floats, as some fields are anomalously
+                        #   strings in the Feb 2025 data handoff (e.g. 'BETA_Twist')
+                        P_meta=hl.float(group_result.P_meta),
+                        BETA_meta=hl.float(group_result.BETA_meta),
+                        HetP=hl.float(group_result.HetP),
+                        gnomad_v4_1_genome_nfe_freq=hl.float(group_result.gnomADv4_1_genome_nfe_frq),
+                        P_Twist=hl.float(group_result.P_Twist),
+                        BETA_Twist=hl.float(group_result.BETA_Twist),
+                        P_Nextera=hl.float(group_result.P_Nextera),
+                        BETA_Nextera=hl.float(group_result.BETA_Nextera),
+                        P_Sanger_WES=hl.float(group_result.P_Sanger_WES),
+                        BETA_Sanger_WES=hl.float(group_result.BETA_Sanger_WES),
+                        P_UKBB=hl.float(group_result.P_UKBB),
+                        BETA_UKBB=hl.float(group_result.BETA_UKBB),
+                        P_Sanger_WGS=hl.float(group_result.P_Sanger_WGS),
+                        BETA_Sanger_WGS=hl.float(group_result.BETA_Sanger_WGS),
+                        P_regeneron=hl.float(group_result.P_regeneron),
+                        BETA_regeneron=hl.float(group_result.BETA_regeneron),
                     ),
                 )
             )
@@ -88,7 +102,6 @@ def prepare_variant_results():
 
     annotations = annotations.annotate(transcript_consequences=hl.json(annotations.transcript_consequences))
 
-    # Not actually sure which annotations we need
     annotations = annotations.select(
         gene_id=annotations.gene_id_canonical,
         consequence=annotations.most_severe_consequence,
@@ -107,6 +120,7 @@ def prepare_variant_results():
     variants = variants.annotate(**annotations[variants.locus, variants.alleles])
 
     most_significant_variant_per_gene = os.path.join(staging_output_path, "ibd", "genes_most_significant_variants.ht")
+
     if not hl.hadoop_exists(most_significant_variant_per_gene):
         exploded = variants.annotate(
             group_entries=hl.array(hl.zip(variants.group_results.keys(), variants.group_results.values()))
@@ -119,11 +133,23 @@ def prepare_variant_results():
         grouped = exploded.group_by(gene_id=exploded.gene_id, group_name=exploded.group_name,).aggregate(
             most_significant_variant=hl.agg.take(
                 hl.struct(
-                    p=exploded.group_data.p,
-                    variant_data=exploded.group_data,
+                    P_meta=exploded.group_data.P_meta,
+                    variant_data=hl.struct(
+                        **exploded.group_data,
+                        gene_id=exploded.gene_id,
+                        consequence=exploded.consequence,
+                        hgvsc=exploded.hgvsc,
+                        hgvsp=exploded.hgvsp,
+                        cadd=exploded.info.cadd,
+                        splice_ai=exploded.info.splice_ai,
+                        revel=exploded.info.revel,
+                        polyphen=exploded.info.polyphen,
+                        sift=exploded.info.sift,
+                        transcript_consequences=exploded.info.transcript_consequences,
+                    ),
                 ),
                 1,
-                ordering=exploded.group_data.p,
+                ordering=exploded.group_data.P_meta,
             )[0]
         )
 
