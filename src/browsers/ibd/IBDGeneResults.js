@@ -6,7 +6,8 @@ import { BaseTable, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
 
-const ibdAnalysisGroups = ['IBD', 'CD', 'UC']
+// const ibdAnalysisGroups = ['IBD', 'CD', 'UC']
+const ibdAnalysisGroups = ['IBD', 'CD']
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -17,7 +18,7 @@ const formatToDecimals = (value, decimals = 3) => {
   return Number(value).toFixed(decimals)
 }
 const formatDecimal = (value) => formatToDecimals(value, 3)
-const formatWholeNumber = (value) => formatToDecimals(value, 0)
+// const formatWholeNumber = (value) => formatToDecimals(value, 0)
 
 const formatScientific = (value, decimals = 2) => {
   if (value == null) return '-'
@@ -34,68 +35,30 @@ const formatPVal = (value) => {
   return formatScientific(value)
 }
 
-const columnConfig = {
+const rowOptions = {
+  'PTV 0.001': 'ptv_0_001',
+  'NSyn 0.001': 'nsyn_0_001',
+  'NSyn AM 0.001': 'nsyn_am_0_001',
+}
+
+const columnOptions = {
   'P-Value': {
-    schemaName: 'P',
+    schemaName: 'P_meta',
     renderFunction: formatPVal,
   },
   Beta: {
-    schemaName: 'BETA',
+    schemaName: 'beta_meta',
     renderFunction: formatDecimal,
   },
-  'Standard Error': {
-    schemaName: 'SE',
-    renderFunction: formatDecimal,
-  },
-  Frequency: {
-    schemaName: 'freq',
-    renderFunction: formatDecimal,
-  },
-  'Case Allele Count': {
-    schemaName: 'n_alleles_case',
-    renderFunction: formatWholeNumber,
-  },
-  'Control Allele Count': {
-    schemaName: 'n_alleles_control',
-    renderFunction: formatWholeNumber,
-  },
-  'Case Sample Count': {
-    schemaName: 'n_samples_case',
-    renderFunction: formatWholeNumber,
-  },
-  'Control Sample Count': {
-    schemaName: 'n_samples_control',
-    renderFunction: formatWholeNumber,
-  },
-  'Heterozygous P-Value': {
-    schemaName: 'HetP',
+  'Het P': {
+    schemaName: 'het_P_meta',
     renderFunction: formatDecimal,
   },
 }
 
-const columnsWanted = [
-  'Category',
-  'Case Allele Count',
-  'Control Allele Count',
-  'P-Value',
-  'Beta',
-  'Standard Error',
-]
+const rowsWanted = ['PTV 0.001', 'NSyn 0.001']
 
-const rowOptions = {
-  'LoF 0.001': 'lof_0_001',
-  '(3) LoF 0.001': '3_lof_0_001',
-  'LoF Missense Singleton': 'lof_missense_singleton',
-  'LoF Missense 0.001': 'lof_missense_0_001',
-  '(3) LoF Missense 0.001': '3_lof_missense_0_001',
-  'LoF Singleton': 'lof_singleton',
-  'Nonsynonymous 0.001': 'nsyn_0_001',
-  '(2) Nonsynonymous 0.001': '2_nsyn_0_001',
-  '(3) Nonsynonymous 0.001': '3_nsyn_0_001',
-  'Nonsynonymous singleton': 'nsyn_singleton',
-}
-
-const rowsWanted = ['LoF 0.001', 'LoF Missense 0.001']
+const columnsWanted = ['Category', 'P-Value', 'Beta', 'Het P']
 
 const IBDGeneResult = ({ result }) => (
   <div>
@@ -117,8 +80,8 @@ const IBDGeneResult = ({ result }) => (
               .map((column) => (
                 <td key={column}>
                   {(() => {
-                    const toCheck = result[`${rowOptions[row]}_${columnConfig[column].schemaName}`]
-                    return toCheck === null ? '-' : columnConfig[column].renderFunction(toCheck)
+                    const toCheck = result[`${rowOptions[row]}_${columnOptions[column].schemaName}`]
+                    return toCheck === null ? '-' : columnOptions[column].renderFunction(toCheck)
                   })()}
                 </td>
               ))}
