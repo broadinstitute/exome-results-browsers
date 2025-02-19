@@ -284,6 +284,7 @@ const VariantDetails = ({
   variantAnalysisGroupLabels,
   variantResultColumns,
   renderVariantAttributes,
+  variantDetailColumns,
   renderVariantTranscriptConsequences,
 }) => {
   const defaultGroupResult = inputVariant.group_results[defaultVariantAnalysisGroup]
@@ -291,6 +292,24 @@ const VariantDetails = ({
   const variant = { ...inputVariant, group_result: defaultGroupResult }
 
   const gnomadDataset = referenceGenome === 'GRCh38' ? 'gnomad_r3' : 'gnomad_r2_1'
+
+  const renderedVariantColumns = variantDetailColumns || [
+    { key: 'group_result.ac_case', heading: 'AC Case', render: (value) => value },
+    { key: 'group_result.an_case', heading: 'AN Case', render: (value) => value },
+    { key: 'group_result.ac_ctrl', heading: 'AC Ctrl', render: (value) => value },
+    { key: 'group_result.an_ctrl', heading: 'AN Ctrl', render: (value) => value },
+    {
+      key: 'group_result.af_case',
+      heading: 'AF Case',
+      render: (value) => renderExponential(value),
+    },
+    {
+      key: 'group_result.af_ctrl',
+      heading: 'AF Ctrl',
+      render: (value) => renderExponential(value),
+    },
+    ...variantResultColumns,
+  ]
 
   return (
     <VariantContainer>
@@ -342,13 +361,7 @@ const VariantDetails = ({
         <thead>
           <tr>
             <th scope="col">Group</th>
-            <th scope="col">AC Case</th>
-            <th scope="col">AN Case</th>
-            <th scope="col">AC Ctrl</th>
-            <th scope="col">AN Ctrl</th>
-            <th scope="col">AF Case</th>
-            <th scope="col">AF Ctrl</th>
-            {variantResultColumns.map((c) => (
+            {renderedVariantColumns.map((c) => (
               <th key={c.key} scope="col">
                 {c.heading}
               </th>
@@ -375,13 +388,7 @@ const VariantDetails = ({
               return (
                 <tr key={analysisGroup}>
                   <th scope="row">{variantAnalysisGroupLabels[analysisGroup] || analysisGroup}</th>
-                  <td>{groupResult.ac_case}</td>
-                  <td>{groupResult.an_case}</td>
-                  <td>{groupResult.ac_ctrl}</td>
-                  <td>{groupResult.an_ctrl}</td>
-                  <td>{renderExponential(groupResult.af_case)}</td>
-                  <td>{renderExponential(groupResult.af_ctrl)}</td>
-                  {variantResultColumns.map((c) => (
+                  {renderedVariantColumns.map((c) => (
                     <td key={c.key}>
                       {get(rowVariant, c.key) === null
                         ? ''
@@ -428,11 +435,24 @@ VariantDetails.propTypes = {
     })
   ).isRequired,
   renderVariantAttributes: PropTypes.func,
+  variantDetailColumns: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      heading: PropTypes.string,
+      minWidth: PropTypes.number,
+      tooltip: PropTypes.string,
+      render: PropTypes.func,
+      renderForCSV: PropTypes.func,
+      showOnGenePage: PropTypes.bool,
+      showOnDetails: PropTypes.bool,
+    })
+  ),
   renderVariantTranscriptConsequences: PropTypes.bool,
 }
 
 VariantDetails.defaultProps = {
   renderVariantAttributes: undefined,
+  variantDetailColumns: undefined,
   renderVariantTranscriptConsequences: false,
 }
 
