@@ -129,6 +129,80 @@ const IBDBrowser = () => (
       { label: 'Splice AI', content: spliceAi === null ? '–' : spliceAi },
       { label: 'Sift', content: sift === null ? '–' : sift },
     ]}
+    variantDetailColumns={[
+      {
+        key: 'group_result.P_Twist',
+        heading: 'P (Twist)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'group_result.BETA_Twist',
+        heading: 'Beta (Twist)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'group_result.P_Nextera',
+        heading: 'P (Nextera)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'group_result.BETA_Nextera',
+        heading: 'Beta (Nextera)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'group_result.P_Sanger_WES',
+        heading: 'P (Sanger WES)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'group_result.BETA_Sanger_WES',
+        heading: 'Beta (Sanger WES)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'group_result.P_UKBB',
+        heading: 'P (UKBB)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'group_result.BETA_UKBB',
+        heading: 'Beta (UKBB)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'group_result.P_Sanger_WGS',
+        heading: 'P (Sanger WGS)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'group_result.BETA_Sanger_WGS',
+        heading: 'Beta (Sanger WGS)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'group_result.P_regeneron',
+        heading: 'P (Regeneron)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+      {
+        key: 'group_result.BETA_regeneron',
+        heading: 'Beta (Regeneron)',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+    ]}
     renderVariantTranscriptConsequences
   />
 )
