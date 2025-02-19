@@ -37,6 +37,7 @@ const Browser = ({
   variantConsequenceCategoryLabels,
   variantCustomFilter,
   renderVariantAttributes,
+  variantDetailColumns,
   renderVariantTranscriptConsequences,
 }) => (
   <Router>
@@ -94,6 +95,7 @@ const Browser = ({
               variantConsequenceCategoryLabels={variantConsequenceCategoryLabels}
               variantCustomFilter={variantCustomFilter}
               renderVariantAttributes={renderVariantAttributes}
+              variantDetailColumns={variantDetailColumns}
               renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
             />
           )}
@@ -189,6 +191,18 @@ Browser.propTypes = {
     defaultFilter: PropTypes.any.isRequired,
     applyFilter: PropTypes.func.isRequired,
   }),
+  variantDetailColumns: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      heading: PropTypes.string,
+      minWidth: PropTypes.number,
+      tooltip: PropTypes.string,
+      render: PropTypes.func,
+      renderForCSV: PropTypes.func,
+      showOnGenePage: PropTypes.bool,
+      showOnDetails: PropTypes.bool,
+    })
+  ),
   renderVariantAttributes: PropTypes.func,
   renderVariantTranscriptConsequences: PropTypes.bool,
 }
@@ -221,6 +235,7 @@ Browser.defaultProps = {
     other: 'Other',
   },
   variantCustomFilter: undefined,
+  variantDetailColumns: undefined,
   renderVariantAttributes: undefined,
   renderVariantTranscriptConsequences: false,
 }
