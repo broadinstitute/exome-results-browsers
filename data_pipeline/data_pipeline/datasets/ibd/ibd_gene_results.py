@@ -92,7 +92,6 @@ def prepare_gene_results():
     results = results.join(variant_per_gene_per_group, "left")
 
     # pylint: disable-next=anomalous-backslash-in-string
-    # results = results.annotate(burden_test=results.burden_test.replace("\.", "_").replace("\+", "_").lower())
     results = results.annotate(
         consequence_category=results.consequence_category.replace("\.", "_").replace("\+", "_").lower()
     )
