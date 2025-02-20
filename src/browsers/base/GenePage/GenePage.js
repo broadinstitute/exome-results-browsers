@@ -46,6 +46,7 @@ const GenePage = ({
   variantConsequenceCategoryLabels,
   variantResultColumns,
   variantCustomFilter,
+  additionalVariantDetailSummaryColumns,
   renderVariantAttributes,
   variantDetailColumns,
   renderVariantTranscriptConsequences,
@@ -119,6 +120,7 @@ const GenePage = ({
           defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
           gene={gene}
           renderVariantAttributes={renderVariantAttributes}
+          additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
           variantDetailColumns={variantDetailColumns}
           renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
           variantAnalysisGroupLabels={variantAnalysisGroupLabels}
@@ -147,6 +149,18 @@ GenePage.propTypes = {
   variantConsequenceCategoryLabels: PropTypes.any, // eslint-disable-line react/forbid-prop-types
   variantCustomFilter: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   renderVariantAttributes: PropTypes.func,
+  additionalVariantDetailSummaryColumns: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      heading: PropTypes.string,
+      minWidth: PropTypes.number,
+      tooltip: PropTypes.string,
+      render: PropTypes.func,
+      renderForCSV: PropTypes.func,
+      showOnGenePage: PropTypes.bool,
+      showOnDetails: PropTypes.bool,
+    })
+  ),
   variantDetailColumns: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string.isRequired,
@@ -186,6 +200,7 @@ GenePage.defaultProps = {
   variantSortOrder: 'ascending',
   variantCustomFilter: undefined,
   renderVariantAttributes: undefined,
+  additionalVariantDetailSummaryColumns: undefined,
   variantDetailColumns: undefined,
   renderVariantTranscriptConsequences: false,
   variantConsequenceCategoryLabels: undefined,
