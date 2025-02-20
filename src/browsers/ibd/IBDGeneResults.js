@@ -6,8 +6,7 @@ import { BaseTable, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
 
-// const ibdAnalysisGroups = ['IBD', 'CD', 'UC']
-const ibdAnalysisGroups = ['IBD', 'CD']
+const ibdAnalysisGroups = ['IBD', 'CD', 'UC']
 
 const Table = styled(BaseTable)`
   min-width: 325px;
