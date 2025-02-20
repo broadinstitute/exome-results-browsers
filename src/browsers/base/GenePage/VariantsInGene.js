@@ -250,6 +250,7 @@ class VariantsInGene extends Component {
       variantConsequenceCategoryLabels,
       variantCustomFilter,
       renderVariantAttributes,
+      additionalVariantDetailSummaryColumns,
       variantDetailColumns,
       renderVariantTranscriptConsequences,
     } = this.props
@@ -343,6 +344,7 @@ class VariantsInGene extends Component {
               variantAnalysisGroupLabels={variantAnalysisGroupLabels}
               variantResultColumns={variantResultColumns.filter((c) => c.showOnDetails !== false)}
               renderVariantAttributes={renderVariantAttributes}
+              additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
               variantDetailColumns={variantDetailColumns}
               renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
             />
@@ -377,6 +379,18 @@ VariantsInGene.propTypes = {
     defaultFilter: PropTypes.any.isRequired,
     applyFilter: PropTypes.func.isRequired,
   }),
+  additionalVariantDetailSummaryColumns: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      heading: PropTypes.string,
+      minWidth: PropTypes.number,
+      tooltip: PropTypes.string,
+      render: PropTypes.func,
+      renderForCSV: PropTypes.func,
+      showOnGenePage: PropTypes.bool,
+      showOnDetails: PropTypes.bool,
+    })
+  ),
   renderVariantAttributes: PropTypes.func,
   variantDetailColumns: PropTypes.arrayOf(
     PropTypes.shape({
@@ -425,6 +439,7 @@ VariantsInGene.defaultProps = {
   variantConsequenceCategoryLabels: undefined,
   variantCustomFilter: undefined,
   renderVariantAttributes: undefined,
+  additionalVariantDetailSummaryColumns: undefined,
   variantDetailColumns: undefined,
   renderVariantTranscriptConsequences: false,
 }
