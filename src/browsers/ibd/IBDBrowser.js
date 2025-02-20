@@ -117,6 +117,14 @@ const IBDBrowser = () => (
       { label: 'Splice AI', content: spliceAi === null ? '–' : spliceAi },
       { label: 'Sift', content: sift === null ? '–' : sift },
     ]}
+    additionalVariantDetailSummaryColumns={[
+      {
+        key: 'group_result.HetP',
+        heading: 'Het P\u2011Value',
+        minWidth: 85,
+        render: (value) => renderFloatAsScientific(value),
+      },
+    ]}
     variantDetailColumns={[
       {
         key: 'group_result.P_Twist',

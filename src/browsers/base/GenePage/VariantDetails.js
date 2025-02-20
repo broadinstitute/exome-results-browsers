@@ -284,6 +284,7 @@ const VariantDetails = ({
   variantAnalysisGroupLabels,
   variantResultColumns,
   renderVariantAttributes,
+  additionalVariantDetailSummaryColumns,
   variantDetailColumns,
   renderVariantTranscriptConsequences,
 }) => {
@@ -292,6 +293,11 @@ const VariantDetails = ({
   const variant = { ...inputVariant, group_result: defaultGroupResult }
 
   const gnomadDataset = referenceGenome === 'GRCh38' ? 'gnomad_r3' : 'gnomad_r2_1'
+
+  const renderedVariantSummaryRows = [
+    ...variantResultColumns,
+    ...additionalVariantDetailSummaryColumns,
+  ]
 
   const renderedVariantColumns = variantDetailColumns || [
     { key: 'group_result.ac_case', heading: 'AC Case', render: (value) => value },
@@ -330,7 +336,7 @@ const VariantDetails = ({
                 {defaultGroupResult.ac_ctrl} / {defaultGroupResult.an_ctrl} (
                 {renderExponential(defaultGroupResult.af_ctrl, 4)})
               </VariantAttribute>
-              {variantResultColumns.map((c) => (
+              {renderedVariantSummaryRows.map((c) => (
                 <VariantAttribute key={c.key} label={c.heading}>
                   {get(variant, c.key) === null
                     ? null
@@ -435,6 +441,18 @@ VariantDetails.propTypes = {
     })
   ).isRequired,
   renderVariantAttributes: PropTypes.func,
+  additionalVariantDetailSummaryColumns: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      heading: PropTypes.string,
+      minWidth: PropTypes.number,
+      tooltip: PropTypes.string,
+      render: PropTypes.func,
+      renderForCSV: PropTypes.func,
+      showOnGenePage: PropTypes.bool,
+      showOnDetails: PropTypes.bool,
+    })
+  ),
   variantDetailColumns: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string.isRequired,
@@ -453,6 +471,7 @@ VariantDetails.propTypes = {
 VariantDetails.defaultProps = {
   renderVariantAttributes: undefined,
   variantDetailColumns: undefined,
+  additionalVariantDetailSummaryColumns: undefined,
   renderVariantTranscriptConsequences: false,
 }
 
