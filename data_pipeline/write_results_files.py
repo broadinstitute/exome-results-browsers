@@ -90,7 +90,7 @@ def write_data_files(table_path, output_directory, genes=None):
 
     os.makedirs(f"{output_directory}/results", exist_ok=True)
     for dataset in ds.globals.meta.datasets.dtype.fields:
-        reference_genome = "GRCh38" if dataset == "bipex" else "GRCh37"
+        reference_genome = "GRCh38" if dataset in ["bipex", "ibd"] else "GRCh37"
         gene_results = ds.filter(hl.is_defined(ds.gene_results[dataset]))
         gene_results = gene_results.select(
             result=hl.tuple(
