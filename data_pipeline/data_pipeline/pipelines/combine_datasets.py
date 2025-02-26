@@ -153,7 +153,10 @@ def main():
     hl.init()
 
     output_path = os.path.join(pipeline_config.get("output", "staging_path"), "combined.ht")
-    combine_datasets(datasets_to_combine).write(output_path, overwrite=True)
+
+    combined_ht = combine_datasets(datasets_to_combine)
+    repartitioned_combined_ht = combined_ht.reparitition(500)
+    repartitioned_combined_ht.write(output_path, overwrite=True)
 
 
 if __name__ == "__main__":
