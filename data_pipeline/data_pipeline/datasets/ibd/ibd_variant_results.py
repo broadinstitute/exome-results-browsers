@@ -113,7 +113,6 @@ def prepare_variant_results():
             polyphen=annotations.polyphen_score_canonical,
             splice_ai=annotations.splice_ai_score,
             sift=annotations.sift_score_canonical,
-            transcript_consequences=annotations.transcript_consequences,
         ),
     )
 
@@ -147,7 +146,6 @@ def prepare_variant_results():
                         revel=exploded.info.revel,
                         polyphen=exploded.info.polyphen,
                         sift=exploded.info.sift,
-                        transcript_consequences=exploded.info.transcript_consequences,
                     ),
                 ),
                 1,
