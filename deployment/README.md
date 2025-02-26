@@ -145,6 +145,32 @@ kubectl apply -k deployment/manifests
 
 If you would like to extend your deployment with things like an Ingress, additional environment variables, different docker image tags, etc, you can create a new kustomization in [gnomad-deployments](https://github.com/broadinstitute/gnomad-deployments/blob/main/exome-results-browsers), or a new local directory on your laptop if you don't want to check the kustomization into source control.
 
+### Demo Deployments
+
+- Build the docker image
+
+   ```
+   ./deployment/build-docker-image.sh
+   ```
+
+
+- Push the docker image to the artifact registry
+
+   ```
+   ./deployment/deploy-image.sh <IMAGE-TAG>
+   ```
+
+
+- In [`gnomad-deployments`](https://github.com/broadinstitute/gnomad-deployments) update `exome-results-browsers/demo/kustomization.yaml` to use the new docker image, and optionally a new persisent disk.
+
+- Apply the changes. You must be on site or VPN'd into the broad, and your gcloud and kubectl context should be set appropriately
+
+   ```
+   kubectl apply -k exome-results-browsers/demo/
+   ```
+
+
+
 ### Production Deployment
 
 ## Building the Docker image
