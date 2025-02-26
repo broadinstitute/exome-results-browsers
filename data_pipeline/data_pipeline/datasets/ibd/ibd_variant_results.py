@@ -113,7 +113,7 @@ def prepare_variant_results():
             revel=annotations.revel_score,
             polyphen=annotations.polyphen_score_canonical,
             sift=annotations.sift_score_canonical,
-            transcript_consequences=annotations.transcript_consequences,
+            # transcript_consequences=annotations.transcript_consequences,
         ),
     )
 
