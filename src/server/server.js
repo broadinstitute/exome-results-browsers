@@ -39,6 +39,9 @@ app.set('trust proxy', config.trustProxy)
 
 app.use(compression())
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
 // ================================================================================================
 // Kubernetes readiness probe
 // ================================================================================================
@@ -117,6 +120,70 @@ app.use('/api/search', (req, res) => {
 })
 
 // ================================================================================================
+// Authentication
+// ================================================================================================
+
+// TODO: this is temp logic for now, might have to move around
+const PASSWORD_PROTECTED_DATASETS = ['IBD']
+const CORRECT_PASSWORD = process.env.PROTECTED_PASSWORD || 'test'
+const activeTokens = new Set()
+
+app.post('/api/auth', (req, res) => {
+  const { password } = req.body
+
+  console.log('\n\n=== In auth!!')
+  console.log('\nPassword is: ', password)
+  console.log('\nActive tokens are: ', activeTokens)
+
+  let dataset
+  try {
+    dataset = getDatasetForRequest(req)
+  } catch (err) {} // eslint-disable-line no-empty
+
+  if (!dataset) {
+    res.status(500).json({ message: 'Unknown dataset' })
+  }
+
+  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
+    return res.json({ success: true, token: 'not-required' })
+  }
+
+  if (password === CORRECT_PASSWORD) {
+    const token = Math.random().toString(36).substring(2, 15)
+    activeTokens.add(token)
+
+    console.log('Password correct, about to return true!')
+    res.json({ success: true, token })
+  } else {
+    console.log('Sorry, incorrect password!')
+    res.status(401).json({ success: false, message: 'Invalid password' })
+  }
+})
+
+app.post('/api/check-auth', (req, res) => {
+  const { token } = req.body
+
+  let dataset
+  try {
+    dataset = getDatasetForRequest(req)
+  } catch (err) {} // eslint-disable-line no-empty
+
+  if (!dataset) {
+    res.status(500).json({ message: 'Unknown dataset' })
+  }
+
+  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
+    return res.json({ authenticated: true })
+  }
+
+  if (token && activeTokens.has(token)) {
+    res.json({ authenticated: true })
+  } else {
+    res.json({ authenticated: false })
+  }
+})
+
+// ================================================================================================
 // Dataset
 // ================================================================================================
 
@@ -154,10 +221,51 @@ app.use('/', (req, res, next) => {
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
-  } else {
-    req.dataset = dataset
-    next()
   }
+
+  req.dataset = dataset
+  // return next()
+  //
+  console.log('Hello1')
+
+  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
+    return next()
+  }
+
+  console.log(`Path is: ${req.path}`)
+
+  // if (req.path === '') {
+  //   console.log('Gotcha!')
+  //   res.redirect('/login')
+  // }
+
+  const unauthenticatedPaths = ['/login', '/api/auth', '/api/check-auth', '/config.js']
+  if (unauthenticatedPaths.includes(req.path) || req.path.startsWith('/static/')) {
+    console.log('Oh yeah')
+    return next()
+  }
+
+  const authHeader = req.headers.authorization
+  const queryToken = req.query.token
+
+  let token
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.substring(7)
+  } else if (queryToken) {
+    token = queryToken
+  }
+
+  console.log('Here?')
+  if (token && activeTokens.has(token)) {
+    return next()
+  }
+
+  // if (req.path.startsWith('/api/')) {
+  //   return res.status(401).json({ success: false, message: 'Authentication required' })
+  // }
+
+  console.log('Hello3')
+  res.redirect('/login')
 })
 
 const datasetConfig = {}
