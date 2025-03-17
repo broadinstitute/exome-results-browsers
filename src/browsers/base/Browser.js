@@ -55,11 +55,14 @@ ProtectedRoute.propTypes = {
   render: PropTypes.func,
   isAuthenticated: PropTypes.bool.isRequired,
   datasetId: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  location: PropTypes.object,
 }
 
 ProtectedRoute.defaultProps = {
   component: undefined,
   render: undefined,
+  location: {},
 }
 
 const Browser = ({
@@ -92,7 +95,7 @@ const Browser = ({
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(true)
-  const datasetId = window.datasetConfig.datasetId
+  const { datasetId } = window.datasetConfig
 
   useEffect(() => {
     const token = sessionStorage.getItem('authToken')
