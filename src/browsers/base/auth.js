@@ -24,6 +24,12 @@ const login = (password) => {
     })
 }
 
+const handleLogout = (e) => {
+  e.preventDefault()
+  sessionStorage.removeItem('authToken')
+  window.location.replace('/login')
+}
+
 const addAuthHeader = (options = {}) => {
   const token = sessionStorage.getItem('authToken')
   if (token) {
@@ -38,4 +44,4 @@ const addAuthHeader = (options = {}) => {
   return options
 }
 
-export { isLoggedIn, login, addAuthHeader }
+export { isLoggedIn, login, addAuthHeader, handleLogout }
