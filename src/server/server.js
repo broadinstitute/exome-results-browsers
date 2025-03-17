@@ -130,10 +130,6 @@ const activeTokens = new Set()
 app.post('/api/auth', (req, res) => {
   const { password } = req.body
 
-  console.log('\n\n=== In auth!!')
-  console.log('\nPassword is: ', password)
-  console.log('\nActive tokens are: ', activeTokens)
-
   let dataset
   try {
     dataset = getDatasetForRequest(req)
@@ -150,11 +146,8 @@ app.post('/api/auth', (req, res) => {
   if (password === CORRECT_PASSWORD) {
     const token = Math.random().toString(36).substring(2, 15)
     activeTokens.add(token)
-
-    console.log('Password correct, about to return true!')
     res.json({ success: true, token })
   } else {
-    console.log('Sorry, incorrect password!')
     res.status(401).json({ success: false, message: 'Invalid password' })
   }
 })
