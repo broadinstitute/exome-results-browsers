@@ -50,6 +50,18 @@ const ProtectedRoute = ({
   )
 }
 
+ProtectedRoute.propTypes = {
+  component: PropTypes.func,
+  render: PropTypes.func,
+  isAuthenticated: PropTypes.bool.isRequired,
+  datasetId: PropTypes.string.isRequired,
+}
+
+ProtectedRoute.defaultProps = {
+  component: undefined,
+  render: undefined,
+}
+
 const Browser = ({
   browserTitle,
   navBarBackgroundColor,
