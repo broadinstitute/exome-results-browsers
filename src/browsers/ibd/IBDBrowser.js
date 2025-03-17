@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 
 import Browser from '../base/Browser'
 import { renderFloatAsScientific, renderFloatAsDecimal } from '../base/tableCells'
@@ -10,97 +10,23 @@ import IBDTermsPage from './IBDTermsPage'
 import IBDVariantFilter from './IBDVariantFilter'
 import vepConsequences from '../base/vepConsequences'
 
-import { isLoggedIn } from '../base/auth'
-
 const variantConsequences = [...vepConsequences]
 
 const ibdAnalysisGroups = ['IBD', 'CD', 'UC']
 const defaultIBDAnalysisGroup = ibdAnalysisGroups[0]
 
-const checkAuth = () => {
-  const currentPath = window.location.pathname
-  if (currentPath === '/login') {
-    return true
-  }
-  return isLoggedIn()
-}
-
 const IBDBrowser = () => {
-  const [authChecked, setAuthChecked] = useState(false)
-  const [lastPathname, setLastPathname] = useState(window.location.pathname)
-
-  if (!checkAuth() && window.location.pathname !== '/login') {
-    sessionStorage.setItem('intendedPath', window.location.pathname)
-    window.location.replace('/login')
-    return null
-  }
-
-  useEffect(() => {
-    console.log('Running this useEffect')
-    const handlePopState = () => {
-      if (!checkAuth()) {
-        sessionStorage.setItem('intendedPath', window.location.pathname)
-        window.location.replace('/login')
-      }
-    }
-
-    const intervalId = setInterval(() => {
-      const currentPathname = window.location.pathname
-      if (currentPathname !== lastPathname) {
-        setLastPathname(currentPathname)
-        if (!checkAuth()) {
-          sessionStorage.setItem('intendedPath', currentPathname)
-          window.location.replace('/login')
-        }
-      }
-    }, 100)
-
-    const originalPushState = window.history.pushState
-    const originalReplaceState = window.history.replaceState
-
-    window.history.pushState = function () {
-      originalPushState.apply(this, arguments)
-      if (!checkAuth()) {
-        sessionStorage.setItem('intendedPath', window.location.pathname)
-        window.location.replace('/login')
-      }
-    }
-
-    window.history.replaceState = function () {
-      originalReplaceState.apply(this, arguments)
-      if (!checkAuth()) {
-        sessionStorage.setItem('intendedPath', window.location.pathname)
-        window.location.replace('/login')
-      }
-    }
-
-    window.addEventListener('popstate', handlePopState)
-
-    setAuthChecked(true)
-
-    return () => {
-      window.removeEventListener('popstate', handlePopState)
-      clearInterval(intervalId)
-      window.history.pushState = originalPushState
-      window.history.replaceState = originalReplaceState
-    }
-  }, [lastPathname])
-
-  if (!authChecked) {
-    return null
-  }
-
   return (
     <Browser
       browserTitle="IBD Browser"
       navBarBackgroundColor="#7b558c"
       homePage={IBDHomePage}
       extraPages={[
-        {
-          path: '/login',
-          label: 'Login',
-          component: LoginPage,
-        },
+        // {
+        //   path: '/login',
+        //   label: 'Login',
+        //   component: LoginPage,
+        // },
         {
           path: '/about',
           label: 'About',
