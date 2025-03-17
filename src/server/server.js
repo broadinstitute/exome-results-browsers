@@ -120,62 +120,6 @@ app.use('/api/search', (req, res) => {
 })
 
 // ================================================================================================
-// Authentication
-// ================================================================================================
-
-const PASSWORD_PROTECTED_DATASETS = ['IBD']
-const CORRECT_PASSWORD = process.env.PROTECTED_PASSWORD || 'password'
-const activeTokens = new Set()
-
-app.post('/api/auth', (req, res) => {
-  const { password } = req.body
-
-  let dataset
-  try {
-    dataset = getDatasetForRequest(req)
-  } catch (err) {} // eslint-disable-line no-empty
-
-  if (!dataset) {
-    res.status(500).json({ message: 'Unknown dataset' })
-  }
-
-  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
-    return res.json({ success: true, token: 'not-required' })
-  }
-
-  if (password === CORRECT_PASSWORD) {
-    const token = Math.random().toString(36).substring(2, 15)
-    activeTokens.add(token)
-    res.json({ success: true, token })
-  } else {
-    res.status(401).json({ success: false, message: 'Invalid password' })
-  }
-})
-
-app.post('/api/check-auth', (req, res) => {
-  const { token } = req.body
-
-  let dataset
-  try {
-    dataset = getDatasetForRequest(req)
-  } catch (err) {} // eslint-disable-line no-empty
-
-  if (!dataset) {
-    res.status(500).json({ message: 'Unknown dataset' })
-  }
-
-  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
-    return res.json({ authenticated: true })
-  }
-
-  if (token && activeTokens.has(token)) {
-    res.json({ authenticated: true })
-  } else {
-    res.json({ authenticated: false })
-  }
-})
-
-// ================================================================================================
 // Dataset
 // ================================================================================================
 
@@ -203,6 +147,66 @@ if (isDevelopment) {
   // getDatasetForRequest = (req) => datasetBySubdomain[req.subdomains[0]]
   getDatasetForRequest = () => 'IBD'
 }
+
+// ================================================================================================
+// Authentication Endpoints
+// ================================================================================================
+
+const PASSWORD_PROTECTED_DATASETS = ['IBD']
+const CORRECT_PASSWORD = process.env.PROTECTED_PASSWORD || 'password'
+const activeTokens = new Set()
+
+app.post('/api/auth', (req, res) => {
+  const { password } = req.body
+
+  let dataset
+  try {
+    dataset = getDatasetForRequest(req)
+  } catch (err) {} // eslint-disable-line no-empty
+
+  if (!dataset) {
+    res.status(500).json({ message: 'Unknown dataset' })
+  }
+
+  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
+    res.json({ success: true, token: 'not-required' })
+  }
+
+  if (password === CORRECT_PASSWORD) {
+    const token = Math.random().toString(36).substring(2, 15)
+    activeTokens.add(token)
+    res.json({ success: true, token })
+  } else {
+    res.status(401).json({ success: false, message: 'Invalid password' })
+  }
+})
+
+app.post('/api/check-auth', (req, res) => {
+  const { token } = req.body
+
+  let dataset
+  try {
+    dataset = getDatasetForRequest(req)
+  } catch (err) {} // eslint-disable-line no-empty
+
+  if (!dataset) {
+    res.status(500).json({ message: 'Unknown dataset' })
+  }
+
+  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
+    res.json({ authenticated: true })
+  }
+
+  if (token && activeTokens.has(token)) {
+    res.json({ authenticated: true })
+  } else {
+    res.json({ authenticated: false })
+  }
+})
+
+// ================================================================================================
+// Middleware
+// ================================================================================================
 
 // Store dataset on request object so other route handlers can use it.
 app.use('/', (req, res, next) => {
@@ -245,9 +249,9 @@ app.use('/', (req, res, next) => {
       success: false,
       message: 'Authentication required',
     })
-  } else {
-    return res.redirect('/login')
   }
+
+  return res.redirect('/login')
 })
 
 const datasetConfig = {}
