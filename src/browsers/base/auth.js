@@ -1,7 +1,6 @@
 const isLoggedIn = () => {
-  const isLoggedIn = sessionStorage.getItem('authToken')
-  console.log('Running isLoggedIn, isLoggedIn? ', isLoggedIn)
-  return isLoggedIn !== null
+  const loggedIn = sessionStorage.getItem('authToken')
+  return loggedIn !== null
 }
 
 const login = (password) => {
@@ -18,8 +17,7 @@ const login = (password) => {
       }
       return false
     })
-    .catch((err) => {
-      console.error('Login error:', err)
+    .catch(() => {
       return false
     })
 }
