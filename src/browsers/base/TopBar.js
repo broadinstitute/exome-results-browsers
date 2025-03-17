@@ -86,7 +86,7 @@ const Menu = styled.ul`
 const TopBar = ({ title, links, backgroundColor, textColor }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(true)
-  const datasetId = window.datasetConfig.datasetId
+  const { datasetId } = window.datasetConfig
 
   useEffect(() => {
     const token = sessionStorage.getItem('authToken')
@@ -190,7 +190,6 @@ TopBar.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
-  isAuthenticated: PropTypes.bool.isRequired,
 }
 
 TopBar.defaultProps = {
