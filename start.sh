@@ -2,6 +2,10 @@
 
 set -eu
 
+if [ -f ".env" ]; then
+  export $(grep -v '^#' .env | xargs)
+fi
+
 print_usage() {
   echo "Usage: start.sh BROWSER [--proxy-api] [--port PORT]" 1>&2
 }

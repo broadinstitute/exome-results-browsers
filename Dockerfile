@@ -44,5 +44,7 @@ COPY --chown=node:node --from=build /home/node/app/src/server/public ./public
 # Copy server source
 COPY --chown=node:node src/server .
 
+COPY --chown=node:node .env .
+
 # Run
-CMD ["node", "server.js"]
+CMD sh -c 'if [ -f .env ]; then export $(grep -v "^#" .env | xargs); fi && node server.js'
