@@ -123,9 +123,8 @@ app.use('/api/search', (req, res) => {
 // Authentication
 // ================================================================================================
 
-// TODO: this is temp logic for now, might have to move around
 const PASSWORD_PROTECTED_DATASETS = ['IBD']
-const CORRECT_PASSWORD = process.env.PROTECTED_PASSWORD || 'test'
+const CORRECT_PASSWORD = process.env.PROTECTED_PASSWORD || 'password'
 const activeTokens = new Set()
 
 app.post('/api/auth', (req, res) => {
@@ -224,24 +223,13 @@ app.use('/', (req, res, next) => {
   }
 
   req.dataset = dataset
-  // return next()
-  //
-  console.log('Hello1')
 
   if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
     return next()
   }
 
-  console.log(`Path is: ${req.path}`)
-
-  // if (req.path === '') {
-  //   console.log('Gotcha!')
-  //   res.redirect('/login')
-  // }
-
   const unauthenticatedPaths = ['/login', '/api/auth', '/api/check-auth', '/config.js']
   if (unauthenticatedPaths.includes(req.path) || req.path.startsWith('/static/')) {
-    console.log('Oh yeah')
     return next()
   }
 
@@ -255,17 +243,18 @@ app.use('/', (req, res, next) => {
     token = queryToken
   }
 
-  console.log('Here?')
   if (token && activeTokens.has(token)) {
     return next()
   }
 
-  // if (req.path.startsWith('/api/')) {
-  //   return res.status(401).json({ success: false, message: 'Authentication required' })
-  // }
-
-  console.log('Hello3')
-  res.redirect('/login')
+  if (req.path.startsWith('/api/')) {
+    return res.status(401).json({
+      success: false,
+      message: 'Authentication required',
+    })
+  } else {
+    return res.redirect('/login')
+  }
 })
 
 const datasetConfig = {}
