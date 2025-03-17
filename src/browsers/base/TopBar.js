@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -8,6 +8,7 @@ import { Button, Modal } from '@gnomad/ui'
 import Link from './Link'
 import OtherStudies from './OtherStudies'
 import Searchbox from './Searchbox'
+import { handleLogout } from './auth'
 
 const TitleWrapper = styled.div``
 
@@ -83,12 +84,26 @@ const Menu = styled.ul`
 `
 
 const TopBar = ({ title, links, backgroundColor, textColor }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthLoading, setIsAuthLoading] = useState(true)
+  const datasetId = window.datasetConfig.datasetId
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('authToken')
+    setIsAuthenticated(!!token)
+    setIsAuthLoading(false)
+  }, [])
+
   const [isMenuExpanded, setIsMenuExpanded] = useState(false)
   const closeMenu = () => {
     setIsMenuExpanded(false)
   }
 
   const [showOtherStudiesModal, setShowOtherStudiesModal] = useState(false)
+
+  if (isAuthLoading || (datasetId === 'IBD' && !isAuthenticated)) {
+    return <></>
+  }
 
   return (
     <TopBarWrapper backgroundColor={backgroundColor} textColor={textColor}>
@@ -137,6 +152,13 @@ const TopBar = ({ title, links, backgroundColor, textColor }) => {
             Other Studies
           </Link>
         </li>
+        {sessionStorage.getItem('authToken') && (
+          <li>
+            <Link to="/login" onClick={handleLogout}>
+              Logout
+            </Link>
+          </li>
+        )}
       </Menu>
 
       {showOtherStudiesModal && (
@@ -168,6 +190,7 @@ TopBar.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
 }
 
 TopBar.defaultProps = {
