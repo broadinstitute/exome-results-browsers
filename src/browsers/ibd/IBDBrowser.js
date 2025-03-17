@@ -3,7 +3,6 @@ import React from 'react'
 import Browser from '../base/Browser'
 import { renderFloatAsScientific, renderFloatAsDecimal } from '../base/tableCells'
 
-import LoginPage from '../base/LoginPage'
 import IBDAboutPage from './IBDAboutPage'
 import IBDHomePage from './IBDHomePage'
 import IBDTermsPage from './IBDTermsPage'
@@ -22,11 +21,6 @@ const IBDBrowser = () => {
       navBarBackgroundColor="#7b558c"
       homePage={IBDHomePage}
       extraPages={[
-        // {
-        //   path: '/login',
-        //   label: 'Login',
-        //   component: LoginPage,
-        // },
         {
           path: '/about',
           label: 'About',
