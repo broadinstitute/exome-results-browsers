@@ -6,11 +6,11 @@ import { Page, PageHeading } from '@gnomad/ui'
 import DocumentTitle from './DocumentTitle'
 
 const ErrorMessage = styled.div`
+  padding: 10px;
+  margin-bottom: 20px;
   background-color: #ffebee;
   color: #c62828;
-  padding: 10px;
   border-radius: 4px;
-  margin-bottom: 20px;
 `
 
 const FormGroup = styled.div`
@@ -32,14 +32,14 @@ const Input = styled.input`
 `
 
 const Button = styled.button`
+  padding: 10px 20px;
+  border: none;
+  margin-left: ${(props) => (props.variant === 'logout' ? '20px;' : '')};
   background-color: ${(props) => (props.variant === 'logout' ? '#e6004c' : '#7b558c')};
   color: white;
-  border: none;
-  padding: 10px 20px;
   border-radius: 4px;
   cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   opacity: ${(props) => (props.disabled ? 0.7 : 1)};
-  ${(props) => props.variant === 'logout' && 'margin-left: 20px;'}
 `
 
 const Form = styled.form`
