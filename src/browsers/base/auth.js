@@ -1,35 +1,29 @@
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) {
+    return parts.pop().split(';').shift()
+  }
+  return null
+}
+
 const isLoggedIn = () => {
-  const loggedIn = sessionStorage.getItem('authToken')
+  const loggedIn = userHasBearerCookie()
   return loggedIn !== null
 }
 
-const login = (password) => {
-  return fetch('/api/auth', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success && data.token) {
-        sessionStorage.setItem('authToken', data.token)
-        return true
-      }
-      return false
-    })
-    .catch(() => {
-      return false
-    })
+const userHasBearerCookie = () => {
+  return !!getCookie('authToken')
 }
 
-const handleLogout = (e) => {
+const logout = (e) => {
   e.preventDefault()
-  sessionStorage.removeItem('authToken')
+  document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
   window.location.replace('/login')
 }
 
 const addAuthHeader = (options = {}) => {
-  const token = sessionStorage.getItem('authToken')
+  const token = localStorage.getItem('authToken')
   if (token) {
     return {
       ...options,
@@ -42,4 +36,4 @@ const addAuthHeader = (options = {}) => {
   return options
 }
 
-export { isLoggedIn, login, addAuthHeader, handleLogout }
+export { isLoggedIn, addAuthHeader, logout, userHasBearerCookie }
