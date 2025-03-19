@@ -196,7 +196,7 @@ app.post('/api/auth', (req, res) => {
       'Set-Cookie',
       `authToken=${token}; Path=/; Max-Age=${60 * 60 * 24}; SameSite=Strict`
     )
-    return res.json({ success: true })
+    res.json({ success: true })
   } else {
     res.status(401).json({ success: false, message: 'Invalid password' })
   }
