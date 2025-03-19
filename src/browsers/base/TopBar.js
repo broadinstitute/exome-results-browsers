@@ -8,7 +8,7 @@ import { Button, Modal } from '@gnomad/ui'
 import Link from './Link'
 import OtherStudies from './OtherStudies'
 import Searchbox from './Searchbox'
-import { handleLogout } from './auth'
+import { logout, userHasBearerCookie } from './auth'
 
 const TitleWrapper = styled.div``
 
@@ -89,8 +89,7 @@ const TopBar = ({ title, links, backgroundColor, textColor }) => {
   const { datasetId } = window.datasetConfig
 
   useEffect(() => {
-    const token = sessionStorage.getItem('authToken')
-    setIsAuthenticated(!!token)
+    setIsAuthenticated(userHasBearerCookie())
     setIsAuthLoading(false)
   }, [])
 
@@ -152,9 +151,9 @@ const TopBar = ({ title, links, backgroundColor, textColor }) => {
             Other Studies
           </Link>
         </li>
-        {sessionStorage.getItem('authToken') && (
+        {userHasBearerCookie() && (
           <li>
-            <Link to="/login" onClick={handleLogout}>
+            <Link to="/login" onClick={logout}>
               Logout
             </Link>
           </li>

@@ -30,6 +30,7 @@ const cancelable = (promise) => {
 const fetchApi = (path) => {
   const options = addAuthHeader({
     method: 'GET',
+    credentials: 'include',
   })
   return fetch(`/api${path}`, options).then((response) => {
     const isOk = response.ok

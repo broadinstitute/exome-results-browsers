@@ -13,6 +13,7 @@ import PageNotFoundPage from './PageNotFoundPage'
 import TopBar from './TopBar'
 import vepConsequences from './vepConsequences'
 import LoginPage from './LoginPage'
+import { userHasBearerCookie } from './auth'
 
 const ProtectedRoute = ({
   component: Component,
@@ -98,8 +99,7 @@ const Browser = ({
   const { datasetId } = window.datasetConfig
 
   useEffect(() => {
-    const token = sessionStorage.getItem('authToken')
-    setIsAuthenticated(!!token)
+    setIsAuthenticated(userHasBearerCookie())
     setIsAuthLoading(false)
   }, [])
 

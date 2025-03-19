@@ -39,6 +39,23 @@ app.set('trust proxy', config.trustProxy)
 
 app.use(compression())
 
+const cookieParser = (req, res, next) => {
+  const cookies = {}
+  const cookieHeader = req.headers.cookie
+
+  if (cookieHeader) {
+    cookieHeader.split(';').forEach((cookie) => {
+      const [name, value] = cookie.trim().split('=')
+      cookies[name] = decodeURIComponent(value)
+    })
+  }
+
+  req.cookies = cookies
+  next()
+}
+
+app.use(cookieParser)
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -174,10 +191,23 @@ app.post('/api/auth', (req, res) => {
   if (password === CORRECT_PASSWORD) {
     const token = Math.random().toString(36).substring(2, 15)
     activeTokens.add(token)
-    res.json({ success: true, token })
+    res.setHeader(
+      'Set-Cookie',
+      `authToken=${token}; Path=/; Max-Age=${60 * 60 * 24}; SameSite=Strict`
+    )
+    res.json({ success: true })
   } else {
     res.status(401).json({ success: false, message: 'Invalid password' })
   }
+})
+
+app.post('/api/logout', (req, res) => {
+  const token = req.cookies.authToken
+  if (token) {
+    activeTokens.delete(token)
+  }
+  res.setHeader('Set-Cookie', 'authToken=; Path=/ Max-Age=0')
+  res.json({ success: true })
 })
 
 app.post('/api/check-auth', (req, res) => {
@@ -229,15 +259,7 @@ app.use('/', (req, res, next) => {
     return next()
   }
 
-  const authHeader = req.headers.authorization
-  const queryToken = req.query.token
-
-  let token
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    token = authHeader.substring(7)
-  } else if (queryToken) {
-    token = queryToken
-  }
+  const token = req.cookies.authToken
 
   if (token && activeTokens.has(token)) {
     return next()

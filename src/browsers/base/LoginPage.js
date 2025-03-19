@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Page, PageHeading } from '@gnomad/ui'
 
 import DocumentTitle from './DocumentTitle'
+import { userHasBearerCookie, logout } from './auth'
 
 const ErrorMessage = styled.div`
   padding: 10px;
@@ -60,16 +61,17 @@ const LoginPage = () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password }),
+      credentials: 'include',
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          sessionStorage.setItem('authToken', data.token)
           window.location.replace('/')
         } else {
           setError(data.message || 'Login failed. Please try again.')
           setLoading(false)
         }
+        return data
       })
       .catch((err) => {
         setError('An error occurred. Please try again: ', err)
@@ -77,16 +79,10 @@ const LoginPage = () => {
       })
   }
 
-  const handleLogout = (e) => {
-    e.preventDefault()
-    sessionStorage.removeItem('authToken')
-    window.location.replace('/login')
-  }
-
-  if (sessionStorage.authToken) {
+  if (userHasBearerCookie()) {
     return (
       <>
-        <Button type="button" onClick={handleLogout} variant="logout" disabled={loading}>
+        <Button type="button" onClick={logout} variant="logout" disabled={loading}>
           Logout
         </Button>
       </>
