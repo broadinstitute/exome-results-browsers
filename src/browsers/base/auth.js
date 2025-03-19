@@ -7,13 +7,13 @@ const getCookie = (name) => {
   return null
 }
 
+const userHasBearerCookie = () => {
+  return !!getCookie('authToken')
+}
+
 const isLoggedIn = () => {
   const loggedIn = userHasBearerCookie()
   return loggedIn !== null
-}
-
-const userHasBearerCookie = () => {
-  return !!getCookie('authToken')
 }
 
 const logout = (e) => {
