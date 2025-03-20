@@ -255,7 +255,11 @@ app.use('/', (req, res, next) => {
   }
 
   const unauthenticatedPaths = ['/login', '/api/auth', '/api/check-auth', '/config.js']
-  if (unauthenticatedPaths.includes(req.path) || req.path.startsWith('/static/')) {
+  if (
+    unauthenticatedPaths.includes(req.path) ||
+    req.path.startsWith('/static/') ||
+    req.path.includes('.')
+  ) {
     return next()
   }
 
