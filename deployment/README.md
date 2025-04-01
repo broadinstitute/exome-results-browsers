@@ -65,14 +65,12 @@ the browsers and so cannot be attached to another instance in read-write mode.
 5. Install Hail.
 
    ```
-   apt-get -qq install wget software-properties-common
-   wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
-   add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
-   apt-get -qq update
-   apt-get -qq install adoptopenjdk-8-hotspot
-   apt-get -qq install python3-pip
-   pip3 install hail
-   pip3 install tqdm
+   apt-get install -y \
+      openjdk-11-jre-headless \
+      g++ \
+      python3.9 python3-pip \
+      libopenblas-base liblapack3
+   python3.9 -m pip install hail
    ```
 
 6. Copy results data from GCS.
