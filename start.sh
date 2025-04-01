@@ -2,6 +2,32 @@
 
 set -eu
 
+# Explicitly declare what env vars we want to pull in
+#   we don't include GA Tracking IDs as that would add false traffic
+development_environment_variables=("DEMO_PASSWORD")
+
+if [ -f "build.env" ]; then
+  while IFS= read -r line; do
+    if [[ "$line" =~ ^# ]] || [[ -z "$line" ]]; then
+      continue
+    fi
+
+    var_name=$(echo "$line" | cut -d'=' -f1)
+
+    is_allowed=false
+    for allowed_var in "${development_environment_variables[@]}"; do
+      if [ "$var_name" = "$allowed_var" ]; then
+        is_allowed=true
+        break
+      fi
+    done
+
+    if "$is_allowed"; then
+      export "$line"
+    fi
+  done < "build.env"
+fi
+
 print_usage() {
   echo "Usage: start.sh BROWSER [--proxy-api] [--port PORT]" 1>&2
 }

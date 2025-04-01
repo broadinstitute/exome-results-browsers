@@ -44,5 +44,8 @@ COPY --chown=node:node --from=build /home/node/app/src/server/public ./public
 # Copy server source
 COPY --chown=node:node src/server .
 
+# Copy build environment variables
+COPY --chown=node:node build.env .
+
 # Run
-CMD ["node", "server.js"]
+CMD export "$(xargs < build.env)"; node server.js
