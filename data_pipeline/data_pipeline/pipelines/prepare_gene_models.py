@@ -1,3 +1,6 @@
+import os
+import sys
+
 import hail as hl
 
 from data_pipeline.config import pipeline_config
@@ -249,12 +252,17 @@ def prepare_gene_models():
     exac_constraint = prepare_exac_constraint(exac_constraint_path)
     genes = genes.annotate(exac_constraint=exac_constraint[genes.GRCh37.canonical_transcript_id])
 
-    staging_path = pipeline_config.get("output", "staging_path")
+    output_date = pipeline_config.get("reference_data", "output_last_updated")
+    output_root = pipeline_config.get("output", "gcs_output_root")
+    output_path = os.path.join(output_root, "gene_models", output_date, "gene_models.ht")
 
-    genes.write(f"{staging_path}/gene_models.ht", overwrite=True)
+    genes.write(output_path, overwrite=True)
+
+
+def main():
+    hl.init()
+    prepare_gene_models()
 
 
 if __name__ == "__main__":
-    hl.init()
-
-    prepare_gene_models()
+    sys.exit(main())
