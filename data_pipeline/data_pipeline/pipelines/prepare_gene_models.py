@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 
@@ -213,7 +214,19 @@ def prepare_gnomad_constraint(gnomad_constraint_path):
     return ds
 
 
-def prepare_gene_models():
+def get_output_path(output_local):
+    output_location = "local" if output_local else "gcs"
+    output_date = pipeline_config.get("reference_data", "output_last_updated")
+    output_root = pipeline_config.get("output", f"{output_location}_output_root")
+
+    if output_local:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        output_root = os.path.abspath(os.path.join(script_dir, "..", "..", "..", output_root))
+
+    return os.path.join(output_root, "gene_models", output_date, "gene_models.ht")
+
+
+def prepare_gene_models(output_local):
     genes_grch37 = prepare_gene_models_helper("GRCh37")
     genes_grch38 = prepare_gene_models_helper("GRCh38")
 
@@ -252,16 +265,17 @@ def prepare_gene_models():
     exac_constraint = prepare_exac_constraint(exac_constraint_path)
     genes = genes.annotate(exac_constraint=exac_constraint[genes.GRCh37.canonical_transcript_id])
 
-    output_date = pipeline_config.get("reference_data", "output_last_updated")
-    output_root = pipeline_config.get("output", "gcs_output_root")
-    output_path = os.path.join(output_root, "gene_models", output_date, "gene_models.ht")
-
+    output_path = get_output_path(output_local)
     genes.write(output_path, overwrite=True)
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output-local", action="store_true", help="Output files locally instead of to cloud storage")
+    args = parser.parse_args()
+
     hl.init()
-    prepare_gene_models()
+    prepare_gene_models(args.output_local)
 
 
 if __name__ == "__main__":

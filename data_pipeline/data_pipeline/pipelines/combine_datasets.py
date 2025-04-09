@@ -137,6 +137,17 @@ def combine_datasets(dataset_ids, output_root):
     return ds
 
 
+def get_output_root(output_local):
+    output_location = "local" if output_local else "gcs"
+    output_root = pipeline_config.get("output", f"{output_location}_output_root")
+
+    if output_local:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        output_root = os.path.abspath(os.path.join(script_dir, "..", "..", "..", output_root))
+
+    return output_root
+
+
 def main():
     all_datasets = pipeline_config.get("datasets", "datasets").split(",")
     parser = argparse.ArgumentParser()
@@ -147,6 +158,8 @@ def main():
         required=True,
         help=f"Datasets to combine. Either 'all', or a space separated list of {', '.join(all_datasets)}",
     )
+
+    parser.add_argument("--output-local", action="store_true", help="Output files locally instead of to cloud storage")
 
     args = parser.parse_args()
 
@@ -162,9 +175,8 @@ def main():
 
     hl.init()
 
-    output_root = pipeline_config.get("output", "gcs_output_root")
+    output_root = get_output_root(args.output_local)
     combined_output_date = pipeline_config.get("output", "output_last_updated")
-
     output_path = os.path.join(output_root, "combined", combined_output_date, "combined.ht")
     combine_datasets(datasets_to_combine, output_root).write(output_path, overwrite=True)
 
