@@ -4,7 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 const HtmlPlugin = require('html-webpack-plugin')
 
-const BROWSERS = ['ASC', 'BipEx', 'Epi25', 'SCHEMA', 'IBD']
+const BROWSERS = ['ASC', 'BipEx', 'Epi25', 'SCHEMA', 'IBD', 'GP2']
 
 const isDev = process.env.NODE_ENV === 'development'
 
