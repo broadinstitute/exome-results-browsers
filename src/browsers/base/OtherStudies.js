@@ -143,5 +143,22 @@ export default () => (
         </p>
       </>
     )}
+
+    {datasetConfig.datasetId !== 'GP2' && (
+      <>
+        <h2>
+          Parkinsons - <ExternalLink href="https://gp2.broadinstitute.org">GP2</ExternalLink>
+        </h2>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur adipiscing elit
+          quisque faucibus ex sapien vitae. Ex sapien vitae pellentesque sem placerat in id.
+          Placerat in id cursus mi pretium tellus duis. Pretium tellus duis convallis tempus leo eu
+          aenean.
+        </p>
+        <p>
+          <BrowserLink dataset="GP2" />
+        </p>
+      </>
+    )}
   </>
 )
