@@ -13,7 +13,11 @@ pipeline_config = configparser.ConfigParser()
 pipeline_config.read("pipeline_config.ini")
 
 # Verify that required configuration is set
-REQUIRED_CONFIGURATION = [("output", "staging_path")]
+REQUIRED_CONFIGURATION = [
+    ("output", "gcs_output_root"),
+    ("output", "local_output_root"),
+    ("output", "output_last_updated"),
+]
 try:
     for section, option in REQUIRED_CONFIGURATION:
         value = pipeline_config.get(section, option)
