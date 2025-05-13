@@ -29,7 +29,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
 2. Create a persistent disk and attach it to the instance.
 
    ```
-   TIMESTAMP=$(date '+%y%m%d-%H%M')
+   TIMESTAMP=$(date '+%Y-%m-%d--%H-%M')
    DISK_NAME="exome-results-browsers-data-$TIMESTAMP"
 
    gcloud compute disks create $DISK_NAME \
@@ -111,7 +111,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
 
    gcloud --quiet compute instances delete erb-temp-instance
    ```
-
+# TODO: make this the correct command
 To use the new disk in a deployed instance of the browsers, modify the `pdName` value in the volumes section
 of deployment/manifests/deployment.yaml and run `kubectl apply -f deployment/manifests/deployment.yaml`.
 
