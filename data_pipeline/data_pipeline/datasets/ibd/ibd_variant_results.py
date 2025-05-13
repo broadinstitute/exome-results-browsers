@@ -66,44 +66,111 @@ def prepare_variant_results():
     # Merge variant annotations for canonical transcripts
     annotations = hl.read_table(pipeline_config.get("IBD", "variant_annotations_path"))
 
+    # TODO: break into helper
+    # Use and filter vepped table to get correct gene_id per variant
+    # =======================
+
+    # # use my own vepped table to determine gene_id
+    # vepped_path = os.path.join(staging_output_path, "ibd", "variants_vepped.ht")
+    # vepped_variants_ht = hl.read_table(vepped_path)
+    # transcript_consequences_ht = vepped_variants_ht.select(
+    #     csqs = vepped_variants_ht.vep.transcript_consequences
+    # )
+    # exploded_csqs_ht = transcript_consequences_ht.explode('csqs')
+    # csqs_ht = exploded_csqs_ht.select(
+    #     gene_id = exploded_csqs_ht.csqs.gene_id,
+    #     gene_symbol = exploded_csqs_ht.csqs.gene_symbol,
+    #     mane_select = exploded_csqs_ht.csqs.mane_select,
+    #     source = exploded_csqs_ht.csqs.source,
+    # )
+    #
+    # csqs_ensembl_ht = csqs_ht.filter(csqs_ht.source == "Ensembl")
+    #
+    # csqs_ensembl_coding_ht = csqs_ensembl_ht.filter(
+    #     csqs_ensembl_ht.consequence_term != "downstream_gene_variant"
+    # )
+    # csqs_ensembl_coding_ht = csqs_ensembl_coding_ht.filter(
+    #     csqs_ensembl_coding_ht.consequence_term != "upstream_gene_variant"
+    # )
+    #
+    # variant_gene_groups = csqs_ensembl_coding_ht.group_by(
+    #     locus = csqs_ensembl_ht.locus,
+    #     alleles = csqs_ensembl_ht.alleles,
+    # ).aggregate(
+    #     gene_ids = hl.agg.collect(csqs_ensembl_coding_ht.gene_id),
+    #     gene_symbols = hl.agg.collect(csqs_ensembl_coding_ht.gene_symbol),
+    #     gene_counts = hl.agg.counter(csqs_ensembl_coding_ht.gene_symbol),
+    # )
+    #
+    # variant_with_gene = variant_gene_groups.annotate(
+    #     gene_id = variant_gene_groups.gene_ids[0],
+    #     gene_symbol = variant_gene_groups.gene_symbols[0],
+    # )
+    #
+    # # re-order so ht.show(n) is nicer to inspect
+    # variant_with_gene = variant_with_gene.select(
+    #     gene_id = variant_with_gene.gene_id,
+    #     gene_symbol = variant_with_gene.gene_symbol,
+    #     gene_counts = variant_with_gene.gene_counts,
+    #     gene_ids = variant_with_gene.gene_ids,
+    #     gene_symbols = variant_with_gene.gene_symbols,
+    # )
+    #
+    # corrected_gene_id_path = os.path.join(staging_output_path, "ibd", "gene_id_per_variant.ht")
+    #
+    # variant_with_gene.write(
+    #     corrected_gene_id_path,
+    #     overwrite=True
+    # )
+
+    # ---
+    # TODO: use this to just annotate gene_id
+    corrected_gene_id_path = os.path.join(staging_output_path, "ibd", "gene_id_per_variant.ht")
+    gene_id_per_variant_ht = hl.read_table(corrected_gene_id_path)
+    # corrected_gene_id_path = os.path.join(staging_output_path, "ibd", "gene_id_per_variant.ht")
+    # ---
+
+    # ========================
+
     # add vep to annotations to store in info field
-    vepped_path = os.path.join(staging_output_path, "ibd", "variants_vepped.ht")
-    if not hl.hadoop_exists(vepped_path):
-        print("no vepped table found")
-        variants_to_vep = variants.select()
-        vepped_variants = hl.vep(variants_to_vep)
-        vepped_variants.write(vepped_path, overwrite=True)
+    # vepped_path = os.path.join(staging_output_path, "ibd", "variants_vepped.ht")
+    # if not hl.hadoop_exists(vepped_path):
+    #     print("no vepped table found")
+    #     variants_to_vep = variants.select()
+    #     vepped_variants = hl.vep(variants_to_vep)
+    #     vepped_variants.write(vepped_path, overwrite=True)
 
-    vepped_variants_ht = hl.read_table(vepped_path)
+    # vepped_variants_ht = hl.read_table(vepped_path)
 
-    annotations = annotations.annotate(vep=vepped_variants_ht[annotations.locus, annotations.alleles].vep)
+    # annotations = annotations.annotate(vep=vepped_variants_ht[annotations.locus, annotations.alleles].vep)
 
-    annotations = annotations.annotate(
-        transcript_consequences=annotations.vep.transcript_consequences.map(
-            lambda tc: hl.struct(
-                consequence_terms=tc.consequence_terms,
-                domains=tc.domains,
-                gene_id=tc.gene_id,
-                gene_symbol=tc.gene_symbol,
-                hgnc_id=tc.hgnc_id,
-                hgvsc=tc.hgvsc,
-                hgvsp=tc.hgvsp,
-                canonical=tc.canonical,
-                mane_select=tc.mane_select,
-                lof=tc.lof,
-                lof_flags=tc.lof_flags,
-                lof_filter=tc.lof_filter,
-                polyphen_prediction=tc.polyphen_prediction,
-                sift_prediction=tc.sift_prediction,
-                transcript_id=tc.transcript_id,
-            )
-        )
-    )
+    # annotations = annotations.annotate(
+    #     transcript_consequences=annotations.vep.transcript_consequences.map(
+    #         lambda tc: hl.struct(
+    #             consequence_terms=tc.consequence_terms,
+    #             domains=tc.domains,
+    #             gene_id=tc.gene_id,
+    #             gene_symbol=tc.gene_symbol,
+    #             hgnc_id=tc.hgnc_id,
+    #             hgvsc=tc.hgvsc,
+    #             hgvsp=tc.hgvsp,
+    #             canonical=tc.canonical,
+    #             mane_select=tc.mane_select,
+    #             lof=tc.lof,
+    #             lof_flags=tc.lof_flags,
+    #             lof_filter=tc.lof_filter,
+    #             polyphen_prediction=tc.polyphen_prediction,
+    #             sift_prediction=tc.sift_prediction,
+    #             transcript_id=tc.transcript_id,
+    #         )
+    #     )
+    # )
 
-    annotations = annotations.annotate(transcript_consequences=hl.json(annotations.transcript_consequences))
+    # annotations = annotations.annotate(transcript_consequences=hl.json(annotations.transcript_consequences))
 
     annotations = annotations.select(
-        gene_id=annotations.gene_id_canonical,
+        # don't use this gene id, use from my table instead
+        # gene_id=annotations.gene_id_canonical,
         consequence=annotations.most_severe_consequence,
         hgvsc=annotations.hgvsc_canonical.split(":")[-1],
         hgvsp=annotations.hgvsp_canonical.split(":")[-1],
@@ -118,6 +185,18 @@ def prepare_variant_results():
     )
 
     variants = variants.annotate(**annotations[variants.locus, variants.alleles])
+
+    # ---
+
+    # TODO: use my table to annotate gene_id instead
+    corrected_gene_id_path = os.path.join(staging_output_path, "ibd", "gene_id_per_variant.ht")
+    gene_id_per_variant_ht = hl.read_table(corrected_gene_id_path)
+
+    gene_id_per_variant_ht = gene_id_per_variant_ht.select(gene_id=gene_id_per_variant_ht.gene_id)
+
+    variants = variants.annotate(**gene_id_per_variant_ht[variants.locus, variants.alleles])
+
+    # ---
 
     most_significant_variant_per_gene = os.path.join(staging_output_path, "ibd", "genes_most_significant_variants.ht")
 
@@ -145,7 +224,7 @@ def prepare_variant_results():
                         revel=exploded.info.revel,
                         polyphen=exploded.info.polyphen,
                         sift=exploded.info.sift,
-                        transcript_consequences=exploded.info.transcript_consequences,
+                        # transcript_consequences=exploded.info.transcript_consequences,
                     ),
                 ),
                 1,
