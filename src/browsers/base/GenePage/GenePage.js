@@ -40,11 +40,16 @@ const GenePage = ({
   defaultVariantAnalysisGroup,
   variantAnalysisGroupLabels,
   variantAnalysisGroupOptions,
+  variantSortKey,
+  variantSortOrder,
   variantConsequences,
   variantConsequenceCategoryLabels,
   variantResultColumns,
   variantCustomFilter,
+  additionalVariantDetailSummaryColumns,
   renderVariantAttributes,
+  variantDetailColumns,
+  renderVariantTranscriptConsequences,
 }) => {
   return (
     <TrackPage>
@@ -115,8 +120,13 @@ const GenePage = ({
           defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
           gene={gene}
           renderVariantAttributes={renderVariantAttributes}
+          additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
+          variantDetailColumns={variantDetailColumns}
+          renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
           variantAnalysisGroupLabels={variantAnalysisGroupLabels}
           variantAnalysisGroupOptions={variantAnalysisGroupOptions}
+          variantSortKey={variantSortKey}
+          variantSortOrder={variantSortOrder}
           variantConsequences={variantConsequences}
           variantConsequenceCategoryLabels={variantConsequenceCategoryLabels}
           variantCustomFilter={variantCustomFilter}
@@ -133,10 +143,37 @@ GenePage.propTypes = {
   defaultVariantAnalysisGroup: PropTypes.string.isRequired,
   variantAnalysisGroupLabels: PropTypes.objectOf(PropTypes.string),
   variantResultColumns: PropTypes.arrayOf(PropTypes.object).isRequired,
+  variantSortKey: PropTypes.string,
+  variantSortOrder: PropTypes.string,
   variantConsequences: PropTypes.arrayOf(PropTypes.object).isRequired,
   variantConsequenceCategoryLabels: PropTypes.any, // eslint-disable-line react/forbid-prop-types
   variantCustomFilter: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   renderVariantAttributes: PropTypes.func,
+  additionalVariantDetailSummaryColumns: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      heading: PropTypes.string,
+      minWidth: PropTypes.number,
+      tooltip: PropTypes.string,
+      render: PropTypes.func,
+      renderForCSV: PropTypes.func,
+      showOnGenePage: PropTypes.bool,
+      showOnDetails: PropTypes.bool,
+    })
+  ),
+  variantDetailColumns: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      heading: PropTypes.string,
+      minWidth: PropTypes.number,
+      tooltip: PropTypes.string,
+      render: PropTypes.func,
+      renderForCSV: PropTypes.func,
+      showOnGenePage: PropTypes.bool,
+      showOnDetails: PropTypes.bool,
+    })
+  ),
+  renderVariantTranscriptConsequences: PropTypes.bool,
   gene: PropTypes.shape({
     reference_genome: PropTypes.oneOf(['GRCh37', 'GRCh38']).isRequired,
     gene_id: PropTypes.string.isRequired,
@@ -159,8 +196,13 @@ GenePage.propTypes = {
 
 GenePage.defaultProps = {
   variantAnalysisGroupLabels: undefined,
+  variantSortKey: 'variant_id',
+  variantSortOrder: 'ascending',
   variantCustomFilter: undefined,
   renderVariantAttributes: undefined,
+  additionalVariantDetailSummaryColumns: undefined,
+  variantDetailColumns: undefined,
+  renderVariantTranscriptConsequences: false,
   variantConsequenceCategoryLabels: undefined,
 }
 

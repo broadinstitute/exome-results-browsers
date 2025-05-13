@@ -1,25 +1,27 @@
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { withRouter } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { Button, Modal } from '@gnomad/ui'
+import { Button, ExternalLink, Modal } from '@gnomad/ui'
 
 import Link from './Link'
 import OtherStudies from './OtherStudies'
 import Searchbox from './Searchbox'
+import { logout, userHasBearerCookie } from './auth'
 
 const TitleWrapper = styled.div``
 
 const ToggleMenuButton = styled(Button)``
 
+// TODO: re-add this line when the banner is removed
+// margin-bottom: 20px;
 const TopBarWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 10px 30px;
-  margin-bottom: 20px;
   background-color: ${(props) => props.backgroundColor};
 
   @media (max-width: 900px) {
@@ -82,7 +84,28 @@ const Menu = styled.ul`
   }
 `
 
+const Banner = styled.div`
+  width: 100%;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+`
+
+const CenterHorizontal = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`
+
 const TopBar = ({ title, links, backgroundColor, textColor }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthLoading, setIsAuthLoading] = useState(true)
+  const { datasetId } = window.datasetConfig
+
+  useEffect(() => {
+    setIsAuthenticated(userHasBearerCookie())
+    setIsAuthLoading(false)
+  }, [])
+
   const [isMenuExpanded, setIsMenuExpanded] = useState(false)
   const closeMenu = () => {
     setIsMenuExpanded(false)
@@ -90,68 +113,91 @@ const TopBar = ({ title, links, backgroundColor, textColor }) => {
 
   const [showOtherStudiesModal, setShowOtherStudiesModal] = useState(false)
 
+  if (isAuthLoading || (datasetId === 'IBD' && !isAuthenticated)) {
+    return <></>
+  }
+
   return (
-    <TopBarWrapper backgroundColor={backgroundColor} textColor={textColor}>
-      <TitleWrapper>
-        <Link to="/" onClick={closeMenu}>
-          {title}
-        </Link>
-        <ToggleMenuButton
-          onClick={() => {
-            setIsMenuExpanded(!isMenuExpanded)
-          }}
-        >
-          ☰
-        </ToggleMenuButton>
-      </TitleWrapper>
-
-      <Searchbox id="navbar-search" width="320px" />
-
-      <Menu isExpanded={isMenuExpanded}>
-        <li>
-          <Link to="/results" onClick={closeMenu}>
-            Results
+    <>
+      <TopBarWrapper backgroundColor={backgroundColor} textColor={textColor}>
+        <TitleWrapper>
+          <Link to="/" onClick={closeMenu}>
+            {title}
           </Link>
-        </li>
-        {links.map(({ path, label }) => (
-          <li key={path}>
-            <Link to={path} onClick={closeMenu}>
-              {label}
-            </Link>
-          </li>
-        ))}
-        <li>
-          <Link to="/downloads" onClick={closeMenu}>
-            Downloads
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/other-studies"
-            onClick={(e) => {
-              setShowOtherStudiesModal(true)
-              closeMenu()
-              e.preventDefault()
+          <ToggleMenuButton
+            onClick={() => {
+              setIsMenuExpanded(!isMenuExpanded)
             }}
           >
-            Other Studies
-          </Link>
-        </li>
-      </Menu>
+            ☰
+          </ToggleMenuButton>
+        </TitleWrapper>
 
-      {showOtherStudiesModal && (
-        <Modal
-          id="other-studies"
-          size="large"
-          title="Other Studies"
-          onRequestClose={() => {
-            setShowOtherStudiesModal(false)
-          }}
-        >
-          <OtherStudies />
-        </Modal>
+        <Searchbox id="navbar-search" width="320px" />
+
+        <Menu isExpanded={isMenuExpanded}>
+          <li>
+            <Link to="/results" onClick={closeMenu}>
+              Results
+            </Link>
+          </li>
+          {links.map(({ path, label }) => (
+            <li key={path}>
+              <Link to={path} onClick={closeMenu}>
+                {label}
+              </Link>
+            </li>
+          ))}
+          <li>
+            <Link to="/downloads" onClick={closeMenu}>
+              Downloads
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/other-studies"
+              onClick={(e) => {
+                setShowOtherStudiesModal(true)
+                closeMenu()
+                e.preventDefault()
+              }}
+            >
+              Other Studies
+            </Link>
+          </li>
+          {userHasBearerCookie() && (
+            <li>
+              <Link to="/login" onClick={logout}>
+                Logout
+              </Link>
+            </li>
+          )}
+        </Menu>
+
+        {showOtherStudiesModal && (
+          <Modal
+            id="other-studies"
+            size="large"
+            title="Other Studies"
+            onRequestClose={() => {
+              setShowOtherStudiesModal(false)
+            }}
+          >
+            <OtherStudies />
+          </Modal>
+        )}
+      </TopBarWrapper>
+      {datasetId === 'IBD' && (
+        <Banner>
+          <CenterHorizontal>
+            <p>
+              Have feedback? Fill out our{' '}
+              <ExternalLink href="https://forms.gle/Zf3BkwwV9dB6TMLA9">Google Form</ExternalLink>
+            </p>
+          </CenterHorizontal>
+        </Banner>
       )}
-    </TopBarWrapper>
+    </>
   )
 }
 

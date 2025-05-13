@@ -126,5 +126,22 @@ export default () => (
         </p>
       </>
     )}
+
+    {datasetConfig.datasetId !== 'IBD' && (
+      <>
+        <h2>
+          IBD - <ExternalLink href="https://ibd.broadinstitute.org">IBD</ExternalLink>
+        </h2>
+        <p>
+          The Inflammatory Bowel Disease (IBD) Sequencing Consortium is a global collaboration
+          dedicated to aggregating, generating, and analyzing high-throughput sequencing data of
+          inflammatory bowel disease patients to improve our understanding of disease architecture
+          and advance gene discovery.
+        </p>
+        <p>
+          <BrowserLink dataset="SCHEMA" />
+        </p>
+      </>
+    )}
   </>
 )

@@ -52,9 +52,6 @@ class VariantsInGene extends Component {
       custom: (props.variantCustomFilter || {}).defaultFilter,
     }
 
-    const defaultSortKey = 'variant_id'
-    const defaultSortOrder = 'ascending'
-
     this.tableColumns = getVariantTableColumns(
       props.variantResultColumns.filter((c) => c.showOnGenePage !== false)
     )
@@ -65,8 +62,8 @@ class VariantsInGene extends Component {
         defaultFilter
       ),
       {
-        sortKey: defaultSortKey,
-        sortOrder: defaultSortOrder,
+        sortKey: props.variantSortKey,
+        sortOrder: props.variantSortOrder,
       }
     )
 
@@ -77,8 +74,8 @@ class VariantsInGene extends Component {
       renderedVariants,
       selectedAnalysisGroup: props.defaultVariantAnalysisGroup,
       selectedVariant: null,
-      sortKey: defaultSortKey,
-      sortOrder: defaultSortOrder,
+      sortKey: props.variantSortKey,
+      sortOrder: props.variantSortOrder,
       visibleVariantWindow: [0, 19],
     }
   }
@@ -253,6 +250,9 @@ class VariantsInGene extends Component {
       variantConsequenceCategoryLabels,
       variantCustomFilter,
       renderVariantAttributes,
+      additionalVariantDetailSummaryColumns,
+      variantDetailColumns,
+      renderVariantTranscriptConsequences,
     } = this.props
 
     const {
@@ -344,6 +344,9 @@ class VariantsInGene extends Component {
               variantAnalysisGroupLabels={variantAnalysisGroupLabels}
               variantResultColumns={variantResultColumns.filter((c) => c.showOnDetails !== false)}
               renderVariantAttributes={renderVariantAttributes}
+              additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
+              variantDetailColumns={variantDetailColumns}
+              renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
             />
           </Modal>
         )}
@@ -356,6 +359,8 @@ VariantsInGene.propTypes = {
   variantAnalysisGroupOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
   defaultVariantAnalysisGroup: PropTypes.string.isRequired,
   variantAnalysisGroupLabels: PropTypes.objectOf(PropTypes.string),
+  variantSortKey: PropTypes.string,
+  variantSortOrder: PropTypes.string,
   variantResultColumns: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string.isRequired,
@@ -374,7 +379,32 @@ VariantsInGene.propTypes = {
     defaultFilter: PropTypes.any.isRequired,
     applyFilter: PropTypes.func.isRequired,
   }),
+  additionalVariantDetailSummaryColumns: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      heading: PropTypes.string,
+      minWidth: PropTypes.number,
+      tooltip: PropTypes.string,
+      render: PropTypes.func,
+      renderForCSV: PropTypes.func,
+      showOnGenePage: PropTypes.bool,
+      showOnDetails: PropTypes.bool,
+    })
+  ),
   renderVariantAttributes: PropTypes.func,
+  variantDetailColumns: PropTypes.arrayOf(
+    PropTypes.shape({
+      key: PropTypes.string.isRequired,
+      heading: PropTypes.string,
+      minWidth: PropTypes.number,
+      tooltip: PropTypes.string,
+      render: PropTypes.func,
+      renderForCSV: PropTypes.func,
+      showOnGenePage: PropTypes.bool,
+      showOnDetails: PropTypes.bool,
+    })
+  ),
+  renderVariantTranscriptConsequences: PropTypes.bool,
   gene: PropTypes.shape({
     reference_genome: PropTypes.oneOf(['GRCh37', 'GRCh38']).isRequired,
     gene_id: PropTypes.string.isRequired,
@@ -404,9 +434,14 @@ VariantsInGene.propTypes = {
 
 VariantsInGene.defaultProps = {
   variantAnalysisGroupLabels: {},
+  variantSortKey: 'variant_id',
+  variantSortOrder: 'ascending',
   variantConsequenceCategoryLabels: undefined,
   variantCustomFilter: undefined,
   renderVariantAttributes: undefined,
+  additionalVariantDetailSummaryColumns: undefined,
+  variantDetailColumns: undefined,
+  renderVariantTranscriptConsequences: false,
 }
 
 const VariantsInGeneContainer = ({
