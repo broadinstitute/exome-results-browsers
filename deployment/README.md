@@ -29,7 +29,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
 2. Create a persistent disk and attach it to the instance.
 
    ```
-   TIMESTAMP=$(date '+%y%m%d-%H%M')
+   TIMESTAMP=$(date '+%Y-%m-%d--%H-%M')
    DISK_NAME="exome-results-browsers-data-$TIMESTAMP"
 
    gcloud compute disks create $DISK_NAME \
@@ -79,7 +79,6 @@ the browsers and so cannot be attached to another instance in read-write mode.
       g++ \
       python3.9 python3-pip \
       libopenblas-base liblapack3
-   python3.9 -m pip install hail
    ```
 
    Install Hail and tqdm. Versions should be kept in sync with requirements.txt
@@ -113,8 +112,15 @@ the browsers and so cannot be attached to another instance in read-write mode.
    gcloud --quiet compute instances delete erb-temp-instance
    ```
 
-To use the new disk in a deployed instance of the browsers, modify the `pdName` value in the volumes section
-of deployment/manifests/deployment.yaml and run `kubectl apply -f deployment/manifests/deployment.yaml`.
+To use the new disk in a deployed instance of the browsers, modify the respective manifest in the [gnomAD deployments](https://github.com/broadinstitute/gnomad-deployments) repo, then run `kubectl apply -k <DEPLOYMENT>/`
+
+E.g. to update the `demo` deployment's disk to use a newly created one:
+
+- Navigate to `gnomad-deployments/exome-results-browsers`
+- Change the `pdName` value in `.../exome-results-browsers/demo/kustomization.yaml`
+- VPN into the broad, point your `gcloud` and `kubernetes` at gnomAD (where we deploy the ERBs)
+- Run `kubectl apply -k demo/`
+
 
 ## Docker image
 
