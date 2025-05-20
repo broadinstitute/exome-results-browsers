@@ -9,14 +9,13 @@ def prepare_variant_results():
     # Get unique variants from results table
     variants = results.group_by(results.locus, results.alleles).aggregate()
 
-    # Looks like ac_control was mistakenly encoded as a string, e.g. "[83198, 0]"
+    # Select AC/AF numbers for the reference and alternate alleles
     results = results.annotate(
-        # pylint: disable-next=anomalous-backslash-in-string, unnecessary-lambda
-        ac_control=hl.map(lambda x: hl.int(x), results.ac_control.replace("\[", "").replace("\]", "").split(", "))
+        ac_case=results.ac_case[1],
+        ac_ctrl=results.ac_control[1],
+        an_case=results.ac_case[0],
+        an_ctrl=results.ac_control[0],
     )
-
-    # Select AC/AF numbers for the alternate allele
-    results = results.annotate(ac_case=results.ac_case[1], ac_ctrl=results.ac_control[1])
 
     results = results.drop("ac_control")
 
@@ -37,7 +36,7 @@ def prepare_variant_results():
     # Merge variant annotations for canonical transcripts
     annotations = hl.read_table(pipeline_config.get("IBD", "variant_annotations_path"))
 
-    # Not actually sure which annotations we need
+    # Keep all annotations around for now
     annotations = annotations.select(
         gene_id=annotations.gene_id_canonical,
         consequence=annotations.most_severe_consequence,
