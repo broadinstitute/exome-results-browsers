@@ -22,5 +22,6 @@ try:
     for section, option in REQUIRED_CONFIGURATION:
         value = pipeline_config.get(section, option)
         assert value
+# pylint: disable=broad-exception-raised
 except (configparser.NoOptionError, AssertionError) as exc:
     raise ValueError(f"Missing required configuration '{section}.{option}'") from exc
