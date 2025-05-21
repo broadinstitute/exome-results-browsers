@@ -5,6 +5,53 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
+def generate_gene_id_per_variant_table(vepped_path):
+    vepped_variants_ht = hl.read_table(vepped_path)
+
+    transcript_consequences_ht = vepped_variants_ht.select(csqs=vepped_variants_ht.vep.transcript_consequences)
+    exploded_csqs_ht = transcript_consequences_ht.explode("csqs")
+    csqs_ht = exploded_csqs_ht.select(
+        gene_id=exploded_csqs_ht.csqs.gene_id,
+        gene_symbol=exploded_csqs_ht.csqs.gene_symbol,
+        mane_select=exploded_csqs_ht.csqs.mane_select,
+        source=exploded_csqs_ht.csqs.source,
+    )
+
+    csqs_ensembl_ht = csqs_ht.filter(csqs_ht.source == "Ensembl")
+
+    # filter out downstream and upstream variant as we only show exons
+    #   in the exome results browsers, this fixes the problems of
+    #   multiple mane select transcripts per variant
+    csqs_ensembl_coding_ht = csqs_ensembl_ht.filter(csqs_ensembl_ht.consequence_term != "downstream_gene_variant")
+    csqs_ensembl_coding_ht = csqs_ensembl_coding_ht.filter(
+        csqs_ensembl_coding_ht.consequence_term != "upstream_gene_variant"
+    )
+
+    variant_gene_groups = csqs_ensembl_coding_ht.group_by(
+        locus=csqs_ensembl_ht.locus,
+        alleles=csqs_ensembl_ht.alleles,
+    ).aggregate(
+        gene_ids=hl.agg.collect(csqs_ensembl_coding_ht.gene_id),
+        gene_symbols=hl.agg.collect(csqs_ensembl_coding_ht.gene_symbol),
+        gene_counts=hl.agg.counter(csqs_ensembl_coding_ht.gene_symbol),
+    )
+
+    variant_with_gene = variant_gene_groups.annotate(
+        gene_id=variant_gene_groups.gene_ids[0],
+        gene_symbol=variant_gene_groups.gene_symbols[0],
+    )
+
+    variant_with_gene = variant_with_gene.select(
+        gene_id=variant_with_gene.gene_id,
+        gene_symbol=variant_with_gene.gene_symbol,
+        gene_counts=variant_with_gene.gene_counts,
+        gene_ids=variant_with_gene.gene_ids,
+        gene_symbols=variant_with_gene.gene_symbols,
+    )
+
+    return variant_with_gene
+
+
 def prepare_variant_results():
     staging_output_path = pipeline_config.get("output", "staging_path")
 
@@ -103,7 +150,7 @@ def prepare_variant_results():
     annotations = annotations.annotate(transcript_consequences=hl.json(annotations.transcript_consequences))
 
     annotations = annotations.select(
-        gene_id=annotations.gene_id_canonical,
+        # gene_id now comes from the table we generate
         consequence=annotations.most_severe_consequence,
         hgvsc=annotations.hgvsc_canonical.split(":")[-1],
         hgvsp=annotations.hgvsp_canonical.split(":")[-1],
@@ -117,6 +164,26 @@ def prepare_variant_results():
     )
 
     variants = variants.annotate(**annotations[variants.locus, variants.alleles])
+
+    # --- use VEP'd table to determine gene_id per variant
+
+    # generate table if needed
+    vepped_table_exists = True
+    corrected_gene_id_path = os.path.join(staging_output_path, "ibd", "gene_id_per_variant.ht")
+    corrected_gene_id_table_exists = False
+    if vepped_table_exists and not corrected_gene_id_table_exists:
+        vepped_path = os.path.join(staging_output_path, "ibd", "variants_vepped.ht")
+        variant_with_correct_gene_id = generate_gene_id_per_variant_table(vepped_path)
+
+        variant_with_correct_gene_id.write(corrected_gene_id_path, overwrite=True)
+
+    # annotate result table with corrected gene_id per variant
+    corrected_gene_id_path = os.path.join(staging_output_path, "ibd", "gene_id_per_variant.ht")
+    gene_id_per_variant_ht = hl.read_table(corrected_gene_id_path)
+    gene_id_per_variant_ht = gene_id_per_variant_ht.select(gene_id=gene_id_per_variant_ht.gene_id)
+    variants = variants.annotate(**gene_id_per_variant_ht[variants.locus, variants.alleles])
+
+    # ---
 
     # generate and save most significant variant per analysis group for each Gene
     most_significant_variant_per_gene = os.path.join(staging_output_path, "ibd", "genes_most_significant_variants.ht")
