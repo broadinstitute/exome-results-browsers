@@ -75,7 +75,13 @@ def prepare_gene_results():
         "n_samples_control",
         "HetP",
     ]
-    for category in consequence_categories:
+
+    # this loop below was very inefficient, multiple joins triggered many
+    #   re-shuffles. As a workaround, manually only use the categories we know we want
+    displayed_categories = ["lof_0_001", "lof_missense_0_001"]
+    filtered_consequence_categories = [cat for cat in consequence_categories if cat in displayed_categories]
+
+    for category in filtered_consequence_categories:
         category_results = results.filter(results.burden_test == category)
         category_results = category_results.key_by("gene_id", "analysis_group")
         category_results = category_results.select(
