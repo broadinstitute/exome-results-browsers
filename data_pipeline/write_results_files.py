@@ -149,13 +149,49 @@ def write_data_files(table_path, output_directory, genes=None):
     os.remove(f"{output_directory}/.{temp_file_name}.crc")
 
 
+def init_hail(env="local"):
+    if env == "local":
+        print("Running with default hail pyspark settings")
+        hl.init()
+    elif env == "gce":
+        # tailored to n1-standard-16 used in deployment/README.md
+        print("Running with pyspark settings tailored to n1-standard-16")
+        hl.init(
+            # Feb 21, 2025. Copied settings from Hail's dataproc start source
+            spark_conf={
+                "spark.driver.memory": "49g",
+                "spark.executor.memory": "11g",
+                "spark.executor.memoryOverhead": "3g",
+                "spark.executor.cores": "4",
+                "yarn:yarn.nodemanager.resource.memory-mb": "58982",
+                "yarn:yarn.scheduler.maximum-allocation-mb": "14745",
+                "spark:spark.memory.storageFraction": "0.2",
+                "spark.task.maxFailures": "20",
+                "spark.driver.extraJavaOptions": "-Xss4M",
+                "spark.executor.extraJavaOptions": "-Xss4M",
+                "spark.speculation": "true",
+            }
+        )
+    else:
+        print(f"Unrecognized environment: {env}!")
+        exit(1)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("combined_hail_table")
     parser.add_argument("output_directory")
     parser.add_argument("--genes", nargs="+")
+    parser.add_argument(
+        "--environment",
+        choices=["local", "gce"],
+        default="local",
+        help="Execution environment - local or Google Compute Engine (GCP)",
+    )
     args = parser.parse_args()
 
-    hl.init()
+    init_hail(args.environment)
 
     write_data_files(args.combined_hail_table, args.output_directory, args.genes)
+
+    print("Finished")
