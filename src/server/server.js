@@ -39,6 +39,9 @@ app.set('trust proxy', config.trustProxy)
 
 app.use(compression())
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
 // ================================================================================================
 // Kubernetes readiness probe
 // ================================================================================================
@@ -144,6 +147,66 @@ if (isDevelopment) {
   getDatasetForRequest = (req) => datasetBySubdomain[req.subdomains[0]]
 }
 
+// ================================================================================================
+// Authentication Endpoints
+// ================================================================================================
+
+const PASSWORD_PROTECTED_DATASETS = ['IBD']
+const CORRECT_PASSWORD = process.env.PROTECTED_PASSWORD || 'password'
+const activeTokens = new Set()
+
+app.post('/api/auth', (req, res) => {
+  const { password } = req.body
+
+  let dataset
+  try {
+    dataset = getDatasetForRequest(req)
+  } catch (err) {} // eslint-disable-line no-empty
+
+  if (!dataset) {
+    res.status(500).json({ message: 'Unknown dataset' })
+  }
+
+  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
+    res.json({ success: true, token: 'not-required' })
+  }
+
+  if (password === CORRECT_PASSWORD) {
+    const token = Math.random().toString(36).substring(2, 15)
+    activeTokens.add(token)
+    res.json({ success: true, token })
+  } else {
+    res.status(401).json({ success: false, message: 'Invalid password' })
+  }
+})
+
+app.post('/api/check-auth', (req, res) => {
+  const { token } = req.body
+
+  let dataset
+  try {
+    dataset = getDatasetForRequest(req)
+  } catch (err) {} // eslint-disable-line no-empty
+
+  if (!dataset) {
+    res.status(500).json({ message: 'Unknown dataset' })
+  }
+
+  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
+    res.json({ authenticated: true })
+  }
+
+  if (token && activeTokens.has(token)) {
+    res.json({ authenticated: true })
+  } else {
+    res.json({ authenticated: false })
+  }
+})
+
+// ================================================================================================
+// Middleware
+// ================================================================================================
+
 // Store dataset on request object so other route handlers can use it.
 app.use('/', (req, res, next) => {
   let dataset
@@ -153,10 +216,41 @@ app.use('/', (req, res, next) => {
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
-  } else {
-    req.dataset = dataset
-    next()
   }
+
+  req.dataset = dataset
+
+  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
+    return next()
+  }
+
+  const unauthenticatedPaths = ['/login', '/api/auth', '/api/check-auth', '/config.js']
+  if (unauthenticatedPaths.includes(req.path) || req.path.startsWith('/static/')) {
+    return next()
+  }
+
+  const authHeader = req.headers.authorization
+  const queryToken = req.query.token
+
+  let token
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.substring(7)
+  } else if (queryToken) {
+    token = queryToken
+  }
+
+  if (token && activeTokens.has(token)) {
+    return next()
+  }
+
+  if (req.path.startsWith('/api/')) {
+    return res.status(401).json({
+      success: false,
+      message: 'Authentication required',
+    })
+  }
+
+  return res.redirect('/login')
 })
 
 const datasetConfig = {}

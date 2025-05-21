@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
-import React from 'react'
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Redirect, BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import DefaultHomePage from './DefaultHomePage'
 import DownloadsPage from './DownloadsPage'
@@ -12,6 +12,58 @@ import OtherStudies from './OtherStudies'
 import PageNotFoundPage from './PageNotFoundPage'
 import TopBar from './TopBar'
 import vepConsequences from './vepConsequences'
+import LoginPage from './LoginPage'
+
+const ProtectedRoute = ({
+  component: Component,
+  render: renderFunc,
+  isAuthenticated,
+  datasetId,
+  ...rest
+}) => {
+  return (
+    <Route
+      {...rest}
+      render={(props) => {
+        if (datasetId === 'IBD' && !isAuthenticated) {
+          return (
+            <Redirect
+              to={{
+                pathname: '/login',
+                state: { from: props.location },
+              }}
+            />
+          )
+        }
+
+        if (Component) {
+          return <Component {...props} />
+        }
+
+        if (renderFunc) {
+          return renderFunc(props)
+        }
+
+        return null
+      }}
+    />
+  )
+}
+
+ProtectedRoute.propTypes = {
+  component: PropTypes.func,
+  render: PropTypes.func,
+  isAuthenticated: PropTypes.bool.isRequired,
+  datasetId: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  location: PropTypes.object,
+}
+
+ProtectedRoute.defaultProps = {
+  component: undefined,
+  render: undefined,
+  location: {},
+}
 
 const Browser = ({
   browserTitle,
@@ -40,89 +92,134 @@ const Browser = ({
   additionalVariantDetailSummaryColumns,
   variantDetailColumns,
   renderVariantTranscriptConsequences,
-}) => (
-  <Router>
-    <TopBar
-      title={browserTitle}
-      links={extraPages.map(({ path, label }) => ({ path, label }))}
-      backgroundColor={navBarBackgroundColor}
-    />
+}) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthLoading, setIsAuthLoading] = useState(true)
+  const { datasetId } = window.datasetConfig
 
-    {window.gtag && (
-      <Route
-        path="/"
-        render={({ location }) => {
-          window.gtag('config', window.gaTrackingId, {
-            anonymize_ip: true,
-            page_path: location.pathname,
-          })
-          return null
-        }}
+  useEffect(() => {
+    const token = sessionStorage.getItem('authToken')
+    setIsAuthenticated(!!token)
+    setIsAuthLoading(false)
+  }, [])
+
+  if (isAuthLoading) {
+    return <div>Loading...</div>
+  }
+
+  return (
+    <Router>
+      <TopBar
+        title={browserTitle}
+        links={extraPages.map(({ path, label }) => ({ path, label }))}
+        backgroundColor={navBarBackgroundColor}
       />
-    )}
 
-    <ErrorBoundary>
-      <Switch>
-        <Route path="/" exact component={homePage} />
-
+      {window.gtag && (
         <Route
-          path="/results"
-          render={() => (
-            <GeneResultsPage
-              browserTitle={browserTitle}
-              analysisGroupOptions={geneResultAnalysisGroupOptions}
-              defaultAnalysisGroup={defaultGeneResultAnalysisGroup}
-              defaultSortKey={defaultGeneResultSortKey}
-              geneResultColumns={geneResultColumns}
-              pageHeading={geneResultsPageHeading}
-              tabs={geneResultTabs}
+          path="/"
+          render={({ location }) => {
+            window.gtag('config', window.gaTrackingId, {
+              anonymize_ip: true,
+              page_path: location.pathname,
+            })
+            return null
+          }}
+        />
+      )}
+
+      <ErrorBoundary>
+        <Switch>
+          <Route path="/login" exact component={LoginPage} />
+
+          <ProtectedRoute
+            isAuthenticated={isAuthenticated}
+            datasetId={datasetId}
+            path="/"
+            exact
+            component={homePage}
+          />
+
+          <ProtectedRoute
+            isAuthenticated={isAuthenticated}
+            datasetId={datasetId}
+            path="/results"
+            render={() => (
+              <GeneResultsPage
+                browserTitle={browserTitle}
+                analysisGroupOptions={geneResultAnalysisGroupOptions}
+                defaultAnalysisGroup={defaultGeneResultAnalysisGroup}
+                defaultSortKey={defaultGeneResultSortKey}
+                geneResultColumns={geneResultColumns}
+                pageHeading={geneResultsPageHeading}
+                tabs={geneResultTabs}
+              />
+            )}
+          />
+
+          <ProtectedRoute
+            isAuthenticated={isAuthenticated}
+            datasetId={datasetId}
+            path="/gene/:gene"
+            render={({ match }) => (
+              <GenePage
+                geneIdOrSymbol={match.params.gene}
+                browserTitle={browserTitle}
+                defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
+                variantAnalysisGroupOptions={variantAnalysisGroupOptions}
+                variantAnalysisGroupLabels={variantAnalysisGroupLabels}
+                variantResultColumns={variantResultColumns}
+                variantSortKey={defaultVariantTableSortKey}
+                variantSortOrder={defaultVariantTableSortOrder}
+                variantConsequences={variantConsequences}
+                variantConsequenceCategoryLabels={variantConsequenceCategoryLabels}
+                variantCustomFilter={variantCustomFilter}
+                renderVariantAttributes={renderVariantAttributes}
+                additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
+                variantDetailColumns={variantDetailColumns}
+                renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
+              />
+            )}
+          />
+
+          {extraPages.map(({ path, component }) => (
+            <ProtectedRoute
+              isAuthenticated={isAuthenticated}
+              datasetId={datasetId}
+              key={path}
+              path={path}
+              component={component}
             />
-          )}
-        />
+          ))}
 
-        <Route
-          path="/gene/:gene"
-          render={({ match }) => (
-            <GenePage
-              geneIdOrSymbol={match.params.gene}
-              browserTitle={browserTitle}
-              defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
-              variantAnalysisGroupOptions={variantAnalysisGroupOptions}
-              variantAnalysisGroupLabels={variantAnalysisGroupLabels}
-              variantResultColumns={variantResultColumns}
-              variantSortKey={defaultVariantTableSortKey}
-              variantSortOrder={defaultVariantTableSortOrder}
-              variantConsequences={variantConsequences}
-              variantConsequenceCategoryLabels={variantConsequenceCategoryLabels}
-              variantCustomFilter={variantCustomFilter}
-              renderVariantAttributes={renderVariantAttributes}
-              additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
-              variantDetailColumns={variantDetailColumns}
-              renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
-            />
-          )}
-        />
+          <ProtectedRoute
+            isAuthenticated={isAuthenticated}
+            datasetId={datasetId}
+            path="/downloads"
+            component={DownloadsPage}
+          />
 
-        {extraPages.map(({ path, component }) => (
-          <Route key={path} path={path} component={component} />
-        ))}
+          <ProtectedRoute
+            isAuthenticated={isAuthenticated}
+            datasetId={datasetId}
+            path="/other-studies"
+            render={() => (
+              <InfoPage title="Other Studies">
+                <OtherStudies />
+              </InfoPage>
+            )}
+          />
 
-        <Route path="/downloads" component={DownloadsPage} />
-
-        <Route
-          path="/other-studies"
-          render={() => (
-            <InfoPage title="Other Studies">
-              <OtherStudies />
-            </InfoPage>
-          )}
-        />
-
-        <Route component={PageNotFoundPage} />
-      </Switch>
-    </ErrorBoundary>
-  </Router>
-)
+          <ProtectedRoute
+            isAuthenticated={isAuthenticated}
+            datasetId={datasetId}
+            component={PageNotFoundPage}
+          />
+        </Switch>
+      </ErrorBoundary>
+    </Router>
+  )
+}
 
 Browser.propTypes = {
   browserTitle: PropTypes.string,
