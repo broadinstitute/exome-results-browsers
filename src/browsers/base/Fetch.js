@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import { Component } from 'react'
+import { addAuthHeader } from './auth'
 
 const cancelable = (promise) => {
   let isCanceled = false
@@ -27,9 +28,10 @@ const cancelable = (promise) => {
 }
 
 const fetchApi = (path) => {
-  return fetch(`/api${path}`, {
+  const options = addAuthHeader({
     method: 'GET',
-  }).then((response) => {
+  })
+  return fetch(`/api${path}`, options).then((response) => {
     const isOk = response.ok
     return response.json().then(
       (data) => {

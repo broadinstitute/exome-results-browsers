@@ -36,6 +36,11 @@ const IBDHomePage = () => (
       Or <Link to="/results">view all results</Link>
     </p>
 
+    <p>
+      Examples - Gene name: <Link to="/gene/ENSG00000167207">NOD2</Link>, Ensembl gene ID:{' '}
+      <Link to="/gene/ENSG00000167207">ENSG00000167207</Link>
+    </p>
+
     <StyledContent dangerouslySetInnerHTML={{ __html: homePageContent.html }} />
   </HomePageWrapper>
 )
