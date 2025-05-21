@@ -12,21 +12,32 @@ def prepare_gene_results():
 
     results = results.select_globals()
 
+    results = results.annotate(gene_id=results.ensgid)
+
     # Select result fields, discard gene information
     results = results.select(
         "gene_id",
         "analysis_group",
-        "burden_test",
-        "P",
-        "BETA",
-        "SE",
-        "freq",
-        "n_alleles_case",
-        "n_alleles_control",
-        "n_samples_case",
-        "n_samples_control",
-        "HetP",
+        "consequence_category",
+        "P_meta",
+        "beta_meta",
+        "N_meta",
+        "n_control",
+        "het_P_meta",
+        "P_Broad_Twist",
+        "beta_Broad_Twist",
+        "P_Broad_Nextera",
+        "beta_Broad_Nextera",
+        "P_Sanger_wes",
+        "beta_Sanger_wes",
+        "P_Sanger_wgs",
+        "beta_Sanger_wgs",
+        "P_UKBB_wes",
+        "beta_UKBB_wes",
     )
+
+    # This specific beta was mistakenly typed as a string in the handoff data
+    results = results.annotate(beta_Sanger_wgs=hl.float(results.beta_Sanger_wgs))
 
     results = results.key_by("gene_id", "analysis_group")
 
@@ -48,56 +59,99 @@ def prepare_gene_results():
         variant_an_ctrl=variant_per_gene_per_group.most_significant_variant.variant_data.an_ctrl,
         variant_af_ctrl=hl.float(variant_per_gene_per_group.most_significant_variant.variant_data.ac_ctrl)
         / hl.float(variant_per_gene_per_group.most_significant_variant.variant_data.an_ctrl),
-        variant_ac_control=variant_per_gene_per_group.most_significant_variant.variant_data.an_control,
-        variant_beta=variant_per_gene_per_group.most_significant_variant.variant_data.beta,
-        variant_chi_sq_stat=variant_per_gene_per_group.most_significant_variant.variant_data.chi_sq_stat,
-        variant_p=variant_per_gene_per_group.most_significant_variant.variant_data.p,
+        # variant meta values, for summary table
+        variant_p_meta=variant_per_gene_per_group.most_significant_variant.variant_data.P_meta,
+        variant_beta_meta=variant_per_gene_per_group.most_significant_variant.variant_data.BETA_meta,
+        variant_het_p_meta=variant_per_gene_per_group.most_significant_variant.variant_data.HetP,
+        # variant per-cohort values stats, for rendering modal
+        variant_p_twist=variant_per_gene_per_group.most_significant_variant.variant_data.P_Twist,
+        variant_beta_twist=variant_per_gene_per_group.most_significant_variant.variant_data.BETA_Twist,
+        variant_p_nextera=variant_per_gene_per_group.most_significant_variant.variant_data.P_Nextera,
+        variant_beta_nextera=variant_per_gene_per_group.most_significant_variant.variant_data.BETA_Nextera,
+        variant_p_sanger_wes=variant_per_gene_per_group.most_significant_variant.variant_data.P_Sanger_WES,
+        variant_beta_sanger_wes=variant_per_gene_per_group.most_significant_variant.variant_data.BETA_Sanger_WES,
+        variant_p_ukbb=variant_per_gene_per_group.most_significant_variant.variant_data.P_UKBB,
+        variant_beta_ukbb=variant_per_gene_per_group.most_significant_variant.variant_data.BETA_UKBB,
+        variant_p_sanger_wgs=variant_per_gene_per_group.most_significant_variant.variant_data.P_Sanger_WGS,
+        variant_beta_sanger_wgs=variant_per_gene_per_group.most_significant_variant.variant_data.BETA_Sanger_WGS,
+        variant_p_regeneron=variant_per_gene_per_group.most_significant_variant.variant_data.P_regeneron,
+        variant_beta_regeneron=variant_per_gene_per_group.most_significant_variant.variant_data.BETA_regeneron,
+        # variant JSON-ified transcript consequences, and other info fields, for rendering modal
+        variant_consequence=variant_per_gene_per_group.most_significant_variant.variant_data.consequence,
+        variant_hgvsc=variant_per_gene_per_group.most_significant_variant.variant_data.hgvsc,
+        variant_hgvsp=variant_per_gene_per_group.most_significant_variant.variant_data.hgvsp,
+        variant_cadd=variant_per_gene_per_group.most_significant_variant.variant_data.cadd,
+        variant_splice_ai=variant_per_gene_per_group.most_significant_variant.variant_data.splice_ai,
+        variant_revel=variant_per_gene_per_group.most_significant_variant.variant_data.revel,
+        variant_polyphen=variant_per_gene_per_group.most_significant_variant.variant_data.polyphen,
+        variant_sift=variant_per_gene_per_group.most_significant_variant.variant_data.sift,
+        variant_transcript_consequences=variant_per_gene_per_group.most_significant_variant.variant_data.transcript_consequences,
     )
 
     variant_per_gene_per_group = variant_per_gene_per_group.key_by("gene_id", "analysis_group")
 
     results = results.join(variant_per_gene_per_group, "left")
 
-    # pylint: disable-next=anomalous-backslash-in-string
-    results = results.annotate(burden_test=results.burden_test.replace("\.", "_").replace("\+", "_").lower())
+    results = results.annotate(
+        consequence_category=results.consequence_category.replace(r"\.", "_").replace(r"\+", "_").lower()
+    )
 
     final_results = None
 
-    consequence_categories = results.aggregate(hl.agg.collect_as_set(results.burden_test))
+    consequence_categories = results.aggregate(hl.agg.collect_as_set(results.consequence_category))
     per_category_fields = [
-        "P",
-        "BETA",
-        "SE",
-        "freq",
-        "n_alleles_case",
-        "n_alleles_control",
-        "n_samples_case",
-        "n_samples_control",
-        "HetP",
+        "P_meta",
+        "beta_meta",
+        "het_P_meta",
+        "P_Broad_Twist",
+        "beta_Broad_Twist",
+        "P_Broad_Nextera",
+        "beta_Broad_Nextera",
+        "P_Sanger_wes",
+        "beta_Sanger_wes",
+        "P_Sanger_wgs",
+        "beta_Sanger_wgs",
+        "P_UKBB_wes",
+        "beta_UKBB_wes",
     ]
 
-    # this loop below was very inefficient, multiple joins triggered many
-    #   re-shuffles. As a workaround, manually only use the categories we know we want
-    displayed_categories = ["lof_0_001", "lof_missense_0_001"]
-    filtered_consequence_categories = [cat for cat in consequence_categories if cat in displayed_categories]
-
-    for category in filtered_consequence_categories:
-        category_results = results.filter(results.burden_test == category)
+    for category in consequence_categories:
+        category_results = results.filter(results.consequence_category == category)
         category_results = category_results.key_by("gene_id", "analysis_group")
         category_results = category_results.select(
-            n_cases=category_results.n_samples_case,
-            n_controls=category_results.n_samples_control,
+            n_cases=category_results.N_meta,
+            n_controls=category_results.n_control,
             variant_id=category_results.variant_id,
             variant_ac_case=category_results.variant_ac_case,
             variant_an_case=category_results.variant_an_case,
             variant_af_case=category_results.variant_af_case,
             variant_ac_ctrl=category_results.variant_ac_ctrl,
-            variant_ac_control=category_results.variant_ac_control,
             variant_an_ctrl=category_results.variant_an_ctrl,
             variant_af_ctrl=category_results.variant_af_ctrl,
-            variant_beta=category_results.variant_beta,
-            variant_chi_sq_stat=category_results.variant_chi_sq_stat,
-            variant_p=category_results.variant_p,
+            variant_p_meta=category_results.variant_p_meta,
+            variant_beta_meta=category_results.variant_beta_meta,
+            variant_het_p_meta=category_results.variant_het_p_meta,
+            variant_p_twist=category_results.variant_p_twist,
+            variant_beta_twist=category_results.variant_beta_twist,
+            variant_p_nextera=category_results.variant_p_nextera,
+            variant_beta_nextera=category_results.variant_beta_nextera,
+            variant_p_sanger_wes=category_results.variant_p_sanger_wgs,
+            variant_beta_sanger_wes=category_results.variant_beta_sanger_wgs,
+            variant_p_ukbb=category_results.variant_p_ukbb,
+            variant_beta_ukbb=category_results.variant_beta_ukbb,
+            variant_p_sanger_wgs=category_results.variant_p_sanger_wgs,
+            variant_beta_sanger_wgs=category_results.variant_beta_sanger_wgs,
+            variant_p_regeneron=category_results.variant_p_regeneron,
+            variant_beta_regeneron=category_results.variant_beta_regeneron,
+            variant_consequence=category_results.variant_consequence,
+            variant_hgvsc=category_results.variant_hgvsc,
+            variant_hgvsp=category_results.variant_hgvsp,
+            variant_cadd=category_results.variant_cadd,
+            variant_splice_ai=category_results.variant_splice_ai,
+            variant_revel=category_results.variant_revel,
+            variant_polyphen=category_results.variant_polyphen,
+            variant_sift=category_results.variant_sift,
+            variant_transcript_consequences=category_results.variant_transcript_consequences,
             **{f"{category}_{field}": category_results[field] for field in per_category_fields},
         )
 
@@ -107,16 +161,36 @@ def prepare_gene_results():
                     "n_cases",
                     "n_controls",
                     "variant_id",
-                    "variant_ac_case",
                     "variant_ac_ctrl",
-                    "variant_an_case",
                     "variant_an_ctrl",
-                    "variant_af_case",
                     "variant_af_ctrl",
-                    "variant_ac_control",
-                    "variant_beta",
-                    "variant_chi_sq_stat",
-                    "variant_p",
+                    "variant_ac_case",
+                    "variant_an_case",
+                    "variant_af_case",
+                    "variant_p_meta",
+                    "variant_beta_meta",
+                    "variant_het_p_meta",
+                    "variant_p_twist",
+                    "variant_beta_twist",
+                    "variant_p_nextera",
+                    "variant_beta_nextera",
+                    "variant_p_sanger_wes",
+                    "variant_beta_sanger_wes",
+                    "variant_p_ukbb",
+                    "variant_beta_ukbb",
+                    "variant_p_sanger_wgs",
+                    "variant_beta_sanger_wgs",
+                    "variant_p_regeneron",
+                    "variant_beta_regeneron",
+                    "variant_consequence",
+                    "variant_hgvsc",
+                    "variant_hgvsp",
+                    "variant_cadd",
+                    "variant_splice_ai",
+                    "variant_revel",
+                    "variant_polyphen",
+                    "variant_sift",
+                    "variant_transcript_consequences",
                 ),
                 "outer",
             )
