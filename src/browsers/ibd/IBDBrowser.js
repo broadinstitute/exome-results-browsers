@@ -11,7 +11,7 @@ import vepConsequences from '../base/vepConsequences'
 
 const variantConsequences = [...vepConsequences]
 
-const ibdAnalysisGroups = ['IBD', 'CD', 'UC']
+const ibdAnalysisGroups = ['IBD', 'CD']
 const defaultIBDAnalysisGroup = ibdAnalysisGroups[0]
 
 const IBDBrowser = () => (
@@ -34,7 +34,7 @@ const IBDBrowser = () => (
     geneResultsPageHeading="IBD: results by gene"
     geneResultAnalysisGroupOptions={ibdAnalysisGroups}
     defaultGeneResultAnalysisGroup={defaultIBDAnalysisGroup}
-    defaultGeneResultSortKey="lof_0_001_P"
+    defaultGeneResultSortKey="ptv_0_001_P_meta"
     geneResultColumns={[
       {
         key: 'variant_p',
@@ -55,26 +55,26 @@ const IBDBrowser = () => (
         render: (value) => renderFloatAsScientific(value),
       },
       {
-        key: 'lof_0_001_P',
-        heading: 'LoF 0.001 P-val',
+        key: 'ptv_0_001_P_meta',
+        heading: 'PTV 0.001 P-val',
         minWidth: 110,
         render: (value) => renderFloatAsScientific(value),
       },
       {
-        key: 'lof_0_001_BETA',
-        heading: 'LoF 0.001 Beta',
+        key: 'ptv_0_001_beta_meta',
+        heading: 'PTV 0.001 Beta',
         minWidth: 110,
         render: (value) => renderFloatAsDecimal(value),
       },
       {
-        key: 'lof_missense_0_001_P',
-        heading: 'LoF Missense 0.001 P-val',
+        key: 'nsyn_0_001_P_meta',
+        heading: 'Nsyn 0.001 P-val',
         minWidth: 110,
         render: (value) => renderFloatAsScientific(value),
       },
       {
-        key: 'lof_missense_0_001_BETA',
-        heading: 'LoF Missense 0.001 Beta',
+        key: 'nsyn_0_001_beta_meta',
+        heading: 'Nsyn 0.001 Beta',
         minWidth: 110,
         render: (value) => renderFloatAsDecimal(value),
       },
