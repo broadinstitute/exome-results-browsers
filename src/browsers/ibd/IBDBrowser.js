@@ -81,18 +81,17 @@ const IBDBrowser = () => (
     ]}
     variantAnalysisGroupOptions={ibdAnalysisGroups}
     defaultVariantAnalysisGroup={defaultIBDAnalysisGroup}
-    defaultVariantTableSortKey="group_result.p"
+    defaultVariantTableSortKey="group_result.P_meta"
     defaultVariantTableSortOrder="ascending"
     variantResultColumns={[
       {
-        key: 'group_result.p',
+        key: 'group_result.P_meta',
         heading: 'P\u2011Value',
         minWidth: 85,
         render: (value) => renderFloatAsScientific(value),
       },
-
       {
-        key: 'group_result.beta',
+        key: 'group_result.BETA_meta',
         heading: 'Beta',
         minWidth: 65,
         render: (value) => renderFloatAsDecimal(value),
