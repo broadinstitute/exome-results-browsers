@@ -8,10 +8,9 @@ const TermsPageContent = () => (
   <InfoPage title="Terms of Use">
     <p>
       This website is intended to provide summary-level results from whole exome sequencing data of
-      the Epi25 WES study. The WES data was generated for educational and research use only and not
-      for diagnostic/clinical or commercial use. The data from this website may not be replicated on
-      any other website without written consent. All users of Epi25 browser data agree not to
-      attempt to re-identify participants.
+      the Epi25 WES study. The data from this website may not be replicated on any other website
+      without written consent. All users of Epi25 browser data agree not to attempt to re-identify
+      participants.
     </p>
     <p>
       We encourage you to contact the Epi25 Collaborative before embarking on any analyses using
