@@ -134,6 +134,66 @@ def annotate_variants_with_corrected_gene_id(staging_output_path, variants_ht):
     return corrected_gene_id_variants_ht
 
 
+def generate_most_significant_variant_per_gene_table(staging_output_path, variants_ht):
+    most_significant_variant_per_gene_path = os.path.join(
+        staging_output_path, "ibd", "genes_most_significant_variants.ht"
+    )
+
+    if not hl.hadoop_exists(most_significant_variant_per_gene_path):
+        exploded_ht = variants_ht.annotate(
+            group_entries=hl.array(hl.zip(variants_ht.group_results.keys(), variants_ht.group_results.values()))
+        ).explode("group_entries")
+
+        exploded_ht = exploded_ht.annotate(
+            group_name=exploded_ht.group_entries[0], group_data=exploded_ht.group_entries[1]
+        )
+
+        exploded_ht.drop("group_results", "group_entries")
+
+        individual_analysis_group_ht = exploded_ht.group_by(
+            gene_id=exploded_ht.gene_id, group_name=exploded_ht.group_name
+        ).aggregate(
+            most_significant_variant=hl.agg.take(
+                hl.struct(
+                    P_meta=exploded_ht.group_data.P_meta,
+                    variant_data=hl.struct(
+                        **exploded_ht.group_data,
+                        gene_id=exploded_ht.gene_id,
+                        consequence=exploded_ht.consequence,
+                        hgvsc=exploded_ht.hgvsc,
+                        hgvsp=exploded_ht.hgvsp,
+                        cadd=exploded_ht.info.cadd,
+                        splice_ai=exploded_ht.info.splice_ai,
+                        revel=exploded_ht.info.revel,
+                        polyphen=exploded_ht.info.polyphen,
+                        sift=exploded_ht.info.sift,
+                    ),
+                ),
+                1,
+                ordering=exploded_ht.group_data.P_meta,
+            )[0]
+        )
+
+        # write out intermediate table in case we want this, since we've already done the work
+        individual_analysis_group_ht.write(
+            os.path.join(staging_output_path, "ibd", "gene_most_significant_variant_per_analysis_group.ht"),
+            overwrite=True,
+        )
+
+        grouped_by_gene_ht = individual_analysis_group_ht.group_by(individual_analysis_group_ht.gene_id).aggregate(
+            most_significant_variant_per_group=hl.dict(
+                hl.agg.collect(
+                    (
+                        individual_analysis_group_ht.group_name,
+                        individual_analysis_group_ht.most_significant_variant.variant_data,
+                    )
+                )
+            )
+        )
+
+        grouped_by_gene_ht.write(most_significant_variant_per_gene_path, overwrite=True)
+
+
 def prepare_variant_results(test_gene_id):
     staging_output_path = pipeline_config.get("output", "staging_path")
 
@@ -221,51 +281,6 @@ def prepare_variant_results(test_gene_id):
     variants = annotate_variants_with_corrected_gene_id(staging_output_path, variants)
 
     # generate and save most significant variant per analysis group for each Gene
-    most_significant_variant_per_gene = os.path.join(staging_output_path, "ibd", "genes_most_significant_variants.ht")
-
-    if not hl.hadoop_exists(most_significant_variant_per_gene):
-
-        exploded = variants.annotate(
-            group_entries=hl.array(hl.zip(variants.group_results.keys(), variants.group_results.values()))
-        ).explode("group_entries")
-
-        exploded = exploded.annotate(group_name=exploded.group_entries[0], group_data=exploded.group_entries[1])
-
-        exploded.drop("group_results", "group_entries")
-
-        grouped = exploded.group_by(gene_id=exploded.gene_id, group_name=exploded.group_name).aggregate(
-            most_significant_variant=hl.agg.take(
-                hl.struct(
-                    P_meta=exploded.group_data.P_meta,
-                    variant_data=hl.struct(
-                        **exploded.group_data,
-                        gene_id=exploded.gene_id,
-                        consequence=exploded.consequence,
-                        hgvsc=exploded.hgvsc,
-                        hgvsp=exploded.hgvsp,
-                        cadd=exploded.info.cadd,
-                        splice_ai=exploded.info.splice_ai,
-                        revel=exploded.info.revel,
-                        polyphen=exploded.info.polyphen,
-                        sift=exploded.info.sift,
-                    ),
-                ),
-                1,
-                ordering=exploded.group_data.P_meta,
-            )[0]
-        )
-
-        grouped.write(
-            os.path.join(staging_output_path, "ibd", "gene_most_significant_variant_per_analysis_group.ht"),
-            overwrite=True,
-        )
-
-        final_table = grouped.group_by(grouped.gene_id).aggregate(
-            most_significant_variant_per_group=hl.dict(
-                hl.agg.collect((grouped.group_name, grouped.most_significant_variant.variant_data))
-            )
-        )
-
-        final_table.write(most_significant_variant_per_gene, overwrite=True)
+    generate_most_significant_variant_per_gene_table(staging_output_path, variants)
 
     return variants
