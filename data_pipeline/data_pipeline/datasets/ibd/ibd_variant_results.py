@@ -20,6 +20,46 @@ def filter_results_table_to_test_gene_interval(results, test_gene_symbol):
     return results
 
 
+def add_vep_to_annotations(staging_output_path, variants_ht, annotations_ht):
+
+    vepped_path = os.path.join(staging_output_path, "ibd", "variant_vepped.ht")
+    if not hl.hadoop_exists(vepped_path):
+        print("No VEP'd table found, running VEP ...")
+        variants_to_vep = variants_ht.select()
+        vepped_variants = hl.vep(variants_to_vep)
+        vepped_variants.write(vepped_path, overwrite=True)
+
+    vepped_variants_ht = hl.read_table(vepped_path)
+
+    annotations_ht = annotations_ht.annotate(vep=vepped_variants_ht[annotations_ht.locus, annotations_ht.alleles].vep)
+
+    annotations_ht = annotations_ht.annotate(
+        transcript_consequences=annotations_ht.vep.transcript_consequences.map(
+            lambda tc: hl.struct(
+                consequence_terms=tc.consequence_terms,
+                domains=tc.domains,
+                gene_id=tc.gene_id,
+                gene_symbol=tc.gene_symbol,
+                hgnc_id=tc.hgnc_id,
+                hgvsc=tc.hgvsc,
+                hgvsp=tc.hgvsp,
+                canonical=tc.canonical,
+                mane_select=tc.mane_select,
+                lof=tc.lof,
+                lof_flags=tc.lof_flags,
+                lof_filter=tc.lof_filter,
+                polyphen_prediction=tc.polyphen_prediction,
+                sift_prediction=tc.sift_prediction,
+                transcript_id=tc.transcript_id,
+            )
+        )
+    )
+
+    annotations_ht = annotations_ht.annotate(transcript_consequences=hl.json(annotations_ht.transcript_consequences))
+
+    return annotations_ht
+
+
 def generate_gene_id_per_variant_table(vepped_path):
     vepped_variants_ht = hl.read_table(vepped_path)
 
@@ -132,40 +172,7 @@ def prepare_variant_results(test_gene_id):
     annotations = hl.read_table(pipeline_config.get("IBD", "variant_annotations_path"))
 
     # VEP variants and store transcript consequences in info field
-    vepped_path = os.path.join(staging_output_path, "ibd", "variants_vepped.ht")
-    if not hl.hadoop_exists(vepped_path):
-        print("No VEP'd table found, running VEP")
-        variants_to_vep = variants.select()
-        vepped_variants = hl.vep(variants_to_vep)
-        vepped_variants.write(vepped_path, overwrite=True)
-
-    vepped_variants_ht = hl.read_table(vepped_path)
-
-    annotations = annotations.annotate(vep=vepped_variants_ht[annotations.locus, annotations.alleles].vep)
-
-    annotations = annotations.annotate(
-        transcript_consequences=annotations.vep.transcript_consequences.map(
-            lambda tc: hl.struct(
-                consequence_terms=tc.consequence_terms,
-                domains=tc.domains,
-                gene_id=tc.gene_id,
-                gene_symbol=tc.gene_symbol,
-                hgnc_id=tc.hgnc_id,
-                hgvsc=tc.hgvsc,
-                hgvsp=tc.hgvsp,
-                canonical=tc.canonical,
-                mane_select=tc.mane_select,
-                lof=tc.lof,
-                lof_flags=tc.lof_flags,
-                lof_filter=tc.lof_filter,
-                polyphen_prediction=tc.polyphen_prediction,
-                sift_prediction=tc.sift_prediction,
-                transcript_id=tc.transcript_id,
-            )
-        )
-    )
-
-    annotations = annotations.annotate(transcript_consequences=hl.json(annotations.transcript_consequences))
+    annotations = add_vep_to_annotations(staging_output_path, variants, annotations)
 
     annotations = annotations.select(
         # gene_id now comes from the table we generate
