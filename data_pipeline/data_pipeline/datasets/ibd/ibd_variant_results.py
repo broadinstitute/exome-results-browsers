@@ -70,6 +70,7 @@ def generate_gene_id_per_variant_table(vepped_path):
         gene_symbol=exploded_csqs_ht.csqs.gene_symbol,
         mane_select=exploded_csqs_ht.csqs.mane_select,
         source=exploded_csqs_ht.csqs.source,
+        consequence_term=exploded_csqs_ht.csqs.consequence_terms[0],
     )
 
     csqs_ensembl_ht = csqs_ht.filter(csqs_ht.source == "Ensembl")
@@ -78,13 +79,14 @@ def generate_gene_id_per_variant_table(vepped_path):
     #   in the exome results browsers, this fixes the problems of
     #   multiple mane select transcripts per variant
     csqs_ensembl_coding_ht = csqs_ensembl_ht.filter(csqs_ensembl_ht.consequence_term != "downstream_gene_variant")
+
     csqs_ensembl_coding_ht = csqs_ensembl_coding_ht.filter(
         csqs_ensembl_coding_ht.consequence_term != "upstream_gene_variant"
     )
 
     variant_gene_groups = csqs_ensembl_coding_ht.group_by(
-        locus=csqs_ensembl_ht.locus,
-        alleles=csqs_ensembl_ht.alleles,
+        locus=csqs_ensembl_coding_ht.locus,
+        alleles=csqs_ensembl_coding_ht.alleles,
     ).aggregate(
         gene_ids=hl.agg.collect(csqs_ensembl_coding_ht.gene_id),
         gene_symbols=hl.agg.collect(csqs_ensembl_coding_ht.gene_symbol),
@@ -105,6 +107,31 @@ def generate_gene_id_per_variant_table(vepped_path):
     )
 
     return variant_with_gene
+
+
+def annotate_variants_with_corrected_gene_id(staging_output_path, variants_ht):
+    vepped_path = os.path.join(staging_output_path, "ibd", "variants_vepped.ht")
+    corrected_gene_id_path = os.path.join(staging_output_path, "ibd", "gene_id_per_variant.ht")
+
+    vepped_table_exists = hl.hadoop_exists(vepped_path)
+    corrected_gene_id_table_exists = hl.hadoop_exists(corrected_gene_id_path)
+
+    if not vepped_table_exists:
+        print("No vepped table found, exiting ...")
+        exit(1)
+
+    if not corrected_gene_id_table_exists:
+        variant_with_correct_gene_id = generate_gene_id_per_variant_table(vepped_path)
+        variant_with_correct_gene_id.write(corrected_gene_id_path, overwrite=True)
+
+    # annotate result table with corrected gene_id
+    gene_id_per_variant_ht = hl.read_table(corrected_gene_id_path)
+    gene_id_per_variant_ht = gene_id_per_variant_ht.select(gene_id=gene_id_per_variant_ht.gene_id)
+    corrected_gene_id_variants_ht = variants_ht.annotate(
+        **gene_id_per_variant_ht[variants_ht.locus, variants_ht.alleles]
+    )
+
+    return corrected_gene_id_variants_ht
 
 
 def prepare_variant_results(test_gene_id):
@@ -190,25 +217,8 @@ def prepare_variant_results(test_gene_id):
 
     variants = variants.annotate(**annotations[variants.locus, variants.alleles])
 
-    # --- use VEP'd table to determine gene_id per variant
-
-    # generate table if needed
-    vepped_table_exists = True
-    corrected_gene_id_path = os.path.join(staging_output_path, "ibd", "gene_id_per_variant.ht")
-    corrected_gene_id_table_exists = False
-    if vepped_table_exists and not corrected_gene_id_table_exists:
-        vepped_path = os.path.join(staging_output_path, "ibd", "variants_vepped.ht")
-        variant_with_correct_gene_id = generate_gene_id_per_variant_table(vepped_path)
-
-        variant_with_correct_gene_id.write(corrected_gene_id_path, overwrite=True)
-
-    # annotate result table with corrected gene_id per variant
-    corrected_gene_id_path = os.path.join(staging_output_path, "ibd", "gene_id_per_variant.ht")
-    gene_id_per_variant_ht = hl.read_table(corrected_gene_id_path)
-    gene_id_per_variant_ht = gene_id_per_variant_ht.select(gene_id=gene_id_per_variant_ht.gene_id)
-    variants = variants.annotate(**gene_id_per_variant_ht[variants.locus, variants.alleles])
-
-    # ---
+    # use our VEP table to determine gene_id per variant
+    variants = annotate_variants_with_corrected_gene_id(staging_output_path, variants)
 
     # generate and save most significant variant per analysis group for each Gene
     most_significant_variant_per_gene = os.path.join(staging_output_path, "ibd", "genes_most_significant_variants.ht")
