@@ -46,6 +46,63 @@ data pipeline.
 
 ## Development
 
+### Running pipelines locally
+
+Local files are written to
+
+`./{local_output_root}/{output_last_updated}/<dataset_name>/...`
+
+Where
+
+- `local_output_root`
+- `output_last_updated`
+
+are defined in `config.ini`
+
+**Generate local variant and gene result tables for the dataset(s) you want to test**
+
+```
+./data_pipeline/run_pipeline.py \
+  --environment local \
+  prepare_datasets \
+  --datasets Epi25 GP2 \
+  --output-local \
+  --test-gene PCSK9
+```
+
+
+**Combine the dataset(s)**
+
+```
+./data_pipeline/run_pipeline.py \
+  --environment local \
+  combine_datasets \
+  --datasets Epi25 GP2 \
+  --output-local
+```
+
+**Write result files**
+
+```
+./data_pipeline/write_results_files.py \
+  <COMBINED_HT_PATH> \
+  <OUTPUT_PATH> \
+  --genes <ENSG_ID_TO_WRITE>
+```
+
+e.g.
+
+```
+./data_pipeline/write_results_files.py \
+  ./data/output-data/combined/2025-05-12/combined.ht \
+  ./data/2025-05-12 \
+  --genes ENSG00000169174 ENSG00000167207 ENSG00000164062 ENSG00000187796 ENSG00000179526 ENSG00000149927
+```
+
+Use these file(s) with a local instance of the app, describe below
+
+### Running the app locally
+
 In production, the dataset/browser is determined by the request hostname. In development, the
 application is served on localhost and the dataset/browser is determined by the `BROWSER`
 environment variable. The first argument to `start.sh` sets that variable.
@@ -59,7 +116,7 @@ RESULTS_DATA_DIRECTORY=/path/to/results/data ./start.sh $BROWSER_NAME
 For example:
 
 ```
-RESULTS_DATA_DIRECTORY=/path/to/results/data ./start.sh SCHEMA
+RESULTS_DATA_DIRECTORY=/data/2025-05-12 ./start.sh Epi25
 ```
 
 This runs the server with nodemon and frontend with webpack-dev-server, so that each is
