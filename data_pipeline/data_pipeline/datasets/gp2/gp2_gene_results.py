@@ -10,6 +10,8 @@ from data_pipeline.config import pipeline_config
 
 
 def filter_results_table_to_test_gene(results, test_gene_symbol):
+    test_gene_symbol = "PCSK9"
+
     results = results.filter(results.gene_symbol == test_gene_symbol)
 
     return results.persist()
