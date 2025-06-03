@@ -30,12 +30,12 @@ const GP2Browser = () => {
   //   demo browser with only GP2 variant results
   // This should be updated when we get Gene results
   const analysisGroups = [
+    'EUR',
     'AAC',
     'CAH',
     'MDE',
     'AMR',
     'CAS',
-    'EUR',
     'EAS',
     'SAS',
     'AJ',
