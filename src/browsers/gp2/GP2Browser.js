@@ -138,18 +138,6 @@ const GP2Browser = () => {
         },
       ]}
       variantConsequences={variantConsequences}
-      variantCustomFilter={{
-        component: GP2VariantFilter,
-        defaultFilter: {
-          onlyInAnalysis: false,
-        },
-        applyFilter: (variants, { onlyInAnalysis }) => {
-          if (onlyInAnalysis) {
-            return variants.filter((variant) => variant.group_result.in_analysis)
-          }
-          return variants
-        },
-      }}
       renderVariantAttributes={({ cadd }) => [
         { label: 'CADD', content: cadd === null ? '-' : cadd },
       ]}
