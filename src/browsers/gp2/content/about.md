@@ -1,7 +1,11 @@
-~ About page placeholder ~
+---
+title: About GP2
+---
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+The Global Parkinson’s Genetics Program ([GP2](https://gp2.org/)) is a resource program of the Aligning Science Across Parkinson's ([ASAP](https://parkinsonsroadmap.org/#)) initiative, which is managed by the Coalition for Aligning Science and implemented by the Michael J. Fox Foundation. GP2 serves as a central hub to generate genetic data from studies across the globe and harmonize corresponding clinical data. Our goal is to genetically characterize over 250,000 volunteers around the world to further understand the genetic architecture of Parkinson’s disease (PD).
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+**GP2 member sites and investigators**
+A full list of GP2 sites and principal investigators can be found [here](https://doi.org/10.5281/zenodo.7904831).
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+**Acknowledgements**
+We would like to thank the many tens of thousands of participgnts who generously contributed to our effort. In addition, we want to sincerely thank all the GP2 members who are involved in the program.
