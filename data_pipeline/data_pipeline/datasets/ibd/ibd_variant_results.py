@@ -8,12 +8,12 @@ from data_pipeline.config import pipeline_config
 def filter_results_table_to_test_gene_interval(results, test_gene_symbol):
     print("  Running filter_results_table_to_test_gene_interval")
 
-    if test_gene_symbol != "PCSK9":
-        print("Genes other than PCSK9 not yet supported")
+    if test_gene_symbol != "NOD2":
+        print("Genes other than NOD2 not yet supported")
         exit(1)
 
     test_gene_locus_interval = hl.locus_interval(
-        "chr1", 55039447, 55064852, reference_genome="GRCh38", includes_start=True, includes_end=True
+        "chr16", 50693588, 50734041, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
 
     results = hl.filter_intervals(results, [test_gene_locus_interval])
