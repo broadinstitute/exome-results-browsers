@@ -15,7 +15,7 @@ def filter_results_table_to_test_gene(results, test_gene_symbol):
     return results.persist()
 
 
-def prepare_gene_results(test_gene_id):
+def prepare_gene_results(test_gene_id, _output_root):
     results = hl.read_table(pipeline_config.get("Epi25", "gene_results_path"))
 
     if test_gene_id:

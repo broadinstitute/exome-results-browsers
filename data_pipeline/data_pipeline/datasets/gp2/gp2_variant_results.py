@@ -18,7 +18,7 @@ def filter_results_table_to_test_gene_interval(results, test_gene_symbol):
     return results
 
 
-def prepare_variant_results(test_gene_id):
+def prepare_variant_results(test_gene_id, _output_root):
     results = hl.read_table(pipeline_config.get("GP2", "variant_results_path"))
 
     if test_gene_id:
