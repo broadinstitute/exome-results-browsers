@@ -6,6 +6,7 @@ import { renderCount } from '../base/tableCells'
 import GP2AboutPage from './GP2AboutPage'
 import GP2HomePage from './GP2HomePage'
 import GP2VariantFilter from './GP2VariantFilter'
+import GP2TermsPage from './GP2TermsPage'
 
 import vepConsequences from '../base/vepConsequences'
 
@@ -114,6 +115,11 @@ const GP2Browser = () => {
           path: '/about',
           label: 'About',
           component: GP2AboutPage,
+        },
+        {
+          path: '/terms',
+          label: 'Terms',
+          component: GP2TermsPage,
         },
       ]}
       geneResultsPageHeading="GP2: gene burden results"
