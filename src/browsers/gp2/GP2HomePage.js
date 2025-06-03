@@ -27,7 +27,7 @@ const HomePageWrapper = styled(Page)`
 const GP2HomePage = () => (
   <HomePageWrapper>
     <DocumentTitle title="GP2 Browser" />
-    <HomePageHeading>GP2: Parkinsons Association Browser</HomePageHeading>
+    <HomePageHeading>GP2: Global Parkinson`&apos;s Genetics Program genome browser</HomePageHeading>
 
     <Searchbox width="100%" />
     <p style={{ marginTop: '0.25em' }}>
@@ -35,8 +35,17 @@ const GP2HomePage = () => (
     </p>
 
     <p>
-      Examples - Gene name: <Link to="/gene/ENSG00000231565">NEK2P2</Link>, Ensembl gene ID:{' '}
-      <Link to="/gene/ENSG00000231565">ENSG00000231565</Link>
+      Examples:
+      <ul>
+        <li>
+          Gene name: <Link to="/gene/ENSG00000177628">GBA1</Link>, Ensembl gene ID:{' '}
+          <Link to="/gene/ENSG00000177628">ENSG00000177628</Link>
+        </li>
+        <li>
+          Gene name: <Link to="/gene/ENSG00000188906">LRRK2</Link>, Ensembl gene ID:{' '}
+          <Link to="/gene/ENSG00000188906 ">ENSG00000188906</Link>
+        </li>
+      </ul>
     </p>
 
     <StyledContent dangerouslySetInnerHTML={{ __html: homePageContent.html }} />
