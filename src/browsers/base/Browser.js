@@ -15,7 +15,7 @@ import vepConsequences from './vepConsequences'
 import LoginPage from './LoginPage'
 import { userHasBearerCookie } from './auth'
 
-const PASSWORD_PROTECTED_DATASETS = ['IBD']
+const PASSWORD_PROTECTED_DATASETS = ['IBD', 'GP2']
 
 const ProtectedRoute = ({
   component: Component,
