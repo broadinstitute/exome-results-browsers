@@ -15,6 +15,8 @@ import vepConsequences from './vepConsequences'
 import LoginPage from './LoginPage'
 import { userHasBearerCookie } from './auth'
 
+const PASSWORD_PROTECTED_DATASETS = ['IBD']
+
 const ProtectedRoute = ({
   component: Component,
   render: renderFunc,
@@ -26,7 +28,7 @@ const ProtectedRoute = ({
     <Route
       {...rest}
       render={(props) => {
-        if (datasetId === 'IBD' && !isAuthenticated) {
+        if (PASSWORD_PROTECTED_DATASETS.includes(datasetId) && !isAuthenticated) {
           return (
             <Redirect
               to={{
@@ -113,6 +115,7 @@ const Browser = ({
         title={browserTitle}
         links={extraPages.map(({ path, label }) => ({ path, label }))}
         backgroundColor={navBarBackgroundColor}
+        passwordProtectedDatasets={PASSWORD_PROTECTED_DATASETS}
       />
 
       {window.gtag && (
