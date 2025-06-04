@@ -142,10 +142,47 @@ EOF
 
 Note that the `DEMO_PASSWORD` should be a string with no `""`s, if quotes are included, the password will include the quotes. e.g. `DEMO_PASSWORD="password"` would require a user to type `"password"` into the box, as opposed to just `password`.
 
-Build the Docker image. The build script tags the image with the current git revision.
+**Build the Docker image. The build script tags the image with the current git revision.**
 
 ```
 ./deployment/build-docker-image.sh
+```
+
+or
+
+```
+./deployment/build-docker-image.sh --no-cache
+```
+
+**(Optional) Re-tag the docker image**
+
+
+```
+docker tag \
+  us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:<OLD_TAG> \
+  us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:<NEW_TAG>
+```
+
+Where `<OLD_TAG>` is output by `build-docker-image.sh`
+
+e.g.
+
+```
+docker tag \
+  us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:5e495fb-rig_gp2_demo \
+  us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:5e495fb_2025-06-04_gp2-demo
+```
+
+**Push the docker image to the artifact registry**
+
+```
+docker push us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:<IMAGE_TAG>
+```
+
+e.g.
+
+```
+docker push us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:5e495fb_2025-06-04_gp2-demo
 ```
 
 ## Deployments
