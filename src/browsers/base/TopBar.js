@@ -96,7 +96,7 @@ const CenterHorizontal = styled.div`
   width: 100%;
 `
 
-const TopBar = ({ title, links, backgroundColor, textColor }) => {
+const TopBar = ({ title, links, backgroundColor, textColor, passwordProtectedDatasets }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(true)
   const { datasetId } = window.datasetConfig
@@ -113,7 +113,7 @@ const TopBar = ({ title, links, backgroundColor, textColor }) => {
 
   const [showOtherStudiesModal, setShowOtherStudiesModal] = useState(false)
 
-  if (isAuthLoading || (datasetId === 'IBD' && !isAuthenticated)) {
+  if (isAuthLoading || (passwordProtectedDatasets.includes(datasetId) && !isAuthenticated)) {
     return <></>
   }
 
@@ -214,12 +214,14 @@ TopBar.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+  passwordProtectedDatasets: PropTypes.arrayOf(PropTypes.string),
 }
 
 TopBar.defaultProps = {
   links: [],
   backgroundColor: '#000',
   textColor: '#fff',
+  passwordProtectedDatasets: [],
 }
 
 export default withRouter(TopBar)
