@@ -133,8 +133,13 @@ ASC_BROWSER_GA_TRACKING_ID=
 BipEx_BROWSER_GA_TRACKING_ID=
 Epi25_BROWSER_GA_TRACKING_ID=
 SCHEMA_BROWSER_GA_TRACKING_ID=
+IBD_BROWSER_GA_TRACKING_ID=
+GP2_BROWSER_GA_TRACKING_ID=
+DEMO_PASSWORD=
 EOF
 ```
+
+Note that the `DEMO_PASSWORD` should be a string with no `""`s, if quotes are included, the password will include the quotes. e.g. `DEMO_PASSWORD="password"` would require a user to type `"password"` into the box, as opposed to just `password`.
 
 Build the Docker image. The build script tags the image with the current git revision.
 

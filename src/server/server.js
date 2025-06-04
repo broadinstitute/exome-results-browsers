@@ -169,7 +169,7 @@ if (isDevelopment) {
 // ================================================================================================
 
 const PASSWORD_PROTECTED_DATASETS = ['IBD']
-const CORRECT_PASSWORD = process.env.PROTECTED_PASSWORD || 'password'
+const CORRECT_PASSWORD = process.env.DEMO_PASSWORD || 'password'
 const activeTokens = new Set()
 
 app.post('/api/auth', (req, res) => {
