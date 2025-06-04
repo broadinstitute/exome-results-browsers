@@ -27,7 +27,7 @@ const HomePageWrapper = styled(Page)`
 const GP2HomePage = () => (
   <HomePageWrapper>
     <DocumentTitle title="GP2 Browser" />
-    <HomePageHeading>GP2: Global Parkinson`&apos;s Genetics Program genome browser</HomePageHeading>
+    <HomePageHeading>GP2: Global Parkinson&apos;s Genetics Program genome browser</HomePageHeading>
 
     <Searchbox width="100%" />
     <p style={{ marginTop: '0.25em' }}>
