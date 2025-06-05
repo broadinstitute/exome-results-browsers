@@ -38,6 +38,10 @@ const GP2HomePage = () => (
       Examples:
       <ul>
         <li>
+          (Chr22 Gene for demo) - Gene name: <Link to="/gene/ENSG00000231565">NEK2P2</Link>, Ensembl
+          gene ID: ID: <Link to="/gene/ENSG00000231565">ENSG00000231565</Link>
+        </li>
+        <li>
           Gene name: <Link to="/gene/ENSG00000177628">GBA1</Link>, Ensembl gene ID:{' '}
           <Link to="/gene/ENSG00000177628">ENSG00000177628</Link>
         </li>
