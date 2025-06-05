@@ -296,7 +296,7 @@ const VariantDetails = ({
 
   const renderedVariantSummaryRows = [
     ...variantResultColumns,
-    ...additionalVariantDetailSummaryColumns,
+    ...(additionalVariantDetailSummaryColumns || []),
   ]
 
   const renderedVariantColumns = variantDetailColumns || [
