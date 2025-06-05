@@ -141,6 +141,10 @@ const GeneInfo = ({ gene }) => {
         <dd>{gene.gene_id}</dd>
       </DescriptionListItem>
       <DescriptionListItem>
+        <dt>Region</dt>
+        <dd>{`Chr${gene.chrom}:${gene.start}-${gene.stop}`}</dd>
+      </DescriptionListItem>
+      <DescriptionListItem>
         <dt>References</dt>
         <dd>
           <GeneReferences gene={gene} />
@@ -169,6 +173,9 @@ GeneInfo.propTypes = {
   gene: PropTypes.shape({
     reference_genome: PropTypes.oneOf(['GRCh37', 'GRCh38']),
     gene_id: PropTypes.string.isRequired,
+    chrom: PropTypes.string.isRequired,
+    start: PropTypes.number.isRequired,
+    stop: PropTypes.number.isRequired,
   }).isRequired,
 }
 
