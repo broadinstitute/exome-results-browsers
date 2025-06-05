@@ -131,12 +131,6 @@ const GP2Browser = () => {
       variantResultColumns={[
         {
           key: 'group_result.dataset',
-          heading: 'P\u2011Value',
-          minWidth: 75,
-          render: () => 'n/a',
-        },
-        {
-          key: 'group_result.dataset',
           heading: 'Dataset',
           minWidth: 75,
           render: (value) => value,
