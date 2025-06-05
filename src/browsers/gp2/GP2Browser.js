@@ -106,7 +106,7 @@ const GP2Browser = () => {
 
   return (
     <Browser
-      browerTitle="GP2 Browser"
+      browserTitle="GP2 Browser"
       navBarBackgroundColor="#995400"
       homePage={GP2HomePage}
       extraPages={[
