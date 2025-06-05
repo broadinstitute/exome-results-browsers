@@ -48,4 +48,4 @@ COPY --chown=node:node src/server .
 COPY --chown=node:node build.env .
 
 # Run
-CMD export "$(xargs < build.env)"; node server.js
+CMD /bin/sh -c "export \$(grep -v '^#' build.env | xargs) && exec node server.js"
