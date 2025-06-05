@@ -136,11 +136,13 @@ const TopBar = ({ title, links, backgroundColor, textColor, passwordProtectedDat
         <Searchbox id="navbar-search" width="320px" />
 
         <Menu isExpanded={isMenuExpanded}>
-          <li>
-            <Link to="/results" onClick={closeMenu}>
-              Results
-            </Link>
-          </li>
+          {datasetId !== 'GP2' && (
+            <li>
+              <Link to="/results" onClick={closeMenu}>
+                Results
+              </Link>
+            </li>
+          )}
           {links.map(({ path, label }) => (
             <li key={path}>
               <Link to={path} onClick={closeMenu}>
