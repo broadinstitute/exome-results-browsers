@@ -3,26 +3,27 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
-def filter_results_table_to_test_gene_interval(results, test_gene_symbol):
+def filter_results_table_to_test_gene_interval(results):
 
-    if test_gene_symbol != "PCSK9":
-        print("Genes other than PCSK9 not yet supported")
-        exit(1)
-
-    test_gene_locus_interval = hl.locus_interval(
+    pcsk9_interval = hl.locus_interval(
         "chr1", 55039447, 55064852, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
 
-    results = hl.filter_intervals(results, [test_gene_locus_interval])
+    depdc5_interval = hl.locus_interval(
+        "chr22", 31753867, 31908033, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+
+    results = hl.filter_intervals(results, [pcsk9_interval, depdc5_interval])
+    results = results.persist()
 
     return results
 
 
-def prepare_variant_results(test_gene_id):
+def prepare_variant_results(test_genes, _output_root):
     results = hl.read_table(pipeline_config.get("Epi25", "variant_results_path"))
 
-    if test_gene_id:
-        results = filter_results_table_to_test_gene_interval(results, test_gene_id)
+    if test_genes:
+        results = filter_results_table_to_test_gene_interval(results)
 
     # Get unique variants from results table
     variants = results.group_by(results.locus, results.alleles).aggregate()

@@ -3,8 +3,19 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
-def prepare_gene_results():
+def filter_results_table_to_test_gene(results):
+    test_gene_symbols = ["PCSK9", "AKAP11"]
+    test_gene_set = hl.literal(test_gene_symbols)
+
+    results = results.filter(test_gene_set.contains(results.gene_symbol))
+    return results.persist()
+
+
+def prepare_gene_results(test_genes, _output_root):
     results = hl.read_table(pipeline_config.get("BipEx", "gene_results_path"))
+
+    if test_genes:
+        results = filter_results_table_to_test_gene(results)
 
     results = results.select_globals()
 

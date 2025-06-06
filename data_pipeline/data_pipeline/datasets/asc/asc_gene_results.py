@@ -3,7 +3,15 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
-def prepare_gene_results():
+def filter_results_table_to_test_gene(results):
+    test_gene_symbols = ["PCSK9", "CHD8"]
+    test_gene_set = hl.literal(test_gene_symbols)
+
+    results = results.filter(test_gene_set.contains(results.gene_name))
+    return results.persist()
+
+
+def prepare_gene_results(test_genes, _output_root):
     ds = hl.import_table(
         pipeline_config.get("ASC", "gene_results_path"),
         missing="",
@@ -27,6 +35,9 @@ def prepare_gene_results():
             "qval": hl.tfloat,
         },
     )
+
+    if test_genes:
+        ds = filter_results_table_to_test_gene(ds)
 
     ds = ds.drop("gene_name", "description")
 

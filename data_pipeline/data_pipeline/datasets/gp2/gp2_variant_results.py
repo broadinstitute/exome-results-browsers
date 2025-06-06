@@ -3,25 +3,21 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
-def filter_results_table_to_test_gene_interval(results, test_gene_symbol):
-    if test_gene_symbol != "NEK2P2":
-        print("Genes other than NEK2P2 not yet supported for GP2 test dataset")
-        exit(1)
-
-    test_gene_locus_interval = hl.locus_interval(
+def filter_results_table_to_test_gene_interval(results):
+    nek2p2_interval = hl.locus_interval(
         "chr22", 15611759, 15613096, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
 
-    results = hl.filter_intervals(results, [test_gene_locus_interval])
+    results = hl.filter_intervals(results, [nek2p2_interval])
 
     return results
 
 
-def prepare_variant_results(test_gene_id, _output_root):
+def prepare_variant_results(test_genes, _output_root):
     results = hl.read_table(pipeline_config.get("GP2", "variant_results_path"))
 
-    if test_gene_id:
-        results = filter_results_table_to_test_gene_interval(results, test_gene_id)
+    if test_genes:
+        results = filter_results_table_to_test_gene_interval(results)
 
     variants = results.group_by(results.locus, results.alleles).aggregate()
 

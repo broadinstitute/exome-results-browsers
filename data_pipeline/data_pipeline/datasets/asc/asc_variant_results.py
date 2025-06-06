@@ -49,9 +49,25 @@ CONSEQUENCE_TERMS = [
 CONSEQUENCE_TERM_RANKS = hl.dict({term: rank for rank, term in enumerate(CONSEQUENCE_TERMS)})
 
 
-def prepare_variant_results():
+def filter_results_table_to_test_gene_intervals(results):
+    pcsk9_interval = hl.locus_interval(
+        "1", 55505221, 55530525, reference_genome="GRCh37", includes_start=True, includes_end=True
+    )
+
+    chd8_interval = hl.locus_interval(
+        "14", 21853353, 21924285, reference_genome="GRCh37", includes_start=True, includes_end=True
+    )
+
+    results = hl.filter_intervals(results, [pcsk9_interval, chd8_interval])
+
+    return results.persist()
+
+
+def prepare_variant_results(test_genes, _output_root):
     annotations = None
     results = None
+
+    NUM_PARTITIONS = 10 if test_genes == True else 100
 
     for group in ("dn", "dbs", "swe"):
         group_annotations_path = pipeline_config.get("ASC", f"{group}_variant_annotations_path")
@@ -86,7 +102,10 @@ def prepare_variant_results():
         group_annotations = group_annotations.key_by("locus", "alleles")
         group_annotations = group_annotations.drop("v")
 
-        group_annotations = group_annotations.repartition(100, shuffle=True)
+        if test_genes:
+            group_annotations = filter_results_table_to_test_gene_intervals(group_annotations)
+
+        group_annotations = group_annotations.repartition(NUM_PARTITIONS, shuffle=True)
 
         if annotations is None:
             annotations = group_annotations
@@ -96,7 +115,7 @@ def prepare_variant_results():
         group_results = hl.import_table(
             group_results_path,
             force=True,
-            min_partitions=100,
+            min_partitions=NUM_PARTITIONS,
             key="v",
             missing="NA",
             types={
@@ -120,7 +139,10 @@ def prepare_variant_results():
         group_results = group_results.key_by("locus", "alleles")
         group_results = group_results.drop("v")
 
-        group_results = group_results.repartition(100, shuffle=True)
+        if test_genes:
+            group_results = filter_results_table_to_test_gene_intervals(group_results)
+
+        group_results = group_results.repartition(NUM_PARTITIONS, shuffle=True)
 
         group_results = group_results.drop("af_case", "af_ctrl")
 

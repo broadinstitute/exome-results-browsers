@@ -3,8 +3,25 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
-def prepare_variant_results():
+def filter_results_table_to_test_gene_intervals(results):
+    pcsk9_interval = hl.locus_interval(
+        "chr1", 55039447, 55064852, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+
+    akap11_interval = hl.locus_interval(
+        "chr1", 55039447, 55064852, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+
+    results = hl.filter_intervals(results, [pcsk9_interval, akap11_interval])
+
+    return results.persist()
+
+
+def prepare_variant_results(test_genes, _output_root):
     results = hl.read_table(pipeline_config.get("BipEx", "variant_results_path"))
+
+    if test_genes:
+        results = filter_results_table_to_test_gene_intervals(results)
 
     # Get unique variants from results table
     variants = results.group_by(results.locus, results.alleles).aggregate()

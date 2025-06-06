@@ -3,11 +3,28 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
-def prepare_variant_results():
+def filter_results_table_to_test_gene_intervals(results):
+    pcsk9_interval = hl.locus_interval(
+        "1", 55505221, 55530525, reference_genome="GRCh37", includes_start=True, includes_end=True
+    )
+
+    setd1a_interval = hl.locus_interval(
+        "16", 30968615, 30996437, reference_genome="GRCh37", includes_start=True, includes_end=True
+    )
+
+    results = hl.filter_intervals(results, [pcsk9_interval, setd1a_interval])
+
+    return results.persist()
+
+
+def prepare_variant_results(test_genes, _output_root):
     results_path = pipeline_config.get("SCHEMA", "variant_results_path")
     annotations_path = pipeline_config.get("SCHEMA", "variant_annotations_path")
 
     results = hl.read_table(results_path)
+
+    if test_genes:
+        results = filter_results_table_to_test_gene_intervals(results)
 
     results = results.drop("v", "af_case", "af_ctrl")
 
