@@ -50,7 +50,7 @@ def main():
                     command,
                     env={
                         **os.environ,
-                        "PYSPARK_SUBMIT_ARGS": "--driver-memory 4g pyspark-shell",
+                        "PYSPARK_SUBMIT_ARGS": "--driver-memory 8g --executor-memory 8g pyspark-shell",
                     },
                 )
 
