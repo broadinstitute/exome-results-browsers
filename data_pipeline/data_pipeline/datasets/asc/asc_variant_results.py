@@ -77,6 +77,15 @@ def prepare_variant_results():
             },
         )
 
+        group_annotations = group_annotations.annotate(
+            locus=hl.rbind(
+                group_annotations.v.split(":"), lambda p: hl.locus(p[0], hl.int(p[1]), reference_genome="GRCh37")
+            ),
+            alleles=hl.rbind(group_annotations.v.split(":"), lambda p: [p[2], p[3]]),
+        )
+        group_annotations = group_annotations.key_by("locus", "alleles")
+        group_annotations = group_annotations.drop("v")
+
         group_annotations = group_annotations.repartition(100, shuffle=True)
 
         if annotations is None:
@@ -102,11 +111,22 @@ def prepare_variant_results():
             },
         )
 
+        group_results = group_results.annotate(
+            locus=hl.rbind(
+                group_results.v.split(":"), lambda p: hl.locus(p[0], hl.int(p[1]), reference_genome="GRCh37")
+            ),
+            alleles=hl.rbind(group_results.v.split(":"), lambda p: [p[2], p[3]]),
+        )
+        group_results = group_results.key_by("locus", "alleles")
+        group_results = group_results.drop("v")
+
         group_results = group_results.repartition(100, shuffle=True)
 
         group_results = group_results.drop("af_case", "af_ctrl")
 
-        group_results = group_results.annotate(in_analysis=group_annotations[group_results.v].in_analysis)
+        group_results = group_results.annotate(
+            in_analysis=group_annotations[group_results.locus, group_results.alleles].in_analysis
+        )
 
         if results is None:
             results = group_results
@@ -130,7 +150,7 @@ def prepare_variant_results():
         info=hl.struct(mpc=annotations.mpc, polyphen=annotations.polyphen),
     )
 
-    results = results.group_by("v").aggregate(group_results=hl.agg.collect(results.row_value))
+    results = results.group_by("locus", "alleles").aggregate(group_results=hl.agg.collect(results.row_value))
     results = results.annotate(
         group_results=hl.dict(
             results.group_results.map(
@@ -140,12 +160,5 @@ def prepare_variant_results():
     )
 
     variants = annotations.annotate(group_results=results[annotations.key].group_results)
-
-    variants = variants.annotate(
-        locus=hl.rbind(variants.v.split(":"), lambda p: hl.locus(p[0], hl.int(p[1]), reference_genome="GRCh37")),
-        alleles=hl.rbind(variants.v.split(":"), lambda p: [p[2], p[3]]),
-    )
-
-    variants = variants.key_by("locus", "alleles")
 
     return variants
