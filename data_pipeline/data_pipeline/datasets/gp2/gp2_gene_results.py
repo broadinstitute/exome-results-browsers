@@ -9,18 +9,23 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
-def filter_results_table_to_test_gene(results, test_gene_symbol):
-    test_gene_symbol = "PCSK9"
+def filter_results_table_to_test_gene(results):
+    # TK: use pcsk9 for now while we're using Epi25 as our gene data
+    test_gene_symbols = ["PCSK9"]
+    test_gene_set = hl.literal(test_gene_symbols)
 
-    results = results.filter(results.gene_symbol == test_gene_symbol)
+    results = results.filter(test_gene_set.contains(results.gene_symbol))
 
     return results.persist()
 
 
-def prepare_gene_results(_test_gene_id, _output_root):
+def prepare_gene_results(_test_genes, _output_root):
     results = hl.read_table(pipeline_config.get("Epi25", "gene_results_path"))
 
-    results = filter_results_table_to_test_gene(results, "PCSK9")
+    # TK: make this if test_genes in the future, for now, always subset as there
+    #   no gp2 gene data, and we're using epi25 data just to make the pipeline run
+    if True:  # pylint: disable=using-constant-test
+        results = filter_results_table_to_test_gene(results)
 
     results = results.select_globals()
 

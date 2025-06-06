@@ -3,7 +3,15 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
-def prepare_gene_results():
+def filter_results_table_to_test_gene(results):
+    test_gene_symbols = ["PCSK9", "SETD1A"]
+    test_gene_set = hl.literal(test_gene_symbols)
+
+    results = results.filter(test_gene_set.contains(results["Gene Symbol"]))
+    return results.persist()
+
+
+def prepare_gene_results(test_genes, _output_root):
     ds = hl.import_table(
         pipeline_config.get("SCHEMA", "gene_results_path"),
         delimiter="\t",
@@ -32,6 +40,9 @@ def prepare_gene_results():
             "OR (Class II)": hl.tstr,
         },
     )
+
+    if test_genes:
+        ds = filter_results_table_to_test_gene(ds)
 
     # Parse upper and lower bounds out of odds ratio columns
     def _parse_odds_ratio(field_name):

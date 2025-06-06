@@ -5,21 +5,23 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
-def filter_results_table_to_test_gene(results, test_gene_symbol):
-    results = results.filter(results.gene_symbol == test_gene_symbol)
+def filter_results_table_to_test_gene(results):
+    test_gene_symbols = ["PCSK9", "NOD2"]
+    test_gene_set = hl.literal(test_gene_symbols)
 
+    results = results.filter(test_gene_set.contains(results.gene_symbol))
     return results.persist()
 
 
-def prepare_gene_results(test_gene_id, output_root):
+def prepare_gene_results(test_genes, output_root):
     print("Running IBD prepare_gene_results")
 
     staging_output_path = output_root
 
     results = hl.read_table(pipeline_config.get("IBD", "gene_results_path"))
 
-    if test_gene_id:
-        results = filter_results_table_to_test_gene(results, test_gene_id)
+    if test_genes:
+        results = filter_results_table_to_test_gene(results)
 
     results = results.select_globals()
 
