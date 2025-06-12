@@ -233,10 +233,10 @@ def prepare_variant_results(test_genes, output_root):
 
     # Select AC/AF numbers for the reference and alternate alleles
     results = results.annotate(
-        ac_case=results.ac_case[1],
-        an_case=results.ac_case[0] + results.ac_case[1],
-        ac_ctrl=results.ac_control[1],
-        an_ctrl=results.ac_control[0] + results.ac_control[1],
+        ac_case=results.ac_case[0],
+        an_case=results.ac_case[1],
+        ac_ctrl=results.ac_control[0],
+        an_ctrl=results.ac_control[1],
     )
 
     results = results.drop("ac_control", "an_control")
