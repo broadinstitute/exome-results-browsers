@@ -178,7 +178,8 @@ def main():
     output_root = get_output_root(args.output_local)
     combined_output_date = pipeline_config.get("output", "output_last_updated")
     output_path = os.path.join(output_root, "combined", combined_output_date, "combined.ht")
-    combine_datasets(datasets_to_combine, output_root).write(output_path, overwrite=True)
+    combined_ht = combine_datasets(datasets_to_combine, output_root)
+    combined_ht.write(output_path, overwrite=True)
 
 
 if __name__ == "__main__":
