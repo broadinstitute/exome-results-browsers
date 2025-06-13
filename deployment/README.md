@@ -73,16 +73,20 @@ the browsers and so cannot be attached to another instance in read-write mode.
 5. Install Hail.
 
    Install Java 11
+
    ```
-   apt-get update \
-     apt-get install -y \
+   apt-get update && \
+   apt-get install -y \
      openjdk-11-jre-headless \
      g++ \
-     python3.9 python3-pip \
-     libopenblas-base liblapack3
+     python3.9 \
+     python3-pip \
+     libopenblas-base \
+     liblapack3
    ```
 
    Install Hail and tqdm. Versions should be kept in sync with requirements.txt
+
    ```
    python3.9 -m pip install hail==0.2.126 tqdm==4.66.5
    ```
