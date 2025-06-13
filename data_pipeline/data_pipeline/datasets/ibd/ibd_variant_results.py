@@ -285,7 +285,7 @@ def prepare_variant_results(test_genes, output_root):
     annotations = hl.read_table(pipeline_config.get("IBD", "variant_annotations_path"))
 
     # VEP variants and store transcript consequences in info field
-    annotations = add_vep_to_annotations(staging_output_path, variants, annotations, test_genes)
+    # annotations = add_vep_to_annotations(staging_output_path, variants, annotations, test_genes)
 
     annotations = annotations.select(
         # gene_id now comes from the table we generate
