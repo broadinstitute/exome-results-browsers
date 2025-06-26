@@ -25,6 +25,9 @@ def main():
         "start",
         "exome-results",
         "--max-idle=1h",
+        "--num-workers=2",
+        "--worker-machine-type=n1-highmem-32",
+        "--no-off-heap-memory",
     ] + args.cluster_args
 
     for option in ["project", "region", "zone", "service-account"]:
