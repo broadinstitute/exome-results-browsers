@@ -1,7 +1,5 @@
 import hail as hl
 
-from data_pipeline.config import pipeline_config
-
 
 def filter_results_table_to_test_gene_interval(results):
     nek2p2_interval = hl.locus_interval(
@@ -13,9 +11,7 @@ def filter_results_table_to_test_gene_interval(results):
     return results
 
 
-def prepare_variant_results(test_genes, _output_root):
-    results = hl.read_table(pipeline_config.get("GP2", "variant_results_path"))
-
+def prepare_variant_results(results, annotations, test_genes, _output_root):
     if test_genes:
         results = filter_results_table_to_test_gene_interval(results)
 
@@ -27,16 +23,19 @@ def prepare_variant_results(test_genes, _output_root):
 
     results = results.filter((results.ac_case > 0) | (results.ac_ctrl > 0))
 
-    results = results.group_by("locus", "alleles").aggregate(group_results=hl.agg.collect(results.row_value))
+    results = results.group_by("locus", "alleles").aggregate(group_results_array=hl.agg.collect(results.row_value))
+
     results = results.annotate(
         group_results=hl.dict(
-            results.group_results.map(lambda group_result: (group_result.ancestry, group_result.drop("ancestry")))
+            results.group_results_array.group_by(lambda s: s.ancestry).map_values(
+                lambda grouped_items: grouped_items.map(lambda item: item.drop("ancestry"))
+            )
         )
     )
 
-    variants = variants.annotate(**results[variants.locus, variants.alleles])
+    results = results.drop("group_results_array")
 
-    annotations = hl.read_table(pipeline_config.get("GP2", "variant_annotations_path"))
+    variants = variants.annotate(**results[variants.locus, variants.alleles])
 
     annotations = annotations.select(
         "gene_id",
