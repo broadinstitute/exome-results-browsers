@@ -25,21 +25,47 @@ def prepare_dataset(dataset_id, test_genes, output_local):
     output_root = get_output_root(output_local)
     output_path = f"{output_root}/{dataset_id.lower()}/{update_date}"
 
-    print(f"Preparing {dataset_id} variants hail table")
-    variant_results_module = importlib.import_module(
-        f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_variant_results"
-    )
-    variant_results = variant_results_module.prepare_variant_results(test_genes, output_root)
-    validate_variant_results_table(variant_results)
-    variant_results.write(os.path.join(output_path, "variant_results.ht"), overwrite=True)
+    if dataset_id == "gp2":
+        variant_results_path = pipeline_config.get(dataset_id, "variant_results_path")
+        variant_results_ht = hl.read_table(variant_results_path)
 
-    print(f"Preparing {dataset_id} genes hail table")
-    gene_results_module = importlib.import_module(
-        f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_gene_results"
-    )
-    gene_results = gene_results_module.prepare_gene_results(test_genes, output_root)
-    validate_gene_results_table(gene_results)
-    gene_results.write(os.path.join(output_path, "gene_results.ht"), overwrite=True)
+        variant_annotations_path = pipeline_config.get(dataset_id, "variant_annotations_path")
+        variant_annotations_ht = hl.read_table(variant_annotations_path)
+
+        print(f"Preparing {dataset_id} variants hail table")
+        variant_results_module = importlib.import_module(
+            f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_variant_results"
+        )
+        variant_results = variant_results_module.prepare_variant_results(
+            variant_results_ht, variant_annotations_ht, test_genes, output_root
+        )
+        validate_variant_results_table(variant_results)
+        variant_results.write(os.path.join(output_path, "variant_results.ht"), overwrite=True)
+
+        print(f"Preparing {dataset_id} genes hail table")
+        gene_results_module = importlib.import_module(
+            f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_gene_results"
+        )
+        gene_results = gene_results_module.prepare_gene_results(test_genes, output_root)
+        validate_gene_results_table(gene_results)
+        gene_results.write(os.path.join(output_path, "gene_results.ht"), overwrite=True)
+
+    else:
+        print(f"Preparing {dataset_id} variants hail table")
+        variant_results_module = importlib.import_module(
+            f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_variant_results"
+        )
+        variant_results = variant_results_module.prepare_variant_results(test_genes, output_root)
+        validate_variant_results_table(variant_results)
+        variant_results.write(os.path.join(output_path, "variant_results.ht"), overwrite=True)
+
+        print(f"Preparing {dataset_id} genes hail table")
+        gene_results_module = importlib.import_module(
+            f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_gene_results"
+        )
+        gene_results = gene_results_module.prepare_gene_results(test_genes, output_root)
+        validate_gene_results_table(gene_results)
+        gene_results.write(os.path.join(output_path, "gene_results.ht"), overwrite=True)
 
 
 def main():

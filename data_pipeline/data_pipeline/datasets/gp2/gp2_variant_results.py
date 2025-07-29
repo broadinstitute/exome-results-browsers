@@ -1,7 +1,5 @@
 import hail as hl
 
-from data_pipeline.config import pipeline_config
-
 
 def filter_results_table_to_test_gene_interval(results):
     nek2p2_interval = hl.locus_interval(
@@ -13,9 +11,7 @@ def filter_results_table_to_test_gene_interval(results):
     return results
 
 
-def prepare_variant_results(test_genes, _output_root):
-    results = hl.read_table(pipeline_config.get("GP2", "variant_results_path"))
-
+def prepare_variant_results(results, annotations, test_genes, _output_root):
     if test_genes:
         results = filter_results_table_to_test_gene_interval(results)
 
@@ -35,8 +31,6 @@ def prepare_variant_results(test_genes, _output_root):
     )
 
     variants = variants.annotate(**results[variants.locus, variants.alleles])
-
-    annotations = hl.read_table(pipeline_config.get("GP2", "variant_annotations_path"))
 
     annotations = annotations.select(
         "gene_id",
