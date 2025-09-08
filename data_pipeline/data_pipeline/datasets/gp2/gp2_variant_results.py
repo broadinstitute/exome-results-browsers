@@ -15,27 +15,52 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
     if test_genes:
         results = filter_results_table_to_test_gene_interval(results)
 
-    variants = results.group_by(results.locus, results.alleles).aggregate()
-
     results = results.annotate(ac_case=results.ac_case[1], ac_ctrl=results.ac_ctrl[1])
-
     results = results.drop("af_case", "af_ctrl")
-
     results = results.filter((results.ac_case > 0) | (results.ac_ctrl > 0))
 
-    results = results.group_by("locus", "alleles").aggregate(group_results_array=hl.agg.collect(results.row_value))
-
-    results = results.annotate(
+    results = results.group_by("locus", "alleles").aggregate(
         group_results=hl.dict(
-            results.group_results_array.group_by(lambda s: s.ancestry).map_values(
-                lambda grouped_items: grouped_items.map(lambda item: item.drop("ancestry"))
+            hl.agg.group_by(
+                results.ancestry,
+                hl.agg.group_by(
+                    results.dataset,
+                    hl.agg.collect(
+                        hl.struct(
+                            ac_case=results.ac_case,
+                            an_case=results.an_case,
+                            ac_ctrl=results.ac_ctrl,
+                            an_ctrl=results.an_ctrl,
+                        )
+                    ),
+                ),
             )
         )
     )
 
-    results = results.drop("group_results_array")
+    results = results.annotate(
+        group_results=hl.dict(
+            results.group_results.items().map(
+                lambda item: (
+                    item[0],
+                    item[1].map_values(
+                        lambda values: hl.if_else(
+                            hl.len(values) > 0,
+                            hl.struct(**values[0]),
+                            hl.struct(
+                                ac_case=hl.null(hl.tint32),
+                                an_case=hl.null(hl.tint32),
+                                ac_ctrl=hl.null(hl.tint32),
+                                an_ctrl=hl.null(hl.tint32),
+                            ),
+                        )
+                    ),
+                )
+            )
+        )
+    )
 
-    variants = variants.annotate(**results[variants.locus, variants.alleles])
+    variants = results.key_by("locus", "alleles")
 
     annotations = annotations.select(
         "gene_id",
@@ -49,5 +74,8 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
     )
 
     variants = variants.annotate(**annotations[variants.locus, variants.alleles])
+
+    print(variants.describe())
+    print(variants.show(3))
 
     return variants
