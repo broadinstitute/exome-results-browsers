@@ -25,13 +25,24 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
                 results.ancestry,
                 hl.agg.group_by(
                     results.dataset,
-                    hl.agg.collect(
+                    hl.agg.take(
                         hl.struct(
                             ac_case=results.ac_case,
                             an_case=results.an_case,
                             ac_ctrl=results.ac_ctrl,
                             an_ctrl=results.an_ctrl,
-                        )
+                            ac_other=hl.if_else(
+                                hl.is_defined(results.ac_other[0]),
+                                results.ac_other[0],
+                                hl.null(hl.tint32),
+                            ),
+                            an_other=hl.if_else(
+                                hl.is_defined(results.an_other),
+                                results.an_other,
+                                hl.null(hl.tint32),
+                            ),
+                        ),
+                        1,
                     ),
                 ),
             )
@@ -40,22 +51,47 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
 
     results = results.annotate(
         group_results=hl.dict(
-            results.group_results.items().map(
+            hl.map(
                 lambda item: (
                     item[0],
-                    item[1].map_values(
-                        lambda values: hl.if_else(
-                            hl.len(values) > 0,
-                            hl.struct(**values[0]),
-                            hl.struct(
-                                ac_case=hl.null(hl.tint32),
-                                an_case=hl.null(hl.tint32),
-                                ac_ctrl=hl.null(hl.tint32),
-                                an_ctrl=hl.null(hl.tint32),
+                    hl.bind(
+                        lambda wgs_stats_array, ces_stats_array: hl.struct(
+                            wgs_ac_case=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_case, hl.null(hl.tint32)
                             ),
-                        )
+                            wgs_an_case=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_case, hl.null(hl.tint32)
+                            ),
+                            wgs_ac_ctrl=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_ctrl, hl.null(hl.tint32)
+                            ),
+                            wgs_an_ctrl=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_ctrl, hl.null(hl.tint32)
+                            ),
+                            wgs_ac_other=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_other, hl.null(hl.tint32)
+                            ),
+                            wgs_an_other=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_other, hl.null(hl.tint32)
+                            ),
+                            ces_ac_case=hl.if_else(
+                                hl.len(ces_stats_array) > 0, ces_stats_array[0].ac_case, hl.null(hl.tint32)
+                            ),
+                            ces_an_case=hl.if_else(
+                                hl.len(ces_stats_array) > 0, ces_stats_array[0].an_case, hl.null(hl.tint32)
+                            ),
+                            ces_ac_ctrl=hl.if_else(
+                                hl.len(ces_stats_array) > 0, ces_stats_array[0].ac_ctrl, hl.null(hl.tint32)
+                            ),
+                            ces_an_ctrl=hl.if_else(
+                                hl.len(ces_stats_array) > 0, ces_stats_array[0].an_ctrl, hl.null(hl.tint32)
+                            ),
+                        ),
+                        item[1].get("WGS"),
+                        item[1].get("CES"),
                     ),
-                )
+                ),
+                results.group_results.items(),
             )
         )
     )
@@ -74,8 +110,5 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
     )
 
     variants = variants.annotate(**annotations[variants.locus, variants.alleles])
-
-    print(variants.describe())
-    print(variants.show(3))
 
     return variants
