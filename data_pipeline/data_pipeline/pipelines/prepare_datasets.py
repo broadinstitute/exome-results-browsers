@@ -25,38 +25,48 @@ def prepare_dataset(dataset_id, test_genes, output_local):
     output_root = get_output_root(output_local)
     output_path = f"{output_root}/{dataset_id.lower()}/{update_date}"
 
-    if dataset_id == "gp2":
+    if dataset_id.lower() == "gp2":
+        print("running for GP2")
 
-        # combine input, only for GP2
-        ces_variant_results_path = pipeline_config.get(dataset_id, "ces_variant_results_path")
-        ces_variant_results_ht = hl.read_table(ces_variant_results_path)
+        compute_combine = False
 
-        wgs_variant_results_path = pipeline_config.get(dataset_id, "wgs_variant_results_path")
-        wgs_variant_results_ht = hl.read_table(wgs_variant_results_path)
+        combined_variant_results_path = os.path.join(output_path, "combined_variant_results.ht")
+        combined_variant_annotations_path = os.path.join(output_path, "combined_variant_annotations.ht")
 
-        ces_variant_annotations_path = pipeline_config.get(dataset_id, "ces_variant_annotations_path")
-        ces_variant_annotations_ht = hl.read_table(ces_variant_annotations_path)
+        if compute_combine:
+            print("Creating combined table...")
+            ces_variant_results_path = pipeline_config.get(dataset_id, "ces_variant_results_path")
+            ces_variant_results_ht = hl.read_table(ces_variant_results_path)
 
-        wgs_variant_annotations_path = pipeline_config.get(dataset_id, "wgs_variant_annotations_path")
-        wgs_variant_annotations_ht = hl.read_table(wgs_variant_annotations_path)
+            wgs_variant_results_path = pipeline_config.get(dataset_id, "wgs_variant_results_path")
+            wgs_variant_results_ht = hl.read_table(wgs_variant_results_path)
 
-        variant_results_module = importlib.import_module(
-            f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_variant_results"
-        )
+            ces_variant_annotations_path = pipeline_config.get(dataset_id, "ces_variant_annotations_path")
+            ces_variant_annotations_ht = hl.read_table(ces_variant_annotations_path)
 
-        combined_variant_results_ht, combined_variant_annotations_ht = variant_results_module.combine_input_data(
-            ces_variant_results_ht, wgs_variant_results_ht, ces_variant_annotations_ht, wgs_variant_annotations_ht
-        )
+            wgs_variant_annotations_path = pipeline_config.get(dataset_id, "wgs_variant_annotations_path")
+            wgs_variant_annotations_ht = hl.read_table(wgs_variant_annotations_path)
 
-        combined_variant_results_path = pipeline_config.get(dataset_id, "combined_variant_results_path")
-        combined_variant_annotations_path = pipeline_config.get(dataset_id, "combined_variant_annotations_path")
+            combine_data_module = importlib.import_module(
+                f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_combine_input_datasets"
+            )
 
-        combined_variant_results_ht.write(combined_variant_results_path, overwrite=True)
-        combined_variant_annotations_ht.write(combined_variant_annotations_path, overwrite=True)
+            combined_variant_results_ht, combined_variant_annotations_ht = combine_data_module.combine_input_data(
+                ces_variant_results_ht, wgs_variant_results_ht, ces_variant_annotations_ht, wgs_variant_annotations_ht
+            )
+
+            combined_variant_results_ht.write(combined_variant_results_path, overwrite=True)
+            combined_variant_annotations_ht.write(combined_variant_annotations_path, overwrite=True)
 
         # ---
 
+        combined_variant_results_ht = hl.read_table(combined_variant_results_path)
+        combined_variant_annotations_ht = hl.read_table(combined_variant_annotations_path)
+
         print(f"Preparing {dataset_id} variants hail table")
+        variant_results_module = importlib.import_module(
+            f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_variant_results"
+        )
         variant_results = variant_results_module.prepare_variant_results(
             combined_variant_results_ht, combined_variant_annotations_ht, test_genes, output_root
         )
