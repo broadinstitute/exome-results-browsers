@@ -2,11 +2,12 @@ import hail as hl
 
 
 def filter_results_table_to_test_gene_interval(results):
-    nek2p2_interval = hl.locus_interval(
-        "chr22", 15611759, 15613096, reference_genome="GRCh38", includes_start=True, includes_end=True
+    # ENSG00000177663
+    il17ra_interval = hl.locus_interval(
+        "chr22", 17084954, 17115694, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
 
-    results = hl.filter_intervals(results, [nek2p2_interval])
+    results = hl.filter_intervals(results, [il17ra_interval])
 
     return results
 
@@ -15,8 +16,12 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
     if test_genes:
         results = filter_results_table_to_test_gene_interval(results)
 
-    results = results.annotate(ac_case=results.ac_case[1], ac_ctrl=results.ac_ctrl[1])
-    results = results.drop("af_case", "af_ctrl")
+    results = results.annotate(
+        ac_case=results.ac_case[1],
+        ac_ctrl=results.ac_ctrl[1],
+        ac_other=hl.if_else(hl.is_defined(results.ac_other), results.ac_other[1], hl.null(hl.tint32)),
+    )
+    results = results.drop("af_case", "af_ctrl", "af_other")
     results = results.filter((results.ac_case > 0) | (results.ac_ctrl > 0))
 
     results = results.group_by("locus", "alleles").aggregate(
@@ -31,16 +36,8 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
                             an_case=results.an_case,
                             ac_ctrl=results.ac_ctrl,
                             an_ctrl=results.an_ctrl,
-                            ac_other=hl.if_else(
-                                hl.is_defined(results.ac_other[0]),
-                                results.ac_other[0],
-                                hl.null(hl.tint32),
-                            ),
-                            an_other=hl.if_else(
-                                hl.is_defined(results.an_other),
-                                results.an_other,
-                                hl.null(hl.tint32),
-                            ),
+                            ac_other=results.ac_other,
+                            an_other=results.an_other,
                         ),
                         1,
                     ),
@@ -56,6 +53,18 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
                     item[0],
                     hl.bind(
                         lambda wgs_stats_array, ces_stats_array: hl.struct(
+                            ac_case=hl.if_else(
+                                hl.len(ces_stats_array) > 0, ces_stats_array[0].ac_case, hl.null(hl.tint32)
+                            ),
+                            an_case=hl.if_else(
+                                hl.len(ces_stats_array) > 0, ces_stats_array[0].an_case, hl.null(hl.tint32)
+                            ),
+                            ac_ctrl=hl.if_else(
+                                hl.len(ces_stats_array) > 0, ces_stats_array[0].ac_ctrl, hl.null(hl.tint32)
+                            ),
+                            an_ctrl=hl.if_else(
+                                hl.len(ces_stats_array) > 0, ces_stats_array[0].an_ctrl, hl.null(hl.tint32)
+                            ),
                             wgs_ac_case=hl.if_else(
                                 hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_case, hl.null(hl.tint32)
                             ),
@@ -73,18 +82,6 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
                             ),
                             wgs_an_other=hl.if_else(
                                 hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_other, hl.null(hl.tint32)
-                            ),
-                            ces_ac_case=hl.if_else(
-                                hl.len(ces_stats_array) > 0, ces_stats_array[0].ac_case, hl.null(hl.tint32)
-                            ),
-                            ces_an_case=hl.if_else(
-                                hl.len(ces_stats_array) > 0, ces_stats_array[0].an_case, hl.null(hl.tint32)
-                            ),
-                            ces_ac_ctrl=hl.if_else(
-                                hl.len(ces_stats_array) > 0, ces_stats_array[0].ac_ctrl, hl.null(hl.tint32)
-                            ),
-                            ces_an_ctrl=hl.if_else(
-                                hl.len(ces_stats_array) > 0, ces_stats_array[0].an_ctrl, hl.null(hl.tint32)
                             ),
                         ),
                         item[1].get("WGS"),
