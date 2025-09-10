@@ -130,8 +130,26 @@ const GP2Browser = () => {
       defaultVariantAnalysisGroup="EUR"
       variantResultColumns={[
         {
-          key: 'group_result.dataset',
-          heading: 'Dataset',
+          key: 'group_result.wgs_ac_case',
+          heading: 'WGS AC Case',
+          minWidth: 75,
+          render: (value) => value,
+        },
+        {
+          key: 'group_result.wgs_an_case',
+          heading: 'WGS AN Case',
+          minWidth: 75,
+          render: (value) => value,
+        },
+        {
+          key: 'group_result.wgs_ac_ctrl',
+          heading: 'WGS AC Control',
+          minWidth: 75,
+          render: (value) => value,
+        },
+        {
+          key: 'group_result.wgs_an_ctrl',
+          heading: 'WGS AN Control',
           minWidth: 75,
           render: (value) => value,
         },
