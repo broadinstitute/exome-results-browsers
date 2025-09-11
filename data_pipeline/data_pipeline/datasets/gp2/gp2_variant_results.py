@@ -21,7 +21,7 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
         ac_ctrl=results.ac_ctrl[1],
         ac_other=hl.if_else(hl.is_defined(results.ac_other), results.ac_other[1], hl.null(hl.tint32)),
     )
-    results = results.drop("af_case", "af_ctrl", "af_other")
+    results = results.drop("af_case", "af_ctrl")
     results = results.filter((results.ac_case > 0) | (results.ac_ctrl > 0))
 
     results = results.group_by("locus", "alleles").aggregate(
@@ -38,6 +38,7 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
                             an_ctrl=results.an_ctrl,
                             ac_other=results.ac_other,
                             an_other=results.an_other,
+                            af_other=results.af_other,
                         ),
                         1,
                     ),
@@ -71,17 +72,32 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
                             wgs_an_case=hl.if_else(
                                 hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_case, hl.null(hl.tint32)
                             ),
+                            wgs_af_case=hl.if_else(
+                                hl.len(wgs_stats_array) > 0,
+                                wgs_stats_array[0].ac_case / wgs_stats_array[0].an_case,
+                                hl.null(hl.tint32),
+                            ),
                             wgs_ac_ctrl=hl.if_else(
                                 hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_ctrl, hl.null(hl.tint32)
                             ),
                             wgs_an_ctrl=hl.if_else(
                                 hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_ctrl, hl.null(hl.tint32)
                             ),
+                            wgs_af_ctrl=hl.if_else(
+                                hl.len(wgs_stats_array) > 0,
+                                wgs_stats_array[0].ac_ctrl / wgs_stats_array[0].an_ctrl,
+                                hl.null(hl.tint32),
+                            ),
                             wgs_ac_other=hl.if_else(
                                 hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_other, hl.null(hl.tint32)
                             ),
                             wgs_an_other=hl.if_else(
                                 hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_other, hl.null(hl.tint32)
+                            ),
+                            wgs_af_other=hl.if_else(
+                                hl.len(wgs_stats_array) > 0,
+                                wgs_stats_array[0].ac_other / wgs_stats_array[0].an_other,
+                                hl.null(hl.tint32),
                             ),
                         ),
                         item[1].get("WGS"),
