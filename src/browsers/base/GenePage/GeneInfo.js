@@ -9,7 +9,7 @@ import datasetConfig from '../../datasetConfig'
 const GeneReferences = ({ gene }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const gnomadDataset = gene.reference_genome === 'GRCh37' ? 'gnomad_r2_1' : 'gnomad_r3'
+  const gnomadDataset = gene.reference_genome === 'GRCh37' ? 'gnomad_r2_1' : 'gnomad_r4'
   const gnomadGeneUrl = `https://gnomad.broadinstitute.org/gene/${gene.gene_id}?dataset=${gnomadDataset}`
 
   const ensemblGeneUrl = `https://${
