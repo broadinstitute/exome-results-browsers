@@ -61,6 +61,28 @@ const renderExponentialNumberCell = (row, key) => {
   return truncated.toExponential()
 }
 
+export const renderExponentialIfSmall = (number) => {
+  if (number === null || number === undefined) {
+    return ''
+  }
+
+  const truncated = Number(number.toPrecision(3))
+  if (truncated === 0) {
+    return '0'
+  }
+
+  if (truncated < 0.01) {
+    return truncated.toExponential()
+  }
+
+  return truncated
+}
+
+const renderExponentialNumberCellIfSmall = (row, key) => {
+  const number = get(row, key)
+  return renderExponentialIfSmall(number)
+}
+
 const baseColumns = [
   {
     key: 'variant_id',
@@ -182,7 +204,42 @@ const baseColumns = [
   },
 ]
 
+const gp2Columns = [
+  {
+    key: 'group_result.af_case',
+    heading: 'AF Case',
+    tooltip: 'Allele frequency in cases',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.af_case',
+    minWidth: 80,
+    render: renderExponentialNumberCellIfSmall,
+    renderForCSV: get,
+  },
+  {
+    key: 'group_result.af_ctrl',
+    heading: 'AF Control',
+    tooltip: 'Allele frequency in controls',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.af_ctrl',
+    minWidth: 80,
+    render: renderExponentialNumberCellIfSmall,
+    renderForCSV: get,
+  },
+]
+
 const getVariantTableColumns = (variantResultColumns) => {
+  const { datasetId } = window.datasetConfig
+
+  const datasetColumns = [...baseColumns]
+
+  if (datasetId === 'GP2') {
+    datasetColumns.pop()
+    datasetColumns.pop()
+    datasetColumns.push(...gp2Columns)
+  }
+
   const resultColumns = variantResultColumns.map((column) => ({
     key: column.key,
     heading: column.heading || column.key,
@@ -195,7 +252,7 @@ const getVariantTableColumns = (variantResultColumns) => {
     renderForCSV: column.renderForCSV ? (row, key) => column.renderForCSV(get(row, key)) : get,
   }))
 
-  return [...baseColumns, ...resultColumns]
+  return [...datasetColumns, ...resultColumns]
 }
 
 export default getVariantTableColumns

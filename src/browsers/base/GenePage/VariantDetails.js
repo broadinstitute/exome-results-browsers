@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { BaseTable, ExternalLink, ListItem } from '@gnomad/ui'
 
 import { VariantAttribute, VariantAttributeList } from './VariantAttributes'
+import { renderExponentialIfSmall } from './variantTableColumns'
 
 const VariantContainer = styled.div`
   display: flex;
@@ -288,6 +289,8 @@ const VariantDetails = ({
   variantDetailColumns,
   renderVariantTranscriptConsequences,
 }) => {
+  const { datasetId } = window.datasetConfig
+
   const defaultGroupResult = inputVariant.group_results[defaultVariantAnalysisGroup]
   // Select default analysis group so that column render methods work correctly
   const variant = { ...inputVariant, group_result: defaultGroupResult }
@@ -299,7 +302,7 @@ const VariantDetails = ({
     ...(additionalVariantDetailSummaryColumns || []),
   ]
 
-  const renderedVariantColumns = variantDetailColumns || [
+  const datasetColumns = [
     { key: 'group_result.ac_case', heading: 'AC Case', render: (value) => value },
     { key: 'group_result.an_case', heading: 'AN Case', render: (value) => value },
     { key: 'group_result.ac_ctrl', heading: 'AC Ctrl', render: (value) => value },
@@ -314,6 +317,29 @@ const VariantDetails = ({
       heading: 'AF Ctrl',
       render: (value) => renderExponential(value),
     },
+  ]
+
+  const gp2SpecificColumns = [
+    {
+      key: 'group_result.af_case',
+      heading: 'AF Case',
+      render: (value) => renderExponentialIfSmall(value),
+    },
+    {
+      key: 'group_result.af_ctrl',
+      heading: 'AF Ctrl',
+      render: (value) => renderExponentialIfSmall(value),
+    },
+  ]
+
+  if (datasetId === 'GP2') {
+    datasetColumns.pop()
+    datasetColumns.pop()
+    datasetColumns.push(...gp2SpecificColumns)
+  }
+
+  const renderedVariantColumns = variantDetailColumns || [
+    ...datasetColumns,
     ...variantResultColumns,
   ]
 
