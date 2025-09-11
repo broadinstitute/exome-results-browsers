@@ -292,7 +292,7 @@ const VariantDetails = ({
   // Select default analysis group so that column render methods work correctly
   const variant = { ...inputVariant, group_result: defaultGroupResult }
 
-  const gnomadDataset = referenceGenome === 'GRCh38' ? 'gnomad_r3' : 'gnomad_r2_1'
+  const gnomadDataset = referenceGenome === 'GRCh38' ? 'gnomad_r4' : 'gnomad_r2_1'
 
   const renderedVariantSummaryRows = [
     ...variantResultColumns,
