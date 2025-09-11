@@ -8,6 +8,7 @@ import GP2HomePage from './GP2HomePage'
 import GP2TermsPage from './GP2TermsPage'
 
 import vepConsequences from '../base/vepConsequences'
+import { renderExponentialIfSmall } from '../base/GenePage/variantTableColumns'
 
 const variantConsequences = [...vepConsequences]
 
@@ -152,6 +153,36 @@ const GP2Browser = () => {
           heading: 'WGS AN Control',
           minWidth: 75,
           render: (value) => value,
+        },
+        {
+          key: 'group_result.wgs_ac_other',
+          heading: 'WGS AC Other',
+          minWidth: 75,
+          render: (value) => value,
+        },
+        {
+          key: 'group_result.wgs_an_other',
+          heading: 'WGS AN Other',
+          minWidth: 75,
+          render: (value) => value,
+        },
+        {
+          key: 'group_result.wgs_af_case',
+          heading: 'WGS AF Case',
+          minWidth: 75,
+          render: renderExponentialIfSmall,
+        },
+        {
+          key: 'group_result.wgs_af_ctrl',
+          heading: 'WGS AF Control',
+          minWidth: 75,
+          render: renderExponentialIfSmall,
+        },
+        {
+          key: 'group_result.wgs_af_other',
+          heading: 'WGS AF Other',
+          minWidth: 75,
+          render: renderExponentialIfSmall,
         },
       ]}
       variantConsequences={variantConsequences}
