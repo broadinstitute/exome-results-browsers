@@ -99,8 +99,7 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
         "gene_id",
         consequence=annotations.consequence,
         hgvsc=annotations.hgvsc.split(":")[-1],
-        # ask about hgvsp, if analysts want to display this
-        hgvsp="",
+        hgvsp=annotations.hgvsp.split(":")[-1],
         info=hl.struct(
             cadd=annotations.cadd,
         ),
