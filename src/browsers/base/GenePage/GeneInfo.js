@@ -95,6 +95,7 @@ GeneReferences.propTypes = {
   gene: PropTypes.shape({
     reference_genome: PropTypes.oneOf(['GRCh37', 'GRCh38']).isRequired,
     gene_id: PropTypes.string.isRequired,
+    canonical_transcript_id: PropTypes.string.isRequired,
     symbol: PropTypes.string.isRequired,
     chrom: PropTypes.string.isRequired,
     start: PropTypes.number.isRequired,
@@ -140,6 +141,12 @@ const GeneInfo = ({ gene }) => {
         <dt>Ensembl gene ID</dt>
         <dd>{gene.gene_id}</dd>
       </DescriptionListItem>
+      {gene.canonical_transcript_id && (
+        <DescriptionListItem>
+          <dt>Ensembl transcript ID</dt>
+          <dd>{gene.canonical_transcript_id}</dd>
+        </DescriptionListItem>
+      )}
       <DescriptionListItem>
         <dt>Region</dt>
         <dd>{`Chr${gene.chrom}:${gene.start}-${gene.stop}`}</dd>
@@ -173,6 +180,7 @@ GeneInfo.propTypes = {
   gene: PropTypes.shape({
     reference_genome: PropTypes.oneOf(['GRCh37', 'GRCh38']),
     gene_id: PropTypes.string.isRequired,
+    canonical_transcript_id: PropTypes.string.isRequired,
     chrom: PropTypes.string.isRequired,
     start: PropTypes.number.isRequired,
     stop: PropTypes.number.isRequired,
