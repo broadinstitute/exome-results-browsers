@@ -204,7 +204,7 @@ const TopBar = ({ title, links, backgroundColor, textColor, passwordProtectedDat
           <CenterHorizontal>
             <>
               <p>
-                <b>Note</b>: this demo only includes Chr22 variant data. Have feedback? Fill out our{' '}
+                <b>Note</b>: Have feedback? Fill out our{' '}
                 <ExternalLink href="https://forms.gle/kfNYdzdWS69LZqma9">Google Form</ExternalLink>.
               </p>
             </>
