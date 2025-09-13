@@ -1,20 +1,12 @@
 def combine_variant_results(ces_variants_ht, wgs_variants_ht):
     print("Combining variant results")
 
-    print("TEMP - SUBSETTING TO Chr22")
-    ces_variants_ht = ces_variants_ht.filter(ces_variants_ht.locus.contig == "chr22")
-    wgs_variants_ht = wgs_variants_ht.filter(wgs_variants_ht.locus.contig == "chr22")
-
     combined_variants_ht = ces_variants_ht.union(wgs_variants_ht, unify=True)
     return combined_variants_ht
 
 
 def combine_variant_annotations(ces_annotations_ht, wgs_annotations_ht):
     print("Combining variant annotations")
-
-    print("TEMP - SUBSETTING TO Chr22")
-    ces_annotations_ht = ces_annotations_ht.filter(ces_annotations_ht.locus.contig == "chr22")
-    wgs_annotations_ht = wgs_annotations_ht.filter(wgs_annotations_ht.locus.contig == "chr22")
 
     # wgs is ordered differently, re-order to allow union
     wgs_annotations_ht = wgs_annotations_ht.select(
