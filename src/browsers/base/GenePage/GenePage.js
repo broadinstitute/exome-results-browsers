@@ -78,6 +78,10 @@ const GenePage = ({
                     <ExternalLink href="https://gnomad.broadinstitute.org">
                       gnomAD browser
                     </ExternalLink>
+                    , and read our{' '}
+                    <ExternalLink href="https://gnomad.broadinstitute.org/help/constraint">
+                      help text
+                    </ExternalLink>
                     . Please note that insertions and deletions are excluded in the aggregated
                     counts and calculated metrics.
                   </p>
