@@ -71,82 +71,103 @@ def split_data(row):
     return gene_id, gene_grch37, gene_grch38, all_variants
 
 
-def write_data_files(table_path, output_directory, genes=None):
+def write_data_files(table_path, output_directory, _genes=None):
     if output_directory.startswith("gs://"):
         raise ValueError("Google Storage paths are not supported for output_directory")
 
     ds = hl.read_table(table_path)
 
-    os.makedirs(output_directory, exist_ok=True)
+    # (<chromosome> , <number of chunks>)
+    chroms = [
+        ("1", 5),
+        ("2", 7),  # Chr2 has TTN
+        ("3", 8),  # Chr3 has CNTNAP3
+        ("4", 7),
+        ("5", 7),
+        ("6", 7),
+        ("7", 6),
+        ("8", 8),  # Chr8 has CSMD1, ADAMTS9
+        ("9", 6),  # Chr8 has PTPRD
+        ("10", 6),
+        ("11", 8),
+        ("12", 6),
+        ("13", 3),
+        ("14", 3),
+        ("15", 3),
+        ("16", 3),  # Chr16 has RBFOX1, WWOX
+        ("17", 3),
+        ("18", 3),
+        ("19", 2),
+        ("20", 2),  # Chr20 has LRP1B
+        ("21", 1),
+        ("22", 1),
+        ("X", 1),
+        ("Y", 1),
+    ]
 
-    with open(f"{output_directory}/metadata.json", mode="w", encoding="utf-8") as output_file:
-        output_file.write(hl.eval(hl.json(ds.globals.meta)))
+    it = 0
+    for ch in chroms:
+        it += ch[1]
 
-    gene_search_terms = ds.select(data=hl.json(hl.tuple([ds.gene_id, ds.search_terms])))
-    gene_search_terms.key_by().select("data").export(f"{output_directory}/gene_search_terms.json.txt", header=False)
-    os.remove(f"{output_directory}/.gene_search_terms.json.txt.crc")
+    print(f"Total iterations to run is {it}")
+    expected_time_minutes = it * 2.5
+    expected_time_hours = int(expected_time_minutes // 60)
+    remaining_minutes = int(expected_time_minutes % 60)
+    if expected_time_hours == 0:
+        print(f"Expected time = {remaining_minutes}m")
+    else:
+        print(f"Expected time = {expected_time_hours}h{remaining_minutes}m")
 
-    ds = ds.drop("previous_symbols", "alias_symbols", "search_terms")
+    # filter out large individual genes to avoid Hail OOM errors
+    large_gene_symbols = hl.set(["TTN", "CNTNAP3", "CSMD1", "ADAMTS9", "PTPRD", "WWOX", "RBFOX1", "LRP1B"])
+    ds = ds.filter(large_gene_symbols.contains(ds.symbol), keep=False)
 
-    os.makedirs(f"{output_directory}/results", exist_ok=True)
-    for dataset in ds.globals.meta.datasets.dtype.fields:
-        reference_genome = "GRCh38" if dataset in ["bipex", "ibd"] else "GRCh37"
-        gene_results = ds.filter(hl.is_defined(ds.gene_results[dataset]))
-        gene_results = gene_results.select(
-            result=hl.tuple(
-                [
-                    gene_results.gene_id,
-                    gene_results.symbol,
-                    gene_results.name,
-                    gene_results[reference_genome].chrom,
-                    (gene_results[reference_genome].start + gene_results[reference_genome].stop) // 2,
-                    gene_results.gene_results[dataset].group_results,
-                ]
-            )
-        )
-        gene_results = gene_results.collect()
+    for chrom in chroms:
+        chro = chrom[0]
+        chunks = chrom[1]
+        print(f"\nLooping for just chr{chro}")
 
-        gene_results = [r.result for r in gene_results]
+        for i in range(chunks):
+            print(f" -- chr{chro} - Loop ({i + 1}/{chunks})")
 
-        with open(f"{output_directory}/results/{dataset.lower()}.json", mode="w", encoding="utf-8") as output_file:
-            output_file.write(json.dumps({"results": gene_results}, cls=ResultEncoder))
+            filtered = ds.filter(ds.GRCh38.chrom == chro)
+            filtered = filtered.filter(filtered.GRCh38.start % chunks == i)
 
-    if genes:
-        ds = ds.filter(hl.set(genes).contains(ds.gene_id))
+            temp_file_name = f"temp_chr{chro}-{i+1}.tsv"
+            n_rows = filtered.count()
+            filtered.select(data=hl.json(filtered.row)).export(f"{output_directory}/{temp_file_name}", header=False)
 
-    temp_file_name = "temp.tsv"
-    n_rows = ds.count()
-    ds.select(data=hl.json(ds.row)).export(f"{output_directory}/{temp_file_name}", header=False)
+            csv.field_size_limit(sys.maxsize)
+            os.makedirs(f"{output_directory}/genes", exist_ok=True)
 
-    csv.field_size_limit(sys.maxsize)
-    os.makedirs(f"{output_directory}/genes", exist_ok=True)
+            with multiprocessing.get_context("spawn").Pool() as pool:
+                with open(f"{output_directory}/{temp_file_name}", encoding="utf-8") as data_file:
 
-    with multiprocessing.get_context("spawn").Pool() as pool:
-        with open(f"{output_directory}/{temp_file_name}", encoding="utf-8") as data_file:
+                    reader = csv.reader(data_file, delimiter="\t")
+                    for gene_id, gene_grch37, gene_grch38, all_variants in tqdm(
+                        pool.imap(split_data, reader), total=n_rows
+                    ):
+                        num = int(gene_id.lstrip("ENSGR"))
+                        gene_dir = f"{output_directory}/genes/{str(num % 1000).zfill(3)}"
+                        os.makedirs(gene_dir, exist_ok=True)
 
-            reader = csv.reader(data_file, delimiter="\t")
-            for gene_id, gene_grch37, gene_grch38, all_variants in tqdm(pool.imap(split_data, reader), total=n_rows):
-                num = int(gene_id.lstrip("ENSGR"))
-                gene_dir = f"{output_directory}/genes/{str(num % 1000).zfill(3)}"
-                os.makedirs(gene_dir, exist_ok=True)
+                        if gene_grch37:
+                            with open(f"{gene_dir}/{gene_id}_GRCh37.json", mode="w", encoding="utf-8") as out_file:
+                                out_file.write(gene_grch37)
 
-                if gene_grch37:
-                    with open(f"{gene_dir}/{gene_id}_GRCh37.json", mode="w", encoding="utf-8") as out_file:
-                        out_file.write(gene_grch37)
+                        if gene_grch38:
+                            with open(f"{gene_dir}/{gene_id}_GRCh38.json", mode="w", encoding="utf-8") as out_file:
+                                out_file.write(gene_grch38)
 
-                if gene_grch38:
-                    with open(f"{gene_dir}/{gene_id}_GRCh38.json", mode="w", encoding="utf-8") as out_file:
-                        out_file.write(gene_grch38)
+                        for dataset, dataset_variants in all_variants.items():
+                            if dataset_variants:
+                                with open(
+                                    f"{gene_dir}/{gene_id}_{dataset.lower()}_variants.json", mode="w", encoding="utf-8"
+                                ) as out_file:
+                                    out_file.write(dataset_variants)
 
-                for dataset, dataset_variants in all_variants.items():
-                    if dataset_variants:
-                        with open(
-                            f"{gene_dir}/{gene_id}_{dataset.lower()}_variants.json", mode="w", encoding="utf-8"
-                        ) as out_file:
-                            out_file.write(dataset_variants)
-
-    os.remove(f"{output_directory}/{temp_file_name}")
-    os.remove(f"{output_directory}/.{temp_file_name}.crc")
+            os.remove(f"{output_directory}/{temp_file_name}")
+            os.remove(f"{output_directory}/.{temp_file_name}.crc")
 
 
 def init_hail(env="local"):
