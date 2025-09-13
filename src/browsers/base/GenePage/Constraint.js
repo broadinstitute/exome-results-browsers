@@ -65,7 +65,11 @@ export const GnomadConstraintTable = ({ constraint }) => (
   <Table>
     <thead>
       <tr>
-        <th scope="col">Category</th>
+        <th scope="col">
+          <TooltipAnchor tooltip="VEP consequence category.">
+            <TooltipHint>Category</TooltipHint>
+          </TooltipAnchor>
+        </th>
         <th scope="col">
           <TooltipAnchor tooltip="Expected variant counts were predicted using a depth corrected probability of mutation for each gene.">
             <TooltipHint>Exp. SNVs</TooltipHint>
@@ -77,7 +81,9 @@ export const GnomadConstraintTable = ({ constraint }) => (
           </TooltipAnchor>
         </th>
         <th colSpan={2} scope="col">
-          Constraint metrics
+          <TooltipAnchor tooltip="A signed Z score, positive scores indicate increased constraint (intolerance to variation), and the is the observed to expected ratio (o/e) of number of variants in this gene for the consequence category.">
+            <TooltipHint>Constraint metrics</TooltipHint>
+          </TooltipAnchor>
         </th>
       </tr>
     </thead>
