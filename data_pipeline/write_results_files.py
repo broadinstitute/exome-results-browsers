@@ -139,7 +139,7 @@ def write_json_files(output_directory, tsv_filename, n_rows):
     os.remove(f"{output_directory}/.{tsv_filename}.crc")
 
 
-def process_iteratively(output_directory, ds):
+def process_variants_iteratively(output_directory, ds):
 
     # (<chromosome> , <number of chunks>)
     chroms = [
@@ -225,7 +225,7 @@ def write_data_files(table_path, output_directory, genes=None):
 
         return
     else:
-        process_iteratively(output_directory, ds)
+        process_variants_iteratively(output_directory, ds)
 
         return
 
