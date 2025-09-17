@@ -35,6 +35,7 @@ const ConstraintWrapper = styled.div`
 `
 
 const GenePage = ({
+  datasetId,
   browserTitle,
   gene,
   defaultVariantAnalysisGroup,
@@ -121,6 +122,7 @@ const GenePage = ({
           strand={gene.canonical_transcript.strand}
         />
         <VariantsInGene
+          datasetId={datasetId}
           defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
           gene={gene}
           renderVariantAttributes={renderVariantAttributes}
@@ -142,6 +144,7 @@ const GenePage = ({
 }
 
 GenePage.propTypes = {
+  datasetId: PropTypes.string.isRequired,
   browserTitle: PropTypes.string.isRequired,
   variantAnalysisGroupOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
   defaultVariantAnalysisGroup: PropTypes.string.isRequired,
