@@ -20,7 +20,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
 
    ```
    gcloud --quiet compute instances create erb-temp-instance \
-      --machine-type=n1-standard-8 \
+      --machine-type=n1-highmem-8 \
       --image-family projects/debian-cloud/global/images/family/debian-11 \
       --boot-disk-size=200GB \
       --service-account=erb-data-pipeline@exac-gnomad.iam.gserviceaccount.com
@@ -33,7 +33,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
    DISK_NAME="exome-results-browsers-data-$TIMESTAMP"
 
    gcloud compute disks create $DISK_NAME \
-     --size=100GB \
+     --size=200GB \
      --type=pd-standard
 
    gcloud compute instances attach-disk erb-temp-instance \
