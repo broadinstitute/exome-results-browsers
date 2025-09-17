@@ -445,6 +445,7 @@ VariantsInGene.defaultProps = {
 }
 
 const VariantsInGeneContainer = ({
+  datasetId,
   gene,
   variantConsequences,
   variantAnalysisGroupOptions,
@@ -493,30 +494,76 @@ const VariantsInGeneContainer = ({
                     }
                   )
 
-                  if (groupResult.ac_case === null || groupResult.an_case === null) {
-                    groupResult.af_case = null
-                  } else if (groupResult.an_case === 0) {
-                    groupResult.af_case = 0
-                  } else {
-                    groupResult.af_case = groupResult.ac_case / groupResult.an_case
+                  if (datasetId !== 'GP2') {
+                    if (groupResult.ac_case === null || groupResult.an_case === null) {
+                      groupResult.af_case = null
+                    } else if (groupResult.an_case === 0) {
+                      groupResult.af_case = 0
+                    } else {
+                      groupResult.af_case = groupResult.ac_case / groupResult.an_case
+                    }
+
+                    if (groupResult.ac_ctrl === null || groupResult.an_ctrl === null) {
+                      groupResult.af_ctrl = null
+                    } else if (groupResult.an_ctrl === 0) {
+                      groupResult.af_ctrl = 0
+                    } else {
+                      groupResult.af_ctrl = groupResult.ac_ctrl / groupResult.an_ctrl
+                    }
+
+                    if (groupResult.af_case === null || groupResult.af_ctrl === null) {
+                      groupResult.af = null
+                    } else if (groupResult.an_case + groupResult.an_ctrl === 0) {
+                      groupResult.af = 0
+                    } else {
+                      groupResult.af =
+                        (groupResult.ac_case + groupResult.ac_ctrl) /
+                        (groupResult.an_case + groupResult.an_ctrl)
+                    }
                   }
 
-                  if (groupResult.ac_ctrl === null || groupResult.an_ctrl === null) {
-                    groupResult.af_ctrl = null
-                  } else if (groupResult.an_ctrl === 0) {
-                    groupResult.af_ctrl = 0
-                  } else {
-                    groupResult.af_ctrl = groupResult.ac_ctrl / groupResult.an_ctrl
-                  }
+                  if (datasetId === 'GP2') {
+                    if (groupResult.wgs_ac_case === null || groupResult.wgs_an_case === null) {
+                      groupResult.wgs_af_case = null
+                    } else if (groupResult.wgs_an_case === 0) {
+                      groupResult.wgs_af_case = 0
+                    } else {
+                      groupResult.wgs_af_case = groupResult.wgs_ac_case / groupResult.wgs_an_case
+                    }
 
-                  if (groupResult.af_case === null || groupResult.af_ctrl === null) {
-                    groupResult.af = null
-                  } else if (groupResult.an_case + groupResult.an_ctrl === 0) {
-                    groupResult.af = 0
-                  } else {
-                    groupResult.af =
-                      (groupResult.ac_case + groupResult.ac_ctrl) /
-                      (groupResult.an_case + groupResult.an_ctrl)
+                    if (groupResult.wgs_ac_ctrl === null || groupResult.wgs_an_ctrl === null) {
+                      groupResult.wgs_af_ctrl = null
+                    } else if (groupResult.wgs_an_ctrl === 0) {
+                      groupResult.wgs_af_ctrl = 0
+                    } else {
+                      groupResult.wgs_af_ctrl = groupResult.wgs_ac_ctrl / groupResult.wgs_an_ctrl
+                    }
+
+                    if (groupResult.wgs_ac_other === null || groupResult.wgs_an_other === null) {
+                      groupResult.wgs_af_other = null
+                    } else if (groupResult.wgs_an_other === 0) {
+                      groupResult.wgs_af_other = 0
+                    } else {
+                      groupResult.wgs_af_other = groupResult.wgs_ac_other / groupResult.wgs_an_other
+                    }
+
+                    if (groupResult.ces_ac_case === null || groupResult.ces_an_case === null) {
+                      groupResult.ces_af_case = null
+                    } else if (groupResult.ces_an_case === 0) {
+                      groupResult.ces_af_case = 0
+                    } else {
+                      groupResult.ces_af_case = groupResult.ces_ac_case / groupResult.ces_an_case
+                    }
+
+                    if (groupResult.wgs_af_case === null || groupResult.wgs_af_ctrl === null) {
+                      groupResult.wgs_af = null
+                    } else if (groupResult.wgs_an_case + groupResult.wgs_an_ctrl === 0) {
+                      groupResult.wgs_af = 0
+                    } else {
+                      groupResult.wgs_af =
+                        (groupResult.wgs_ac_case + groupResult.wgs_ac_ctrl) /
+                        (groupResult.wgs_an_case + groupResult.wgs_an_ctrl)
+                    }
                   }
 
                   variant.group_results[group] = groupResult
@@ -560,6 +607,7 @@ const VariantsInGeneContainer = ({
 }
 
 VariantsInGeneContainer.propTypes = {
+  datasetId: PropTypes.string.isRequired,
   variantAnalysisGroupOptions: PropTypes.arrayOf(PropTypes.string),
   defaultVariantAnalysisGroup: PropTypes.string,
   variantConsequences: PropTypes.arrayOf(

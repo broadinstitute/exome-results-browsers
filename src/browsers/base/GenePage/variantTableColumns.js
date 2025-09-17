@@ -83,7 +83,7 @@ const renderExponentialNumberCellIfSmall = (row, key) => {
   return renderExponentialIfSmall(number)
 }
 
-const baseColumns = [
+const variantDescriptionColumns = [
   {
     key: 'variant_id',
     heading: 'Variant ID',
@@ -136,6 +136,9 @@ const baseColumns = [
       ),
     renderForCSV: get,
   },
+]
+
+const statColumns = [
   {
     key: 'group_result.ac_case',
     heading: 'AC Case',
@@ -204,25 +207,102 @@ const baseColumns = [
   },
 ]
 
-const gp2Columns = [
+const gp2StatColumns = [
   {
-    key: 'group_result.af_case',
-    heading: 'AF Case',
-    tooltip: 'Allele frequency in cases',
+    key: 'group_result.wgs_ac_case',
+    heading: 'WGS AC Case',
+    tooltip: 'Allele count in cases in whole genome sequencing',
     isSortable: true,
     sortFunction: (a, b) => a - b,
-    sortKey: 'group_result.af_case',
+    sortKey: 'group_result.wgs_ac_case',
+    minWidth: 80,
+    render: get,
+    renderForCSV: get,
+  },
+  {
+    key: 'group_result.wgs_an_case',
+    heading: 'WGS AN Case',
+    tooltip: 'Allele number in cases in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_an_case',
+    minWidth: 80,
+    render: get,
+    renderForCSV: get,
+  },
+  {
+    key: 'group_result.wgs_af_case',
+    heading: 'WGS AF Case',
+    tooltip: 'Allele frequency in cases in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_af_case',
     minWidth: 80,
     render: renderExponentialNumberCellIfSmall,
     renderForCSV: get,
   },
   {
-    key: 'group_result.af_ctrl',
-    heading: 'AF Control',
-    tooltip: 'Allele frequency in controls',
+    key: 'group_result.wgs_ac_ctrl',
+    heading: 'WGS AC Control',
+    tooltip: 'Allele count in controls in whole genome sequencing',
     isSortable: true,
     sortFunction: (a, b) => a - b,
-    sortKey: 'group_result.af_ctrl',
+    sortKey: 'group_result.wgs_ac_ctrl',
+    minWidth: 80,
+    render: get,
+    renderForCSV: get,
+  },
+  {
+    key: 'group_result.wgs_an_ctrl',
+    heading: 'WGS AN Control',
+    tooltip: 'Allele number in controls in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_an_ctrl',
+    minWidth: 80,
+    render: get,
+    renderForCSV: get,
+  },
+  {
+    key: 'group_result.wgs_af_ctrl',
+    heading: 'WGS AF Control',
+    tooltip: 'Allele frequency in controls in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_af_ctrl',
+    minWidth: 80,
+    render: renderExponentialNumberCellIfSmall,
+    renderForCSV: get,
+  },
+  {
+    key: 'group_result.wgs_ac_other',
+    heading: 'WGS AC Other',
+    tooltip: 'Allele count in others in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_ac_other',
+    minWidth: 80,
+    render: get,
+    renderForCSV: get,
+  },
+  {
+    key: 'group_result.wgs_an_other',
+    heading: 'WGS AN Other',
+    tooltip: 'Allele number in others in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_an_other',
+    minWidth: 80,
+    render: get,
+    renderForCSV: get,
+  },
+  {
+    key: 'group_result.wgs_af_other',
+    heading: 'WGS AF Other',
+    tooltip: 'Allele frequency in others in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_af_other',
     minWidth: 80,
     render: renderExponentialNumberCellIfSmall,
     renderForCSV: get,
@@ -232,27 +312,31 @@ const gp2Columns = [
 const getVariantTableColumns = (variantResultColumns) => {
   const { datasetId } = window.datasetConfig
 
-  const datasetColumns = [...baseColumns]
+  const datasetColumns = [...variantDescriptionColumns]
 
   if (datasetId === 'GP2') {
-    datasetColumns.pop()
-    datasetColumns.pop()
-    datasetColumns.push(...gp2Columns)
+    datasetColumns.push(...gp2StatColumns)
+  } else {
+    datasetColumns.push(...statColumns)
   }
 
-  const resultColumns = variantResultColumns.map((column) => ({
-    key: column.key,
-    heading: column.heading || column.key,
-    tooltip: column.tooltip,
-    isSortable: true,
-    sortFunction: (a, b) => a - b,
-    sortKey: column.key,
-    minWidth: column.minWidth || 65,
-    render: column.render ? (row, key) => column.render(get(row, key)) : renderNumberCell,
-    renderForCSV: column.renderForCSV ? (row, key) => column.renderForCSV(get(row, key)) : get,
-  }))
+  const resultColumns = variantResultColumns.map((column) => {
+    return {
+      key: column.key,
+      heading: column.heading || column.key,
+      tooltip: column.tooltip,
+      isSortable: true,
+      sortFunction: (a, b) => a - b,
+      sortKey: column.key,
+      minWidth: column.minWidth || 65,
+      render: column.render ? (row, key) => column.render(get(row, key)) : renderNumberCell,
+      renderForCSV: column.renderForCSV ? (row, key) => column.renderForCSV(get(row, key)) : get,
+    }
+  })
 
-  return [...datasetColumns, ...resultColumns]
+  const variantTableColumns = [...datasetColumns, ...resultColumns]
+
+  return variantTableColumns
 }
 
 export default getVariantTableColumns

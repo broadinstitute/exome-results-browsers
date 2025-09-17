@@ -166,6 +166,7 @@ const Browser = ({
             path="/gene/:gene"
             render={({ match }) => (
               <GenePage
+                datasetId={datasetId}
                 geneIdOrSymbol={match.params.gene}
                 browserTitle={browserTitle}
                 defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
