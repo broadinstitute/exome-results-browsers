@@ -68,6 +68,7 @@ class VariantsInGene extends Component {
     )
 
     this.state = {
+      datasetId: props.datasetId,
       filter: defaultFilter,
       hoveredVariant: null,
       rowIndexLastClickedInNavigator: 0,
@@ -267,12 +268,16 @@ class VariantsInGene extends Component {
       visibleVariantWindow,
     } = this.state
 
+    // For GP2, we use e.g. 'wgs_ac_case', rather than just 'ac_case'
+    const { datasetId } = this.state
+    const prefix = datasetId === 'GP2' ? 'wgs_' : ''
+
     const cases = renderedVariants
-      .filter((v) => v.group_result.ac_case > 0)
-      .map((v) => ({ ...v, allele_freq: v.group_result.af_case }))
+      .filter((v) => v.group_result[`${prefix}ac_case`] > 0)
+      .map((v) => ({ ...v, allele_freq: v.group_result[`${prefix}af_case`] }))
     const controls = renderedVariants
-      .filter((v) => v.group_result.ac_ctrl > 0)
-      .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
+      .filter((v) => v.group_result[`${prefix}ac_ctrl`] > 0)
+      .map((v) => ({ ...v, allele_freq: v.group_result[`${prefix}af_ctrl`] }))
 
     return (
       <>
@@ -293,7 +298,7 @@ class VariantsInGene extends Component {
               .slice(visibleVariantWindow[0], visibleVariantWindow[1] + 1)
               .map((v) => ({
                 ...v,
-                allele_freq: v.group_result.af,
+                allele_freq: v.group_result[`${prefix}af`],
                 isHighlighted: v.variant_id === hoveredVariant,
               }))}
             variantColor={variantColor}
@@ -356,6 +361,7 @@ class VariantsInGene extends Component {
 }
 
 VariantsInGene.propTypes = {
+  datasetId: PropTypes.string.isRequired,
   variantAnalysisGroupOptions: PropTypes.arrayOf(PropTypes.string).isRequired,
   defaultVariantAnalysisGroup: PropTypes.string.isRequired,
   variantAnalysisGroupLabels: PropTypes.objectOf(PropTypes.string),
@@ -599,6 +605,7 @@ const VariantsInGeneContainer = ({
             }
             gene={gene}
             variants={variants}
+            datasetId={datasetId}
           />
         )
       }}
