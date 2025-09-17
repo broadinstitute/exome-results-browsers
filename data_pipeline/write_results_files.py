@@ -71,6 +71,42 @@ def split_data(row):
     return gene_id, gene_grch37, gene_grch38, all_variants
 
 
+def write_gene_summary_file(output_directory, ds):
+    os.makedirs(output_directory, exist_ok=True)
+
+    with open(f"{output_directory}/metadata.json", mode="w", encoding="utf-8") as output_file:
+        output_file.write(hl.eval(hl.json(ds.globals.meta)))
+
+    gene_search_terms = ds.select(data=hl.json(hl.tuple([ds.gene_id, ds.search_terms])))
+    gene_search_terms.key_by().select("data").export(f"{output_directory}/gene_search_terms.json.txt", header=False)
+    os.remove(f"{output_directory}/.gene_search_terms.json.txt.crc")
+
+    ds = ds.drop("previous_symbols", "alias_symbols", "search_terms")
+
+    os.makedirs(f"{output_directory}/results", exist_ok=True)
+    for dataset in ds.globals.meta.datasets.dtype.fields:
+        reference_genome = "GRCh38" if dataset in ["bipex", "ibd"] else "GRCh37"
+        gene_results = ds.filter(hl.is_defined(ds.gene_results[dataset]))
+        gene_results = gene_results.select(
+            result=hl.tuple(
+                [
+                    gene_results.gene_id,
+                    gene_results.symbol,
+                    gene_results.name,
+                    gene_results[reference_genome].chrom,
+                    (gene_results[reference_genome].start + gene_results[reference_genome].stop) // 2,
+                    gene_results.gene_results[dataset].group_results,
+                ]
+            )
+        )
+        gene_results = gene_results.collect()
+
+        gene_results = [r.result for r in gene_results]
+
+        with open(f"{output_directory}/results/{dataset.lower()}.json", mode="w", encoding="utf-8") as output_file:
+            output_file.write(json.dumps({"results": gene_results}, cls=ResultEncoder))
+
+
 def write_json_files(output_directory, tsv_filename, n_rows):
     csv.field_size_limit(sys.maxsize)
     os.makedirs(f"{output_directory}/genes", exist_ok=True)
@@ -175,6 +211,8 @@ def write_data_files(table_path, output_directory, genes=None):
         raise ValueError("Google Storage paths are not supported for output_directory")
 
     ds = hl.read_table(table_path)
+
+    write_gene_summary_file(output_directory, ds)
 
     if genes:
         ds = ds.filter(hl.set(genes).contains(ds.gene_id))
