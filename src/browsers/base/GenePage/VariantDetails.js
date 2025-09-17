@@ -351,7 +351,7 @@ const VariantDetails = ({
         View in gnomAD
       </ExternalLink>
       <Columns>
-        {defaultGroupResult && (
+        {datasetId !== 'GP2' && defaultGroupResult && (
           <Column>
             <VariantAttributeList label={`Analysis (${defaultVariantAnalysisGroup})`}>
               <VariantAttribute label="Cases">
