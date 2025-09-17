@@ -302,7 +302,7 @@ const VariantDetails = ({
     ...(additionalVariantDetailSummaryColumns || []),
   ]
 
-  const datasetColumns = [
+  const standardColumns = [
     { key: 'group_result.ac_case', heading: 'AC Case', render: (value) => value },
     { key: 'group_result.an_case', heading: 'AN Case', render: (value) => value },
     { key: 'group_result.ac_ctrl', heading: 'AC Ctrl', render: (value) => value },
@@ -319,24 +319,57 @@ const VariantDetails = ({
     },
   ]
 
-  const gp2SpecificColumns = [
+  const gp2Columns = [
     {
-      key: 'group_result.af_case',
-      heading: 'AF Case',
-      render: (value) => renderExponentialIfSmall(value),
+      key: 'group_result.wgs_ac_case',
+      heading: 'WGS AC Case',
+      render: (value) => value,
     },
     {
-      key: 'group_result.af_ctrl',
-      heading: 'AF Ctrl',
-      render: (value) => renderExponentialIfSmall(value),
+      key: 'group_result.wgs_an_case',
+      heading: 'WGS AN Case',
+      render: (value) => value,
+    },
+    {
+      key: 'group_result.wgs_af_case',
+      heading: 'WGS AF Case',
+      render: renderExponentialIfSmall,
+    },
+
+    {
+      key: 'group_result.wgs_ac_ctrl',
+      heading: 'WGS AC Control',
+      render: (value) => value,
+    },
+    {
+      key: 'group_result.wgs_an_ctrl',
+      heading: 'WGS AN Control',
+      render: (value) => value,
+    },
+    {
+      key: 'group_result.wgs_af_ctrl',
+      heading: 'WGS AF Control',
+      render: renderExponentialIfSmall,
+    },
+
+    {
+      key: 'group_result.wgs_ac_other',
+      heading: 'WGS AC Other',
+      render: (value) => value,
+    },
+    {
+      key: 'group_result.wgs_an_other',
+      heading: 'WGS AN Other',
+      render: (value) => value,
+    },
+    {
+      key: 'group_result.wgs_af_other',
+      heading: 'WGS AF Other',
+      render: renderExponentialIfSmall,
     },
   ]
 
-  if (datasetId === 'GP2') {
-    datasetColumns.pop()
-    datasetColumns.pop()
-    datasetColumns.push(...gp2SpecificColumns)
-  }
+  const datasetColumns = datasetId === 'GP2' ? gp2Columns : standardColumns
 
   const renderedVariantColumns = variantDetailColumns || [
     ...datasetColumns,
