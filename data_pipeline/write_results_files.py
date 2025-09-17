@@ -71,11 +71,39 @@ def split_data(row):
     return gene_id, gene_grch37, gene_grch38, all_variants
 
 
-def write_data_files(table_path, output_directory, _genes=None):
-    if output_directory.startswith("gs://"):
-        raise ValueError("Google Storage paths are not supported for output_directory")
+def write_json_files(output_directory, tsv_filename, n_rows):
+    csv.field_size_limit(sys.maxsize)
+    os.makedirs(f"{output_directory}/genes", exist_ok=True)
 
-    ds = hl.read_table(table_path)
+    with multiprocessing.get_context("spawn").Pool() as pool:
+        with open(f"{output_directory}/{tsv_filename}", encoding="utf-8") as data_file:
+
+            reader = csv.reader(data_file, delimiter="\t")
+            for gene_id, gene_grch37, gene_grch38, all_variants in tqdm(pool.imap(split_data, reader), total=n_rows):
+                num = int(gene_id.lstrip("ENSGR"))
+                gene_dir = f"{output_directory}/genes/{str(num % 1000).zfill(3)}"
+                os.makedirs(gene_dir, exist_ok=True)
+
+                if gene_grch37:
+                    with open(f"{gene_dir}/{gene_id}_GRCh37.json", mode="w", encoding="utf-8") as out_file:
+                        out_file.write(gene_grch37)
+
+                if gene_grch38:
+                    with open(f"{gene_dir}/{gene_id}_GRCh38.json", mode="w", encoding="utf-8") as out_file:
+                        out_file.write(gene_grch38)
+
+                for dataset, dataset_variants in all_variants.items():
+                    if dataset_variants:
+                        with open(
+                            f"{gene_dir}/{gene_id}_{dataset.lower()}_variants.json", mode="w", encoding="utf-8"
+                        ) as out_file:
+                            out_file.write(dataset_variants)
+
+    os.remove(f"{output_directory}/{tsv_filename}")
+    os.remove(f"{output_directory}/.{tsv_filename}.crc")
+
+
+def process_iteratively(output_directory, ds):
 
     # (<chromosome> , <number of chunks>)
     chroms = [
@@ -137,37 +165,31 @@ def write_data_files(table_path, output_directory, _genes=None):
             n_rows = filtered.count()
             filtered.select(data=hl.json(filtered.row)).export(f"{output_directory}/{temp_file_name}", header=False)
 
-            csv.field_size_limit(sys.maxsize)
-            os.makedirs(f"{output_directory}/genes", exist_ok=True)
+            write_json_files(output_directory, temp_file_name, n_rows)
 
-            with multiprocessing.get_context("spawn").Pool() as pool:
-                with open(f"{output_directory}/{temp_file_name}", encoding="utf-8") as data_file:
+    return
 
-                    reader = csv.reader(data_file, delimiter="\t")
-                    for gene_id, gene_grch37, gene_grch38, all_variants in tqdm(
-                        pool.imap(split_data, reader), total=n_rows
-                    ):
-                        num = int(gene_id.lstrip("ENSGR"))
-                        gene_dir = f"{output_directory}/genes/{str(num % 1000).zfill(3)}"
-                        os.makedirs(gene_dir, exist_ok=True)
 
-                        if gene_grch37:
-                            with open(f"{gene_dir}/{gene_id}_GRCh37.json", mode="w", encoding="utf-8") as out_file:
-                                out_file.write(gene_grch37)
+def write_data_files(table_path, output_directory, genes=None):
+    if output_directory.startswith("gs://"):
+        raise ValueError("Google Storage paths are not supported for output_directory")
 
-                        if gene_grch38:
-                            with open(f"{gene_dir}/{gene_id}_GRCh38.json", mode="w", encoding="utf-8") as out_file:
-                                out_file.write(gene_grch38)
+    ds = hl.read_table(table_path)
 
-                        for dataset, dataset_variants in all_variants.items():
-                            if dataset_variants:
-                                with open(
-                                    f"{gene_dir}/{gene_id}_{dataset.lower()}_variants.json", mode="w", encoding="utf-8"
-                                ) as out_file:
-                                    out_file.write(dataset_variants)
+    if genes:
+        ds = ds.filter(hl.set(genes).contains(ds.gene_id))
 
-            os.remove(f"{output_directory}/{temp_file_name}")
-            os.remove(f"{output_directory}/.{temp_file_name}.crc")
+        temp_file_name = "temp.tsv"
+        n_rows = ds.count()
+        ds.select(data=hl.json(ds.row)).export(f"{output_directory}/{temp_file_name}", header=False)
+
+        write_json_files(output_directory, temp_file_name, n_rows)
+
+        return
+    else:
+        process_iteratively(output_directory, ds)
+
+        return
 
 
 def init_hail(env="local"):
