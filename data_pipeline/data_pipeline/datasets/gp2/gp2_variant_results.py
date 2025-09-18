@@ -89,13 +89,29 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
 
     variants = results.key_by("locus", "alleles")
 
+    # keep this in sync with GRCh38 path in config.ini
+    clinvar_grch38_path = "gs://exome-results-browsers/reference/clinvar_grch38_variants.ht"
+    clinvar = hl.read_table(clinvar_grch38_path)
+    clinvar = clinvar.select(
+        "clinvar_variation_id",
+        "clinical_significance_category",
+        clinical_significance=clinvar.clinical_significance[0],
+    )
+    annotations = annotations.annotate(**clinvar[annotations.locus, annotations.alleles])
+
     annotations = annotations.select(
         "gene_id",
+        "clinvar_variation_id",
+        "clinical_significance",
+        "clinical_significance_category",
         consequence=annotations.consequence,
         hgvsc=annotations.hgvsc.split(":")[-1],
         hgvsp=annotations.hgvsp.split(":")[-1],
         info=hl.struct(
             cadd=annotations.cadd,
+            clinvar_variation_id=annotations.clinvar_variation_id,
+            clinical_significance=annotations.clinical_significance,
+            clinical_significance_category=annotations.clinical_significance_category,
         ),
     )
 
