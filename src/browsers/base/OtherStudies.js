@@ -133,10 +133,15 @@ export default () => (
           Parkinsons - <ExternalLink href="https://gp2.broadinstitute.org">GP2</ExternalLink>
         </h2>
         <p>
-          Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur adipiscing elit
-          quisque faucibus ex sapien vitae. Ex sapien vitae pellentesque sem placerat in id.
-          Placerat in id cursus mi pretium tellus duis. Pretium tellus duis convallis tempus leo eu
-          aenean.
+          The Global Parkinson’s Genetics Program (
+          <ExternalLink href="https://gp2.org/">GP2</ExternalLink>) is a resource program of the
+          Aligning Science Across Parkinson&apos;s (
+          <ExternalLink href="https://parkinsonsroadmap.org/#">ASAP</ExternalLink>) initiative,
+          which is managed by the Coalition for Aligning Science and implemented by the Michael J.
+          Fox Foundation. GP2 serves as a central hub to generate genetic data from studies across
+          the globe and harmonize corresponding clinical data. Our goal is to genetically
+          characterize over 250,000 volunteers around the world to further understand the genetic
+          architecture of Parkinson’s disease (PD).
         </p>
         <p>
           <BrowserLink dataset="GP2" />
