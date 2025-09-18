@@ -150,11 +150,13 @@ const TopBar = ({ title, links, backgroundColor, textColor, passwordProtectedDat
               </Link>
             </li>
           ))}
-          <li>
-            <Link to="/downloads" onClick={closeMenu}>
-              Downloads
-            </Link>
-          </li>
+          {datasetId !== 'GP2' && (
+            <li>
+              <Link to="/downloads" onClick={closeMenu}>
+                Downloads
+              </Link>
+            </li>
+          )}
           <li>
             <Link
               to="/other-studies"

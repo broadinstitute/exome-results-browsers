@@ -143,22 +143,24 @@ const Browser = ({
             component={homePage}
           />
 
-          <ProtectedRoute
-            isAuthenticated={isAuthenticated}
-            datasetId={datasetId}
-            path="/results"
-            render={() => (
-              <GeneResultsPage
-                browserTitle={browserTitle}
-                analysisGroupOptions={geneResultAnalysisGroupOptions}
-                defaultAnalysisGroup={defaultGeneResultAnalysisGroup}
-                defaultSortKey={defaultGeneResultSortKey}
-                geneResultColumns={geneResultColumns}
-                pageHeading={geneResultsPageHeading}
-                tabs={geneResultTabs}
-              />
-            )}
-          />
+          {datasetId !== 'GP2' && (
+            <ProtectedRoute
+              isAuthenticated={isAuthenticated}
+              datasetId={datasetId}
+              path="/results"
+              render={() => (
+                <GeneResultsPage
+                  browserTitle={browserTitle}
+                  analysisGroupOptions={geneResultAnalysisGroupOptions}
+                  defaultAnalysisGroup={defaultGeneResultAnalysisGroup}
+                  defaultSortKey={defaultGeneResultSortKey}
+                  geneResultColumns={geneResultColumns}
+                  pageHeading={geneResultsPageHeading}
+                  tabs={geneResultTabs}
+                />
+              )}
+            />
+          )}
 
           <ProtectedRoute
             isAuthenticated={isAuthenticated}
@@ -196,12 +198,14 @@ const Browser = ({
             />
           ))}
 
-          <ProtectedRoute
-            isAuthenticated={isAuthenticated}
-            datasetId={datasetId}
-            path="/downloads"
-            component={DownloadsPage}
-          />
+          {datasetId !== 'GP2' && (
+            <ProtectedRoute
+              isAuthenticated={isAuthenticated}
+              datasetId={datasetId}
+              path="/downloads"
+              component={DownloadsPage}
+            />
+          )}
 
           <ProtectedRoute
             isAuthenticated={isAuthenticated}
