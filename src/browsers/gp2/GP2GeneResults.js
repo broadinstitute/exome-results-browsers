@@ -2,9 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { BaseTable, Tabs } from '@gnomad/ui'
-
-import HelpButton from '../base/HelpButton'
+import { BaseTable } from '@gnomad/ui'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -95,54 +93,11 @@ GP2GeneResult.propTypes = {
   }).isRequired,
 }
 
-const GP2GeneResults = ({ results }) => (
+const GP2GeneResults = () => (
   <>
-    <h2>
-      Gene Result{' '}
-      <HelpButton
-        popupTitle="Gene Burden Result"
-        popupContent={
-          <>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien
-              vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus
-              leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus
-              bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut
-              hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia
-              nostra inceptos himenaeos.
-            </p>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien
-              vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus
-              leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus
-              bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut
-              hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia
-              nostra inceptos himenaeos.
-            </p>
-          </>
-        }
-      />
-    </h2>
-    <Tabs
-      // TODO: change to ancestries when we get the data
-      tabs={['AAC', 'CAH', 'MDE', 'AMR', 'CAS', 'EUR', 'EAS', 'SAS', 'AJ', 'FIN', 'AFR'].map(
-        (group) => ({
-          id: group,
-          label: group,
-          render: () =>
-            results[group] ? (
-              <GP2GeneResult result={results[group]} />
-            ) : (
-              <p>No result for {group} in this gene.</p>
-            ),
-        })
-      )}
-    />
+    <h2>Gene Results </h2>
+    <p>Gene burden results will be released in the future.</p>
   </>
 )
-
-GP2GeneResults.propTypes = {
-  results: PropTypes.objectOf(PropTypes.object).isRequired,
-}
 
 export default GP2GeneResults
