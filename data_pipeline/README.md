@@ -59,6 +59,16 @@ Configuration is divided into sections:
 
     https://www.genenames.org/cgi-bin/download/custom?col=gd_hgnc_id&col=gd_app_sym&col=gd_app_name&col=gd_prev_sym&col=gd_aliases&col=gd_pub_ensembl_id&col=md_ensembl_id&col=md_mim_id&status=Approved&hgnc_dbtag=on&order_by=gd_app_sym_sort&format=text&submit=submit
 
+  - `clinvar_grch37_path`
+
+    Copy of the reduced GRCh37 ClinVar hail table from GeniE
+    `gs://aggregate-frequency-calculator-data/ClinVar/ClinVar_GRCh37_variants.ht`
+
+  - `clinvar_grch38_path`
+
+    Copy of the reduced GRCh38 ClinVar hail table from GeniE
+    `gs://aggregate-frequency-calculator-data/ClinVar/ClinVar_GRCh38_variants.ht`
+
 - `output`
 
   - `staging_path` - path of the directory where pipelines should write Hail Tables
