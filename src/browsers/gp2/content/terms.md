@@ -8,4 +8,4 @@ We encourage you to contact GP2 before embarking on any analyses using these dat
 
 ## Citations in publications
 
-We request that any use of data from the GP2 browser cite the consortium's paper, [_GP2: The Global Parkinson's Genetics Program_](https://doi.org/10.1002/mds.28494), and the browser release paper [_TK: (todo - paper name), Zih-Hua Fang et al._](www.google.com)
+We request that any use of data from the GP2 browser cite the consortium's paper, [_GP2: The Global Parkinson's Genetics Program_](https://doi.org/10.1002/mds.28494), and, when published, the browser release paper.
