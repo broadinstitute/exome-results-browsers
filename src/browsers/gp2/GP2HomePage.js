@@ -30,9 +30,10 @@ const GP2HomePage = () => (
     <HomePageHeading>GP2: Global Parkinson&apos;s Genetics Program genome browser</HomePageHeading>
 
     <Searchbox width="100%" />
-    <p style={{ marginTop: '0.25em' }}>
-      Or <Link to="/results">view all results</Link>
-    </p>
+
+    <br />
+    <br />
+    <br />
 
     <p>
       Examples:
