@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { ExternalLink, TooltipAnchor, TooltipHint } from '@gnomad/ui'
+
 import Browser from '../base/Browser'
 import { renderCount } from '../base/tableCells'
 
@@ -162,8 +164,23 @@ const GP2Browser = () => {
         },
       ]}
       variantConsequences={variantConsequences}
-      renderVariantAttributes={({ cadd }) => [
+      renderVariantAttributes={({ cadd, clinvar_variation_id: clinvarID }) => [
         { label: 'CADD', content: cadd === null ? '-' : cadd },
+        {
+          label: (
+            <TooltipAnchor tooltip="ClinVar data last updated September 18, 2025">
+              <TooltipHint>ClinVar ID</TooltipHint>
+            </TooltipAnchor>
+          ),
+          content:
+            clinvarID === null ? (
+              '-'
+            ) : (
+              <ExternalLink href={`https://www.ncbi.nlm.nih.gov/clinvar/variation/${clinvarID}/`}>
+                {clinvarID}
+              </ExternalLink>
+            ),
+        },
       ]}
     />
   )
