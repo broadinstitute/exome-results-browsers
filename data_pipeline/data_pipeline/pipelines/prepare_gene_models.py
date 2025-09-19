@@ -135,11 +135,11 @@ def prepare_gene_models_helper(reference_genome):
     genes = genes.annotate(
         canonical_transcript=genes.transcripts.filter(
             lambda transcript: transcript.transcript_id == genes.canonical_transcript_id
-        ).head()
+        ).first()
     )
     genes = genes.annotate(
         canonical_transcript=genes.canonical_transcript.annotate(
-            exons=hl.cond(
+            exons=hl.if_else(
                 genes.canonical_transcript.exons.any(lambda exon: exon.feature_type == "CDS"),
                 genes.canonical_transcript.exons.filter(lambda exon: exon.feature_type == "CDS"),
                 genes.canonical_transcript.exons.filter(lambda exon: exon.feature_type == "exon"),
