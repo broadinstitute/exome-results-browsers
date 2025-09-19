@@ -450,6 +450,47 @@ VariantsInGene.defaultProps = {
   renderVariantTranscriptConsequences: false,
 }
 
+const addSingleAF = (args) => {
+  const { groupResult, prefix, suffix } = args
+
+  const ac = groupResult[`${prefix}ac_${suffix}`]
+  const an = groupResult[`${prefix}an_${suffix}`]
+  let af = null
+
+  if (ac === null || an === null) {
+    af = null
+  } else if (an === 0) {
+    af = 0
+  } else {
+    af = ac / an
+  }
+
+  groupResult[`${prefix}af_${suffix}`] = af
+}
+
+const addOverallAF = (args) => {
+  const { groupResult, prefix } = args
+
+  const caseAC = groupResult[`${prefix}ac_case`]
+  const caseAN = groupResult[`${prefix}an_case`]
+  const controlAC = groupResult[`${prefix}ac_ctrl`]
+  const controlAN = groupResult[`${prefix}an_ctrl`]
+  const caseAF = groupResult[`${prefix}af_case`]
+  const controlAF = groupResult[`${prefix}af_ctrl`]
+
+  let overallAF = null
+
+  if (caseAF === null || controlAF === null) {
+    overallAF = null
+  } else if (caseAN + controlAN === 0) {
+    overallAF = 0
+  } else {
+    overallAF = (caseAC + controlAC) / (caseAN + controlAN)
+  }
+
+  groupResult[`${prefix}af`] = overallAF
+}
+
 const VariantsInGeneContainer = ({
   datasetId,
   gene,
@@ -501,75 +542,17 @@ const VariantsInGeneContainer = ({
                   )
 
                   if (datasetId !== 'GP2') {
-                    if (groupResult.ac_case === null || groupResult.an_case === null) {
-                      groupResult.af_case = null
-                    } else if (groupResult.an_case === 0) {
-                      groupResult.af_case = 0
-                    } else {
-                      groupResult.af_case = groupResult.ac_case / groupResult.an_case
-                    }
-
-                    if (groupResult.ac_ctrl === null || groupResult.an_ctrl === null) {
-                      groupResult.af_ctrl = null
-                    } else if (groupResult.an_ctrl === 0) {
-                      groupResult.af_ctrl = 0
-                    } else {
-                      groupResult.af_ctrl = groupResult.ac_ctrl / groupResult.an_ctrl
-                    }
-
-                    if (groupResult.af_case === null || groupResult.af_ctrl === null) {
-                      groupResult.af = null
-                    } else if (groupResult.an_case + groupResult.an_ctrl === 0) {
-                      groupResult.af = 0
-                    } else {
-                      groupResult.af =
-                        (groupResult.ac_case + groupResult.ac_ctrl) /
-                        (groupResult.an_case + groupResult.an_ctrl)
-                    }
+                    addSingleAF({ groupResult, prefix: '', suffix: 'case' })
+                    addSingleAF({ groupResult, prefix: '', suffix: 'ctrl' })
+                    addOverallAF({ groupResult, prefix: '' })
                   }
 
                   if (datasetId === 'GP2') {
-                    if (groupResult.wgs_ac_case === null || groupResult.wgs_an_case === null) {
-                      groupResult.wgs_af_case = null
-                    } else if (groupResult.wgs_an_case === 0) {
-                      groupResult.wgs_af_case = 0
-                    } else {
-                      groupResult.wgs_af_case = groupResult.wgs_ac_case / groupResult.wgs_an_case
-                    }
-
-                    if (groupResult.wgs_ac_ctrl === null || groupResult.wgs_an_ctrl === null) {
-                      groupResult.wgs_af_ctrl = null
-                    } else if (groupResult.wgs_an_ctrl === 0) {
-                      groupResult.wgs_af_ctrl = 0
-                    } else {
-                      groupResult.wgs_af_ctrl = groupResult.wgs_ac_ctrl / groupResult.wgs_an_ctrl
-                    }
-
-                    if (groupResult.wgs_ac_other === null || groupResult.wgs_an_other === null) {
-                      groupResult.wgs_af_other = null
-                    } else if (groupResult.wgs_an_other === 0) {
-                      groupResult.wgs_af_other = 0
-                    } else {
-                      groupResult.wgs_af_other = groupResult.wgs_ac_other / groupResult.wgs_an_other
-                    }
-
-                    if (groupResult.ces_ac_case === null || groupResult.ces_an_case === null) {
-                      groupResult.ces_af_case = null
-                    } else if (groupResult.ces_an_case === 0) {
-                      groupResult.ces_af_case = 0
-                    } else {
-                      groupResult.ces_af_case = groupResult.ces_ac_case / groupResult.ces_an_case
-                    }
-
-                    if (groupResult.wgs_af_case === null || groupResult.wgs_af_ctrl === null) {
-                      groupResult.wgs_af = null
-                    } else if (groupResult.wgs_an_case + groupResult.wgs_an_ctrl === 0) {
-                      groupResult.wgs_af = 0
-                    } else {
-                      groupResult.wgs_af =
-                        (groupResult.wgs_ac_case + groupResult.wgs_ac_ctrl) /
-                        (groupResult.wgs_an_case + groupResult.wgs_an_ctrl)
-                    }
+                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'case' })
+                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'ctrl' })
+                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'other' })
+                    addSingleAF({ groupResult, prefix: 'ces_', suffix: 'case' })
+                    addOverallAF({ groupResult, prefix: 'wgs_' })
                   }
 
                   variant.group_results[group] = groupResult
