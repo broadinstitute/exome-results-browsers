@@ -37,7 +37,7 @@ Configuration is divided into sections:
 
   - `grch38_gencode_path`
 
-    Copy of ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_29/gencode.v29.annotation.gtf.gz
+    Copy of ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_39/gencode.v39.annotation.gtf.gz
     compressed with blocked gzip.
 
   - `grch37_canonical_transcripts_path` and `grch38_canonical_transcripts_path`
