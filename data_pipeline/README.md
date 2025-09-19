@@ -69,6 +69,10 @@ Configuration is divided into sections:
     Copy of the reduced GRCh38 ClinVar hail table from GeniE
     `gs://aggregate-frequency-calculator-data/ClinVar/ClinVar_GRCh38_variants.ht`
 
+  - `dbSNP_grch38_rsids_path`
+
+    Copy of the GRCh38 dbSNP rsid only hail table from Hail's datasets (`gs://hail-datasets-us-central1/..)
+
 - `output`
 
   - `staging_path` - path of the directory where pipelines should write Hail Tables
