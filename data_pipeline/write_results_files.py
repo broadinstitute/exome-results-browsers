@@ -140,6 +140,15 @@ def write_json_files(output_directory, tsv_filename, n_rows):
 
 
 def process_variants_iteratively(output_directory, ds):
+    def output_expected_time(it):
+        print(f"Iterations remaining: {it}")
+        expected_time_minutes = it * 2.5
+        expected_time_hours = int(expected_time_minutes // 60)
+        remaining_minutes = int(expected_time_minutes % 60)
+        if expected_time_hours == 0:
+            print(f"Expected time = {remaining_minutes}m")
+        else:
+            print(f"Expected time = {expected_time_hours}h{remaining_minutes}m")
 
     # (<chromosome> , <number of chunks>)
     chroms = [
@@ -172,15 +181,7 @@ def process_variants_iteratively(output_directory, ds):
     it = 0
     for ch in chroms:
         it += ch[1]
-
-    print(f"Total iterations to run is {it}")
-    expected_time_minutes = it * 2.5
-    expected_time_hours = int(expected_time_minutes // 60)
-    remaining_minutes = int(expected_time_minutes % 60)
-    if expected_time_hours == 0:
-        print(f"Expected time = {remaining_minutes}m")
-    else:
-        print(f"Expected time = {expected_time_hours}h{remaining_minutes}m")
+    output_expected_time(it)
 
     # filter out large individual genes to avoid Hail OOM errors
     large_gene_symbols = hl.set(["TTN", "CNTNAP3", "CSMD1", "ADAMTS9", "PTPRD", "WWOX", "RBFOX1", "LRP1B"])
@@ -202,6 +203,9 @@ def process_variants_iteratively(output_directory, ds):
             filtered.select(data=hl.json(filtered.row)).export(f"{output_directory}/{temp_file_name}", header=False)
 
             write_json_files(output_directory, temp_file_name, n_rows)
+
+            it -= 1
+            output_expected_time(it)
 
     return
 
