@@ -164,7 +164,7 @@ const GP2Browser = () => {
         },
       ]}
       variantConsequences={variantConsequences}
-      renderVariantAttributes={({ cadd, clinvar_variation_id: clinvarID }) => [
+      renderVariantAttributes={({ cadd, clinvar_variation_id: clinvarID, rsid }) => [
         { label: 'CADD', content: cadd === null ? '-' : cadd },
         {
           label: (
@@ -179,6 +179,19 @@ const GP2Browser = () => {
               <ExternalLink href={`https://www.ncbi.nlm.nih.gov/clinvar/variation/${clinvarID}/`}>
                 {clinvarID}
               </ExternalLink>
+            ),
+        },
+        {
+          label: (
+            <TooltipAnchor tooltip="rsids from dbSNP version 154">
+              <TooltipHint>dnSNP rsid</TooltipHint>
+            </TooltipAnchor>
+          ),
+          content:
+            rsid === null ? (
+              '-'
+            ) : (
+              <ExternalLink href={`https://www.ncbi.nlm.nih.gov/snp/${rsid}/`}>{rsid}</ExternalLink>
             ),
         },
       ]}
