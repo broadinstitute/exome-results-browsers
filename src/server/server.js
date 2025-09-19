@@ -154,14 +154,15 @@ if (isDevelopment) {
   )
   getDatasetForRequest = () => devDataset
 } else {
-  const datasetBySubdomain = Object.keys(metadata.datasets).reduce(
-    (acc, dataset) => ({
-      ...acc,
-      [dataset.toLowerCase()]: dataset,
-    }),
-    {}
-  )
-  getDatasetForRequest = (req) => datasetBySubdomain[req.subdomains[0]]
+  // const datasetBySubdomain = Object.keys(metadata.datasets).reduce(
+  //   (acc, dataset) => ({
+  //     ...acc,
+  //     [dataset.toLowerCase()]: dataset,
+  //   }),
+  //   {}
+  // )
+  // getDatasetForRequest = (req) => datasetBySubdomain[req.subdomains[0]]
+  getDatasetForRequest = () => 'GP2'
 }
 
 // ================================================================================================
