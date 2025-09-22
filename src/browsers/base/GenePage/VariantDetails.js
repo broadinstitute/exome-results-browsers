@@ -282,6 +282,7 @@ const VariantDetails = ({
   defaultVariantAnalysisGroup,
   referenceGenome,
   variant: inputVariant,
+  variantAnalysisGroupOptions,
   variantAnalysisGroupLabels,
   variantResultColumns,
   renderVariantAttributes,
@@ -375,6 +376,29 @@ const VariantDetails = ({
     ...datasetColumns,
     ...variantResultColumns,
   ]
+
+  if (datasetId === 'GP2') {
+    // const gp2AnalysisGroups = [
+    //   'EUR',
+    //   'AAC',
+    //   'CAH',
+    //   'MDE',
+    //   'AMR',
+    //   'CAS',
+    //   'EAS',
+    //   'SAS',
+    //   'AJ',
+    //   'FIN',
+    //   'AFR',
+    // ]
+
+    const parsedGroupResults = variantAnalysisGroupOptions.reduce((acc, group) => {
+      acc[group] = variant.group_results[group] || {}
+      return acc
+    }, {})
+
+    variant.group_results = parsedGroupResults
+  }
 
   return (
     <VariantContainer>
@@ -489,6 +513,7 @@ VariantDetails.propTypes = {
     info: PropTypes.object,
     group_results: PropTypes.objectOf(PropTypes.object).isRequired,
   }).isRequired,
+  variantAnalysisGroupOptions: PropTypes.objectOf(PropTypes.string).isRequired,
   variantAnalysisGroupLabels: PropTypes.objectOf(PropTypes.string).isRequired,
   variantResultColumns: PropTypes.arrayOf(
     PropTypes.shape({
