@@ -46,6 +46,20 @@ const GP2Browser = () => {
     'AFR',
   ]
 
+  const analysisGroupLabels = {
+    AFR: 'African/African American',
+    AAC: 'African',
+    AJ: 'Ashkenazi Jewish',
+    AMR: 'Latino and Indigenous people of the Americas',
+    EAS: 'East Asian',
+    EUR: 'European (non-Finnish)',
+    SAS: 'South Asian',
+    CAS: 'Central Asian',
+    MDE: 'Middle Eastern',
+    FIN: 'European (Finnish)',
+    CAH: 'Complex Admixture',
+  }
+
   const geneResultColumns = [
     {
       key: 'n_cases',
@@ -131,6 +145,7 @@ const GP2Browser = () => {
       geneResultColumns={geneResultColumns}
       variantAnalysisGroupOptions={analysisGroups}
       defaultVariantAnalysisGroup="EUR"
+      variantAnalysisGroupLabels={analysisGroupLabels}
       variantResultColumns={[
         {
           key: 'group_result.ces_ac_case',
