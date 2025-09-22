@@ -346,6 +346,7 @@ class VariantsInGene extends Component {
               defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
               referenceGenome={gene.reference_genome}
               variant={selectedVariant}
+              variantAnalysisGroupOptions={variantAnalysisGroupOptions}
               variantAnalysisGroupLabels={variantAnalysisGroupLabels}
               variantResultColumns={variantResultColumns.filter((c) => c.showOnDetails !== false)}
               renderVariantAttributes={renderVariantAttributes}
