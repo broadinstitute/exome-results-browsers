@@ -125,9 +125,13 @@ const DescriptionListItem = styled.div`
 const GeneInfo = ({ gene }) => {
   const ucscReferenceGenomeId = gene.reference_genome === 'GRCh38' ? 'hg38' : 'hg19'
 
-  const otherStudies = [{ id: 'ASC' }, { id: 'BipEx' }, { id: 'Epi25' }, { id: 'SCHEMA' }].filter(
-    ({ id }) => id !== datasetConfig.datasetId
-  )
+  const otherStudies = [
+    { id: 'ASC' },
+    { id: 'BipEx' },
+    { id: 'Epi25' },
+    { id: 'SCHEMA' },
+    { id: 'GP2' },
+  ].filter(({ id }) => id !== datasetConfig.datasetId)
 
   return (
     <DescriptionList>
