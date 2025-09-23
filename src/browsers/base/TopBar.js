@@ -10,6 +10,8 @@ import OtherStudies from './OtherStudies'
 import Searchbox from './Searchbox'
 import { logout, userHasBearerCookie } from './auth'
 
+import gp2LogoSrc from '../gp2/content/gp2logo.svg'
+
 const TitleWrapper = styled.div``
 
 const ToggleMenuButton = styled(Button)``
@@ -122,7 +124,7 @@ const TopBar = ({ title, links, backgroundColor, textColor, passwordProtectedDat
       <TopBarWrapper backgroundColor={backgroundColor} textColor={textColor}>
         <TitleWrapper>
           <Link to="/" onClick={closeMenu}>
-            {title}
+            {datasetId === 'GP2' ? <img src={gp2LogoSrc} alt="GP2 Logo" /> : title}
           </Link>
           <ToggleMenuButton
             onClick={() => {
