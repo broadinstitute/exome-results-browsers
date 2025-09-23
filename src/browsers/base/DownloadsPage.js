@@ -44,18 +44,23 @@ DatasetDownloadLinks.propTypes = {
   datasetId: PropTypes.string.isRequired,
 }
 
-export default () => (
-  <InfoPage title="Downloads">
-    <DatasetDownloadLinks datasetId={datasetConfig.datasetId} />
+export default () => {
+  const datasetsWithoutDownloads = ['GP2', 'IBD']
+  return (
+    <InfoPage title="Downloads">
+      <DatasetDownloadLinks datasetId={datasetConfig.datasetId} />
 
-    <h2>Other Studies</h2>
-    {otherDatasets.map((otherDatasetId) => {
-      return (
-        <React.Fragment key={otherDatasetId}>
-          <h3>{otherDatasetId}</h3>
-          <DatasetDownloadLinks datasetId={otherDatasetId} />
-        </React.Fragment>
-      )
-    })}
-  </InfoPage>
-)
+      <h2>Other Studies</h2>
+      {otherDatasets
+        .filter((otherDatasetId) => !datasetsWithoutDownloads.includes(otherDatasetId))
+        .map((otherDatasetId) => {
+          return (
+            <React.Fragment key={otherDatasetId}>
+              <h3>{otherDatasetId}</h3>
+              <DatasetDownloadLinks datasetId={otherDatasetId} />
+            </React.Fragment>
+          )
+        })}
+    </InfoPage>
+  )
+}
