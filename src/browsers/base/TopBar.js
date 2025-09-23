@@ -16,14 +16,13 @@ const TitleWrapper = styled.div``
 
 const ToggleMenuButton = styled(Button)``
 
-// TODO: re-add this line when the banner is removed
-// margin-bottom: 20px;
 const TopBarWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 10px 30px;
+  margin-bottom: 20px;
   background-color: ${(props) => props.backgroundColor};
 
   @media (max-width: 900px) {
@@ -200,18 +199,6 @@ const TopBar = ({ title, links, backgroundColor, textColor, passwordProtectedDat
               Have feedback? Fill out our{' '}
               <ExternalLink href="https://forms.gle/Zf3BkwwV9dB6TMLA9">Google Form</ExternalLink>
             </p>
-          </CenterHorizontal>
-        </Banner>
-      )}
-      {datasetId === 'GP2' && (
-        <Banner>
-          <CenterHorizontal>
-            <>
-              <p>
-                <b>Note</b>: Have feedback? Fill out our{' '}
-                <ExternalLink href="https://forms.gle/kfNYdzdWS69LZqma9">Google Form</ExternalLink>.
-              </p>
-            </>
           </CenterHorizontal>
         </Banner>
       )}
