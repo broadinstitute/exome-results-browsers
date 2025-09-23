@@ -13,6 +13,7 @@ const studyPhenotypes = {
   BipEx: 'Bipolar disorder',
   Epi25: 'Epilepsy',
   SCHEMA: 'Schizophrenia',
+  GP2: 'Parkinsons',
 }
 
 const GeneResults = DatasetGeneResultComponent
