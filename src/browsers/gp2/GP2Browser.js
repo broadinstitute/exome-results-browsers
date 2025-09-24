@@ -47,8 +47,8 @@ const GP2Browser = () => {
   ]
 
   const analysisGroupLabels = {
-    AFR: 'African/African American',
-    AAC: 'African',
+    AFR: 'African',
+    AAC: 'African Admixed',
     AJ: 'Ashkenazi Jewish',
     AMR: 'Latino and Indigenous people of the Americas',
     EAS: 'East Asian',
