@@ -168,7 +168,7 @@ if (isDevelopment) {
 // Authentication Endpoints
 // ================================================================================================
 
-const PASSWORD_PROTECTED_DATASETS = ['IBD', 'GP2']
+const PASSWORD_PROTECTED_DATASETS = ['IBD']
 const CORRECT_PASSWORD = process.env.DEMO_PASSWORD || 'password'
 const activeTokens = new Set()
 
