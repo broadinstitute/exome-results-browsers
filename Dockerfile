@@ -19,7 +19,7 @@ COPY --chown=node:node src/browsers ./src/browsers
 
 # Build frontend
 COPY --chown=node:node build.env .
-RUN export "$(xargs < build.env)"; yarn run build
+RUN set -a && . ./build.env && set +a && yarn run build
 
 ###############################################################################
 FROM --platform=linux/amd64 node:16.13.1-alpine
