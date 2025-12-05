@@ -123,7 +123,6 @@ const Browser = ({
           path="/"
           render={({ location }) => {
             window.gtag('config', window.gaTrackingId, {
-              anonymize_ip: true,
               page_path: location.pathname,
             })
             return null
