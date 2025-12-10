@@ -59,7 +59,7 @@ declare global {
   }
 }
 
-const PASSWORD_PROTECTED_DATASETS: DatasetId[] = ['IBD']
+const PASSWORD_PROTECTED_DATASETS: DatasetId[] = ['IBD', 'SCHEMA']
 
 interface ProtectedRouteExtraProps {
   datasetId: DatasetId
