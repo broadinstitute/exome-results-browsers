@@ -34,6 +34,7 @@ def prepare_variant_results(test_genes, _output_root):
         an_case=variant_results.AN_case,
         ac_ctrl=variant_results.AC_control,
         an_ctrl=variant_results.AN_control,
+        n_de_novo=hl.or_else(variant_results.n_de_novo, 0),
     )
 
     variant_results = variant_results.drop(
@@ -51,6 +52,7 @@ def prepare_variant_results(test_genes, _output_root):
     variant_results = variant_results.group_by("locus", "alleles").aggregate(
         group_results=hl.agg.collect(variant_results.row_value)
     )
+
     variant_results = variant_results.annotate(
         group_results=hl.dict(
             variant_results.group_results.map(
