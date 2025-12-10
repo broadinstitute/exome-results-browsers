@@ -4,14 +4,6 @@ from data_pipeline.config import pipeline_config
 
 
 def filter_results_table_to_test_gene_intervals(variants):
-    print("Filtering to test intervals ...")
-    # pcsk9_interval = hl.locus_interval(
-    #     "1", 55505221, 55530525, reference_genome="GRCh37", includes_start=True, includes_end=True
-    # )
-    #
-    # setd1a_interval = hl.locus_interval(
-    #     "16", 30968615, 30996437, reference_genome="GRCh37", includes_start=True, includes_end=True
-    # )
     pcsk9_interval_grch38 = hl.locus_interval(
         "chr1", 55039447, 55064852, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
@@ -52,14 +44,9 @@ def prepare_variant_results(test_genes, _output_root):
         "MAC",
     )
 
-    # results = results.annotate(source=hl.delimit(hl.sorted(hl.array(results.source)), ", "))
-
     variant_results = variant_results.annotate(
-        # source="meta",
         analysis_group="meta",
     )
-
-    # results = results.annotate(source=hl.delimit(hl.sorted(hl.array(results.source)), ", "))
 
     variant_results = variant_results.group_by("locus", "alleles").aggregate(
         group_results=hl.agg.collect(variant_results.row_value)
@@ -71,20 +58,6 @@ def prepare_variant_results(test_genes, _output_root):
             )
         )
     )
-
-    # variant_annotations = hl.read_table(variant_annotations_path)
-
-    # variants = variants.select(
-    #     gene_id=variants.gene_id,
-    #     consequence=hl.case()
-    #     .when((variants.canonical_term == "missense_variant") & (variants.mpc >= 3), "missense_variant_mpc_>=3")
-    #     .when((variants.canonical_term == "missense_variant") & (variants.mpc >= 2), "missense_variant_mpc_2-3")
-    #     .when(variants.canonical_term == "missense_variant", "missense_variant_mpc_<2")
-    #     .default(variants.canonical_term),
-    #     hgvsc=variants.hgvsc_canonical.split(":")[-1],
-    #     hgvsp=variants.hgvsp_canonical.split(":")[-1],
-    #     info=hl.struct(cadd=variants.cadd, mpc=variants.mpc, polyphen=variants.polyphen),
-    # )
 
     variant_annotations = variant_annotations.select(
         gene_id=variant_annotations.gene_id,
