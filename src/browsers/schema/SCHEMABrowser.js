@@ -42,7 +42,11 @@ const renderOddsRatio = (value) => {
   if (value === 0) {
     return '0'
   }
-  return value.toPrecision(3)
+  const float_value = parseFloat(value)
+  if (isNaN(float_value)) {
+    return value;
+  }
+  return float_value.toPrecision(3)
 }
 
 const SCHEMABrowser = () => (
@@ -68,96 +72,76 @@ const SCHEMABrowser = () => (
     defaultGeneResultSortKey="P meta"
     geneResultColumns={[
       {
-        key: 'Case PTV',
+        key: 'PTV Case Carrier',
         heading: 'Case PTV',
         tooltip:
-          'Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites. Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 70,
         render: renderCount,
       },
       {
-        key: 'Ctrl PTV',
+        key: 'PTV Control Carrier',
         heading: 'Control PTV',
         tooltip:
-          'Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites. Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 70,
         render: renderCount,
       },
       {
-        key: 'Case mis3',
-        heading: 'Case Missense (MPC\u00a0≥\u00a03)',
+        key: 'PTV + Missense Case Carrier',
+        heading: 'Case PTV + Missense',
         tooltip:
-          'MPC-prioritized missense variants: missense variants with an MPC score above the described threshold. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites, and missense variants predicted to be damaging (mean missense rank percentile >= 93%). Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 100,
         render: renderCount,
       },
       {
-        key: 'Ctrl mis3',
-        heading: 'Control Missense (MPC\u00a0≥\u00a03)',
+        key: 'PTV + Missense Control Carrier',
+        heading: 'Control PTV + Missense',
         tooltip:
-          'MPC-prioritized missense variants: missense variants with an MPC score above the described threshold. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites, and missense variants predicted to be damaging (mean missense rank percentile >= 93%). Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 100,
         render: renderCount,
       },
       {
-        key: 'Case mis2',
-        heading: 'Case Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
-        tooltip:
-          'MPC-prioritized missense variants: missense variants with an MPC score in the described range. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
-        minWidth: 110,
-        render: renderCount,
-      },
-      {
-        key: 'Ctrl mis2',
-        heading: 'Control Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
-        tooltip:
-          'MPC-prioritized missense variants: missense variants with an MPC score in the described range. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
-        minWidth: 110,
-        render: renderCount,
-      },
-      {
-        key: 'De novo PTV',
+        key: 'N de novo PTV',
+        heading: 'De Novo PTV',
         tooltip: 'Determined to be de novo of origin in 3,402 parent-proband trios.',
         minWidth: 90,
         render: renderCount,
       },
       {
-        key: 'De novo mis3',
-        heading: 'De Novo Missense (MPC\u00a0≥\u00a03)',
+        key: 'N de novo PTV + Missense',
+        heading: 'De Novo PTV + Missense',
         tooltip: 'Determined to be de novo of origin in 3,402 parent-proband trios.',
         minWidth: 100,
         render: renderCount,
       },
       {
-        key: 'De novo mis2',
-        heading: 'De Novo Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
-        tooltip: 'Determined to be de novo of origin in 3,402 parent-proband trios.',
-        minWidth: 110,
-        render: renderCount,
-      },
-      {
-        key: 'P meta',
-        tooltip: 'Study-wide meta-analysis P-value.',
+        key: 'SCHEMA2 Case-Control Pvalue',
+        heading: 'Case-Control Cauchy Pvalue',
+        tooltip: 'Cauchy-combined pvalue of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
         minWidth: 100,
       },
       {
-        key: 'Q meta',
-        tooltip: 'P-value adjusted for the False Discovery Rate.',
+        key: 'Case-Control + de novo Pvalue',
+        heading: 'Case-Control + de novo Pvalue',
+        tooltip: 'Weighted meta-analysis p-value combining the Case-Control Cauchy pvalue with the De Novo pvalue',
         minWidth: 100,
       },
       {
-        key: 'OR (Class I)',
-        heading: 'OR (Class\u00a0I)',
+        key: 'PTV OR',
+        heading: 'OR PTV',
         tooltip:
-          'In-sample odds ratio of Class I variants, defined as PTVs and MPC > 3 missense variants.',
+          'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
         minWidth: 110,
         render: renderOddsRatio,
       },
       {
-        key: 'OR (Class II)',
-        heading: 'OR (Class\u00a0II)',
+        key: 'PTV+ Missense OR',
+        heading: 'OR PTV + Missense',
         tooltip:
-          'In-sample odds ratio of Class II variants, defined as MPC 2 - 3 missense variants.',
+          'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs + missense variants predicted to be damaging.',
         minWidth: 110,
         render: renderOddsRatio,
       },
@@ -169,7 +153,7 @@ const SCHEMABrowser = () => (
         render: (results) => (
           <GeneResultsManhattanPlot
             results={results}
-            pValueColumn="P meta"
+            pValueColumn="Case-Control + de novo Pvalue"
             thresholds={[
               {
                 label: 'Genome-wide significance (p = 2.2e-6)',
@@ -189,7 +173,7 @@ const SCHEMABrowser = () => (
         render: (results) => (
           <GeneResultsQQPlot
             results={results}
-            pValueColumn="P meta"
+            pValueColumn="Case-Control + de novo Pvalue"
             thresholds={[
               {
                 label: 'Genome-wide significance (p = 2.2e-6)',
