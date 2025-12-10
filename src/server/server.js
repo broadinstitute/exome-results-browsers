@@ -169,7 +169,12 @@ if (isDevelopment) {
 // ================================================================================================
 
 const PASSWORD_PROTECTED_DATASETS = ['IBD']
-const CORRECT_PASSWORD = process.env.DEMO_PASSWORD || 'password'
+
+const CORRECT_PASSWORD = process.env.DEMO_PASSWORD
+  // Remove the ""s from development env var with a regex
+  ? (process.env.DEMO_PASSWORD.replace(/^"|"$/g, '') || 'password')
+  : 'password'
+
 const activeTokens = new Set()
 
 app.post('/api/auth', (req, res) => {
