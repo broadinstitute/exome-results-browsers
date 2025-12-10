@@ -208,45 +208,18 @@ const SCHEMABrowser = () => (
     variantAnalysisGroupOptions={['meta']}
     variantResultColumns={[
       {
-        key: 'group_result.n_denovos',
+        key: 'group_result.n_de_novo',
         heading: 'No. de novos',
         minWidth: 80,
         type: 'int',
         tooltip: 'Out of AC case, the number of genotypes determined to de novo in origin.',
       },
-      {
-        key: 'group_result.p',
-        heading: 'P-Val',
-        minWidth: 65,
-        tooltip: 'P-value from single variant association testing.',
-      },
-      {
-        key: 'group_result.est',
-        heading: 'Estimate',
-        minWidth: 80,
-        tooltip: 'Effect size from single variant association testing.',
-      },
-      {
-        key: 'group_result.se',
-        heading: 'SE',
-        showOnGenePage: false,
-      },
-      {
-        key: 'group_result.qp',
-        heading: 'Qp',
-        showOnGenePage: false,
-      },
-      {
-        key: 'group_result.i2',
-        heading: 'I2',
-        showOnGenePage: false,
-      },
-      {
-        key: 'group_result.source',
-        heading: 'Source',
-        render: (value) => value,
-        showOnGenePage: false,
-      },
+      // {
+      //   key: 'group_result.source',
+      //   heading: 'Source',
+      //   render: (value) => value,
+      //   showOnGenePage: false,
+      // },
       {
         key: 'group_result.in_analysis',
         heading: 'In Analysis',
