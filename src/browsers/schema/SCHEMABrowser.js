@@ -120,9 +120,15 @@ const SCHEMABrowser = () => (
         render: renderCount,
       },
       {
+        key: 'SCHEMA2 Case-Control Pvalue',
+        heading: 'Case-Control Cauchy Pvalue',
+        tooltip: 'Study-wide P-value for Case-Control.',
+        minWidth: 100,
+      },
+      {
         key: 'Case-Control + de novo Pvalue',
-        heading: 'P meta',
-        tooltip: 'Study-wide meta-analysis P-value.',
+        heading: 'Case-Control + de novo Pvalue',
+        tooltip: 'Study-wide P-value for Case-Control + de novos.',
         minWidth: 100,
       },
       {
