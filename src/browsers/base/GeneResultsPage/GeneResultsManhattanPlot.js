@@ -5,10 +5,21 @@ import styled from 'styled-components'
 
 import { ManhattanPlot } from '@gnomad/manhattan-plot'
 
+const VALID_MANHATTAN_PACKAGE_CHROMOSOMES = new Set(
+  Array.from(new Array(22), (_, i) => `${i + 1}`).concat(['X', 'Y'])
+)
+
 const GeneResultsManhattanPlot = ({ pValueColumn, results, ...otherProps }) => {
   const renderedDataPoints = results
-    .filter((r) => r.chrom && r.pos && r[pValueColumn])
-    .map((r) => ({ ...r, pval: r[pValueColumn] }))
+    .filter((r) => {
+      return (
+        r.chrom &&
+        r.pos &&
+        r[pValueColumn] &&
+        VALID_MANHATTAN_PACKAGE_CHROMOSOMES.has(r.chrom)
+      )
+    })
+    .map((r) => ({ ...r, pval: r[pValueColumn]}))
 
   return (
     <ManhattanPlot
