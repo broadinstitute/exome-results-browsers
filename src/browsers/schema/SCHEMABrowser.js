@@ -229,7 +229,7 @@ const SCHEMABrowser = () => (
       applyFilter: (variants, { onlyDeNovo, onlyInAnalysis }) => {
         let filteredVariants = variants
         if (onlyDeNovo) {
-          filteredVariants = filteredVariants.filter((v) => v.group_result.n_denovos > 0)
+          filteredVariants = filteredVariants.filter((v) => v.group_result.n_de_novo > 0)
         }
         if (onlyInAnalysis) {
           filteredVariants = filteredVariants.filter((v) => v.group_result.in_analysis)
