@@ -84,7 +84,7 @@ def prepare_variant_results(test_genes, _output_root):
         hgvsc=variant_annotations.hgvsc.split(":")[-1],
         hgvsp=variant_annotations.hgvsp.split(":")[-1],
         info=hl.struct(
-            misrank_percentil=variant_annotations["MisRank_Percentile"],
+            misrank_percentile=variant_annotations["MisRank_Percentile"],
             mpc=variant_annotations["MPC"],
             alpha_missense=variant_annotations["AlphaMissense"],
             misfit_s=variant_annotations["MisFit_S"],
