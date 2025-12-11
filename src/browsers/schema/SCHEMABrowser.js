@@ -235,10 +235,12 @@ const SCHEMABrowser = () => (
         return filteredVariants
       },
     }}
-    renderVariantAttributes={({ cadd, mpc, polyphen }) => [
-      { label: 'PolyPhen', content: polyphen === null ? '–' : polyphen },
+    renderVariantAttributes={({ misrank_percentile: misrankPercentile, mpc, alpha_missense: alphaMissense, misfit_s: misfitS, pop_eve: popEve }) => [
+      { label: 'MisRank Percentile', content: misrankPercentile === null ? '–' : misrankPercentile },
       { label: 'MPC', content: mpc === null ? '–' : mpc },
-      { label: 'CADD', content: cadd === null ? '–' : cadd },
+      { label: 'AlphaMissense', content: alphaMissense === null ? '–' : alphaMissense },
+      { label: 'MisFit S', content: misfitS === null ? '–' : misfitS },
+      { label: 'PopEVE', content: popEve === null ? '–' : popEve },
     ]}
   />
 )
