@@ -62,7 +62,7 @@ const SCHEMAGeneResult = ({ result }) => {
       <tbody>
         <tr>
           <th scope="row">
-            <TooltipAnchor tooltip="Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants.">
+            <TooltipAnchor tooltip="Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites.">
               <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>PTV</TooltipHint>
             </TooltipAnchor>
           </th>
@@ -89,7 +89,7 @@ const SCHEMAGeneResult = ({ result }) => {
 
         <tr>
           <th scope="row">
-            <TooltipAnchor tooltip="MPC-prioritized missense variants: missense variants with an MPC score above the described threshold.">
+            <TooltipAnchor tooltip="Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites, and missense variants predicted to be damaging (mean missense rank percentile >= 93%).">
               <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>
                 PTV + Missense
               </TooltipHint>
