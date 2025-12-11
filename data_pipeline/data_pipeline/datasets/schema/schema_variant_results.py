@@ -24,6 +24,22 @@ def prepare_variant_results(test_genes, _output_root):
     variant_results = hl.read_table(variant_results_path)
     variant_annotations = hl.read_table(variant_annotations_path)
 
+    variant_partitions = variant_results.n_partitions()
+    annotations_partitions = variant_annotations.n_partitions()
+
+    print(f"Variants table has {variant_partitions} partitions")
+    print(f"Annotations table has {annotations_partitions} partitions")
+
+    # initial variants had 137k partitions
+    if (not test_genes) and variant_partitions > 2000:
+        print("Naive coalescing variant table")
+        variant_results = variant_results.naive_coalesce(2000)
+
+    # initial annotations had 75k partitions
+    if (not test_genes) and annotations_partitions > 2000:
+        print("Naive coalescing annotation table")
+        variant_annotations = variant_annotations.naive_coalesce(2000)
+
     if test_genes:
         variant_results = filter_results_table_to_test_gene_intervals(variant_results)
         variant_annotations = filter_results_table_to_test_gene_intervals(variant_annotations)
