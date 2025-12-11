@@ -114,8 +114,12 @@ const SCHEMAGeneResult = ({ result }) => {
       </tbody>
     </Table>
     <p style={{ marginTop: '2rem', fontWeight: 'bold' }}>
-      Meta-analysis <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
+      Case-Control Cauchy <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
       {result['SCHEMA2 Case-Control Pvalue'] === null ? '—' : result['SCHEMA2 Case-Control Pvalue'].toPrecision(3)}
+    </p>
+    <p style={{ fontWeight: 'bold' }}>
+      Case-Control + de novo <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
+      {result['Case-Control + de novo Pvalue'] === null ? '—' : result['Case-Control + de novo Pvalue'].toPrecision(3)}
     </p>
     <p style={{ marginTop: '2em' }}>
       <strong>Total cases: {result.n_cases}</strong>
