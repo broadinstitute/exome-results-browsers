@@ -51,8 +51,10 @@ const renderOddsRatio = (value) => {
 
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
-    browserTitle="SCHEMA browser"
-    navBarBackgroundColor="#0a79bf"
+    // browserTitle="SCHEMA browser"
+    // navBarBackgroundColor="#0a79bf"
+    browserTitle="SCHEMA2 demo"
+    navBarBackgroundColor="#ff9900"
     homePage={SCHEMAHomePage}
     extraPages={[
       {
