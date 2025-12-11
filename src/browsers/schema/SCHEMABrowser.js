@@ -77,7 +77,7 @@ const SCHEMABrowser = () => (
         key: 'PTV Case Carrier',
         heading: 'Case PTV',
         tooltip:
-          'Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites. Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 70,
         render: renderCount,
       },
@@ -85,7 +85,7 @@ const SCHEMABrowser = () => (
         key: 'PTV Control Carrier',
         heading: 'Control PTV',
         tooltip:
-          'Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites. Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 70,
         render: renderCount,
       },
@@ -93,7 +93,7 @@ const SCHEMABrowser = () => (
         key: 'PTV + Missense Case Carrier',
         heading: 'Case PTV + Missense',
         tooltip:
-          'Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants, in addition to variants with a high MisRank percentile. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites, and missense variants predicted to be damaging (mean missense rank percentile >= 93%). Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 100,
         render: renderCount,
       },
@@ -101,7 +101,7 @@ const SCHEMABrowser = () => (
         key: 'PTV + Missense Control Carrier',
         heading: 'Control PTV + Missense',
         tooltip:
-          'Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants, in addition to variants with a high MisRank percentile. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites, and missense variants predicted to be damaging (mean missense rank percentile >= 93%). Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 100,
         render: renderCount,
       },
@@ -135,7 +135,7 @@ const SCHEMABrowser = () => (
         key: 'PTV OR',
         heading: 'OR PTV',
         tooltip:
-          'In-sample odds ratio of PTV variants.',
+          'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
         minWidth: 110,
         render: renderOddsRatio,
       },
@@ -143,7 +143,7 @@ const SCHEMABrowser = () => (
         key: 'PTV+ Missense OR',
         heading: 'OR PTV + Missense',
         tooltip:
-          'In-sample odds ratio of PTV + Missense variants.',
+          'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs + missense variants predicted to be damaging.',
         minWidth: 110,
         render: renderOddsRatio,
       },
