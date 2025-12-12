@@ -16,6 +16,11 @@ variantConsequences.splice(
   vepConsequences.findIndex(({ term }) => term === 'missense_variant'),
   1,
   {
+    term: 'missense_variant',
+    label: 'missense',
+    category: 'missense',
+  },
+  {
     term: 'missense_variant_mpc_>=3',
     label: 'missense (MPC\u00a0≥\u00a03)',
     category: 'missense',
