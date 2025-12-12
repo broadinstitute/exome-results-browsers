@@ -122,13 +122,13 @@ const SCHEMABrowser = () => (
       {
         key: 'SCHEMA2 Case-Control Pvalue',
         heading: 'Case-Control Cauchy Pvalue',
-        tooltip: 'Study-wide P-value for Case-Control.',
+        tooltip: 'Cauchy-combined pvalue of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
         minWidth: 100,
       },
       {
         key: 'Case-Control + de novo Pvalue',
         heading: 'Case-Control + de novo Pvalue',
-        tooltip: 'Study-wide P-value for Case-Control + de novos.',
+        tooltip: 'Weighted meta-analysis p-value combining the Case-Control Cauchy pvalue with the De Novo pvalue',
         minWidth: 100,
       },
       {
