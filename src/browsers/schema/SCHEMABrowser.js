@@ -168,7 +168,7 @@ const SCHEMABrowser = () => (
         render: (results) => (
           <GeneResultsManhattanPlot
             results={results}
-            pValueColumn="Case-Control de novo Pvalue"
+            pValueColumn="Case-Control Min-Pvalue"
             thresholds={[
               {
                 label: 'Genome-wide significance (p = 2.2e-6)',
@@ -188,7 +188,7 @@ const SCHEMABrowser = () => (
         render: (results) => (
           <GeneResultsQQPlot
             results={results}
-            pValueColumn="Case-Control + de novo Pvalue"
+            pValueColumn="Case-Control Min-Pvalue"
             thresholds={[
               {
                 label: 'Genome-wide significance (p = 2.2e-6)',
