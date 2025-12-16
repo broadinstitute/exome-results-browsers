@@ -230,6 +230,16 @@ const TopBar = ({
           </CenterHorizontal>
         </Banner>
       )}
+      {datasetId === 'SCHEMA' && (
+        <Banner>
+          <CenterHorizontal>
+            <p>
+              Have feedback? Fill out our{' '}
+              <ExternalLink href="https://forms.gle/Ch6UfT4iirvZ6Lvi9">SCHEMA2 Demo Google Form</ExternalLink>
+            </p>
+          </CenterHorizontal>
+        </Banner>
+      )}
     </>
   )
 }
