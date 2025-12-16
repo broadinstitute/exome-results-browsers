@@ -49,7 +49,7 @@ const renderOddsRatio = (value) => {
   }
   const float_value = parseFloat(value)
   if (isNaN(float_value)) {
-    return value;
+    return value
   }
   return float_value.toPrecision(3)
 }
@@ -76,7 +76,7 @@ const SCHEMABrowser = () => (
     geneResultsPageHeading="Exome meta-analysis results"
     geneResultAnalysisGroupOptions={['meta']}
     defaultGeneResultAnalysisGroup="meta"
-    defaultGeneResultSortKey="P meta"
+    defaultGeneResultSortKey="Case-Control Cauchy Pvalue"
     geneResultColumns={[
       {
         key: 'PTV Case Carrier',
@@ -95,7 +95,7 @@ const SCHEMABrowser = () => (
         render: renderCount,
       },
       {
-        key: 'PTV + Missense Case Carrier',
+        key: 'PTV Missense Case Carrier',
         heading: 'Case PTV + Missense',
         tooltip:
           'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites, and missense variants predicted to be damaging (mean missense rank percentile >= 93%). Aggregated counts from variants with minor allele count [MAC] <= 15',
@@ -103,7 +103,7 @@ const SCHEMABrowser = () => (
         render: renderCount,
       },
       {
-        key: 'PTV + Missense Control Carrier',
+        key: 'PTV Missense Control Carrier',
         heading: 'Control PTV + Missense',
         tooltip:
           'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites, and missense variants predicted to be damaging (mean missense rank percentile >= 93%). Aggregated counts from variants with minor allele count [MAC] <= 15',
@@ -118,34 +118,42 @@ const SCHEMABrowser = () => (
         render: renderCount,
       },
       {
-        key: 'N de novo PTV + Missense',
+        key: 'N de novo PTV Missense',
         heading: 'De Novo PTV + Missense',
         tooltip: 'Determined to be de novo of origin in 3,402 parent-proband trios.',
         minWidth: 100,
         render: renderCount,
       },
       {
-        key: 'SCHEMA2 Case-Control Pvalue',
+        key: 'Case-Control Cauchy Pvalue',
         heading: 'Case-Control Cauchy Pvalue',
-        tooltip: 'Cauchy-combined pvalue of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
+        tooltip:
+          'Cauchy-combined pvalue of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
         minWidth: 100,
       },
       {
-        key: 'Case-Control + de novo Pvalue',
+        key: 'Case-Control Min-Pvalue',
+        heading: 'Case-Control Min Pvalue',
+        tooltip:
+          'Minimum pvalue of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
+        minWidth: 100,
+      },
+      {
+        key: 'Case Control de novo Pvalue',
         heading: 'Case-Control + de novo Pvalue',
-        tooltip: 'Weighted meta-analysis p-value combining the Case-Control Cauchy pvalue with the De Novo pvalue',
+        tooltip:
+          'Weighted meta-analysis p-value combining the Case-Control Cauchy pvalue with the De Novo pvalue',
         minWidth: 100,
       },
       {
         key: 'PTV OR',
         heading: 'OR PTV',
-        tooltip:
-          'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
+        tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
         minWidth: 110,
         render: renderOddsRatio,
       },
       {
-        key: 'PTV+ Missense OR',
+        key: 'PTV Missense OR',
         heading: 'OR PTV + Missense',
         tooltip:
           'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs + missense variants predicted to be damaging.',
@@ -248,8 +256,17 @@ const SCHEMABrowser = () => (
         return filteredVariants
       },
     }}
-    renderVariantAttributes={({ misrank_percentile: misrankPercentile, mpc, alpha_missense: alphaMissense, misfit_s: misfitS, pop_eve: popEve }) => [
-      { label: 'MisRank Percentile', content: misrankPercentile === null ? '–' : misrankPercentile },
+    renderVariantAttributes={({
+      misrank_percentile: misrankPercentile,
+      mpc,
+      alpha_missense: alphaMissense,
+      misfit_s: misfitS,
+      pop_eve: popEve,
+    }) => [
+      {
+        label: 'MisRank Percentile',
+        content: misrankPercentile === null ? '–' : misrankPercentile,
+      },
       { label: 'MPC', content: mpc === null ? '–' : mpc },
       { label: 'AlphaMissense', content: alphaMissense === null ? '–' : alphaMissense },
       { label: 'MisFit S', content: misfitS === null ? '–' : misfitS },
