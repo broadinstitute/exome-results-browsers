@@ -88,6 +88,7 @@ const Menu = styled.ul`
 const Banner = styled.div`
   width: 100%;
   margin-bottom: 20px;
+  margin-top: -20px;
   background-color: #f0f0f0;
 `
 
@@ -192,6 +193,17 @@ const TopBar = ({ title, links, backgroundColor, textColor, passwordProtectedDat
           </Modal>
         )}
       </TopBarWrapper>
+      {datasetId === 'SCHEMA' && (
+        <Banner>
+          <CenterHorizontal>
+            <p>
+              Have feedback? Fill out our{' '}
+              <ExternalLink href="https://forms.gle/Ch6UfT4iirvZ6Lvi9">SCHEMA2 Demo feedback form</ExternalLink>
+              .
+            </p>
+          </CenterHorizontal>
+        </Banner>
+      )}
       {datasetId === 'IBD' && (
         <Banner>
           <CenterHorizontal>

@@ -210,7 +210,7 @@ def process_variants_iteratively(output_directory, ds):
     return
 
 
-def write_data_files(table_path, output_directory, genes=None):
+def write_data_files(table_path, output_directory, genes=None, iterative=False):
     if output_directory.startswith("gs://"):
         raise ValueError("Google Storage paths are not supported for output_directory")
 
@@ -228,10 +228,21 @@ def write_data_files(table_path, output_directory, genes=None):
         write_json_files(output_directory, temp_file_name, n_rows)
 
         return
-    else:
+
+    elif iterative:
+        print("Going iterative")
         process_variants_iteratively(output_directory, ds)
 
         return
+
+    else:
+        print("Trying normal for speed")
+
+        temp_file_name = "temp.tsv"
+        n_rows = ds.count()
+        ds.select(data=hl.json(ds.row)).export(f"{output_directory}/{temp_file_name}", header=False)
+
+        write_json_files(output_directory, temp_file_name, n_rows)
 
 
 def init_hail(env="local"):
@@ -267,6 +278,7 @@ if __name__ == "__main__":
     parser.add_argument("combined_hail_table")
     parser.add_argument("output_directory")
     parser.add_argument("--genes", nargs="+")
+    parser.add_argument("--iterative", action="store_true")
     parser.add_argument(
         "--environment",
         choices=["local", "gce"],
@@ -277,6 +289,6 @@ if __name__ == "__main__":
 
     init_hail(args.environment)
 
-    write_data_files(args.combined_hail_table, args.output_directory, args.genes)
+    write_data_files(args.combined_hail_table, args.output_directory, args.genes, args.iterative)
 
     print("Finished")

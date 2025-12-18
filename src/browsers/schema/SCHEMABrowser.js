@@ -16,6 +16,11 @@ variantConsequences.splice(
   vepConsequences.findIndex(({ term }) => term === 'missense_variant'),
   1,
   {
+    term: 'missense_variant',
+    label: 'missense',
+    category: 'missense',
+  },
+  {
     term: 'missense_variant_mpc_>=3',
     label: 'missense (MPC\u00a0≥\u00a03)',
     category: 'missense',
@@ -29,7 +34,32 @@ variantConsequences.splice(
     term: 'missense_variant_mpc_<2',
     label: 'missense (MPC\u00a0<\u00a02)',
     category: 'missense',
-  }
+  },
+  {
+    term: 'transcript_ablation_LC',
+    label: 'LC transcript ablation',
+    category: 'lof',
+  },
+  {
+    term: 'splice_acceptor_variant_LC',
+    label: 'LC splice acceptor',
+    category: 'lof',
+  },
+  {
+    term: 'splice_donor_variant_LC',
+    label: 'LC splice donor',
+    category: 'lof',
+  },
+  {
+    term: 'stop_gained_LC',
+    label: 'LC stop gained',
+    category: 'lof',
+  },
+  {
+    term: 'frameshift_variant_LC',
+    label: 'LC frameshift',
+    category: 'lof',
+  },
 )
 
 const renderOddsRatio = (value) => {
@@ -42,13 +72,19 @@ const renderOddsRatio = (value) => {
   if (value === 0) {
     return '0'
   }
-  return value.toPrecision(3)
+  const float_value = parseFloat(value)
+  if (isNaN(float_value)) {
+    return value
+  }
+  return float_value.toPrecision(3)
 }
 
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
-    browserTitle="SCHEMA browser"
-    navBarBackgroundColor="#0a79bf"
+    // browserTitle="SCHEMA browser"
+    // navBarBackgroundColor="#0a79bf"
+    browserTitle="SCHEMA2 demo"
+    navBarBackgroundColor="#ff9900"
     homePage={SCHEMAHomePage}
     extraPages={[
       {
@@ -65,99 +101,87 @@ const SCHEMABrowser = () => (
     geneResultsPageHeading="Exome meta-analysis results"
     geneResultAnalysisGroupOptions={['meta']}
     defaultGeneResultAnalysisGroup="meta"
-    defaultGeneResultSortKey="P meta"
+    defaultGeneResultSortKey="Case-Control Cauchy Pvalue"
     geneResultColumns={[
       {
-        key: 'Case PTV',
+        key: 'PTV Case Carrier',
         heading: 'Case PTV',
         tooltip:
-          'Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites. Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 70,
         render: renderCount,
       },
       {
-        key: 'Ctrl PTV',
+        key: 'PTV Control Carrier',
         heading: 'Control PTV',
         tooltip:
-          'Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites. Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 70,
         render: renderCount,
       },
       {
-        key: 'Case mis3',
-        heading: 'Case Missense (MPC\u00a0≥\u00a03)',
+        key: 'PTV Missense Case Carrier',
+        heading: 'Case PTV + Missense',
         tooltip:
-          'MPC-prioritized missense variants: missense variants with an MPC score above the described threshold. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites, and missense variants predicted to be damaging (mean missense rank percentile >= 93%). Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 100,
         render: renderCount,
       },
       {
-        key: 'Ctrl mis3',
-        heading: 'Control Missense (MPC\u00a0≥\u00a03)',
+        key: 'PTV Missense Control Carrier',
+        heading: 'Control PTV + Missense',
         tooltip:
-          'MPC-prioritized missense variants: missense variants with an MPC score above the described threshold. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
+          'Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites, and missense variants predicted to be damaging (mean missense rank percentile >= 93%). Aggregated counts from variants with minor allele count [MAC] <= 15',
         minWidth: 100,
         render: renderCount,
       },
       {
-        key: 'Case mis2',
-        heading: 'Case Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
-        tooltip:
-          'MPC-prioritized missense variants: missense variants with an MPC score in the described range. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
-        minWidth: 110,
-        render: renderCount,
-      },
-      {
-        key: 'Ctrl mis2',
-        heading: 'Control Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
-        tooltip:
-          'MPC-prioritized missense variants: missense variants with an MPC score in the described range. Aggregated counts from variants with minor allele count [MAC] ≤ 5.',
-        minWidth: 110,
-        render: renderCount,
-      },
-      {
-        key: 'De novo PTV',
+        key: 'N de novo PTV',
+        heading: 'De Novo PTV',
         tooltip: 'Determined to be de novo of origin in 3,402 parent-proband trios.',
         minWidth: 90,
         render: renderCount,
       },
       {
-        key: 'De novo mis3',
-        heading: 'De Novo Missense (MPC\u00a0≥\u00a03)',
+        key: 'N de novo PTV Missense',
+        heading: 'De Novo PTV + Missense',
         tooltip: 'Determined to be de novo of origin in 3,402 parent-proband trios.',
         minWidth: 100,
         render: renderCount,
       },
       {
-        key: 'De novo mis2',
-        heading: 'De Novo Missense (2\u00a0≤\u00a0MPC\u00a0<\u00a03)',
-        tooltip: 'Determined to be de novo of origin in 3,402 parent-proband trios.',
-        minWidth: 110,
-        render: renderCount,
-      },
-      {
-        key: 'P meta',
-        tooltip: 'Study-wide meta-analysis P-value.',
-        minWidth: 100,
-      },
-      {
-        key: 'Q meta',
-        tooltip: 'P-value adjusted for the False Discovery Rate.',
-        minWidth: 100,
-      },
-      {
-        key: 'OR (Class I)',
-        heading: 'OR (Class\u00a0I)',
+        key: 'Case-Control Cauchy Pvalue',
+        heading: 'Case-Control Cauchy Pvalue',
         tooltip:
-          'In-sample odds ratio of Class I variants, defined as PTVs and MPC > 3 missense variants.',
+          'Cauchy-combined pvalue of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
+        minWidth: 100,
+      },
+      {
+        key: 'Case-Control Min-Pvalue',
+        heading: 'Case-Control Min Pvalue',
+        tooltip:
+          'Minimum pvalue of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
+        minWidth: 100,
+      },
+      {
+        key: 'Case Control de novo Pvalue',
+        heading: 'Case-Control + de novo Pvalue',
+        tooltip:
+          'Weighted meta-analysis p-value combining the Case-Control Cauchy pvalue with the De Novo pvalue',
+        minWidth: 100,
+      },
+      {
+        key: 'PTV OR',
+        heading: 'OR PTV',
+        tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
         minWidth: 110,
         render: renderOddsRatio,
       },
       {
-        key: 'OR (Class II)',
-        heading: 'OR (Class\u00a0II)',
+        key: 'PTV Missense OR',
+        heading: 'OR PTV + Missense',
         tooltip:
-          'In-sample odds ratio of Class II variants, defined as MPC 2 - 3 missense variants.',
+          'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs + missense variants predicted to be damaging.',
         minWidth: 110,
         render: renderOddsRatio,
       },
@@ -169,7 +193,7 @@ const SCHEMABrowser = () => (
         render: (results) => (
           <GeneResultsManhattanPlot
             results={results}
-            pValueColumn="P meta"
+            pValueColumn="Case-Control Min-Pvalue"
             thresholds={[
               {
                 label: 'Genome-wide significance (p = 2.2e-6)',
@@ -189,7 +213,7 @@ const SCHEMABrowser = () => (
         render: (results) => (
           <GeneResultsQQPlot
             results={results}
-            pValueColumn="P meta"
+            pValueColumn="Case-Control Min-Pvalue"
             thresholds={[
               {
                 label: 'Genome-wide significance (p = 2.2e-6)',
@@ -208,45 +232,18 @@ const SCHEMABrowser = () => (
     variantAnalysisGroupOptions={['meta']}
     variantResultColumns={[
       {
-        key: 'group_result.n_denovos',
+        key: 'group_result.n_de_novo',
         heading: 'No. de novos',
         minWidth: 80,
         type: 'int',
         tooltip: 'Out of AC case, the number of genotypes determined to de novo in origin.',
       },
-      {
-        key: 'group_result.p',
-        heading: 'P-Val',
-        minWidth: 65,
-        tooltip: 'P-value from single variant association testing.',
-      },
-      {
-        key: 'group_result.est',
-        heading: 'Estimate',
-        minWidth: 80,
-        tooltip: 'Effect size from single variant association testing.',
-      },
-      {
-        key: 'group_result.se',
-        heading: 'SE',
-        showOnGenePage: false,
-      },
-      {
-        key: 'group_result.qp',
-        heading: 'Qp',
-        showOnGenePage: false,
-      },
-      {
-        key: 'group_result.i2',
-        heading: 'I2',
-        showOnGenePage: false,
-      },
-      {
-        key: 'group_result.source',
-        heading: 'Source',
-        render: (value) => value,
-        showOnGenePage: false,
-      },
+      // {
+      //   key: 'group_result.source',
+      //   heading: 'Source',
+      //   render: (value) => value,
+      //   showOnGenePage: false,
+      // },
       {
         key: 'group_result.in_analysis',
         heading: 'In Analysis',
@@ -276,7 +273,7 @@ const SCHEMABrowser = () => (
       applyFilter: (variants, { onlyDeNovo, onlyInAnalysis }) => {
         let filteredVariants = variants
         if (onlyDeNovo) {
-          filteredVariants = filteredVariants.filter((v) => v.group_result.n_denovos > 0)
+          filteredVariants = filteredVariants.filter((v) => v.group_result.n_de_novo > 0)
         }
         if (onlyInAnalysis) {
           filteredVariants = filteredVariants.filter((v) => v.group_result.in_analysis)
@@ -284,10 +281,21 @@ const SCHEMABrowser = () => (
         return filteredVariants
       },
     }}
-    renderVariantAttributes={({ cadd, mpc, polyphen }) => [
-      { label: 'PolyPhen', content: polyphen === null ? '–' : polyphen },
+    renderVariantAttributes={({
+      misrank_percentile: misrankPercentile,
+      mpc,
+      alpha_missense: alphaMissense,
+      misfit_s: misfitS,
+      pop_eve: popEve,
+    }) => [
+      {
+        label: 'MisRank Percentile',
+        content: misrankPercentile === null ? '–' : misrankPercentile,
+      },
       { label: 'MPC', content: mpc === null ? '–' : mpc },
-      { label: 'CADD', content: cadd === null ? '–' : cadd },
+      { label: 'AlphaMissense', content: alphaMissense === null ? '–' : alphaMissense },
+      { label: 'MisFit S', content: misfitS === null ? '–' : misfitS },
+      { label: 'PopEVE', content: popEve === null ? '–' : popEve },
     ]}
   />
 )
