@@ -34,7 +34,32 @@ variantConsequences.splice(
     term: 'missense_variant_mpc_<2',
     label: 'missense (MPC\u00a0<\u00a02)',
     category: 'missense',
-  }
+  },
+  {
+    term: 'transcript_ablation_LC',
+    label: 'LC transcript ablation',
+    category: 'lof',
+  },
+  {
+    term: 'splice_acceptor_variant_LC',
+    label: 'LC splice acceptor',
+    category: 'lof',
+  },
+  {
+    term: 'splice_donor_variant_LC',
+    label: 'LC splice donor',
+    category: 'lof',
+  },
+  {
+    term: 'stop_gained_LC',
+    label: 'LC stop gained',
+    category: 'lof',
+  },
+  {
+    term: 'frameshift_variant_LC',
+    label: 'LC frameshift',
+    category: 'lof',
+  },
 )
 
 const renderOddsRatio = (value) => {
