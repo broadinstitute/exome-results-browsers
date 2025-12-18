@@ -4,7 +4,7 @@ from data_pipeline.config import pipeline_config
 
 
 def filter_results_table_to_test_gene(results):
-    test_gene_symbols = ["PCSK9", "SETD1A"]
+    test_gene_symbols = ["PCSK9", "SETD1A", "SAMD11"]
     test_gene_set = hl.literal(test_gene_symbols)
 
     results = results.filter(test_gene_set.contains(results["Gene"]))
