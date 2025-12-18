@@ -12,7 +12,12 @@ def filter_results_table_to_test_gene_intervals(variants):
         "chr16", 30957754, 30984664, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
 
-    variants = hl.filter_intervals(variants, [pcsk9_interval_grch38, setd1a_interval_grch38])
+    # ENSG00000187634
+    samd11_interval_grch38 = hl.locus_interval(
+        "chr1", 923923, 944575, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+
+    variants = hl.filter_intervals(variants, [pcsk9_interval_grch38, setd1a_interval_grch38, samd11_interval_grch38])
 
     return variants.persist()
 
