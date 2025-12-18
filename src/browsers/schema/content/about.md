@@ -23,8 +23,6 @@ We would like to thank the many tens of thousands of patients and families who g
 
 ### A-BIG-NET 
 
-### BioX
-
 ### Genomic Psychiatry Cohort (GPC)
 
 ### GenSCRIP
