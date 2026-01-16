@@ -4,12 +4,15 @@ from data_pipeline.config import pipeline_config
 
 
 def filter_results_table_to_test_gene_intervals(results):
+
+    # ENSG00000169174
     pcsk9_interval = hl.locus_interval(
         "chr1", 55039447, 55064852, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
 
+    # ENSG00000023516
     akap11_interval = hl.locus_interval(
-        "chr1", 55039447, 55064852, reference_genome="GRCh38", includes_start=True, includes_end=True
+        "chr13", 42272152, 42323261, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
 
     results = hl.filter_intervals(results, [pcsk9_interval, akap11_interval])
@@ -32,6 +35,22 @@ def prepare_variant_results(test_genes, _output_root):
     results = results.drop("af_case", "af_ctrl")
 
     results = results.filter((results.ac_case > 0) | (results.ac_ctrl > 0))
+
+    results = results.select(
+        # "locus",
+        # "alleles",
+        "variant_id",
+        "analysis_group",
+        "ac_case",
+        "an_case",
+        "ac_ctrl",
+        "an_ctrl",
+        "estimate",
+        "chi_sq_stat",
+        "p_value",
+        "in_analysis",
+        "in_gnomad_non_neuro",
+    )
 
     # Annotate variants with a struct for each analysis group
     results = results.group_by("locus", "alleles").aggregate(group_results=hl.agg.collect(results.row_value))
