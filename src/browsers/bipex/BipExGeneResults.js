@@ -25,89 +25,48 @@ const renderOddsRatio = (value) => {
 
 const BipExGeneResult = ({ result }) => (
   <div>
-    <h3>Burden (MAC ≤ 5)</h3>
     <Table>
       <thead>
         <tr>
           <th scope="col">Category</th>
           <th scope="col">Case Count</th>
           <th scope="col">Control Count</th>
+          <th scope="col">P-value</th>
+          <th scope="col">Odds Ratio</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <th scope="row">Protein-truncating</th>
-          <td>{result.ptv_case_count === null ? '-' : result.ptv_case_count}</td>
-          <td>{result.ptv_control_count === null ? '-' : result.ptv_control_count}</td>
+          <td>{result.ptv_case_carrier === null ? '-' : result.ptv_case_carrier}</td>
+          <td>{result.ptv_ctrl_carrier === null ? '-' : result.ptv_ctrl_carrier}</td>
+          <td>{result.ptv_p_value === null ? '-' : result.ptv_p_value}</td>
+          <td>{result.ptv_odds_ratio === null ? '-' : result.ptv_odds_ratio}</td>
         </tr>
         <tr>
-          <th scope="row">Damaging Missense</th>
-          <td>
-            {result.damaging_missense_case_count === null
-              ? '-'
-              : result.damaging_missense_case_count}
-          </td>
-          <td>
-            {result.damaging_missense_control_count === null
-              ? '-'
-              : result.damaging_missense_control_count}
-          </td>
+          <th scope="row">Missense</th>
+          <td>{result.mis_case_carrier === null ? '-' : result.mis_case_carrier}</td>
+          <td>{result.mis_ctrl_carrier === null ? '-' : result.mis_ctrl_carrier}</td>
+          <td>{result.mis_p_value === null ? '-' : result.mis_p_value}</td>
+          <td>{result.mis_odds_ratio === null ? '-' : result.mis_odds_ratio}</td>
+        </tr>
+        <tr>
+          <th scope="row">Missense + Protein-truncating</th>
+          <td>{result.ptv_mis_case_carrier === null ? '-' : result.ptv_mis_case_carrier}</td>
+          <td>{result.ptv_mis_ctrl_carrier === null ? '-' : result.ptv_mis_ctrl_carrier}</td>
+          <td>{result.ptv_mis_p_value === null ? '-' : result.ptv_mis_p_value}</td>
+          <td>{result.ptv_mis_odds_ratio === null ? '-' : result.ptv_mis_odds_ratio}</td>
+        </tr>
+        <tr>
+          <th scope="row">Synonymous</th>
+          <td>{result.syn_case_carrier === null ? '-' : result.syn_case_carrier}</td>
+          <td>{result.syn_ctrl_carrier === null ? '-' : result.syn_ctrl_carrier}</td>
+          <td>{result.syn_p_value === null ? '-' : result.syn_p_value}</td>
+          <td>{result.syn_odds_ratio === null ? '-' : result.syn_odds_ratio}</td>
         </tr>
       </tbody>
     </Table>
 
-    <h3>Presence/absence (MAC ≤ 5, not in gnomAD non-neuro)</h3>
-    <Table>
-      <thead>
-        <tr>
-          <th scope="col">Category</th>
-          <th scope="col">Case Count</th>
-          <th scope="col">Control Count</th>
-          <th scope="col">Fisher p-val</th>
-          <th scope="col">Fisher odds ratio</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">Protein-truncating</th>
-          <td>
-            {result.ptv_fisher_gnom_non_psych_case_count === null
-              ? '-'
-              : result.ptv_fisher_gnom_non_psych_case_count}
-          </td>
-          <td>
-            {result.ptv_fisher_gnom_non_psych_control_count === null
-              ? '-'
-              : result.ptv_fisher_gnom_non_psych_control_count}
-          </td>
-          <td>
-            {result.ptv_fisher_gnom_non_psych_pval === null
-              ? '-'
-              : result.ptv_fisher_gnom_non_psych_pval.toPrecision(3)}
-          </td>
-          <td>{renderOddsRatio(result.ptv_fisher_gnom_non_psych_OR)}</td>
-        </tr>
-        <tr>
-          <th scope="row">Damaging Missense</th>
-          <td>
-            {result.damaging_missense_fisher_gnom_non_psych_case_count === null
-              ? '-'
-              : result.damaging_missense_fisher_gnom_non_psych_case_count}
-          </td>
-          <td>
-            {result.damaging_missense_fisher_gnom_non_psych_control_count === null
-              ? '-'
-              : result.damaging_missense_fisher_gnom_non_psych_control_count}
-          </td>
-          <td>
-            {result.damaging_missense_fisher_gnom_non_psych_pval === null
-              ? '-'
-              : result.damaging_missense_fisher_gnom_non_psych_pval.toPrecision(3)}
-          </td>
-          <td>{renderOddsRatio(result.damaging_missense_fisher_gnom_non_psych_OR)}</td>
-        </tr>
-      </tbody>
-    </Table>
 
     <p style={{ marginTop: '2em' }}>
       <strong>Total cases: {result.n_cases}</strong>
@@ -115,6 +74,7 @@ const BipExGeneResult = ({ result }) => (
     <p>
       <strong>Total controls: {result.n_controls}</strong>
     </p>
+
   </div>
 )
 
@@ -187,6 +147,8 @@ const BipExGeneResults = ({ results }) => (
         }
       />
     </h2>
+
+    {/*
     <Tabs
       tabs={[
         'Bipolar Disorder',
@@ -206,6 +168,10 @@ const BipExGeneResults = ({ results }) => (
           ),
       }))}
     />
+    */}
+
+    <BipExGeneResult result={results["meta"]} />
+
   </>
 )
 
