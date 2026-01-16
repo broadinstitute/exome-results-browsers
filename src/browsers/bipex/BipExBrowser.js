@@ -26,14 +26,16 @@ const BipExBrowser = () => (
     homePage={BipExHomePage}
     geneResultsPageHeading="Gene results"
     geneResultAnalysisGroupOptions={[
-      'Bipolar Disorder',
-      'Bipolar Disorder 1',
-      'Bipolar Disorder 2',
-      'Bipolar Disorder with Psychosis',
-      'Bipolar Disorder without Psychosis',
-      'Bipolar Disorder (including Schizoaffective)',
+      "meta",
+      // 'Bipolar Disorder',
+      // 'Bipolar Disorder 1',
+      // 'Bipolar Disorder 2',
+      // 'Bipolar Disorder with Psychosis',
+      // 'Bipolar Disorder without Psychosis',
+      // 'Bipolar Disorder (including Schizoaffective)',
     ]}
-    defaultGeneResultAnalysisGroup="Bipolar Disorder"
+    // defaultGeneResultAnalysisGroup="Bipolar Disorder"
+    defaultGeneResultAnalysisGroup="meta"
     defaultGeneResultSortKey="ptv_fisher_gnom_non_psych_pval"
     geneResultColumns={[
       {
@@ -95,78 +97,30 @@ const BipExBrowser = () => (
         render: renderOddsRatio,
       },
     ]}
-    defaultVariantAnalysisGroup="Bipolar Disorder"
+    defaultVariantAnalysisGroup="meta"
     variantAnalysisGroupOptions={[
-      'Bipolar Disorder',
-      'Bipolar Disorder 1',
-      'Bipolar Disorder 2',
-      'Bipolar Disorder with Psychosis',
-      'Bipolar Disorder without Psychosis',
-      'Bipolar Disorder (including Schizoaffective)',
+      "meta",
     ]}
     variantResultColumns={[
       {
-        key: 'group_result.estimate',
-        heading: 'Estimate',
-        minWidth: 80,
-      },
-      {
-        key: 'group_result.chi_sq_stat',
-        heading: 'χ²',
+        key: 'group_result.mac',
+        heading: 'MAC',
         minWidth: 65,
       },
       {
-        key: 'group_result.p_value',
-        heading: 'P\u2011Value',
-        minWidth: 65,
+        key: 'group_result.missense_passing',
+        heading: 'Missense passing',
+        minWidth: 85,
+        render: (value) => (value ? 'yes' : ''),
+        renderForCSV: (value) => (value ? 'yes' : ''),
       },
       {
         key: 'group_result.in_analysis',
-        heading: 'MAC ≤ 5',
+        heading: 'In analysis',
         minWidth: 85,
         render: (value) => (value ? 'yes' : ''),
         renderForCSV: (value) => (value ? 'yes' : ''),
         showOnDetails: false,
-      },
-      {
-        key: 'group_result.in_gnomad_non_neuro',
-        heading: 'In gnomAD non-neuro?',
-        minWidth: 85,
-        render: (value) => (value ? 'yes' : ''),
-        renderForCSV: (value) => (value ? 'yes' : ''),
-        showOnDetails: false,
-      },
-    ]}
-    variantConsequences={[
-      {
-        term: 'damaging_missense',
-        label: 'Damaging Missense',
-        category: 'missense',
-      },
-      {
-        term: 'non_coding',
-        label: 'Non-coding',
-        category: 'other',
-      },
-      {
-        term: 'other_missense',
-        label: 'Other Missense',
-        category: 'missense',
-      },
-      {
-        term: 'ptv',
-        label: 'Protein-truncating',
-        category: 'lof',
-      },
-      {
-        term: 'synonymous',
-        label: 'Synonymous',
-        category: 'synonymous',
-      },
-      {
-        term: 'NA',
-        label: '',
-        category: 'other',
       },
     ]}
     variantCustomFilter={{
