@@ -141,15 +141,8 @@ const BipExBrowser = () => (
       },
       // ---
     ]}
-    // defaultVariantAnalysisGroup="Bipolar Disorder"
     defaultVariantAnalysisGroup="meta"
     variantAnalysisGroupOptions={[
-      // 'Bipolar Disorder',
-      // 'Bipolar Disorder 1',
-      // 'Bipolar Disorder 2',
-      // 'Bipolar Disorder with Psychosis',
-      // 'Bipolar Disorder without Psychosis',
-      // 'Bipolar Disorder (including Schizoaffective)',
       "meta",
     ]}
     variantResultColumns={[
