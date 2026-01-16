@@ -27,16 +27,9 @@ const BipExBrowser = () => (
     geneResultsPageHeading="Gene results"
     geneResultAnalysisGroupOptions={[
       "meta",
-      // 'Bipolar Disorder',
-      // 'Bipolar Disorder 1',
-      // 'Bipolar Disorder 2',
-      // 'Bipolar Disorder with Psychosis',
-      // 'Bipolar Disorder without Psychosis',
-      // 'Bipolar Disorder (including Schizoaffective)',
     ]}
-    // defaultGeneResultAnalysisGroup="Bipolar Disorder"
     defaultGeneResultAnalysisGroup="meta"
-    defaultGeneResultSortKey="ptv_fisher_gnom_non_psych_pval"
+    defaultGeneResultSortKey="ptv_p_value"
     geneResultColumns={[
       {
         key: 'n_cases',
@@ -50,52 +43,103 @@ const BipExBrowser = () => (
         minWidth: 90,
         render: renderCount,
       },
+      // ---
       {
-        key: 'ptv_case_count',
-        heading: 'PTV Case Count',
+        key: 'ptv_case_carrier',
+        heading: 'PTV Case Carrier',
         minWidth: 65,
         render: renderCount,
       },
       {
-        key: 'ptv_control_count',
-        heading: 'PTV Control Count',
+        key: 'ptv_ctrl_carrier',
+        heading: 'PTV Control Carrier',
         minWidth: 65,
         render: renderCount,
       },
       {
-        key: 'ptv_fisher_gnom_non_psych_pval',
-        heading: 'PTV Fisher p\u2011val',
-        minWidth: 85,
+        key: 'ptv_p_value',
+        heading: 'PTV p\u2011val',
+        minWidth: 95,
       },
       {
-        key: 'ptv_fisher_gnom_non_psych_OR',
+        key: 'ptv_odds_ratio',
         heading: 'PTV Fisher odds ratio',
         minWidth: 85,
         render: renderOddsRatio,
       },
+      // ---
       {
-        key: 'damaging_missense_case_count',
-        heading: 'Damaging Missense Case Count',
-        minWidth: 70,
+        key: 'mis_case_carrier',
+        heading: 'MIS Case Carrier',
+        minWidth: 65,
         render: renderCount,
       },
       {
-        key: 'damaging_missense_control_count',
-        heading: 'Damaging Missense Control Count',
-        minWidth: 70,
+        key: 'mis_ctrl_carrier',
+        heading: 'MIS Control Carrier',
+        minWidth: 65,
         render: renderCount,
       },
       {
-        key: 'damaging_missense_fisher_gnom_non_psych_pval',
-        heading: 'Damaging Missense Fisher p\u2011val',
-        minWidth: 85,
+        key: 'mis_p_value',
+        heading: 'MIS p\u2011val',
+        minWidth: 95,
       },
       {
-        key: 'damaging_missense_fisher_gnom_non_psych_OR',
-        heading: 'Damaging Missense Fisher odds ratio',
+        key: 'mis_odds_ratio',
+        heading: 'MIS Fisher odds ratio',
         minWidth: 85,
         render: renderOddsRatio,
       },
+      // ---
+      {
+        key: 'ptv_mis_case_carrier',
+        heading: 'PTV+MIS Case Carrier',
+        minWidth: 65,
+        render: renderCount,
+      },
+      {
+        key: 'ptv_mis_ctrl_carrier',
+        heading: 'PTV+MISControl Carrier',
+        minWidth: 65,
+        render: renderCount,
+      },
+      {
+        key: 'ptv_mis_p_value',
+        heading: 'PTV+MIS p\u2011val',
+        minWidth: 95,
+      },
+      {
+        key: 'ptv_mis_odds_ratio',
+        heading: 'PTV+MIS Fisher odds ratio',
+        minWidth: 85,
+        render: renderOddsRatio,
+      },
+      // ---
+      {
+        key: 'syn_case_carrier',
+        heading: 'SYN Case Carrier',
+        minWidth: 65,
+        render: renderCount,
+      },
+      {
+        key: 'syn_ctrl_carrier',
+        heading: 'SYN Control Carrier',
+        minWidth: 65,
+        render: renderCount,
+      },
+      {
+        key: 'syn_p_value',
+        heading: 'SYN p\u2011val',
+        minWidth: 95,
+      },
+      {
+        key: 'syn_odds_ratio',
+        heading: 'SYN Fisher odds ratio',
+        minWidth: 85,
+        render: renderOddsRatio,
+      },
+      // ---
     ]}
     // defaultVariantAnalysisGroup="Bipolar Disorder"
     defaultVariantAnalysisGroup="meta"
