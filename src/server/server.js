@@ -162,14 +162,14 @@ if (isDevelopment) {
   //   {}
   // )
   // getDatasetForRequest = (req) => datasetBySubdomain[req.subdomains[0]]
-  getDatasetForRequest = () => "BipEx"
+  getDatasetForRequest = () => 'BipEx'
 }
 
 // ================================================================================================
 // Authentication Endpoints
 // ================================================================================================
 
-const PASSWORD_PROTECTED_DATASETS = ['IBD']
+const PASSWORD_PROTECTED_DATASETS = ['IBD', 'BipEx']
 const CORRECT_PASSWORD = process.env.DEMO_PASSWORD || 'password'
 const activeTokens = new Set()
 
