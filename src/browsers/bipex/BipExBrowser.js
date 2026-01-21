@@ -95,13 +95,13 @@ const BipExBrowser = () => (
       {
         key: 'ptv_mis_case_carrier',
         heading: 'PTV+MIS Case Carrier',
-        minWidth: 65,
+        minWidth: 85,
         render: renderCount,
       },
       {
         key: 'ptv_mis_ctrl_carrier',
-        heading: 'PTV+MISControl Carrier',
-        minWidth: 65,
+        heading: 'PTV+MIS Control Carrier',
+        minWidth: 85,
         render: renderCount,
       },
       {
@@ -119,13 +119,13 @@ const BipExBrowser = () => (
       {
         key: 'syn_case_carrier',
         heading: 'SYN Case Carrier',
-        minWidth: 65,
+        minWidth: 85,
         render: renderCount,
       },
       {
         key: 'syn_ctrl_carrier',
         heading: 'SYN Control Carrier',
-        minWidth: 65,
+        minWidth: 85,
         render: renderCount,
       },
       {
