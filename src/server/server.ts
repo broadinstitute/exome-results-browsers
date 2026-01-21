@@ -187,7 +187,7 @@ if (isDevelopment) {
 // Authentication Endpoints
 // ================================================================================================
 
-const PASSWORD_PROTECTED_DATASETS = ['IBD', 'SCHEMA2']
+const PASSWORD_PROTECTED_DATASETS = ['IBD', 'BipEx', 'SCHEMA2']
 
 const CORRECT_PASSWORD = process.env.DEMO_PASSWORD
   ? // Remove the ""s from development env var with a regex
