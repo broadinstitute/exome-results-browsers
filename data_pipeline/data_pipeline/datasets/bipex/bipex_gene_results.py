@@ -51,8 +51,8 @@ def prepare_gene_results(test_genes, _output_root):
     results = results.annotate(
         gene_id=gene_model_ht[results["gene_symbol"]].gene_id,
         # FIXME: suggest anlyst include this in input file, remove this when they do
-        n_cases=88_888,
-        n_controls=111_111,
+        n_cases=65_018,
+        n_controls=169_631,
     )
 
     results = results.group_by("gene_id").aggregate(group_results=hl.agg.collect(results.row.drop("gene_id")))
