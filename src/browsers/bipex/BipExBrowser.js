@@ -7,15 +7,27 @@ import BipExHomePage from './BipExHomePage'
 import BipExVariantFilter from './BipExVariantFilter'
 
 const renderOddsRatio = (value) => {
-  if (value === null) {
+  if (value == null) {
     return ''
   }
+
   if (value === 'Infinity') {
     return '∞'
   }
+
   if (value === 0) {
     return '0'
   }
+
+  if (isNaN(value)) {
+    return 'NaN'
+  }
+
+  if (typeof value !== 'number') {
+    return `[FIXME: ${typeof value} | ${String(value)}]`
+  }
+
+  // 5. Safe to call toPrecision
   return value.toPrecision(3)
 }
 
