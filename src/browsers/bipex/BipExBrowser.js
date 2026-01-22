@@ -33,8 +33,10 @@ const renderOddsRatio = (value) => {
 
 const BipExBrowser = () => (
   <Browser
-    browserTitle="BipEx: Bipolar Exomes Browser"
-    navBarBackgroundColor="#c24100"
+    // browserTitle="BipEx: Bipolar Exomes Browser"
+    // navBarBackgroundColor="#c24100"
+    browserTitle="DEMO - BipEx2"
+    navBarBackgroundColor="#a6694b"
     homePage={BipExHomePage}
     geneResultsPageHeading="Gene results"
     geneResultAnalysisGroupOptions={[
