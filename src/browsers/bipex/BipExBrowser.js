@@ -20,7 +20,7 @@ const renderOddsRatio = (value) => {
   }
 
   if (isNaN(value)) {
-    return 'NaN'
+    return '-'
   }
 
   if (typeof value !== 'number') {
