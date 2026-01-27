@@ -62,6 +62,7 @@ def prepare_variant_results(test_genes, _output_root):
         "mac",  # int
         "worst_csq_for_variant_canonical",  # string
         "missense_passing",  # bool
+        "in_analysis",  # bool
     )
 
     # Annotate variants with a struct for each analysis group
