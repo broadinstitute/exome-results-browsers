@@ -17,75 +17,52 @@ def prepare_gene_results(test_genes, _output_root):
     if test_genes:
         results = filter_results_table_to_test_gene(results)
 
+    n_cases = hl.eval(results.globals["case_total"])
+    n_controls = hl.eval(results.globals["control_total"])
     results = results.select_globals()
+
+    results = results.annotate(
+        analysis_group="meta",
+    )
 
     # Select result fields, discard gene information
     results = results.select(
-        "gene_id",
-        "analysis_group",
-        "case_count",
-        "control_count",
-        "n_cases",
-        "n_controls",
-        "fisher_gnom_non_psych_pval",
-        "fisher_gnom_non_psych_OR",
-        "fisher_gnom_non_psych_case_count",
-        "fisher_gnom_non_psych_case_no_count",
-        "fisher_gnom_non_psych_control_count",
-        "fisher_gnom_non_psych_control_no_count",
+        analysis_group="meta",
+        syn_case_carrier=results["SYN Case Carrier"],
+        syn_ctrl_carrier=results["SYN Control Carrier"],
+        syn_p_value=results["SYN P-value"],
+        syn_odds_ratio=results["SYN Odds Ratio"],
+        mis_case_carrier=results["MIS Case Carrier"],
+        mis_ctrl_carrier=results["MIS Control Carrier"],
+        mis_p_value=results["MIS P-value"],
+        mis_odds_ratio=results["MIS Odds Ratio"],
+        ptv_case_carrier=results["PTV Case Carrier"],
+        ptv_ctrl_carrier=results["PTV Control Carrier"],
+        ptv_p_value=results["PTV P-value"],
+        ptv_odds_ratio=results["PTV Odds Ratio"],
+        ptv_mis_case_carrier=results["PTV+MIS Case Carrier"],
+        ptv_mis_ctrl_carrier=results["PTV+MIS Control Carrier"],
+        ptv_mis_p_value=results["PTV+MIS P-value"],
+        ptv_mis_odds_ratio=results["PTV+MIS Odds Ratio"],
     )
 
-    results = results.annotate(fisher_gnom_non_psych_OR=hl.float(results.fisher_gnom_non_psych_OR))
+    gene_models_path = "gs://gnomad-v4-data-pipeline/output/genes/gnomad.browser.GRCh38.GENCODEv39.pext.ht"
+    gene_models_ht = hl.read_table(gene_models_path)
+    gene_model_ht = gene_models_ht.key_by("symbol")
 
-    final_results = None
-
-    consequence_categories = results.aggregate(hl.agg.collect_as_set(results.consequence_category))
-    per_category_fields = [
-        "case_count",
-        "control_count",
-        "fisher_gnom_non_psych_pval",
-        "fisher_gnom_non_psych_OR",
-        "fisher_gnom_non_psych_case_count",
-        "fisher_gnom_non_psych_case_no_count",
-        "fisher_gnom_non_psych_control_count",
-        "fisher_gnom_non_psych_control_no_count",
-    ]
-    for category in consequence_categories:
-        category_results = results.filter(results.consequence_category == category)
-        category_results = category_results.key_by("gene_id", "analysis_group")
-        category_results = category_results.select(
-            n_cases=category_results.n_cases,
-            n_controls=category_results.n_controls,
-            **{f"{category}_{field}": category_results[field] for field in per_category_fields},
-        )
-
-        if final_results:
-            final_results = final_results.join(category_results.drop("n_cases", "n_controls"), "outer")
-
-            # N cases/controls should be the same for all consequence categories for a gene/analysis group.
-            # However, if there are no variants of a certain consequence category found in a gene, then
-            # N cases/controls for that gene/analysis group/consequence category will be missing.
-            final_results = final_results.annotate(
-                n_cases=hl.or_else(
-                    final_results.n_cases, category_results[final_results.gene_id, final_results.analysis_group].n_cases
-                ),
-                n_controls=hl.or_else(
-                    final_results.n_controls,
-                    category_results[final_results.gene_id, final_results.analysis_group].n_controls,
-                ),
-            )
-        else:
-            final_results = category_results
-
-    final_results = final_results.group_by("gene_id").aggregate(
-        group_results=hl.agg.collect(final_results.row.drop("gene_id"))
+    results = results.annotate(
+        gene_id=gene_model_ht[results["gene_symbol"]].gene_id,
+        n_cases=n_cases,
+        n_controls=n_controls,
     )
-    final_results = final_results.annotate(
+
+    results = results.group_by("gene_id").aggregate(group_results=hl.agg.collect(results.row.drop("gene_id")))
+    results = results.annotate(
         group_results=hl.dict(
-            final_results.group_results.map(
+            results.group_results.map(
                 lambda group_result: (group_result.analysis_group, group_result.drop("analysis_group"))
             )
         )
     )
 
-    return final_results
+    return results

@@ -53,8 +53,17 @@ export default () => (
     </p>
 
     <p style={{ textAlign: 'justify' }}>
-      The BipEx dataset currently consists of 14,210 cases and 14,422 controls after quality
-      control. See our{' '}
+      The BipEx dataset currently consists of 65,018 cases and 169,631 controls after quality
+      control.
+    </p>
+
+    {/* TK: TODO: */}
+    <p style={{ marginLeft: '2rem' }}><b>Further information to be populated. TK: TODO: </b></p>
+
+
+    {/*
+    <p>
+      See our{' '}
       <ExternalLink href="https://astheeggeggs.github.io/BipEx/qc.html">GitHub page</ExternalLink>{' '}
       for full details of the curation process and breakdown of subtypes, geographies, and
       collaborative partners.
@@ -80,5 +89,9 @@ export default () => (
     <p style={{ textAlign: 'justify' }}>
       Note that the BipEx dataset has been joint-called and aligned to the GRCh38 reference genome.
     </p>
+
+    */}
+
+    <p>Analysis data last updated January 14, 2026.</p>
   </HomePageWrapper>
 )

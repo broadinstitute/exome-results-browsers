@@ -88,6 +88,7 @@ const Menu = styled.ul`
 const Banner = styled.div`
   width: 100%;
   margin-bottom: 20px;
+  margin-top: -20px;
   background-color: #f0f0f0;
 `
 
@@ -198,6 +199,16 @@ const TopBar = ({ title, links, backgroundColor, textColor, passwordProtectedDat
             <p>
               Have feedback? Fill out our{' '}
               <ExternalLink href="https://forms.gle/Zf3BkwwV9dB6TMLA9">Google Form</ExternalLink>
+            </p>
+          </CenterHorizontal>
+        </Banner>
+      )}
+      {datasetId === 'BipEx' && (
+        <Banner>
+          <CenterHorizontal>
+            <p>
+              Have feedback? Fill out our{' '}
+              <ExternalLink href="https://forms.gle/VcF8AjgnD9q7eFVw6">BipEx 2 Demo Google Form</ExternalLink>
             </p>
           </CenterHorizontal>
         </Banner>
