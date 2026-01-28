@@ -17,6 +17,8 @@ def prepare_gene_results(test_genes, _output_root):
     if test_genes:
         results = filter_results_table_to_test_gene(results)
 
+    n_cases = hl.eval(results.globals["case_total"])
+    n_controls = hl.eval(results.globals["control_total"])
     results = results.select_globals()
 
     results = results.annotate(
@@ -50,9 +52,8 @@ def prepare_gene_results(test_genes, _output_root):
 
     results = results.annotate(
         gene_id=gene_model_ht[results["gene_symbol"]].gene_id,
-        # FIXME: suggest anlyst include this in input file, remove this when they do
-        n_cases=65_018,
-        n_controls=169_631,
+        n_cases=n_cases,
+        n_controls=n_controls,
     )
 
     results = results.group_by("gene_id").aggregate(group_results=hl.agg.collect(results.row.drop("gene_id")))
