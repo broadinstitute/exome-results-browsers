@@ -88,6 +88,7 @@ const Menu = styled.ul`
 const Banner = styled.div`
   width: 100%;
   margin-bottom: 20px;
+  margin-top: -20px;
   background-color: #f0f0f0;
 `
 
