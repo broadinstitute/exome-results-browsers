@@ -11,7 +11,8 @@
     "start": "./start.sh",
     "build": "webpack --config=src/browsers/webpack.config.js",
     "lint:js": "eslint .",
-    "lint:css": "stylelint 'src/**/*.js'"
+    "lint:css": "stylelint 'src/**/*.js'",
+    "typecheck": "yarn tsc --noEmit"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
@@ -21,6 +22,10 @@
     "@babel/preset-react": "^7.9.4",
     "@gnomad/markdown-loader": "^1.0.0",
     "@hot-loader/react-dom": "^16.11.0",
+    "@types/compression": "^1.8.1",
+    "@types/express": "^5.0.6",
+    "@types/morgan": "^1.9.10",
+    "@types/react": "^19.2.13",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "babel-plugin-styled-components": "^1.10.6",
@@ -43,6 +48,9 @@
     "stylelint-config-styled-components": "^0.1.1",
     "stylelint-order": "^4.0.0",
     "stylelint-processor-styled-components": "^1.10.0",
+    "ts-loader": "^9.5.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.1"
