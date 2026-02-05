@@ -1,13 +1,17 @@
-const fs = require('fs')
-const path = require('path')
-const process = require('process')
-const readline = require('readline')
+import fs from 'fs'
+import path from 'path'
+import process from 'process'
+import readline from 'readline'
 
-const compression = require('compression')
-const express = require('express')
-const morgan = require('morgan')
+import compression from 'compression'
+import express, { Response, NextFunction } from 'express'
+import morgan from 'morgan'
 
-const { PrefixTrie } = require('./search')
+import { PrefixTrie } from './search'
+
+interface Request extends express.Request {
+  dataset?: string
+}
 
 // ================================================================================================
 // Configuration
@@ -25,7 +29,7 @@ if (missingConfig.length) {
 }
 
 const config = {
-  dataDirectory: path.resolve(process.env.RESULTS_DATA_DIRECTORY),
+  dataDirectory: path.resolve(process.env.RESULTS_DATA_DIRECTORY!),
   port: process.env.PORT || 8000,
   trustProxy: JSON.parse(process.env.TRUST_PROXY || 'false'),
 }
@@ -39,8 +43,8 @@ app.set('trust proxy', config.trustProxy)
 
 app.use(compression())
 
-const cookieParser = (req, res, next) => {
-  const cookies = {}
+const cookieParser = (req: Request, _res: Response, next: NextFunction) => {
+  const cookies: Record<string, any> = {}
   const cookieHeader = req.headers.cookie
 
   if (cookieHeader) {
@@ -64,7 +68,7 @@ app.use(express.urlencoded({ extended: true }))
 // ================================================================================================
 
 // This must be registered before the HTTP => HTTPS redirect because it must return 200, not 30x.
-app.use('/ready', (request, response) => {
+app.use('/ready', (_request: Request, response: Response) => {
   response.send('true')
 })
 
@@ -78,7 +82,7 @@ app.use(morgan(isDevelopment ? 'dev' : 'combined'))
 // Gene search
 // ================================================================================================
 
-const geneSearch = new PrefixTrie()
+const geneSearch = new PrefixTrie<string>()
 
 const indexGenes = () => {
   return new Promise((resolve) => {
@@ -98,7 +102,7 @@ const indexGenes = () => {
   })
 }
 
-app.use('/api/search', (req, res) => {
+app.use('/api/search', (req: Request, res: Response) => {
   if (!req.query.q) {
     return res.status(400).json({ error: 'Query required' })
   }
@@ -107,17 +111,21 @@ app.use('/api/search', (req, res) => {
     return res.status(400).json({ error: 'One query required' })
   }
 
+  if (typeof req.query.q !== 'string') {
+    return res.status(400).json({ error: 'One query string required' })
+  }
+
   const query = req.query.q.toUpperCase()
 
-  let results
+  let results: any
   if (query.match(/^ENSG\d{11}$/)) {
     results = [{ label: query, url: `/gene/${query}` }]
   } else {
     results = geneSearch
       .search(query)
-      .flatMap(({ word, docs: geneIds }) => {
+      .flatMap(({ word, docs: geneIds }: { word: string; docs: string[] }) => {
         if (geneIds.length > 1) {
-          return geneIds.map((geneId) => ({
+          return geneIds.map((geneId: string) => ({
             label: `${word} (${geneId})`,
             url: `/gene/${geneId}`,
           }))
@@ -146,22 +154,22 @@ const metadata = JSON.parse(
 
 // In development, serve the browser specified by the BROWSER environment variable.
 // In production, determine the browser/dataset to show based on the subdomain.
-let getDatasetForRequest
+let getDatasetForRequest: any
 
 if (isDevelopment) {
   const devDataset = Object.keys(metadata.datasets).find(
-    (dataset) => dataset.toLowerCase() === process.env.BROWSER.toLowerCase()
+    (dataset) => dataset.toLowerCase() === process.env.BROWSER!.toLowerCase()
   )
   getDatasetForRequest = () => devDataset
 } else {
-  const datasetBySubdomain = Object.keys(metadata.datasets).reduce(
+  const datasetBySubdomain: Record<string, string> = Object.keys(metadata.datasets).reduce(
     (acc, dataset) => ({
       ...acc,
       [dataset.toLowerCase()]: dataset,
     }),
     {}
   )
-  getDatasetForRequest = (req) => datasetBySubdomain[req.subdomains[0]]
+  getDatasetForRequest = (req: express.Request) => datasetBySubdomain[req.subdomains[0]]
 }
 
 // ================================================================================================
@@ -172,10 +180,10 @@ const PASSWORD_PROTECTED_DATASETS = ['IBD']
 const CORRECT_PASSWORD = process.env.DEMO_PASSWORD || 'password'
 const activeTokens = new Set()
 
-app.post('/api/auth', (req, res) => {
+app.post('/api/auth', (req: Request, res: Response) => {
   const { password } = req.body
 
-  let dataset
+  let dataset: any
   try {
     dataset = getDatasetForRequest(req)
   } catch (err) {} // eslint-disable-line no-empty
@@ -184,7 +192,7 @@ app.post('/api/auth', (req, res) => {
     res.status(500).json({ message: 'Unknown dataset' })
   }
 
-  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
+  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset!)) {
     res.json({ success: true, token: 'not-required' })
   }
 
@@ -201,7 +209,7 @@ app.post('/api/auth', (req, res) => {
   }
 })
 
-app.post('/api/logout', (req, res) => {
+app.post('/api/logout', (req: Request, res: Response) => {
   const token = req.cookies.authToken
   if (token) {
     activeTokens.delete(token)
@@ -210,10 +218,10 @@ app.post('/api/logout', (req, res) => {
   res.json({ success: true })
 })
 
-app.post('/api/check-auth', (req, res) => {
+app.post('/api/check-auth', (req: Request, res: Response) => {
   const { token } = req.body
 
-  let dataset
+  let dataset: any
   try {
     dataset = getDatasetForRequest(req)
   } catch (err) {} // eslint-disable-line no-empty
@@ -222,7 +230,7 @@ app.post('/api/check-auth', (req, res) => {
     res.status(500).json({ message: 'Unknown dataset' })
   }
 
-  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
+  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset!)) {
     res.json({ authenticated: true })
   }
 
@@ -238,8 +246,8 @@ app.post('/api/check-auth', (req, res) => {
 // ================================================================================================
 
 // Store dataset on request object so other route handlers can use it.
-app.use('/', (req, res, next) => {
-  let dataset
+app.use('/', (req: Request, res: Response, next: NextFunction) => {
+  let dataset: any
   try {
     dataset = getDatasetForRequest(req)
   } catch (err) {} // eslint-disable-line no-empty
@@ -250,7 +258,7 @@ app.use('/', (req, res, next) => {
 
   req.dataset = dataset
 
-  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset)) {
+  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset!)) {
     return next()
   }
 
@@ -279,8 +287,8 @@ app.use('/', (req, res, next) => {
   return res.redirect('/login')
 })
 
-const datasetConfig = {}
-const getDatasetConfigJs = (dataset) => {
+const datasetConfig: Record<string, any> = {}
+const getDatasetConfigJs = (dataset: string) => {
   if (!datasetConfig[dataset]) {
     const datasetMetadata = {
       datasetId: dataset,
@@ -292,15 +300,15 @@ const getDatasetConfigJs = (dataset) => {
   return datasetConfig[dataset]
 }
 
-app.use('/config.js', (req, res) => {
-  res.type('text/javascript').send(getDatasetConfigJs(req.dataset))
+app.use('/config.js', (req: Request, res: Response) => {
+  res.type('text/javascript').send(getDatasetConfigJs(req.dataset!))
 })
 
 // ================================================================================================
 // File paths
 // ================================================================================================
 
-const geneDataDirectory = (geneId) => {
+const geneDataDirectory = (geneId: string) => {
   const n = Number(geneId.replace(/^ENSGR?/, ''))
   const geneDataPath = path.join('genes', String(n % 1000).padStart(3, '0'))
 
@@ -311,7 +319,7 @@ const geneDataDirectory = (geneId) => {
 // Gene results
 // ================================================================================================
 
-app.get('/api/results', (req, res) => {
+app.get('/api/results', (req: any, res) => {
   const resultsPath = path.join('results', `${req.dataset.toLowerCase()}.json`)
 
   return res.sendFile(resultsPath, { root: config.dataDirectory }, (err) => {
@@ -325,10 +333,14 @@ app.get('/api/results', (req, res) => {
 // Gene
 // ================================================================================================
 
-app.get('/api/gene/:geneIdOrName', (req, res) => {
+app.get('/api/gene/:geneIdOrName', (req: Request, res: Response) => {
   const { geneIdOrName } = req.params
 
-  let geneId
+  if (typeof geneIdOrName !== 'string') {
+    return res.status(400).json({ error: 'Gene ID or name must be a single string' })
+  }
+
+  let geneId: any
   if (geneIdOrName.match(/^ENSGR?\d+/)) {
     geneId = geneIdOrName
   } else {
@@ -342,7 +354,7 @@ app.get('/api/gene/:geneIdOrName', (req, res) => {
     geneId = geneIds[0] // eslint-disable-line prefer-destructuring
   }
 
-  const referenceGenome = metadata.datasets[req.dataset].reference_genome
+  const referenceGenome = metadata.datasets[req.dataset!].reference_genome
   const genePath = path.join(geneDataDirectory(geneId), `${geneId}_${referenceGenome}.json`)
 
   return res.sendFile(genePath, { root: config.dataDirectory }, (err) => {
@@ -356,14 +368,18 @@ app.get('/api/gene/:geneIdOrName', (req, res) => {
 // Variants
 // ================================================================================================
 
-app.get('/api/gene/:geneIdOrName/variants', (req, res) => {
+app.get('/api/gene/:geneIdOrName/variants', (req: Request, res: Response) => {
   const { geneIdOrName } = req.params
 
-  let geneId
+  if (typeof geneIdOrName !== 'string') {
+    return res.status(400).json({ error: 'Gene ID or name must be a single string' })
+  }
+
+  let geneId: any
   if (geneIdOrName.match(/^ENSGR?\d+/)) {
     geneId = geneIdOrName
   } else {
-    const geneIds = geneSearch.get(geneIdOrName.toUpperCase())
+    const geneIds = geneSearch.get(geneIdOrName.toUpperCase()) || []
     if (geneIds.length === 1) {
       geneId = geneIds[0] // eslint-disable-line prefer-destructuring
     } else if (geneIds.length === 0) {
@@ -375,7 +391,7 @@ app.get('/api/gene/:geneIdOrName/variants', (req, res) => {
 
   const variantsPath = path.join(
     geneDataDirectory(geneId),
-    `${geneId}_${req.dataset.toLowerCase()}_variants.json`
+    `${geneId}_${req.dataset!.toLowerCase()}_variants.json`
   )
 
   return res.sendFile(variantsPath, { root: config.dataDirectory }, (err) => {
@@ -390,8 +406,8 @@ app.get('/api/gene/:geneIdOrName/variants', (req, res) => {
 // ================================================================================================
 
 // Return 404 for unknown API paths.
-app.use('/api', (request, response) => {
-  response.status(404).json({ error: 'not found' })
+app.use('/api', (_req: Request, res: Response) => {
+  res.status(404).json({ error: 'not found' })
 })
 
 // ================================================================================================
@@ -399,14 +415,14 @@ app.use('/api', (request, response) => {
 // ================================================================================================
 
 // Serve static files from the appropriate dataset's directory.
-app.use((req, res, next) => {
+app.use((req: Request, _res: Response, next: NextFunction) => {
   req.url = `/${req.dataset}${req.url}`
   next()
 }, express.static(path.join(__dirname, 'public')))
 
 // Return index.html for unknown paths and let client side routing handle it.
-app.use((req, res) => {
-  res.sendFile(path.resolve(__dirname, 'public', req.dataset, 'index.html'))
+app.use((req: Request, res: Response) => {
+  res.sendFile(path.resolve(__dirname, 'public', req.dataset!, 'index.html'))
 })
 
 // ================================================================================================
