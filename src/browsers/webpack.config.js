@@ -3,6 +3,7 @@ const path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 const HtmlPlugin = require('html-webpack-plugin')
+const tsConfig = require('../../tsconfig.json')
 
 const BROWSERS = ['ASC', 'BipEx', 'Epi25', 'SCHEMA', 'IBD', 'GP2']
 
@@ -12,11 +13,20 @@ let config = BROWSERS.map((browser) => {
   const browserConfig = {
     devtool: 'source-map',
     entry: {
-      bundle: path.resolve(__dirname, './base/main.js'),
+      bundle: path.resolve(__dirname, './base/main.tsx'),
     },
     mode: isDev ? 'development' : 'production',
     module: {
       rules: [
+        {
+          test: /\.(ts|tsx)$/,
+          loader: 'esbuild-loader',
+          options: {
+            loader: 'tsx',
+            target: 'es2015',
+            tsconfigRaw: tsConfig,
+          },
+        },
         {
           test: /\.js$/,
           exclude: /node_modules/,
@@ -78,6 +88,7 @@ let config = BROWSERS.map((browser) => {
       }),
     ],
     resolve: {
+      extensions: ['.tsx', '.ts', '.js', '.jsx'],
       alias: {
         __BROWSER_APP_PATH__: path.resolve(__dirname, browser.toLowerCase(), `${browser}Browser`),
       },
