@@ -4,6 +4,7 @@ import process from 'process'
 import readline from 'readline'
 
 import compression from 'compression'
+import rateLimit from 'express-rate-limit'
 import express, { Response, NextFunction } from 'express'
 import morgan from 'morgan'
 
@@ -59,6 +60,16 @@ const cookieParser = (req: Request, _res: Response, next: NextFunction) => {
 }
 
 app.use(cookieParser)
+
+const oneMinuteInMilliseconds = 1 * 1000 * 60
+
+const fileSystemRateLimiter = rateLimit({
+  windowMs: oneMinuteInMilliseconds,
+  max: 100,
+  message: { error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+})
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -186,7 +197,7 @@ app.post('/api/auth', (req: Request, res: Response) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) {} // eslint-disable-line no-empty
+  } catch (err) { } // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -224,7 +235,7 @@ app.post('/api/check-auth', (req: Request, res: Response) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) {} // eslint-disable-line no-empty
+  } catch (err) { } // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -250,7 +261,7 @@ app.use('/', (req: Request, res: Response, next: NextFunction) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) {} // eslint-disable-line no-empty
+  } catch (err) { } // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -319,7 +330,11 @@ const geneDataDirectory = (geneId: string) => {
 // Gene results
 // ================================================================================================
 
-app.get('/api/results', (req: any, res) => {
+app.get('/api/results', fileSystemRateLimiter, (req: any, res) => {
+  if (!req.dataset || typeof req.dataset !== 'string') {
+    return res.status(400).json({ error: 'invalid dataset' })
+  }
+
   const resultsPath = path.join('results', `${req.dataset.toLowerCase()}.json`)
 
   return res.sendFile(resultsPath, { root: config.dataDirectory }, (err) => {
@@ -333,7 +348,11 @@ app.get('/api/results', (req: any, res) => {
 // Gene
 // ================================================================================================
 
-app.get('/api/gene/:geneIdOrName', (req: Request, res: Response) => {
+app.get('/api/gene/:geneIdOrName', fileSystemRateLimiter, (req: Request, res: Response) => {
+  if (!req.dataset || typeof req.dataset !== 'string') {
+    return res.status(400).json({ error: 'invalid dataset' })
+  }
+
   const { geneIdOrName } = req.params
 
   if (typeof geneIdOrName !== 'string') {
@@ -368,7 +387,11 @@ app.get('/api/gene/:geneIdOrName', (req: Request, res: Response) => {
 // Variants
 // ================================================================================================
 
-app.get('/api/gene/:geneIdOrName/variants', (req: Request, res: Response) => {
+app.get('/api/gene/:geneIdOrName/variants', fileSystemRateLimiter, (req: Request, res: Response) => {
+  if (!req.dataset || typeof req.dataset !== 'string') {
+    return res.status(400).json({ error: 'invalid dataset' })
+  }
+
   const { geneIdOrName } = req.params
 
   if (typeof geneIdOrName !== 'string') {
@@ -421,7 +444,11 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 }, express.static(path.join(__dirname, 'public')))
 
 // Return index.html for unknown paths and let client side routing handle it.
-app.use((req: Request, res: Response) => {
+app.use(fileSystemRateLimiter, (req: Request, res: Response) => {
+  if (!req.dataset || typeof req.dataset !== 'string') {
+    return res.status(400).json({ error: 'invalid dataset' })
+  }
+
   res.sendFile(path.resolve(__dirname, 'public', req.dataset!, 'index.html'))
 })
 
