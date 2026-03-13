@@ -92,13 +92,23 @@ const GenePage = ({
             <Tabs
               tabs={[
                 {
-                  id: 'gnomad',
-                  label: 'gnomAD',
+                  id: 'gnomad_v4',
+                  label: 'gnomAD v4',
                   render: () =>
-                    gene.gnomad_constraint ? (
-                      <GnomadConstraintTable constraint={gene.gnomad_constraint} />
+                    gene.gnomad_v4_constraint ? (
+                      <GnomadConstraintTable constraint={gene.gnomad_v4_constraint} />
                     ) : (
-                      <p>gnomAD constraint is not available for this gene.</p>
+                      <p>gnomAD v4 constraint is not available for this gene.</p>
+                    ),
+                },
+                {
+                  id: 'gnomad_v2',
+                  label: 'gnomAD v2',
+                  render: () =>
+                    gene.gnomad_v2_constraint ? (
+                      <GnomadConstraintTable constraint={gene.gnomad_v2_constraint} />
+                    ) : (
+                      <p>gnomAD v2 constraint is not available for this gene.</p>
                     ),
                 },
                 {
@@ -195,7 +205,8 @@ GenePage.propTypes = {
         })
       ),
     }).isRequired,
-    gnomad_constraint: PropTypes.object,
+    gnomad_v2_constraint: PropTypes.object,
+    gnomad_v4_constraint: PropTypes.object,
     exac_constraint: PropTypes.object,
     gene_results: PropTypes.objectOf(PropTypes.any).isRequired,
   }).isRequired,
