@@ -181,8 +181,8 @@ def prepare_exac_constraint(exac_constraint_path):
     return ds
 
 
-def prepare_gnomad_constraint(gnomad_constraint_path):
-    ds = hl.read_table(gnomad_constraint_path)
+def prepare_gnomad_v2_constraint(gnomad_v2_constraint_path):
+    ds = hl.read_table(gnomad_v2_constraint_path)
 
     ds = ds.select_globals()
 
@@ -210,6 +210,39 @@ def prepare_gnomad_constraint(gnomad_constraint_path):
     )
 
     ds = ds.key_by("transcript_id").drop("gene", "transcript")
+
+    return ds
+
+
+def prepare_gnomad_v4_constraint(gnomad_v4_constraint_path):
+    ds = hl.read_table(gnomad_v4_constraint_path)
+
+    ds = ds.select_globals()
+
+    # Select relevant fields
+    ds = ds.select(
+        transcript_id=ds.transcript,
+        # Expected
+        exp_lof=ds.lof.exp,
+        exp_mis=ds.mis.exp,
+        exp_syn=ds.syn.exp,
+        # Observed
+        obs_lof=ds.lof.obs,
+        obs_mis=ds.mis.obs,
+        obs_syn=ds.syn.obs,
+        # Observed/Expected
+        oe_lof=ds.lof.oe,
+        oe_mis=ds.mis.oe,
+        oe_syn=ds.syn.oe,
+        # Z
+        lof_z=ds.lof.z_score,
+        mis_z=ds.mis.z_score,
+        syn_z=ds.syn.z_score,
+        # Other
+        pLI=ds.lof.pLI,
+    )
+
+    ds = ds.key_by("transcript_id").drop("gene", "gene_id", "transcript", "canonical", "mane_select")
 
     return ds
 
@@ -257,13 +290,17 @@ def prepare_gene_models(output_local):
         ),
     )
 
-    gnomad_constraint_path = pipeline_config.get("reference_data", "gnomad_constraint_path")
-    gnomad_constraint = prepare_gnomad_constraint(gnomad_constraint_path)
-    genes = genes.annotate(gnomad_constraint=gnomad_constraint[genes.GRCh37.canonical_transcript_id])
-
     exac_constraint_path = pipeline_config.get("reference_data", "exac_constraint_path")
     exac_constraint = prepare_exac_constraint(exac_constraint_path)
     genes = genes.annotate(exac_constraint=exac_constraint[genes.GRCh37.canonical_transcript_id])
+
+    gnomad_v2_constraint_path = pipeline_config.get("reference_data", "gnomad_v2_constraint_path")
+    gnomad_v2_constraint = prepare_gnomad_v2_constraint(gnomad_v2_constraint_path)
+    genes = genes.annotate(gnomad_v2_constraint=gnomad_v2_constraint[genes.GRCh37.canonical_transcript_id])
+
+    gnomad_v4_constraint_path = pipeline_config.get("reference_data", "gnomad_v4_constraint_path")
+    gnomad_v4_constraint = prepare_gnomad_v4_constraint(gnomad_v4_constraint_path)
+    genes = genes.annotate(gnomad_v4_constraint=gnomad_v4_constraint[genes.GRCh38.canonical_transcript_id])
 
     output_path = get_output_path(output_local)
     genes.write(output_path, overwrite=True)
