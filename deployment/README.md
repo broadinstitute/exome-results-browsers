@@ -20,7 +20,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
 
    ```
    gcloud --quiet compute instances create erb-temp-instance \
-      --machine-type=n1-highmem-8 \
+      --machine-type=n1-standard-16 \
       --image-family projects/debian-cloud/global/images/family/debian-11 \
       --boot-disk-size=200GB \
       --service-account=erb-data-pipeline@exac-gnomad.iam.gserviceaccount.com
@@ -28,9 +28,12 @@ the browsers and so cannot be attached to another instance in read-write mode.
 
 2. Create a persistent disk and attach it to the instance.
 
+   Change the `LABEL` variable if this is not for prod, e.g. `schema2-demo`
+
    ```
+   LABEL="prod"
    TIMESTAMP=$(date '+%Y-%m-%d--%H-%M')
-   DISK_NAME="exome-results-browsers-data-$TIMESTAMP"
+   DISK_NAME="erb-data-$LABEL-$TIMESTAMP"
 
    gcloud compute disks create $DISK_NAME \
      --size=200GB \
@@ -50,6 +53,8 @@ the browsers and so cannot be attached to another instance in read-write mode.
    ```
 
 4. SSH into the instance and mount and format the disk.
+
+   SSH in
 
    ```
    gcloud compute ssh erb-temp-instance
@@ -100,7 +105,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
 7. Write results files to persistent disk.
 
    ```
-   /tmp/write_results_files.py /tmp/combined.ht /mnt/disks/erb-data/results
+   /tmp/write_results_files.py /tmp/combined.ht /mnt/disks/erb-data/results --environment gce
    ```
 
 8. Unmount disk.
@@ -109,7 +114,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
    umount /mnt/disks/erb-data
    ```
 
-9. Disconnect from the instance, detach the disk, and delete the instance.
+9. Disconnect from the instance (`# exit`), detach the disk (`$ exit`), and delete the instance.
 
    ```
    gcloud compute instances detach-disk erb-temp-instance --disk=$DISK_NAME
