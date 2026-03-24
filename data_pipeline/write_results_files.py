@@ -210,7 +210,7 @@ def process_variants_iteratively(output_directory, ds):
     return
 
 
-def write_data_files(table_path, output_directory, genes=None):
+def write_data_files(table_path, output_directory, genes=None, iterative=False):
     if output_directory.startswith("gs://"):
         raise ValueError("Google Storage paths are not supported for output_directory")
 
@@ -228,8 +228,57 @@ def write_data_files(table_path, output_directory, genes=None):
         write_json_files(output_directory, temp_file_name, n_rows)
 
         return
-    else:
+
+    elif iterative:
+        print("Writing out files iteratively...")
+
         process_variants_iteratively(output_directory, ds)
+
+        return
+
+    else:
+        print("Writing out files in a single step...")
+
+        ds = ds.annotate(
+            variant_counts=hl.struct(
+                ASC=hl.or_else(hl.len(ds.variants.ASC), 0),
+                BipEx=hl.or_else(hl.len(ds.variants.BipEx), 0),
+                Epi25=hl.or_else(hl.len(ds.variants.Epi25), 0),
+                GP2=hl.or_else(hl.len(ds.variants.GP2), 0),
+                SCHEMA=hl.or_else(hl.len(ds.variants.SCHEMA), 0),
+            )
+        )
+
+        ds = ds.annotate(
+            total_variants=(
+                ds.variant_counts.ASC
+                + ds.variant_counts.BipEx
+                + ds.variant_counts.Epi25
+                + ds.variant_counts.GP2
+                + ds.variant_counts.SCHEMA
+            )
+        )
+
+        VARIANT_THRESHOLD = 200_000
+
+        ds_large_genes = ds.filter(ds.total_variants > VARIANT_THRESHOLD)
+        large_gene_symbols = ds_large_genes.symbol.collect()
+
+        print(f"Removing {len(large_gene_symbols)} genes with > {VARIANT_THRESHOLD:,} variants:")
+        for symbol in large_gene_symbols:
+            print(f" - {symbol}")
+
+        ds_filtered = ds.filter(ds.total_variants <= VARIANT_THRESHOLD)
+        ds_filtered = ds_filtered.drop("variant_counts", "total_variants")
+
+        temp_file_name = "temp.tsv"
+        n_rows = ds_filtered.count()
+
+        ds_filtered = ds_filtered.repartition(500)
+
+        ds_filtered.select(data=hl.json(ds_filtered.row)).export(f"{output_directory}/{temp_file_name}", header=False)
+
+        write_json_files(output_directory, temp_file_name, n_rows)
 
         return
 
