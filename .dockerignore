@@ -5,3 +5,4 @@ src/server/public
 !build.env
 !package.json
 !yarn.lock
+!tsconfig.json

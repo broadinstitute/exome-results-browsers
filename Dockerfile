@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:16.13.1-alpine AS build
+FROM --platform=linux/amd64 node:16.13.1-bullseye-slim AS build
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 WORKDIR /home/node/app
@@ -11,6 +11,7 @@ ENV NODE_ENV=production
 COPY --chown=node:node package.json .
 COPY --chown=node:node src/browsers/package.json src/browsers/package.json
 COPY --chown=node:node yarn.lock .
+COPY --chown=node:node tsconfig.json .
 RUN yarn install --production false --frozen-lockfile && yarn cache clean
 
 # Copy frontend source
@@ -22,7 +23,7 @@ COPY --chown=node:node build.env .
 RUN set -a && . ./build.env && set +a && yarn run build
 
 ###############################################################################
-FROM --platform=linux/amd64 node:16.13.1-alpine
+FROM --platform=linux/amd64 node:16.13.1-bullseye-slim
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 WORKDIR /home/node/app
@@ -30,7 +31,6 @@ WORKDIR /home/node/app
 USER node
 
 ENV NODE_ENV=production
-
 ENV PORT=8000
 
 # Install dependencies
@@ -48,4 +48,4 @@ COPY --chown=node:node src/server .
 COPY --chown=node:node build.env .
 
 # Run
-CMD /bin/sh -c "export \$(grep -v '^#' build.env | xargs) && exec node server.js"
+CMD ["/bin/sh", "-c", "export $(grep -v '^#' build.env | xargs) && exec node server.ts"]
