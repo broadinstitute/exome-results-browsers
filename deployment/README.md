@@ -160,38 +160,13 @@ Note that the `DEMO_PASSWORD` should be a string with no `""`s, if quotes are in
 or
 
 ```
-./deployment/build-docker-image.sh --no-cache
-```
-
-**(Optional) Re-tag the docker image**
-
-
-```
-docker tag \
-  us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:<OLD_TAG> \
-  us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:<NEW_TAG>
-```
-
-Where `<OLD_TAG>` is output by `build-docker-image.sh`
-
-e.g.
-
-```
-docker tag \
-  us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:5e495fb-rig_gp2_demo \
-  us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:5e495fb_2025-06-04_gp2-demo
-```
-
-**Push the docker image to the artifact registry**
-
-```
-docker push us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:<IMAGE_TAG>
+./deployment/build-docker-image.sh --no-cache --tag <TAG_NAME> --push
 ```
 
 e.g.
 
 ```
-docker push us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers:5e495fb_2025-06-04_gp2-demo
+./deployment/build-docker-image.sh --no-cache --tag prod-2026-03-27--11-22 --push
 ```
 
 ## Deployments
