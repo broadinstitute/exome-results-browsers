@@ -59,7 +59,7 @@ variantConsequences.splice(
     term: 'frameshift_variant_LC',
     label: 'LC frameshift',
     category: 'lof',
-  },
+  }
 )
 
 const renderOddsRatio = (value) => {
