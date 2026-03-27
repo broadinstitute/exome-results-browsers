@@ -187,11 +187,11 @@ if (isDevelopment) {
 // Authentication Endpoints
 // ================================================================================================
 
-const PASSWORD_PROTECTED_DATASETS = ['IBD', 'SCHEMA']
+const PASSWORD_PROTECTED_DATASETS = ['IBD', 'SCHEMA2']
 
 const CORRECT_PASSWORD = process.env.DEMO_PASSWORD
-  // Remove the ""s from development env var with a regex
-  ? (process.env.DEMO_PASSWORD.replace(/^"|"$/g, '') || 'password')
+  ? // Remove the ""s from development env var with a regex
+    process.env.DEMO_PASSWORD.replace(/^"|"$/g, '') || 'password'
   : 'password'
 
 const activeTokens = new Set()
@@ -202,7 +202,7 @@ app.post('/api/auth', (req: Request, res: Response) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) { } // eslint-disable-line no-empty
+  } catch (err) {} // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -240,7 +240,7 @@ app.post('/api/check-auth', (req: Request, res: Response) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) { } // eslint-disable-line no-empty
+  } catch (err) {} // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -266,7 +266,7 @@ app.use('/', (req: Request, res: Response, next: NextFunction) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) { } // eslint-disable-line no-empty
+  } catch (err) {} // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -392,42 +392,46 @@ app.get('/api/gene/:geneIdOrName', fileSystemRateLimiter, (req: Request, res: Re
 // Variants
 // ================================================================================================
 
-app.get('/api/gene/:geneIdOrName/variants', fileSystemRateLimiter, (req: Request, res: Response) => {
-  if (!req.dataset || typeof req.dataset !== 'string') {
-    return res.status(400).json({ error: 'invalid dataset' })
-  }
+app.get(
+  '/api/gene/:geneIdOrName/variants',
+  fileSystemRateLimiter,
+  (req: Request, res: Response) => {
+    if (!req.dataset || typeof req.dataset !== 'string') {
+      return res.status(400).json({ error: 'invalid dataset' })
+    }
 
-  const { geneIdOrName } = req.params
+    const { geneIdOrName } = req.params
 
-  if (typeof geneIdOrName !== 'string') {
-    return res.status(400).json({ error: 'Gene ID or name must be a single string' })
-  }
+    if (typeof geneIdOrName !== 'string') {
+      return res.status(400).json({ error: 'Gene ID or name must be a single string' })
+    }
 
-  let geneId: any
-  if (geneIdOrName.match(/^ENSGR?\d+/)) {
-    geneId = geneIdOrName
-  } else {
-    const geneIds = geneSearch.get(geneIdOrName.toUpperCase()) || []
-    if (geneIds.length === 1) {
-      geneId = geneIds[0] // eslint-disable-line prefer-destructuring
-    } else if (geneIds.length === 0) {
-      return res.status(404).json({ error: 'Gene not found' })
+    let geneId: any
+    if (geneIdOrName.match(/^ENSGR?\d+/)) {
+      geneId = geneIdOrName
     } else {
-      return res.status(400).json({ error: 'Gene symbol matches multiple genes' })
+      const geneIds = geneSearch.get(geneIdOrName.toUpperCase()) || []
+      if (geneIds.length === 1) {
+        geneId = geneIds[0] // eslint-disable-line prefer-destructuring
+      } else if (geneIds.length === 0) {
+        return res.status(404).json({ error: 'Gene not found' })
+      } else {
+        return res.status(400).json({ error: 'Gene symbol matches multiple genes' })
+      }
     }
+
+    const variantsPath = path.join(
+      geneDataDirectory(geneId),
+      `${geneId}_${req.dataset!.toLowerCase()}_variants.json`
+    )
+
+    return res.sendFile(variantsPath, { root: config.dataDirectory }, (err) => {
+      if (err) {
+        res.status(404).json({ error: 'Gene not found' })
+      }
+    })
   }
-
-  const variantsPath = path.join(
-    geneDataDirectory(geneId),
-    `${geneId}_${req.dataset!.toLowerCase()}_variants.json`
-  )
-
-  return res.sendFile(variantsPath, { root: config.dataDirectory }, (err) => {
-    if (err) {
-      res.status(404).json({ error: 'Gene not found' })
-    }
-  })
-})
+)
 
 // ================================================================================================
 // API error handling

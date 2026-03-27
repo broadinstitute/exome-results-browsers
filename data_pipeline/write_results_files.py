@@ -246,6 +246,7 @@ def write_data_files(table_path, output_directory, genes=None, iterative=False):
                 Epi25=hl.or_else(hl.len(ds.variants.Epi25), 0),
                 GP2=hl.or_else(hl.len(ds.variants.GP2), 0),
                 SCHEMA=hl.or_else(hl.len(ds.variants.SCHEMA), 0),
+                SCHEMA2=hl.or_else(hl.len(ds.variants.SCHEMA2), 0),
             )
         )
 
@@ -256,6 +257,7 @@ def write_data_files(table_path, output_directory, genes=None, iterative=False):
                 + ds.variant_counts.Epi25
                 + ds.variant_counts.GP2
                 + ds.variant_counts.SCHEMA
+                + ds.variant_counts.SCHEMA2
             )
         )
 

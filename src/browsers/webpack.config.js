@@ -5,7 +5,7 @@ const CopyPlugin = require('copy-webpack-plugin')
 const HtmlPlugin = require('html-webpack-plugin')
 const tsConfig = require('../../tsconfig.json')
 
-const BROWSERS = ['ASC', 'BipEx', 'Epi25', 'SCHEMA', 'IBD', 'GP2']
+const BROWSERS = ['ASC', 'BipEx', 'Epi25', 'SCHEMA', 'SCHEMA2', 'IBD', 'GP2']
 
 const isDev = process.env.NODE_ENV === 'development'
 
