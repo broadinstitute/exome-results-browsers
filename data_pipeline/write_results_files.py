@@ -316,6 +316,7 @@ if __name__ == "__main__":
     parser.add_argument("combined_hail_table")
     parser.add_argument("output_directory")
     parser.add_argument("--genes", nargs="+")
+    parser.add_argument("--iterative", action="store_true")
     parser.add_argument(
         "--environment",
         choices=["local", "gce"],
@@ -326,6 +327,6 @@ if __name__ == "__main__":
 
     init_hail(args.environment)
 
-    write_data_files(args.combined_hail_table, args.output_directory, args.genes)
+    write_data_files(args.combined_hail_table, args.output_directory, args.genes, args.iterative)
 
     print("Finished")

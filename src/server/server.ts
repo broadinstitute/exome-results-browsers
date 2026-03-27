@@ -173,22 +173,28 @@ if (isDevelopment) {
   )
   getDatasetForRequest = () => devDataset
 } else {
-  const datasetBySubdomain: Record<string, string> = Object.keys(metadata.datasets).reduce(
-    (acc, dataset) => ({
-      ...acc,
-      [dataset.toLowerCase()]: dataset,
-    }),
-    {}
-  )
-  getDatasetForRequest = (req: express.Request) => datasetBySubdomain[req.subdomains[0]]
+  // const datasetBySubdomain: Record<string, string> = Object.keys(metadata.datasets).reduce(
+  //   (acc, dataset) => ({
+  //     ...acc,
+  //     [dataset.toLowerCase()]: dataset,
+  //   }),
+  //   {}
+  // )
+  // getDatasetForRequest = (req: express.Request) => datasetBySubdomain[req.subdomains[0]]
+  getDatasetForRequest = () => 'SCHEMA'
 }
 
 // ================================================================================================
 // Authentication Endpoints
 // ================================================================================================
 
-const PASSWORD_PROTECTED_DATASETS = ['IBD']
-const CORRECT_PASSWORD = process.env.DEMO_PASSWORD || 'password'
+const PASSWORD_PROTECTED_DATASETS = ['IBD', 'SCHEMA']
+
+const CORRECT_PASSWORD = process.env.DEMO_PASSWORD
+  // Remove the ""s from development env var with a regex
+  ? (process.env.DEMO_PASSWORD.replace(/^"|"$/g, '') || 'password')
+  : 'password'
+
 const activeTokens = new Set()
 
 app.post('/api/auth', (req: Request, res: Response) => {
