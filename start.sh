@@ -74,8 +74,11 @@ cd "$PROJECT_DIR"
 
 # Validate browser argument
 BROWSER_DIRECTORY=$(echo "$BROWSER" | tr '[:upper:]' '[:lower:]')
-if [ ! -f "./src/browsers/${BROWSER_DIRECTORY}/${BROWSER}Browser.js" ]; then
-  echo "did not find ${BROWSER}Browser.js in src/browsers/${BROWSER_DIRECTORY}" 1>&2
+
+BROWSER_ENTRY_PATH="./src/browsers/${BROWSER_DIRECTORY}/${BROWSER}Browser"
+
+if [ ! -f "${BROWSER_ENTRY_PATH}.js" ] && [ ! -f "${BROWSER_ENTRY_PATH}.tsx" ]; then
+  echo "did not find ${BROWSER}Browser(.js|.tsx) in src/browsers/${BROWSER_DIRECTORY}" 1>&2
   exit 1
 fi
 
