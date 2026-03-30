@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -12,7 +11,7 @@ const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
-const renderOddsRatio = (value) => {
+const renderOddsRatio = (value: number | null | 'Infinity') => {
   if (value === null) {
     return '-'
   }
@@ -25,7 +24,38 @@ const renderOddsRatio = (value) => {
   return value.toPrecision(3)
 }
 
-const SCHEMAGeneResult = ({ result }) => (
+type SchemaGeneResult = {
+  'Case PTV': number
+  'Ctrl PTV': number
+  'Case mis3': number
+  'Ctrl mis3': number
+  'Case mis2': number
+  'Ctrl mis2': number
+  'P ca/co (Class 1)': number
+  'P ca/co (Class 2)': number
+  'P ca/co (comb)': number
+  'De novo PTV': number
+  'De novo mis3': number
+  'De novo mis2': number
+  'P de novo': number
+  'P meta': number
+  'Q meta': number
+  'OR (PTV)': number
+  'OR (Class I)': number
+  'OR (Class II)': number
+  'OR (PTV) lower bound': number
+  'OR (PTV) upper bound': number
+  'OR (Class I) lower bound': number
+  'OR (Class I) upper bound': number
+  'OR (Class II) lower bound': number
+  'OR (Class II) upper bound': number
+}
+
+interface SchemaGeneResultProps {
+  result: SchemaGeneResult
+}
+
+const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => (
   <div>
     <Table>
       <thead>
@@ -133,36 +163,13 @@ const SCHEMAGeneResult = ({ result }) => (
   </div>
 )
 
-SCHEMAGeneResult.propTypes = {
-  result: PropTypes.shape({
-    'Case PTV': PropTypes.number,
-    'Ctrl PTV': PropTypes.number,
-    'Case mis3': PropTypes.number,
-    'Ctrl mis3': PropTypes.number,
-    'Case mis2': PropTypes.number,
-    'Ctrl mis2': PropTypes.number,
-    'P ca/co (Class 1)': PropTypes.number,
-    'P ca/co (Class 2)': PropTypes.number,
-    'P ca/co (comb)': PropTypes.number,
-    'De novo PTV': PropTypes.number,
-    'De novo mis3': PropTypes.number,
-    'De novo mis2': PropTypes.number,
-    'P de novo': PropTypes.number,
-    'P meta': PropTypes.number,
-    'Q meta': PropTypes.number,
-    'OR (PTV)': PropTypes.number,
-    'OR (Class I)': PropTypes.number,
-    'OR (Class II)': PropTypes.number,
-    'OR (PTV) lower bound': PropTypes.number,
-    'OR (PTV) upper bound': PropTypes.number,
-    'OR (Class I) lower bound': PropTypes.number,
-    'OR (Class I) upper bound': PropTypes.number,
-    'OR (Class II) lower bound': PropTypes.number,
-    'OR (Class II) upper bound': PropTypes.number,
-  }).isRequired,
+interface SchemaGeneResultsProps {
+  results: {
+    meta: SchemaGeneResult
+  }
 }
 
-const SCHEMAGeneResults = ({ results }) => (
+const SCHEMAGeneResults = ({ results }: SchemaGeneResultsProps) => (
   <>
     <h2>
       Gene Result{' '}
@@ -176,9 +183,5 @@ const SCHEMAGeneResults = ({ results }) => (
     {results.meta ? <SCHEMAGeneResult result={results.meta} /> : <p>No result for this gene.</p>}
   </>
 )
-
-SCHEMAGeneResults.propTypes = {
-  results: PropTypes.objectOf(PropTypes.object).isRequired,
-}
 
 export default SCHEMAGeneResults

@@ -1,15 +1,24 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 
 import { Checkbox } from '@gnomad/ui'
 
-const SCHEMAVariantFilter = ({ value, onChange }) => (
+type SCHEMAVariantFilterValue = {
+  onlyInAnalysis: boolean
+  onlyDeNovo: boolean
+}
+
+interface SCHEMAVariantFilterProps {
+  value: SCHEMAVariantFilterValue
+  onChange: (newValue: SCHEMAVariantFilterValue) => void
+}
+
+const SCHEMAVariantFilter = ({ value, onChange }: SCHEMAVariantFilterProps) => (
   <>
     <Checkbox
       checked={value.onlyInAnalysis}
       id="in-analysis-filter"
       label="Show only variants in analysis"
-      onChange={(onlyInAnalysis) => {
+      onChange={(onlyInAnalysis: boolean) => {
         onChange({ ...value, onlyInAnalysis })
       }}
     />
@@ -17,19 +26,11 @@ const SCHEMAVariantFilter = ({ value, onChange }) => (
       checked={value.onlyDeNovo}
       id="de-novo-filter"
       label="Show only de novo variants"
-      onChange={(onlyDeNovo) => {
+      onChange={(onlyDeNovo: boolean) => {
         onChange({ ...value, onlyDeNovo })
       }}
     />
   </>
 )
-
-SCHEMAVariantFilter.propTypes = {
-  value: PropTypes.shape({
-    onlyInAnalysis: PropTypes.bool.isRequired,
-    onlyDeNovo: PropTypes.bool.isRequired,
-  }).isRequired,
-  onChange: PropTypes.func.isRequired,
-}
 
 export default SCHEMAVariantFilter
