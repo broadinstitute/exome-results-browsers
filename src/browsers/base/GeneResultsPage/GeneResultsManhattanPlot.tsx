@@ -6,12 +6,15 @@ import styled from 'styled-components'
 import { ManhattanPlot } from '@gnomad/manhattan-plot'
 import { GeneRow } from './geneResultTableColumns'
 
-interface GeneResultsManhattanPlotProps {
-  pValueColumn?: string
-  results: GeneRow[]
-  height: number
-  width: number
-  [key: string]: any
+interface AutosizedGeneResultsManhattanPlotProps {
+  pValueColumn?: string,
+  results: GeneRow[],
+  [key: string]: any,
+}
+
+interface GeneResultsManhattanPlotProps extends AutosizedGeneResultsManhattanPlotProps {
+  height: number,
+  width: number,
 }
 
 const VALID_MANHATTAN_PACKAGE_CHROMOSOMES = new Set(
@@ -30,21 +33,23 @@ const GeneResultsManhattanPlot = ({
       return (
         r.chrom &&
         r.pos &&
-        r[pValueColumns] &&
+        r[pValueColumn] &&
         VALID_MANHATTAN_PACKAGE_CHROMOSOMES.has(r.chrom)
       )
     })
-    .map((r) => ({ ...r, pval: r[pValueColumn]}))
+    .map((r) => ({ ...r, pval: r[pValueColumn] }))
 
   return (
     <ManhattanPlot
-      {...otherProps}
+      height={height}
+      width={width}
       dataPoints={renderedDataPoints}
       pointLabel={(d: GeneRow) => `${d.gene_symbol || d.gene_id} (p = ${d.pval.toExponential(3)})`}
       yLabel={'-log\u2081\u2080(p)'}
       onClickPoint={(d: GeneRow) => {
         window.open(`/gene/${d.gene_id}`)
       }}
+      {...otherProps}
     />
   )
 }
@@ -54,12 +59,15 @@ const Wrapper = styled.div`
   width: 100%;
 `
 
-const AutosizedGeneResultsManhattanPlot = withSize()(({ size, ...otherProps }: SizeMeProps) => (
-  <Wrapper>
-    {Boolean(size.width) && (
-      <GeneResultsManhattanPlot height={500} width={size.width!} {...(otherProps as any)} />
-    )}
-  </Wrapper>
-))
+const AutosizedGeneResultsManhattanPlot = withSize()(
+  ({ size, ...otherProps }: SizeMeProps & AutosizedGeneResultsManhattanPlotProps) => {
+    return (
+      <Wrapper>
+        {Boolean(size.width) && (
+          <GeneResultsManhattanPlot height={500} width={size.width!} {...otherProps} />
+        )}
+      </Wrapper>
+    )
+  })
 
 export default AutosizedGeneResultsManhattanPlot

@@ -6,12 +6,15 @@ import styled from 'styled-components'
 import { QQPlot } from '@gnomad/qq-plot'
 import { GeneRow } from './geneResultTableColumns'
 
-interface GeneResultsQQPlotProps {
+interface AutosizedGeneResultsQQPlotProps {
   pValueColumn: string
   results: GeneRow[]
+  [key: string]: any
+}
+
+interface GeneResultsQQPlotProps extends AutosizedGeneResultsQQPlotProps {
   height: number
   width: number
-  [key: string]: any
 }
 
 const GeneResultsQQPlot = ({
@@ -27,7 +30,8 @@ const GeneResultsQQPlot = ({
 
   return (
     <QQPlot
-      {...otherProps}
+      height={height}
+      width={width}
       dataPoints={renderedDataPoints}
       pointLabel={(d: GeneRow) => d.gene_symbol || d.gene_id}
       xLabel={'Expected -log\u2081\u2080(p)'}
@@ -35,6 +39,7 @@ const GeneResultsQQPlot = ({
       onClickPoint={(d: GeneRow) => {
         window.open(`/gene/${d.gene_id}`)
       }}
+      {...otherProps}
     />
   )
 }
@@ -44,12 +49,16 @@ const Wrapper = styled.div`
   width: 100%;
 `
 
-const AutosizedGeneResultsQQPlot = withSize()(({ size, ...otherProps }: SizeMeProps) => (
-  <Wrapper>
-    {Boolean(size.width) && (
-      <GeneResultsQQPlot height={500} width={size.width!} {...(otherProps as any)} />
-    )}
-  </Wrapper>
-))
+const AutosizedGeneResultsQQPlot = withSize()(
+  ({ size, ...otherProps }: SizeMeProps & AutosizedGeneResultsQQPlotProps) => {
+    return (
+      <Wrapper>
+        {Boolean(size.width) && (
+          <GeneResultsQQPlot height={500} width={size.width!} {...otherProps} />
+        )}
+      </Wrapper>
+    )
+  }
+)
 
 export default AutosizedGeneResultsQQPlot
