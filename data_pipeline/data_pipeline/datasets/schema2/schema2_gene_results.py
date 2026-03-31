@@ -23,7 +23,7 @@ def prepare_gene_results(test_genes, _output_root):
 
     gene_results = gene_results.annotate(
         gene_id=gene_model_ht[gene_results["Gene"]].gene_id,
-        # FIXME: suggest anlyst include this in input file, remove this when they do
+        # TK: suggest analyst include this in input file, then pull this number from there
         n_cases=87_959,
         n_controls=150_587,
     )
