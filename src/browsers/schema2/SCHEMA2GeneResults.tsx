@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -12,8 +11,8 @@ const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
-const renderOddsRatio = (value) => {
-  if (value === null) {
+const renderOddsRatio = (value: number | string | null | undefined) => {
+  if (value === null || value == undefined) {
     return '-'
   }
   if (value === 'Infinity') {
@@ -24,14 +23,37 @@ const renderOddsRatio = (value) => {
     return '0'
   }
 
-  const floatValue = parseFloat(value)
+  console.log(`Value is: (${value})`)
+  const floatValue = typeof value == 'string' ? parseFloat(value) : value
   if (Number.isNaN(floatValue)) {
     return value
   }
   return floatValue.toPrecision(3)
 }
 
-const SCHEMAGeneResult = ({ result }) => {
+type SchemaGeneResult = {
+  'PTV Case Carrier': number
+  'PTV Control Carrier': number
+  'PTV Pvalue': number
+  'PTV OR': string
+  'N de novo PTV': number
+  'PTV Missense Case Carrier': number
+  'PTV Missense Control Carrier': number
+  'PTV Missense Pvalue': number
+  'PTV Missense OR': string
+  'N de novo PTV + Missense': number
+  'de novo Pvalue': number
+  'Case-Control + de novo Pvalue': number
+  'Case-Control Cauchy Pvalue': number
+  n_cases: number
+  n_controls: number
+}
+
+interface SchemaGeneResultProps {
+  result: SchemaGeneResult
+}
+
+const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
   return (
     <div>
       <Table>
@@ -139,25 +161,13 @@ const SCHEMAGeneResult = ({ result }) => {
   )
 }
 
-SCHEMAGeneResult.propTypes = {
-  result: PropTypes.shape({
-    'PTV Case Carrier': PropTypes.number,
-    'PTV Control Carrier': PropTypes.number,
-    'PTV Pvalue': PropTypes.number,
-    'PTV OR': PropTypes.string,
-    'N de novo PTV': PropTypes.number,
-    'PTV Missense Case Carrier': PropTypes.number,
-    'PTV Missense Control Carrier': PropTypes.number,
-    'PTV Missense Pvalue': PropTypes.number,
-    'PTV Missense OR': PropTypes.string,
-    'N de novo PTV + Missense': PropTypes.number,
-    'de novo Pvalue': PropTypes.number,
-    'Case-Control + de novo Pvalue': PropTypes.number,
-    'Case-Control Cauchy Pvalue': PropTypes.number,
-  }).isRequired,
+interface SchemaGeneResultsProps {
+  results: {
+    meta: SchemaGeneResult
+  }
 }
 
-const SCHEMAGeneResults = ({ results }) => (
+const SCHEMAGeneResults = ({ results }: SchemaGeneResultsProps) => (
   <>
     <h2>
       Gene Result{' '}
@@ -171,9 +181,5 @@ const SCHEMAGeneResults = ({ results }) => (
     {results.meta ? <SCHEMAGeneResult result={results.meta} /> : <p>No result for this gene.</p>}
   </>
 )
-
-SCHEMAGeneResults.propTypes = {
-  results: PropTypes.objectOf(PropTypes.object).isRequired,
-}
 
 export default SCHEMAGeneResults

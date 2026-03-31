@@ -62,7 +62,7 @@ variantConsequences.splice(
   }
 )
 
-const renderOddsRatio = (value) => {
+const renderOddsRatio = (value: number | string | null) => {
   if (value === null) {
     return ''
   }
@@ -72,7 +72,7 @@ const renderOddsRatio = (value) => {
   if (value === 0) {
     return '0'
   }
-  const floatValue = parseFloat(value)
+  const floatValue = typeof value == 'string' ? parseFloat(value) : value
   if (Number.isNaN(floatValue)) {
     return value
   }
@@ -81,8 +81,6 @@ const renderOddsRatio = (value) => {
 
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
-    // browserTitle="SCHEMA browser"
-    // navBarBackgroundColor="#0a79bf"
     browserTitle="SCHEMA2 demo"
     navBarBackgroundColor="#ff9900"
     homePage={SCHEMAHomePage}
