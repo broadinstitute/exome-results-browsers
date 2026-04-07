@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -10,8 +9,8 @@ const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
-const renderOddsRatio = (value) => {
-  if (value === null) {
+const renderOddsRatio = (value: number | string | null | undefined) => {
+  if (value === null || value === undefined) {
     return '-'
   }
   if (value === 'Infinity') {
@@ -20,26 +19,59 @@ const renderOddsRatio = (value) => {
   if (value === 0) {
     return '0'
   }
-  return value.toPrecision(3)
+
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+  return floatValue.toPrecision(3)
 }
 
-const safeReturnValue = (object, fieldName) => {
+enum ResultEnum {
+  n_cases,
+  n_controls,
+  ptv_case_carrier,
+  ptv_ctrl_carrier,
+  ptv_p_value,
+  ptv_odds_ratio,
+  mis_case_carrier,
+  mis_ctrl_carrier,
+  mis_p_value,
+  mis_odds_ratio,
+  ptv_mis_case_carrier,
+  ptv_mis_ctrl_carrier,
+  ptv_mis_p_value,
+  ptv_mis_odds_ratio,
+  syn_case_carrier,
+  syn_ctrl_carrier,
+  syn_p_value,
+  syn_odds_ratio,
+}
+
+type ResultKey = keyof typeof ResultEnum
+
+type ResultObject = Record<ResultKey, string>
+
+type CategoryAbbreviation = 'ptv' | 'mis' | 'ptv_mis' | 'syn'
+
+
+const safeReturnValue = (object: ResultObject, fieldName: ResultKey): string => {
   return object[fieldName] === null ? '-' : object[fieldName]
 }
 
-const createGeneTableRow = (object, category, categoryAbbrev) => {
+const createGeneTableRow = (object: ResultObject, category: string, categoryAbbreviation: CategoryAbbreviation) => {
   return (
     <tr>
       <th scope="row">{category}</th>
-      <td>{safeReturnValue(object, `${categoryAbbrev}_case_carrier`)}</td>
-      <td>{safeReturnValue(object, `${categoryAbbrev}_ctrl_carrier`)}</td>
-      <td>{safeReturnValue(object, `${categoryAbbrev}_p_value`)}</td>
-      <td>{renderOddsRatio(object[`${categoryAbbrev}_odds_ratio`])}</td>
+      <td>{safeReturnValue(object, `${categoryAbbreviation}_case_carrier`)}</td>
+      <td>{safeReturnValue(object, `${categoryAbbreviation}_ctrl_carrier`)}</td>
+      <td>{safeReturnValue(object, `${categoryAbbreviation}_p_value`)}</td>
+      <td>{renderOddsRatio(object[`${categoryAbbreviation}_odds_ratio`])}</td>
     </tr>
   )
 }
 
-const BipExGeneResult = ({ result }) => (
+const BipExGeneResult = ({ result }: { result: ResultObject }) => (
   <div>
     <Table>
       <thead>
@@ -68,30 +100,14 @@ const BipExGeneResult = ({ result }) => (
   </div>
 )
 
-BipExGeneResult.propTypes = {
-  result: PropTypes.shape({
-    n_cases: PropTypes.number,
-    n_controls: PropTypes.number,
-    ptv_case_carrier: PropTypes.number,
-    ptv_ctrl_carrier: PropTypes.number,
-    ptv_p_value: PropTypes.number,
-    ptv_odds_ratio: PropTypes.number,
-    mis_case_carrier: PropTypes.number,
-    mis_ctrl_carrier: PropTypes.number,
-    mis_p_value: PropTypes.number,
-    mis_odds_ratio: PropTypes.number,
-    ptv_mis_case_carrier: PropTypes.number,
-    ptv_mis_ctrl_carrier: PropTypes.number,
-    ptv_mis_p_value: PropTypes.number,
-    ptv_mis_odds_ratio: PropTypes.number,
-    syn_case_carrier: PropTypes.number,
-    syn_ctrl_carrier: PropTypes.number,
-    syn_p_value: PropTypes.number,
-    syn_odds_ratio: PropTypes.number,
-  }).isRequired,
+
+interface BipExGeneResultsProps {
+  results: {
+    meta: ResultObject
+  }
 }
 
-const BipExGeneResults = ({ results }) => (
+const BipExGeneResults = ({ results }: BipExGeneResultsProps) => (
   <>
     <h2>
       Gene Result{' '}
@@ -140,9 +156,5 @@ const BipExGeneResults = ({ results }) => (
     <BipExGeneResult result={results.meta} />
   </>
 )
-
-BipExGeneResults.propTypes = {
-  results: PropTypes.objectOf(PropTypes.object).isRequired,
-}
 
 export default BipExGeneResults
