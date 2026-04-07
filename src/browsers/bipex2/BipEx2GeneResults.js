@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
-import { BaseTable, ExternalLink, Tabs } from '@gnomad/ui'
+import { BaseTable, ExternalLink } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
 
@@ -23,6 +23,22 @@ const renderOddsRatio = (value) => {
   return value.toPrecision(3)
 }
 
+const safeReturnValue = (object, fieldName) => {
+  return object[fieldName] === null ? '-' : object[fieldName]
+}
+
+const createGeneTableRow = (object, category, categoryAbbrev) => {
+  return (
+    <tr>
+      <th scope="row">{category}</th>
+      <td>{safeReturnValue(object, `${categoryAbbrev}_case_carrier`)}</td>
+      <td>{safeReturnValue(object, `${categoryAbbrev}_ctrl_carrier`)}</td>
+      <td>{safeReturnValue(object, `${categoryAbbrev}_p_value`)}</td>
+      <td>{renderOddsRatio(object[`${categoryAbbrev}_odds_ratio`])}</td>
+    </tr>
+  )
+}
+
 const BipExGeneResult = ({ result }) => (
   <div>
     <Table>
@@ -36,37 +52,12 @@ const BipExGeneResult = ({ result }) => (
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <th scope="row">Protein-truncating</th>
-          <td>{result.ptv_case_carrier === null ? '-' : result.ptv_case_carrier}</td>
-          <td>{result.ptv_ctrl_carrier === null ? '-' : result.ptv_ctrl_carrier}</td>
-          <td>{result.ptv_p_value === null ? '-' : result.ptv_p_value}</td>
-          <td>{result.ptv_odds_ratio === null ? '-' : result.ptv_odds_ratio}</td>
-        </tr>
-        <tr>
-          <th scope="row">Missense</th>
-          <td>{result.mis_case_carrier === null ? '-' : result.mis_case_carrier}</td>
-          <td>{result.mis_ctrl_carrier === null ? '-' : result.mis_ctrl_carrier}</td>
-          <td>{result.mis_p_value === null ? '-' : result.mis_p_value}</td>
-          <td>{result.mis_odds_ratio === null ? '-' : result.mis_odds_ratio}</td>
-        </tr>
-        <tr>
-          <th scope="row">Missense + Protein-truncating</th>
-          <td>{result.ptv_mis_case_carrier === null ? '-' : result.ptv_mis_case_carrier}</td>
-          <td>{result.ptv_mis_ctrl_carrier === null ? '-' : result.ptv_mis_ctrl_carrier}</td>
-          <td>{result.ptv_mis_p_value === null ? '-' : result.ptv_mis_p_value}</td>
-          <td>{result.ptv_mis_odds_ratio === null ? '-' : result.ptv_mis_odds_ratio}</td>
-        </tr>
-        <tr>
-          <th scope="row">Synonymous</th>
-          <td>{result.syn_case_carrier === null ? '-' : result.syn_case_carrier}</td>
-          <td>{result.syn_ctrl_carrier === null ? '-' : result.syn_ctrl_carrier}</td>
-          <td>{result.syn_p_value === null ? '-' : result.syn_p_value}</td>
-          <td>{result.syn_odds_ratio === null ? '-' : result.syn_odds_ratio}</td>
-        </tr>
+        {createGeneTableRow(result, 'Protein-truncating', 'ptv')}
+        {createGeneTableRow(result, 'Missense', 'mis')}
+        {createGeneTableRow(result, 'Missense + Protein-truncating', 'ptv_mis')}
+        {createGeneTableRow(result, 'Synonmymous', 'syn')}
       </tbody>
     </Table>
-
 
     <p style={{ marginTop: '2em' }}>
       <strong>Total cases: {result.n_cases}</strong>
@@ -74,7 +65,6 @@ const BipExGeneResult = ({ result }) => (
     <p>
       <strong>Total controls: {result.n_controls}</strong>
     </p>
-
   </div>
 )
 
@@ -82,23 +72,22 @@ BipExGeneResult.propTypes = {
   result: PropTypes.shape({
     n_cases: PropTypes.number,
     n_controls: PropTypes.number,
-    ptv_case_count: PropTypes.number,
-    ptv_control_count: PropTypes.number,
-    ptv_fisher_gnom_non_psych_case_count: PropTypes.number,
-    ptv_fisher_gnom_non_psych_control_count: PropTypes.number,
-    ptv_fisher_gnom_non_psych_pval: PropTypes.number,
-    // Odds ratio values may be a string 'inf' or a number
-    ptv_fisher_gnom_non_psych_OR: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    damaging_missense_case_count: PropTypes.number,
-    damaging_missense_control_count: PropTypes.number,
-    damaging_missense_fisher_gnom_non_psych_case_count: PropTypes.number,
-    damaging_missense_fisher_gnom_non_psych_control_count: PropTypes.number,
-    damaging_missense_fisher_gnom_non_psych_pval: PropTypes.number,
-    // Odds ratio values may be a string 'inf' or a number
-    damaging_missense_fisher_gnom_non_psych_OR: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string,
-    ]),
+    ptv_case_carrier: PropTypes.number,
+    ptv_ctrl_carrier: PropTypes.number,
+    ptv_p_value: PropTypes.number,
+    ptv_odds_ratio: PropTypes.number,
+    mis_case_carrier: PropTypes.number,
+    mis_ctrl_carrier: PropTypes.number,
+    mis_p_value: PropTypes.number,
+    mis_odds_ratio: PropTypes.number,
+    ptv_mis_case_carrier: PropTypes.number,
+    ptv_mis_ctrl_carrier: PropTypes.number,
+    ptv_mis_p_value: PropTypes.number,
+    ptv_mis_odds_ratio: PropTypes.number,
+    syn_case_carrier: PropTypes.number,
+    syn_ctrl_carrier: PropTypes.number,
+    syn_p_value: PropTypes.number,
+    syn_odds_ratio: PropTypes.number,
   }).isRequired,
 }
 
@@ -148,30 +137,7 @@ const BipExGeneResults = ({ results }) => (
       />
     </h2>
 
-    {/*
-    <Tabs
-      tabs={[
-        'Bipolar Disorder',
-        'Bipolar Disorder 1',
-        'Bipolar Disorder 2',
-        'Bipolar Disorder with Psychosis',
-        'Bipolar Disorder without Psychosis',
-        'Bipolar Disorder (including Schizoaffective)',
-      ].map((group) => ({
-        id: group,
-        label: group,
-        render: () =>
-          results[group] ? (
-            <BipExGeneResult result={results[group]} />
-          ) : (
-            <p>No result for {group} in this gene.</p>
-          ),
-      }))}
-    />
-    */}
-
-    <BipExGeneResult result={results["meta"]} />
-
+    <BipExGeneResult result={results.meta} />
   </>
 )
 
