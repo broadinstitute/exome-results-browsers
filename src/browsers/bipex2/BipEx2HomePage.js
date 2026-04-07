@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { ExternalLink, Page, PageHeading } from '@gnomad/ui'
+import { Page, PageHeading } from '@gnomad/ui'
 
 import DocumentTitle from '../base/DocumentTitle'
 import Link from '../base/Link'
