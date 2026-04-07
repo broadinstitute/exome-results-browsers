@@ -23,7 +23,6 @@ const renderOddsRatio = (value: number | string | null | undefined) => {
     return '0'
   }
 
-  console.log(`Value is: (${value})`)
   const floatValue = typeof value == 'string' ? parseFloat(value) : value
   if (Number.isNaN(floatValue)) {
     return value
