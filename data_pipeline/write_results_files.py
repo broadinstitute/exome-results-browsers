@@ -243,6 +243,7 @@ def write_data_files(table_path, output_directory, genes=None, iterative=False):
             variant_counts=hl.struct(
                 ASC=hl.or_else(hl.len(ds.variants.ASC), 0),
                 BipEx=hl.or_else(hl.len(ds.variants.BipEx), 0),
+                BipEx2=hl.or_else(hl.len(ds.variants.BipEx2), 0),
                 Epi25=hl.or_else(hl.len(ds.variants.Epi25), 0),
                 GP2=hl.or_else(hl.len(ds.variants.GP2), 0),
                 SCHEMA=hl.or_else(hl.len(ds.variants.SCHEMA), 0),
@@ -254,6 +255,7 @@ def write_data_files(table_path, output_directory, genes=None, iterative=False):
             total_variants=(
                 ds.variant_counts.ASC
                 + ds.variant_counts.BipEx
+                + ds.variant_counts.BipEx2
                 + ds.variant_counts.Epi25
                 + ds.variant_counts.GP2
                 + ds.variant_counts.SCHEMA
@@ -288,7 +290,13 @@ def write_data_files(table_path, output_directory, genes=None, iterative=False):
 def init_hail(env="local"):
     if env == "local":
         print("Running with default hail pyspark settings")
-        hl.init()
+        # hl.init()
+        hl.init(
+            spark_conf={
+                "spark.driver.bindAddress": "127.0.0.1",
+                "spark.driver.host": "127.0.0.1",
+            },
+        )
     elif env == "gce":
         # tailored to n1-standard-16 used in deployment/README.md
         print("Running with pyspark settings tailored to n1-standard-16")

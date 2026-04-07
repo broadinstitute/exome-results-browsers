@@ -173,7 +173,13 @@ def main():
     else:
         datasets_to_combine = all_datasets
 
-    hl.init()
+    # hl.init()
+    hl.init(
+        spark_conf={
+            "spark.driver.bindAddress": "127.0.0.1",
+            "spark.driver.host": "127.0.0.1",
+        },
+    )
 
     output_root = get_output_root(args.output_local)
     combined_output_date = pipeline_config.get("output", "output_last_updated")

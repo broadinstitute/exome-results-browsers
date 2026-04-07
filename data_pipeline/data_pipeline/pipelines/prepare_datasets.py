@@ -130,7 +130,13 @@ def main():
     else:
         datasets_to_prepare = all_datasets
 
-    hl.init()
+    # hl.init()
+    hl.init(
+        spark_conf={
+            "spark.driver.bindAddress": "127.0.0.1",
+            "spark.driver.host": "127.0.0.1",
+        },
+    )
 
     for dataset in datasets_to_prepare:
         prepare_dataset(dataset, args.test_genes, args.output_local)
