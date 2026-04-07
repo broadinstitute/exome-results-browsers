@@ -6,8 +6,8 @@ import { renderCount } from '../base/tableCells'
 import BipExHomePage from './BipEx2HomePage'
 import BipExVariantFilter from './BipEx2VariantFilter'
 
-const renderOddsRatio = (value) => {
-  if (value == null) {
+const renderOddsRatio = (value: number | string | null | undefined) => {
+  if (value === null || value === undefined) {
     return ''
   }
 
