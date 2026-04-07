@@ -3,8 +3,8 @@ import React from 'react'
 import Browser from '../base/Browser'
 import { renderCount } from '../base/tableCells'
 
-import BipExHomePage from './BipExHomePage'
-import BipExVariantFilter from './BipExVariantFilter'
+import BipExHomePage from './BipEx2HomePage'
+import BipExVariantFilter from './BipEx2VariantFilter'
 
 const renderOddsRatio = (value) => {
   if (value == null) {
@@ -36,9 +36,7 @@ const BipExBrowser = () => (
     navBarBackgroundColor="#a6694b"
     homePage={BipExHomePage}
     geneResultsPageHeading="Gene results"
-    geneResultAnalysisGroupOptions={[
-      "meta",
-    ]}
+    geneResultAnalysisGroupOptions={['meta']}
     defaultGeneResultAnalysisGroup="meta"
     defaultGeneResultSortKey="ptv_p_value"
     geneResultColumns={[
@@ -153,9 +151,7 @@ const BipExBrowser = () => (
       // ---
     ]}
     defaultVariantAnalysisGroup="meta"
-    variantAnalysisGroupOptions={[
-      "meta",
-    ]}
+    variantAnalysisGroupOptions={['meta']}
     variantResultColumns={[
       {
         key: 'group_result.mac',

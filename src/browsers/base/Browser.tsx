@@ -22,7 +22,7 @@ import LoginPage from './LoginPage'
 import { userHasBearerCookie } from './auth'
 import { GeneRow } from './GeneResultsPage/geneResultTableColumns'
 
-export type DatasetId = 'ASC' | 'BipEx' | 'Epi25' | 'GP2' | 'IBD' | 'SCHEMA' | 'SCHEMA2'
+export type DatasetId = 'ASC' | 'BipEx' | 'BipEx2' | 'Epi25' | 'GP2' | 'IBD' | 'SCHEMA' | 'SCHEMA2'
 
 export type ReferenceGenome = 'GRCh37' | 'GRCh38'
 

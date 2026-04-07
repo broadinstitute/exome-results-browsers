@@ -21,7 +21,7 @@ def filter_results_table_to_test_gene_intervals(results):
 
 
 def prepare_variant_results(test_genes, _output_root):
-    results = hl.read_table(pipeline_config.get("BipEx", "variant_results_path"))
+    results = hl.read_table(pipeline_config.get("BipEx2", "variant_results_path"))
 
     if test_genes:
         results = filter_results_table_to_test_gene_intervals(results)
@@ -78,7 +78,7 @@ def prepare_variant_results(test_genes, _output_root):
     variants = variants.annotate(**results[variants.locus, variants.alleles])
 
     # Merge variant annotations for canonical transcripts
-    annotations = hl.read_table(pipeline_config.get("BipEx", "variant_annotations_path"))
+    annotations = hl.read_table(pipeline_config.get("BipEx2", "variant_annotations_path"))
 
     annotations = annotations.select(
         "gene_id",
