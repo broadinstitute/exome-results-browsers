@@ -12,7 +12,7 @@ def filter_results_table_to_test_gene(results):
 
 
 def prepare_gene_results(test_genes, _output_root):
-    results = hl.read_table(pipeline_config.get("BipEx", "gene_results_path"))
+    results = hl.read_table(pipeline_config.get("BipEx2", "gene_results_path"))
 
     if test_genes:
         results = filter_results_table_to_test_gene(results)

@@ -58,8 +58,9 @@ export default () => (
     </p>
 
     {/* TK: TODO: */}
-    <p style={{ marginLeft: '2rem' }}><b>Further information to be populated. TK: TODO: </b></p>
-
+    <p style={{ marginLeft: '2rem' }}>
+      <b>Further information to be populated. TK: TODO: </b>
+    </p>
 
     {/*
     <p>

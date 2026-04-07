@@ -244,12 +244,14 @@ const TopBar = ({
           </CenterHorizontal>
         </Banner>
       )}
-      {datasetId === 'BipEx' && (
+      {datasetId === 'BipEx2' && (
         <Banner>
           <CenterHorizontal>
             <p>
               Have feedback? Fill out our{' '}
-              <ExternalLink href="https://forms.gle/VcF8AjgnD9q7eFVw6">BipEx 2 Demo Google Form</ExternalLink>
+              <ExternalLink href="https://forms.gle/VcF8AjgnD9q7eFVw6">
+                BipEx 2 Demo Google Form
+              </ExternalLink>
             </p>
           </CenterHorizontal>
         </Banner>
