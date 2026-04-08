@@ -6,16 +6,27 @@ import { renderCount } from '../base/tableCells'
 import BipExHomePage from './BipExHomePage'
 import BipExVariantFilter from './BipExVariantFilter'
 
-const renderOddsRatio = (value) => {
-  if (value === null) {
+const renderOddsRatio = (value: number | string | null | undefined) => {
+  if (value === null || value === undefined) {
     return ''
   }
+
   if (value === 'Infinity') {
     return '∞'
   }
+
   if (value === 0) {
     return '0'
   }
+
+  if (Number.isNaN(value)) {
+    return '-'
+  }
+
+  if (typeof value !== 'number') {
+    return `[FIXME: ${typeof value} | ${String(value)}]`
+  }
+
   return value.toPrecision(3)
 }
 

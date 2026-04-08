@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -10,8 +9,8 @@ const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
-const renderOddsRatio = (value) => {
-  if (value === null) {
+const renderOddsRatio = (value: number | string | null | undefined) => {
+  if (value === null || value === undefined) {
     return '-'
   }
   if (value === 'Infinity') {
@@ -20,10 +19,15 @@ const renderOddsRatio = (value) => {
   if (value === 0) {
     return '0'
   }
-  return value.toPrecision(3)
+
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+  return floatValue.toPrecision(3)
 }
 
-const BipExGeneResult = ({ result }) => (
+const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
   <div>
     <h3>Burden (MAC ≤ 5)</h3>
     <Table>
@@ -118,31 +122,41 @@ const BipExGeneResult = ({ result }) => (
   </div>
 )
 
-BipExGeneResult.propTypes = {
-  result: PropTypes.shape({
-    n_cases: PropTypes.number,
-    n_controls: PropTypes.number,
-    ptv_case_count: PropTypes.number,
-    ptv_control_count: PropTypes.number,
-    ptv_fisher_gnom_non_psych_case_count: PropTypes.number,
-    ptv_fisher_gnom_non_psych_control_count: PropTypes.number,
-    ptv_fisher_gnom_non_psych_pval: PropTypes.number,
-    // Odds ratio values may be a string 'inf' or a number
-    ptv_fisher_gnom_non_psych_OR: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    damaging_missense_case_count: PropTypes.number,
-    damaging_missense_control_count: PropTypes.number,
-    damaging_missense_fisher_gnom_non_psych_case_count: PropTypes.number,
-    damaging_missense_fisher_gnom_non_psych_control_count: PropTypes.number,
-    damaging_missense_fisher_gnom_non_psych_pval: PropTypes.number,
-    // Odds ratio values may be a string 'inf' or a number
-    damaging_missense_fisher_gnom_non_psych_OR: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string,
-    ]),
-  }).isRequired,
+interface BipExResultObject {
+  n_cases: number,
+  n_controls: number,
+  ptv_case_count: number,
+  ptv_control_count: number,
+  ptv_fisher_gnom_non_psych_case_count: number,
+  ptv_fisher_gnom_non_psych_control_count: number,
+  ptv_fisher_gnom_non_psych_pval: number,
+  // Odds ratio values may be a string 'inf' or a number
+  ptv_fisher_gnom_non_psych_OR: number | string,
+  damaging_missense_case_count: number,
+  damaging_missense_control_count: number,
+  damaging_missense_fisher_gnom_non_psych_case_count: number,
+  damaging_missense_fisher_gnom_non_psych_control_count: number,
+  damaging_missense_fisher_gnom_non_psych_pval: number,
+  // Odds ratio values may be a string 'inf' or a number
+  damaging_missense_fisher_gnom_non_psych_OR: number | string,
 }
 
-const BipExGeneResults = ({ results }) => (
+const groups = [
+  'Bipolar Disorder',
+  'Bipolar Disorder 1',
+  'Bipolar Disorder 2',
+  'Bipolar Disorder with Psychosis',
+  'Bipolar Disorder without Psychosis',
+  'Bipolar Disorder (including Schizoaffective)',
+] as const
+
+type BipExAnalysisGroup = typeof groups[number]
+
+interface BipExGeneResultsProps {
+  results: Record<BipExAnalysisGroup, BipExResultObject>
+}
+
+const BipExGeneResults = ({ results }: BipExGeneResultsProps) => (
   <>
     <h2>
       Gene Result{' '}
@@ -188,14 +202,7 @@ const BipExGeneResults = ({ results }) => (
       />
     </h2>
     <Tabs
-      tabs={[
-        'Bipolar Disorder',
-        'Bipolar Disorder 1',
-        'Bipolar Disorder 2',
-        'Bipolar Disorder with Psychosis',
-        'Bipolar Disorder without Psychosis',
-        'Bipolar Disorder (including Schizoaffective)',
-      ].map((group) => ({
+      tabs={groups.map((group) => ({
         id: group,
         label: group,
         render: () =>
@@ -208,9 +215,5 @@ const BipExGeneResults = ({ results }) => (
     />
   </>
 )
-
-BipExGeneResults.propTypes = {
-  results: PropTypes.objectOf(PropTypes.object).isRequired,
-}
 
 export default BipExGeneResults
