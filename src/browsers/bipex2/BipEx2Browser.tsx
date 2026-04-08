@@ -38,7 +38,7 @@ const BipExBrowser = () => (
     geneResultsPageHeading="Gene results"
     geneResultAnalysisGroupOptions={['meta']}
     defaultGeneResultAnalysisGroup="meta"
-    defaultGeneResultSortKey="ptv_p_value"
+    defaultGeneResultSortKey="ptv_mis_p_value"
     geneResultColumns={[
       {
         key: 'n_cases',
@@ -51,6 +51,30 @@ const BipExBrowser = () => (
         heading: 'Controls',
         minWidth: 90,
         render: renderCount,
+      },
+      // ---
+      {
+        key: 'ptv_mis_case_carrier',
+        heading: 'PTV+MIS Case Carrier',
+        minWidth: 85,
+        render: renderCount,
+      },
+      {
+        key: 'ptv_mis_ctrl_carrier',
+        heading: 'PTV+MIS Control Carrier',
+        minWidth: 85,
+        render: renderCount,
+      },
+      {
+        key: 'ptv_mis_p_value',
+        heading: 'PTV+MIS p\u2011val',
+        minWidth: 95,
+      },
+      {
+        key: 'ptv_mis_odds_ratio',
+        heading: 'PTV+MIS Fisher odds ratio',
+        minWidth: 85,
+        render: renderOddsRatio,
       },
       // ---
       {
@@ -102,30 +126,6 @@ const BipExBrowser = () => (
       },
       // ---
       {
-        key: 'ptv_mis_case_carrier',
-        heading: 'PTV+MIS Case Carrier',
-        minWidth: 85,
-        render: renderCount,
-      },
-      {
-        key: 'ptv_mis_ctrl_carrier',
-        heading: 'PTV+MIS Control Carrier',
-        minWidth: 85,
-        render: renderCount,
-      },
-      {
-        key: 'ptv_mis_p_value',
-        heading: 'PTV+MIS p\u2011val',
-        minWidth: 95,
-      },
-      {
-        key: 'ptv_mis_odds_ratio',
-        heading: 'PTV+MIS Fisher odds ratio',
-        minWidth: 85,
-        render: renderOddsRatio,
-      },
-      // ---
-      {
         key: 'syn_case_carrier',
         heading: 'SYN Case Carrier',
         minWidth: 85,
@@ -148,7 +148,6 @@ const BipExBrowser = () => (
         minWidth: 85,
         render: renderOddsRatio,
       },
-      // ---
     ]}
     defaultVariantAnalysisGroup="meta"
     variantAnalysisGroupOptions={['meta']}
