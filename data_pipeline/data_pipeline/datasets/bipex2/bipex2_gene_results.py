@@ -3,6 +3,20 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
+def filter_results_table_to_test_gene(results):
+    test_gene_symbols = [
+        "PCSK9",  # ENSG00000169174
+        "AKAP11",  # ENSG00000023516
+        "SHANK1",  # ENSG00000161681
+        "FRYL",  # ENSG00000075539
+        "MAGI2",  # ENSG00000187391
+    ]
+    test_gene_set = hl.literal(test_gene_symbols)
+
+    results = results.filter(test_gene_set.contains(results.gene_symbol))
+    return results.persist()
+
+
 def annotate_false_discovery_rate_significant_genes(results):
     # manually listed here, got told by analyst that the smallest 13 p value for mis+ptv are bonferroni
     bonferonni_significant_gene_symbols = [
@@ -78,14 +92,6 @@ def annotate_false_discovery_rate_significant_genes(results):
     )
 
     return results
-
-
-def filter_results_table_to_test_gene(results):
-    test_gene_symbols = ["PCSK9", "AKAP11"]
-    test_gene_set = hl.literal(test_gene_symbols)
-
-    results = results.filter(test_gene_set.contains(results.gene_symbol))
-    return results.persist()
 
 
 def prepare_gene_results(test_genes, _output_root):
