@@ -3,6 +3,83 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 
 
+def annotate_false_discovery_rate_significant_genes(results):
+    # manually listed here, got told by analyst that the smallest 13 p value for mis+ptv are bonferroni
+    bonferonni_significant_gene_symbols = [
+        "RB1CC1",
+        "AKAP11",
+        "ATP2B2",
+        "SHANK1",
+        "DOP1A",
+        "ATP9A",
+        "KDM5B",
+        "TERF2",
+        "CUL1",
+        "EIF4E2",
+        "EIF4A2",
+        "SP4",
+        "HECTD2",
+    ]
+
+    # manually listed here, got told by analyst that the smallest 33 p value for mis+ptv are fdr 5 percent
+    false_discovery_five_percent_significant_gene_symbols = [
+        "FRYL",
+        "TCF7L1",
+        "HDAC3",
+        "HERC1",
+        "LRFN1",
+        "NBPF14",
+        "ST18",
+        "ATXN2L",
+        "DNAJC13",
+        "SYT1",
+        "AKR7L",
+        "HES4",
+        "MAGI2",
+        "PCDHGA8",
+        "TEX261",
+        "RAB3D",
+        "CIP2A",
+        "SLC2A11",
+        "KLF1",
+        "TOPAZ1",
+    ]
+
+    bonferroni_set = set(bonferonni_significant_gene_symbols)
+    hl_bonferroni = hl.literal(bonferroni_set)
+
+    false_discovery_five_percent_set = set(
+        bonferonni_significant_gene_symbols + false_discovery_five_percent_significant_gene_symbols
+    )
+    hl_false_discovery_five_percent = hl.literal(false_discovery_five_percent_set)
+
+    results = results.annotate(
+        flags=hl.array(
+            [
+                hl.or_missing(hl_bonferroni.contains(results.gene_symbol), "bonferonni_significant"),
+                hl.or_missing(
+                    hl_false_discovery_five_percent.contains(results.gene_symbol), "fdr_five_percent_significant"
+                ),
+            ]
+        ).filter(hl.is_defined)
+    )
+
+    # turn array ["a", "b", "c"] in to string "a,b,c"
+    results = results.transmute(
+        flags=hl.fold(
+            lambda i, j: hl.if_else(
+                i != "",
+                i + "," + j,
+                i + j,
+            ),
+            "",
+            results.flags,
+        )
+    )
+
+    return results
+
+
 def filter_results_table_to_test_gene(results):
     test_gene_symbols = ["PCSK9", "AKAP11"]
     test_gene_set = hl.literal(test_gene_symbols)
@@ -25,6 +102,8 @@ def prepare_gene_results(test_genes, _output_root):
         analysis_group="meta",
     )
 
+    results = annotate_false_discovery_rate_significant_genes(results)
+
     # Select result fields, discard gene information
     results = results.select(
         analysis_group="meta",
@@ -44,6 +123,8 @@ def prepare_gene_results(test_genes, _output_root):
         ptv_mis_ctrl_carrier=results["PTV+MIS Control Carrier"],
         ptv_mis_p_value=results["PTV+MIS P-value"],
         ptv_mis_odds_ratio=results["PTV+MIS Odds Ratio"],
+        #
+        flags=results["flags"],
     )
 
     gene_models_path = "gs://gnomad-v4-data-pipeline/output/genes/gnomad.browser.GRCh38.GENCODEv39.pext.ht"
