@@ -15,7 +15,30 @@ def filter_results_table_to_test_gene_intervals(results):
         "chr13", 42272152, 42323261, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
 
-    results = hl.filter_intervals(results, [pcsk9_interval, akap11_interval])
+    # ENSG00000161681
+    shank1_interval = hl.locus_interval(
+        "chr19", 50659255, 50719802, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+
+    # ENSG00000075539
+    fryl_interval = hl.locus_interval(
+        "chr4", 48497357, 48780322, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+    # ENSG00000187391
+    magi2_interval = hl.locus_interval(
+        "chr7", 78017055, 79453667, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+
+    results = hl.filter_intervals(
+        results,
+        [
+            pcsk9_interval,
+            akap11_interval,
+            shank1_interval,
+            fryl_interval,
+            magi2_interval,
+        ],
+    )
 
     return results.persist()
 
