@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount } from '../base/tableCells'
+import { renderCount, renderFloatAsScientific } from '../base/tableCells'
 
 import BipExHomePage from './BipEx2HomePage'
 import BipExVariantFilter from './BipEx2VariantFilter'
@@ -44,109 +44,113 @@ const BipExBrowser = () => (
         key: 'n_cases',
         heading: 'Cases',
         minWidth: 90,
-        render: renderCount,
+        render: (value) => renderCount(value),
       },
       {
         key: 'n_controls',
         heading: 'Controls',
         minWidth: 90,
-        render: renderCount,
+        render: (value) => renderCount(value),
       },
       // ---
       {
         key: 'ptv_mis_case_carrier',
         heading: 'PTV+MIS Case Carrier',
         minWidth: 85,
-        render: renderCount,
+        render: (value) => renderCount(value),
       },
       {
         key: 'ptv_mis_ctrl_carrier',
         heading: 'PTV+MIS Control Carrier',
         minWidth: 85,
-        render: renderCount,
+        render: (value) => renderCount(value),
       },
       {
         key: 'ptv_mis_p_value',
         heading: 'PTV+MIS p\u2011val',
         minWidth: 95,
+        render: (value) => renderFloatAsScientific(value)
       },
       {
         key: 'ptv_mis_odds_ratio',
         heading: 'PTV+MIS Fisher odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio(value),
       },
       // ---
       {
         key: 'ptv_case_carrier',
         heading: 'PTV Case Carrier',
         minWidth: 65,
-        render: renderCount,
+        render: (value) => renderCount(value),
       },
       {
         key: 'ptv_ctrl_carrier',
         heading: 'PTV Control Carrier',
         minWidth: 65,
-        render: renderCount,
+        render: (value) => renderCount(value),
       },
       {
         key: 'ptv_p_value',
         heading: 'PTV p\u2011val',
         minWidth: 95,
+        render: (value) => renderFloatAsScientific(value)
       },
       {
         key: 'ptv_odds_ratio',
         heading: 'PTV Fisher odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio(value),
       },
       // ---
       {
         key: 'mis_case_carrier',
         heading: 'MIS Case Carrier',
         minWidth: 65,
-        render: renderCount,
+        render: (value) => renderCount(value),
       },
       {
         key: 'mis_ctrl_carrier',
         heading: 'MIS Control Carrier',
         minWidth: 65,
-        render: renderCount,
+        render: (value) => renderCount(value),
       },
       {
         key: 'mis_p_value',
         heading: 'MIS p\u2011val',
         minWidth: 95,
+        render: (value) => renderFloatAsScientific(value)
       },
       {
         key: 'mis_odds_ratio',
         heading: 'MIS Fisher odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio(value),
       },
       // ---
       {
         key: 'syn_case_carrier',
         heading: 'SYN Case Carrier',
         minWidth: 85,
-        render: renderCount,
+        render: (value) => renderCount(value),
       },
       {
         key: 'syn_ctrl_carrier',
         heading: 'SYN Control Carrier',
         minWidth: 85,
-        render: renderCount,
+        render: (value) => renderCount(value),
       },
       {
         key: 'syn_p_value',
         heading: 'SYN p\u2011val',
         minWidth: 95,
+        render: (value) => renderFloatAsScientific(value)
       },
       {
         key: 'syn_odds_ratio',
         heading: 'SYN Fisher odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio(value),
       },
     ]}
     defaultVariantAnalysisGroup="meta"
