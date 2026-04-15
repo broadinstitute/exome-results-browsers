@@ -18,78 +18,40 @@ def filter_results_table_to_test_gene(results):
 
 
 def annotate_false_discovery_rate_significant_genes(results):
-    # manually listed here, got told by analyst that the smallest 13 p value for mis+ptv are bonferroni
-    bonferonni_significant_gene_symbols = [
-        "RB1CC1",
-        "AKAP11",
-        "ATP2B2",
-        "SHANK1",
-        "DOP1A",
-        "ATP9A",
-        "KDM5B",
-        "TERF2",
-        "CUL1",
-        "EIF4E2",
-        "EIF4A2",
-        "SP4",
-        "HECTD2",
-    ]
 
-    # manually listed here, got told by analyst that the smallest 33 p value for mis+ptv are fdr 5 percent
-    false_discovery_five_percent_significant_gene_symbols = [
-        "FRYL",
-        "TCF7L1",
-        "HDAC3",
-        "HERC1",
-        "LRFN1",
-        "NBPF14",
-        "ST18",
-        "ATXN2L",
-        "DNAJC13",
-        "SYT1",
-        "AKR7L",
-        "HES4",
-        "MAGI2",
-        "PCDHGA8",
-        "TEX261",
-        "RAB3D",
-        "CIP2A",
-        "SLC2A11",
-        "KLF1",
-        "TOPAZ1",
-    ]
+    # p-value of 0 typically indicates error of NaN in analysis, not real
+    #    significance
+    valid_results = results.filter(hl.is_defined(results["PTV+MIS P-value"]) & (results["PTV+MIS P-value"] > 0))
 
-    bonferroni_set = set(bonferonni_significant_gene_symbols)
-    hl_bonferroni = hl.literal(bonferroni_set)
+    bonferonni_significant_cutoff = 13
+    # fdr: false discovery rate
+    fdr_five_significant_cutoff = 33
 
-    false_discovery_five_percent_set = set(
-        bonferonni_significant_gene_symbols + false_discovery_five_percent_significant_gene_symbols
-    )
-    hl_false_discovery_five_percent = hl.literal(false_discovery_five_percent_set)
+    fdr_five_significant_rows = valid_results.order_by("PTV+MIS P-value").take(fdr_five_significant_cutoff)
+    fdr_five_significant_gene_symbols = [row.gene_symbol for row in fdr_five_significant_rows]
+
+    bonferonni_significant_gene_symbols = fdr_five_significant_gene_symbols[:bonferonni_significant_cutoff]
+    fdr_five_significant_gene_symbols = fdr_five_significant_gene_symbols[:fdr_five_significant_cutoff]
+
+    bonferroni_significant_set = set(bonferonni_significant_gene_symbols)
+    hl_bonferroni_significant_set = hl.literal(bonferroni_significant_set)
+
+    fdr_five_significant_set = set(fdr_five_significant_gene_symbols)
+    hl_fdr_five_significant_set = hl.literal(fdr_five_significant_set)
 
     results = results.annotate(
         flags=hl.array(
             [
-                hl.or_missing(hl_bonferroni.contains(results.gene_symbol), "bonferonni_significant"),
+                hl.or_missing(hl_bonferroni_significant_set.contains(results.gene_symbol), "bonferonni_significant"),
                 hl.or_missing(
-                    hl_false_discovery_five_percent.contains(results.gene_symbol), "fdr_five_percent_significant"
+                    hl_fdr_five_significant_set.contains(results.gene_symbol), "fdr_five_percent_significant"
                 ),
             ]
         ).filter(hl.is_defined)
     )
 
     # turn array ["a", "b", "c"] in to string "a,b,c"
-    results = results.transmute(
-        flags=hl.fold(
-            lambda i, j: hl.if_else(
-                i != "",
-                i + "," + j,
-                i + j,
-            ),
-            "",
-            results.flags,
-        )
-    )
+    results = results.transmute(flags=hl.delimit(results.flags, ","))
 
     return results
 
