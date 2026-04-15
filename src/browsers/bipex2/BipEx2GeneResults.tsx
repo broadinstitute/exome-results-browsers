@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { BaseTable, ExternalLink } from '@gnomad/ui'
+import { Badge, BaseTable, ExternalLink } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
 
@@ -46,6 +46,7 @@ enum ResultEnum {
   syn_ctrl_carrier,
   syn_p_value,
   syn_odds_ratio,
+  flags,
 }
 
 type ResultKey = keyof typeof ResultEnum
@@ -54,12 +55,40 @@ type ResultObject = Record<ResultKey, string>
 
 type CategoryAbbreviation = 'ptv' | 'mis' | 'ptv_mis' | 'syn'
 
-
 const safeReturnValue = (object: ResultObject, fieldName: ResultKey): string => {
   return object[fieldName] === null ? '-' : object[fieldName]
 }
 
-const createGeneTableRow = (object: ResultObject, category: string, categoryAbbreviation: CategoryAbbreviation) => {
+const renderBipexGeneFlags = (flags: string) => {
+  const flagsArray = flags.split(',')
+  if (flagsArray.length === 0) {
+    return null
+  }
+
+  if (flagsArray.indexOf('bonferonni_significant') !== -1) {
+    return (
+      <>
+        <Badge level="info">Note</Badge> This gene's missense + protein truncating P-value fell into
+        a range making it Bonferroni significant
+      </>
+    )
+  } else if (flagsArray.indexOf('fdr_five_percent_significant') !== -1) {
+    return (
+      <>
+        <Badge level="info">Note</Badge> This gene's missense + protein truncating P-value fell into
+        a range making it FDR 5% significant
+      </>
+    )
+  }
+
+  return null
+}
+
+const createGeneTableRow = (
+  object: ResultObject,
+  category: string,
+  categoryAbbreviation: CategoryAbbreviation
+) => {
   return (
     <tr>
       <th scope="row">{category}</th>
@@ -73,6 +102,12 @@ const createGeneTableRow = (object: ResultObject, category: string, categoryAbbr
 
 const BipExGeneResult = ({ result }: { result: ResultObject }) => (
   <div>
+    {result.flags !== '' && (
+      <div style={{ marginTop: '1em', marginBottom: '2em' }}>
+        {renderBipexGeneFlags(result.flags)}
+      </div>
+    )}
+
     <Table>
       <thead>
         <tr>
@@ -99,7 +134,6 @@ const BipExGeneResult = ({ result }: { result: ResultObject }) => (
     </p>
   </div>
 )
-
 
 interface BipExGeneResultsProps {
   results: {

@@ -6,6 +6,9 @@ import { renderCount, renderFloatAsScientific } from '../base/tableCells'
 import BipExHomePage from './BipEx2HomePage'
 import BipExVariantFilter from './BipEx2VariantFilter'
 
+// @ts-expect-error: no types in this version of @gnomad/ui
+import { TooltipAnchor, TooltipHint } from '@gnomad/ui'
+
 const renderOddsRatio = (value: number | string | null | undefined) => {
   if (value === null || value === undefined) {
     return ''
@@ -28,6 +31,30 @@ const renderOddsRatio = (value: number | string | null | undefined) => {
   }
 
   return value.toPrecision(3)
+}
+
+const renderBipexFlags = (value: string) => {
+  const flagsArray = value.split(',')
+
+  if (flagsArray.length === 0) {
+    return ''
+  }
+
+  if (flagsArray.indexOf('bonferonni_significant') !== -1) {
+    return (
+      <TooltipAnchor tooltip="TK: WRITE ME">
+        <TooltipHint>Bonferroni</TooltipHint>
+      </TooltipAnchor>
+    )
+  } else if (flagsArray.indexOf('fdr_five_percent_significant') !== -1) {
+    return (
+      <TooltipAnchor tooltip="TK: WRITE ME">
+        <TooltipHint>FDR 5%</TooltipHint>
+      </TooltipAnchor>
+    )
+  }
+
+  return ''
 }
 
 const BipExBrowser = () => (
@@ -54,6 +81,13 @@ const BipExBrowser = () => (
       },
       // ---
       {
+        key: 'flags',
+        heading: 'Flags',
+        minWidth: 90,
+        render: (value) => renderBipexFlags(value),
+      },
+      // ---
+      {
         key: 'ptv_mis_case_carrier',
         heading: 'PTV+MIS Case Carrier',
         minWidth: 85,
@@ -69,7 +103,7 @@ const BipExBrowser = () => (
         key: 'ptv_mis_p_value',
         heading: 'PTV+MIS p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value)
+        render: (value) => renderFloatAsScientific(value),
       },
       {
         key: 'ptv_mis_odds_ratio',
@@ -94,7 +128,7 @@ const BipExBrowser = () => (
         key: 'ptv_p_value',
         heading: 'PTV p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value)
+        render: (value) => renderFloatAsScientific(value),
       },
       {
         key: 'ptv_odds_ratio',
@@ -119,7 +153,7 @@ const BipExBrowser = () => (
         key: 'mis_p_value',
         heading: 'MIS p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value)
+        render: (value) => renderFloatAsScientific(value),
       },
       {
         key: 'mis_odds_ratio',
@@ -144,7 +178,7 @@ const BipExBrowser = () => (
         key: 'syn_p_value',
         heading: 'SYN p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value)
+        render: (value) => renderFloatAsScientific(value),
       },
       {
         key: 'syn_odds_ratio',
