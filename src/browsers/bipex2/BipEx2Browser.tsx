@@ -22,7 +22,7 @@ const renderOddsRatio = (value: number | string | null | undefined) => {
     return '0'
   }
 
-  if (Number.isNaN(value)) {
+  if (value === "NaN" || Number.isNaN(value)) {
     return '-'
   }
 
@@ -42,13 +42,13 @@ const renderBipexFlags = (value: string) => {
 
   if (flagsArray.indexOf('bonferonni_significant') !== -1) {
     return (
-      <TooltipAnchor tooltip="TK: WRITE ME">
+      <TooltipAnchor tooltip="This gene's missense + protein truncating P-value fell into a range making it Bonferroni significant">
         <TooltipHint>Bonferroni</TooltipHint>
       </TooltipAnchor>
     )
   } else if (flagsArray.indexOf('fdr_five_percent_significant') !== -1) {
     return (
-      <TooltipAnchor tooltip="TK: WRITE ME">
+      <TooltipAnchor tooltip="This gene's missense + protein truncating P-value fell into a range making it FDR 5% significant">
         <TooltipHint>FDR 5%</TooltipHint>
       </TooltipAnchor>
     )
