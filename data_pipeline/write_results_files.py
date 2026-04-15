@@ -239,17 +239,16 @@ def write_data_files(table_path, output_directory, genes=None, iterative=False):
     else:
         print("Writing out files in a single step...")
 
-        ds = ds.annotate(
-            variant_counts=hl.struct(
-                ASC=hl.or_else(hl.len(ds.variants.ASC), 0),
-                BipEx=hl.or_else(hl.len(ds.variants.BipEx), 0),
-                BipEx2=hl.or_else(hl.len(ds.variants.BipEx2), 0),
-                Epi25=hl.or_else(hl.len(ds.variants.Epi25), 0),
-                GP2=hl.or_else(hl.len(ds.variants.GP2), 0),
-                SCHEMA=hl.or_else(hl.len(ds.variants.SCHEMA), 0),
-                SCHEMA2=hl.or_else(hl.len(ds.variants.SCHEMA2), 0),
-            )
-        )
+        expected_datasets = ["ASC", "BipEx", "BipEx2", "Epi25", "GP2", "SCHEMA", "SCHEMA2"]
+
+        counts_expr = {}
+        for name in expected_datasets:
+            if name in ds.variants:
+                counts_expr[name] = hl.or_else(hl.len(ds.variants[name]), 0)
+            else:
+                counts_expr[name] = 0
+
+        ds = ds.annotate(variant_counts=hl.struct(**counts_expr))
 
         ds = ds.annotate(
             total_variants=(
