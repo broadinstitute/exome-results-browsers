@@ -44,7 +44,7 @@ class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsT
     const { sortKey, sortAscending } = this.state
 
     const comparator =
-      sortKey === 'gene_id' || sortKey === 'gene_name'
+      sortKey === 'gene_id' || sortKey === 'gene_name' || sortKey === 'flags'
         ? (a: any, b: any) => a.localeCompare(b)
         : (a: any, b: any) => a - b
 
