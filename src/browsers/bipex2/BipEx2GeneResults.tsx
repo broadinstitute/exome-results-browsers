@@ -187,7 +187,7 @@ const BipExGeneResults = ({ results }: BipExGeneResultsProps) => (
       />
     </h2>
 
-    <BipExGeneResult result={results.meta} />
+    {results.meta ? <BipExGeneResult result={results.meta} /> : <p>No result for this gene.</p>}
   </>
 )
 
