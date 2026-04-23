@@ -15,7 +15,10 @@ const otherDatasets = (Object.keys(datasetConfig.datasets) as DatasetId[])
 const downloadUrl = (datasetId: DatasetId, file: string) => {
   if (datasetId === 'Epi25') {
     return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2022-12-01/${datasetId}/${datasetId}_${file}`
+  } else if (datasetId === 'BipEx2') {
+    return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2026-04-14/${datasetId}/${datasetId}_${file}`
   }
+
   return `https://atgu-exome-browser-data.s3.amazonaws.com/${datasetId}/${datasetId}_${file}`
 }
 
