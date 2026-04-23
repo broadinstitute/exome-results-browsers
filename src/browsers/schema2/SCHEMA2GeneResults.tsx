@@ -6,6 +6,7 @@ import { BaseTable, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 import HelpButton from '../base/HelpButton'
 import StyledContent from '../base/StyledContent'
 import geneResultsDescription from './content/generesults.md'
+import { renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -30,20 +31,32 @@ const renderOddsRatio = (value: number | string | null | undefined) => {
   return floatValue.toPrecision(3)
 }
 
+const safeRenderCount = (value: number | null | undefined) => {
+  if (value === null || value === undefined) {
+    return '-'
+  }
+
+  return value
+}
+
 type SchemaGeneResult = {
-  'PTV Case Carrier': number
-  'PTV Control Carrier': number
-  'PTV Pvalue': number
-  'PTV OR': string
-  'N de novo PTV': number
-  'PTV Missense Case Carrier': number
-  'PTV Missense Control Carrier': number
-  'PTV Missense Pvalue': number
-  'PTV Missense OR': string
-  'N de novo PTV + Missense': number
-  'de novo Pvalue': number
-  'Case-Control + de novo Pvalue': number
-  'Case-Control Cauchy Pvalue': number
+  ptv_case_carrier: number
+  ptv_control_carrier: number
+  ptv_p_value: number
+  ptv_odds_ratio: string
+
+  ptv_mis_case_carrier: number
+  ptv_mis_control_carrier: number
+  ptv_mis_p_value: number
+  ptv_mis_odds_ratio: string
+
+  ptv_n_de_novo: number
+  ptv_mis_n_de_novo: number
+
+  n_de_novo_p_value: number
+  case_control_plus_de_novo_p_value: number
+  schema_case_control_p_value: number // formerly 'cauchy'
+
   n_cases: number
   n_controls: number
 }
@@ -87,18 +100,18 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               </TooltipAnchor>
             </th>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-              {result['PTV Case Carrier'] === null ? '—' : result['PTV Case Carrier']}
+              {safeRenderCount(result.ptv_case_carrier)}
             </td>
-            <td>{result['PTV Control Carrier'] === null ? '—' : result['PTV Control Carrier']}</td>
-            <td style={{ paddingLeft: '10px' }}>{renderOddsRatio(result['PTV OR'])}</td>
+            <td>{safeRenderCount(result.ptv_control_carrier)}</td>
+            <td style={{ paddingLeft: '10px' }}>{renderOddsRatio(result.ptv_odds_ratio)}</td>
             <td style={{ paddingLeft: '10px' }}>
-              {result['PTV Pvalue'] === null ? '—' : result['PTV Pvalue'].toPrecision(3)}
+              {renderStringOrFloatPvalueAsScientific(result.ptv_p_value)}
             </td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-              {result['N de novo PTV'] === null ? '—' : result['N de novo PTV']}
+              {safeRenderCount(result.ptv_n_de_novo)}
             </td>
             <td rowSpan={2} style={{ paddingLeft: '10px' }}>
-              {result['de novo Pvalue'] === null ? '—' : result['de novo Pvalue'].toPrecision(3)}
+              {renderStringOrFloatPvalueAsScientific(result.n_de_novo_p_value)}
             </td>
           </tr>
 
@@ -109,46 +122,28 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               </TooltipAnchor>
             </th>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-              {result['PTV Missense Case Carrier'] === null
-                ? '—'
-                : result['PTV Missense Case Carrier']}
+              {safeRenderCount(result.ptv_mis_case_carrier)}
             </td>
-            <td>
-              {result['PTV Missense Control Carrier'] === null
-                ? '—'
-                : result['PTV Missense Control Carrier']}
+            <td>{safeRenderCount(result.ptv_mis_control_carrier)}</td>
+            <td rowSpan={2} style={{ paddingLeft: '10px' }}>
+              {renderOddsRatio(result.ptv_mis_odds_ratio)}
             </td>
             <td rowSpan={2} style={{ paddingLeft: '10px' }}>
-              {renderOddsRatio(result['PTV+ Missense OR'])}
-            </td>
-            <td rowSpan={2} style={{ paddingLeft: '10px' }}>
-              {result['PTV Missense Pvalue'] === null
-                ? '—'
-                : result['PTV Missense Pvalue'].toPrecision(3)}
+              {renderStringOrFloatPvalueAsScientific(result.ptv_mis_p_value)}
             </td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-              {result['N de novo PTV Missense'] === null ? '—' : result['N de novo PTV Missense']}
+              {safeRenderCount(result.ptv_mis_n_de_novo)}
             </td>
           </tr>
         </tbody>
       </Table>
       <p style={{ marginTop: '2rem', fontWeight: 'bold' }}>
         Case-Control Cauchy <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
-        {result['Case-Control Cauchy Pvalue'] === null
-          ? '—'
-          : result['Case-Control Cauchy Pvalue'].toPrecision(3)}
-      </p>
-      <p style={{ fontWeight: 'bold' }}>
-        Case-Control Min <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
-        {result['Case-Control Min-Pvalue'] === null
-          ? '—'
-          : result['Case-Control Min-Pvalue'].toPrecision(3)}
+        {renderStringOrFloatPvalueAsScientific(result.schema_case_control_p_value)}
       </p>
       <p style={{ fontWeight: 'bold' }}>
         Case-Control + de novo <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
-        {result['Case Control de novo Pvalue'] === null
-          ? '—'
-          : result['Case Control de novo Pvalue'].toPrecision(3)}
+        {renderStringOrFloatPvalueAsScientific(result.case_control_plus_de_novo_p_value)}
       </p>
       <p style={{ marginTop: '2em' }}>
         <strong>Total cases: {result.n_cases}</strong>
