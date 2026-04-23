@@ -49,21 +49,15 @@ def prepare_variant_results(test_genes, _output_root):
         variant_results = filter_results_table_to_test_gene_intervals(variant_results)
         variant_annotations = filter_results_table_to_test_gene_intervals(variant_annotations)
 
-    # Add n_denovos to AC_case
-    variant_results = variant_results.annotate(
+    variant_results = variant_results.select(
         ac_case=hl.or_else(variant_results.AC_case, 0) + hl.or_else(variant_results.n_de_novo, 0),
         an_case=variant_results.AN_case,
         ac_ctrl=variant_results.AC_control,
         an_ctrl=variant_results.AN_control,
         n_de_novo=hl.or_else(variant_results.n_de_novo, 0),
-    )
-
-    variant_results = variant_results.drop(
-        "AC_case",
-        "AC_control",
-        "AN_case",
-        "AN_control",
-        "MAC",
+        in_analysis=variant_results.in_analysis,
+        # consequence
+        # MAC
     )
 
     variant_results = variant_results.annotate(
