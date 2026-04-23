@@ -21,6 +21,23 @@ const NumberCell = styled.span`
   white-space: nowrap;
 `
 
+export const renderStringOrFloatPvalueAsScientific = (value: number | string | undefined | null) => {
+  if (value === null || value == undefined) {
+    return '-'
+  }
+
+  if (value === 0) {
+    return '0'
+  }
+
+  const floatValue = typeof value == 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+
+  return renderFloatAsScientific(floatValue)
+}
+
 export const renderFloatAsScientific = (value: number | null) => {
   if (value === null) {
     return ''
