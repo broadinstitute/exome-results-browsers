@@ -30,7 +30,7 @@ export const renderFloatAsScientific = (value: number | null) => {
   if (truncated === 0) {
     return <NumberCell>0 </NumberCell>
   }
-  return <NumberCell>{truncated.toExponential()} </NumberCell>
+  return <NumberCell>{truncated.toExponential(2)} </NumberCell>
 }
 
 export const renderFloatAsDecimal = (value: number | null) => {

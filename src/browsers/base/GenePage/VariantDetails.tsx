@@ -320,8 +320,19 @@ const TranscriptConsequences = ({
 const renderNumber = (num: number | null, precision = 3) =>
   num === null ? '–' : Number(num.toPrecision(precision)).toString()
 
-const renderExponential = (num: number | null, precision = 4) =>
-  num === null ? '–' : Number(num.toPrecision(precision)).toExponential()
+const renderExponential = (num: number | null | undefined, precision = 3): string => {
+  if (num === null || num === undefined) {
+    return '-'
+  }
+
+  if (num === 0) {
+    return '0'
+  }
+
+  const truncated = Number(num.toPrecision(precision))
+
+  return truncated.toExponential(2)
+}
 
 interface VariantDetailsProps {
   defaultVariantAnalysisGroup: string

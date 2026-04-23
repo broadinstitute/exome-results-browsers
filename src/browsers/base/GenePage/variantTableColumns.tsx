@@ -48,34 +48,32 @@ const VariantCategoryMarker = styled.span`
 `
 
 interface GroupResult {
-  ac_case: number,
-  an_case: number,
-  af_case: number,
-  ac_ctrl: number,
-  an_ctrl: number,
-  af_ctrl: number,
+  ac_case: number
+  an_case: number
+  af_case: number
+  ac_ctrl: number
+  an_ctrl: number
+  af_ctrl: number
   af: number
   [key: string]: number | null
 }
 
 export interface VariantRow {
-  variant_id: string,
+  variant_id: string
   pos: number
-  consequence: string,
-  consequenceCategory: ConsequenceCategory,
-  hgvsp: string,
-  hgvsc: string,
-  group_results: { [key: string]: GroupResult },
-  info: any,
+  consequence: string
+  consequenceCategory: ConsequenceCategory
+  hgvsp: string
+  hgvsc: string
+  group_results: { [key: string]: GroupResult }
+  info: any
   [key: string]: any
 }
-
 
 // TK: TODO: fixme, use variant row! type with all these things
 interface Variant {
   variant_id: string
 }
-
 
 const renderNumberCell = (row: VariantRow, key: string): string => {
   const number = get(row, key)
@@ -98,7 +96,7 @@ const renderExponentialNumberCell = (row: VariantRow, key: string): string => {
   if (truncated === 0) {
     return '0'
   }
-  return truncated.toExponential()
+  return truncated.toExponential(2)
 }
 
 export const renderExponentialIfSmall = (number: number | null | undefined): string => {
@@ -112,7 +110,7 @@ export const renderExponentialIfSmall = (number: number | null | undefined): str
   }
 
   if (truncated < 0.01) {
-    return truncated.toExponential()
+    return truncated.toExponential(2)
   }
 
   return truncated.toString()
@@ -123,22 +121,21 @@ const renderExponentialNumberCellIfSmall = (row: VariantRow, key: string) => {
   return renderExponentialIfSmall(number)
 }
 
-
 interface RenderContext {
-  highlightWords?: string[],
-  onClickVariant?: (row: VariantRow) => void,
+  highlightWords?: string[]
+  onClickVariant?: (row: VariantRow) => void
 }
 
 export interface VariantTableColumn {
-  key: string,
-  heading: string,
-  tooltip?: string,
-  isRowHeader?: boolean,
-  isSortable: boolean,
-  sortFunction: (a: any, b: any) => number,
-  sortKey: string,
-  minWidth: number,
-  grow?: number,
+  key: string
+  heading: string
+  tooltip?: string
+  isRowHeader?: boolean
+  isSortable: boolean
+  sortFunction: (a: any, b: any) => number
+  sortKey: string
+  minWidth: number
+  grow?: number
   render: (row: VariantRow, key: string, context: RenderContext) => React.ReactNode
   renderForCSV: (row: VariantRow, key: string) => string | number | null
 }
@@ -155,12 +152,8 @@ const variantDescriptionColumns: VariantTableColumn[] = [
     minWidth: 130,
     grow: 2,
     render: (row, key, { highlightWords = [], onClickVariant }) => (
-      <VariantIdButton
-        onClick={() => onClickVariant?.(row)}
-        tabIndex={-1}>
-        <Highlighter
-          searchWords={highlightWords}
-          textToHighlight={row[key]} />
+      <VariantIdButton onClick={() => onClickVariant?.(row)} tabIndex={-1}>
+        <Highlighter searchWords={highlightWords} textToHighlight={row[key]} />
       </VariantIdButton>
     ),
     renderForCSV: get,
@@ -373,7 +366,9 @@ const gp2StatColumns: VariantTableColumn[] = [
   },
 ]
 
-const getVariantTableColumns = (variantResultColumns: VariantColumnConfig[]): VariantTableColumn[] => {
+const getVariantTableColumns = (
+  variantResultColumns: VariantColumnConfig[]
+): VariantTableColumn[] => {
   const { datasetId } = window.datasetConfig
 
   const datasetColumns = [...variantDescriptionColumns]
@@ -393,12 +388,12 @@ const getVariantTableColumns = (variantResultColumns: VariantColumnConfig[]): Va
       sortFunction: (a, b) => a - b,
       sortKey: column.key,
       minWidth: column.minWidth || 65,
-      render: column.render ?
-        (row, key) => column.render!(get(row, key)) :
-        (row, key) => renderNumberCell(row, key),
-      renderForCSV: column.renderForCSV ?
-        (row, key) => column.renderForCSV!(get(row, key)) :
-        (row, key) => get(row, key),
+      render: column.render
+        ? (row, key) => column.render!(get(row, key))
+        : (row, key) => renderNumberCell(row, key),
+      renderForCSV: column.renderForCSV
+        ? (row, key) => column.renderForCSV!(get(row, key))
+        : (row, key) => get(row, key),
     }
   })
 
