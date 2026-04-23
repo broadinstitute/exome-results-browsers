@@ -120,9 +120,6 @@ def prepare_downloads_for_dataset(dataset_id, output_local):
 
 
 def main():
-
-    print("hello!")
-
     all_datasets = pipeline_config.get("datasets", "datasets").split(",")
     parser = argparse.ArgumentParser()
     parser.add_argument(
