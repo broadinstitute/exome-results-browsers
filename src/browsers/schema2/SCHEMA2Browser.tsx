@@ -149,17 +149,17 @@ const SCHEMABrowser = () => (
       },
       {
         key: 'schema_case_control_p_value',
-        heading: 'Case-Control Cauchy Pvalue',
+        heading: 'Case-Control SCHEMA2 P-value',
         tooltip:
-          'Cauchy-combined pvalue of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
+          'SCHEMA2 p-value of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
         minWidth: 100,
         render: (value) => renderStringOrFloatPvalueAsScientific(value),
       },
       {
         key: 'case_control_plus_de_novo_p_value',
-        heading: 'Case-Control + de novo Pvalue',
+        heading: 'Case-Control + de novo P-value',
         tooltip:
-          'Weighted meta-analysis p-value combining the Case-Control Cauchy pvalue with the De Novo pvalue',
+          'Weighted meta-analysis p-value combining the Case-Control SCHEMA2 p-value with the De Novo pvalue',
         minWidth: 100,
         render: (value) => renderStringOrFloatPvalueAsScientific(value),
       },

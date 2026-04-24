@@ -55,7 +55,7 @@ type SchemaGeneResult = {
 
   n_de_novo_p_value: number
   case_control_plus_de_novo_p_value: number
-  schema_case_control_p_value: number // formerly 'cauchy'
+  schema_case_control_p_value: number
 
   n_cases: number
   n_controls: number
@@ -138,7 +138,7 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
         </tbody>
       </Table>
       <p style={{ marginTop: '2rem', fontWeight: 'bold' }}>
-        Case-Control Cauchy <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
+        Case-Control SCHEMA2 <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
         {renderStringOrFloatPvalueAsScientific(result.schema_case_control_p_value)}
       </p>
       <p style={{ fontWeight: 'bold' }}>
