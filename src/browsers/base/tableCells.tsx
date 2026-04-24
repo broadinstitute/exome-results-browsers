@@ -38,12 +38,17 @@ export const renderStringOrFloatPvalueAsScientific = (value: number | string | u
   return renderFloatAsScientific(floatValue)
 }
 
-export const renderFloatAsScientific = (value: number | null) => {
+export const renderFloatAsScientific = (value: number | string | null) => {
   if (value === null) {
     return ''
   }
 
-  const truncated = Number(value.toPrecision(3))
+  const floatValue = typeof value == 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+
+  const truncated = Number(floatValue.toPrecision(3))
   if (truncated === 0) {
     return <NumberCell>0 </NumberCell>
   }
