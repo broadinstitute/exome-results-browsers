@@ -55,8 +55,8 @@ export const renderFloatAsScientific = (value: number | string | undefined | nul
   return <NumberCell>{truncated.toExponential(2)} </NumberCell>
 }
 
-export const renderFloatAsDecimal = (value: number | null) => {
-  if (value === null) {
+export const renderFloatAsDecimal = (value: number | undefined | null) => {
+  if (value === null || value === undefined) {
     return ''
   }
 
