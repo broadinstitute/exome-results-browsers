@@ -38,9 +38,9 @@ export const renderStringOrFloatPvalueAsScientific = (value: number | string | u
   return renderFloatAsScientific(floatValue)
 }
 
-export const renderFloatAsScientific = (value: number | string | null) => {
-  if (value === null) {
-    return ''
+export const renderFloatAsScientific = (value: number | string | undefined | null) => {
+  if (value === null || value == undefined) {
+    return '-'
   }
 
   const floatValue = typeof value == 'string' ? parseFloat(value) : value
