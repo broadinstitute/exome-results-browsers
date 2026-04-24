@@ -38,13 +38,15 @@ const IBDBrowser = () => {
       defaultGeneResultSortKey="ptv_0_001_P_meta"
       geneResultColumns={[
         {
-          key: 'variant_p',
+          // key: 'variant_p',
+          key: 'variant_p_meta',
           heading: 'Variant P-val',
           minWidth: 110,
           render: (value) => renderFloatAsScientific(value),
         },
         {
-          key: 'variant_beta',
+          // key: 'variant_beta',
+          key: 'variant_beta_meta',
           heading: 'Variant Beta',
           minWidth: 110,
           render: (value) => renderFloatAsDecimal(value),
