@@ -173,14 +173,15 @@ if (isDevelopment) {
   )
   getDatasetForRequest = () => devDataset
 } else {
-  const datasetBySubdomain: Record<string, string> = Object.keys(metadata.datasets).reduce(
-    (acc, dataset) => ({
-      ...acc,
-      [dataset.toLowerCase()]: dataset,
-    }),
-    {}
-  )
-  getDatasetForRequest = (req: express.Request) => datasetBySubdomain[req.subdomains[0]]
+  // const datasetBySubdomain: Record<string, string> = Object.keys(metadata.datasets).reduce(
+  //   (acc, dataset) => ({
+  //     ...acc,
+  //     [dataset.toLowerCase()]: dataset,
+  //   }),
+  //   {}
+  // )
+  // getDatasetForRequest = (req: express.Request) => datasetBySubdomain[req.subdomains[0]]
+  getDatasetForRequest = () => "SCHEMA2"
 }
 
 // ================================================================================================
