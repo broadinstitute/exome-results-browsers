@@ -122,7 +122,7 @@ const BipExGeneResult = ({ result }: { result: ResultObject }) => (
         {createGeneTableRow(result, 'Protein-truncating', 'ptv')}
         {createGeneTableRow(result, 'Missense', 'mis')}
         {createGeneTableRow(result, 'Missense + Protein-truncating', 'ptv_mis')}
-        {createGeneTableRow(result, 'Synonmymous', 'syn')}
+        {createGeneTableRow(result, 'Synonymous', 'syn')}
       </tbody>
     </Table>
 
