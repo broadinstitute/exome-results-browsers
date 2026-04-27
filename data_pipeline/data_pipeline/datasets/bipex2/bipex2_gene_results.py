@@ -10,10 +10,15 @@ def filter_results_table_to_test_gene(results):
         "SHANK1",  # ENSG00000161681
         "FRYL",  # ENSG00000075539
         "MAGI2",  # ENSG00000187391
+        "KIAA1211L",  # ENSG00000196872
+        "C1orf61",  # ENSG00000125462
     ]
+
+    test_gene_symbols = [gene.upper() for gene in test_gene_symbols]
     test_gene_set = hl.literal(test_gene_symbols)
 
-    results = results.filter(test_gene_set.contains(results.gene_symbol))
+    results = results.filter(test_gene_set.contains(results.gene_symbol.upper()))
+
     return results.persist()
 
 
@@ -56,8 +61,46 @@ def annotate_false_discovery_rate_significant_genes(results):
     return results
 
 
+def build_gene_lookup_ht(gene_models_ht):
+    lookup_ht = gene_models_ht.select(
+        search_terms_upper=hl.array(gene_models_ht.search_terms).map(lambda x: x.upper()),
+        primary_symbol=gene_models_ht.symbol,
+    )
+
+    lookup_ht = lookup_ht.explode("search_terms_upper")
+
+    lookup_ht = lookup_ht.key_by(search_term=lookup_ht.search_terms_upper)
+
+    lookup_ht = lookup_ht.group_by("search_term").aggregate(
+        mapped_genes=hl.agg.collect(hl.struct(gene_id=lookup_ht.gene_id, primary_symbol=lookup_ht.primary_symbol))
+    )
+
+    return lookup_ht
+
+
+def map_gene_symbols_to_ensg_ids(results, primary_lookup_ht, secondary_lookup_ht):
+    query_symbol = results.gene_symbol.upper()
+
+    primary_match = primary_lookup_ht[query_symbol]
+    secondary_match = secondary_lookup_ht[query_symbol]
+
+    results = results.annotate(
+        gene_id=hl.case()
+        .when(hl.is_defined(primary_match), primary_match.gene_id)
+        .when(
+            hl.is_defined(secondary_match) & (hl.len(secondary_match.mapped_genes) > 0),
+            secondary_match.mapped_genes[0].gene_id,
+        )
+        .default(hl.null(hl.tstr)),
+    )
+
+    return results
+
+
 def prepare_gene_results(test_genes, _output_root):
     results = hl.read_table(pipeline_config.get("BipEx2", "gene_results_path"))
+
+    results = annotate_false_discovery_rate_significant_genes(results)
 
     if test_genes:
         results = filter_results_table_to_test_gene(results)
@@ -69,8 +112,6 @@ def prepare_gene_results(test_genes, _output_root):
     results = results.annotate(
         analysis_group="meta",
     )
-
-    results = annotate_false_discovery_rate_significant_genes(results)
 
     # Select result fields, discard gene information
     results = results.select(
@@ -97,10 +138,13 @@ def prepare_gene_results(test_genes, _output_root):
 
     gene_models_path = "gs://gnomad-v4-data-pipeline/output/genes/gnomad.browser.GRCh38.GENCODEv39.pext.ht"
     gene_models_ht = hl.read_table(gene_models_path)
-    gene_model_ht = gene_models_ht.key_by("symbol")
+
+    primary_lookup_ht = gene_models_ht.key_by("symbol_upper_case").select("gene_id")
+    secondary_lookup_ht = build_gene_lookup_ht(gene_models_ht)
+
+    results = map_gene_symbols_to_ensg_ids(results, primary_lookup_ht, secondary_lookup_ht)
 
     results = results.annotate(
-        gene_id=gene_model_ht[results["gene_symbol"]].gene_id,
         n_cases=n_cases,
         n_controls=n_controls,
     )
