@@ -29,6 +29,11 @@ def filter_results_table_to_test_gene_intervals(results):
         "chr7", 78017055, 79453667, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
 
+    # ENSG00000196872 - KIAA1211L, or CRACDL
+    cracdl_interval = hl.locus_interval(
+        "chr2", 98793846, 98936259, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+
     results = hl.filter_intervals(
         results,
         [
@@ -37,6 +42,7 @@ def filter_results_table_to_test_gene_intervals(results):
             shank1_interval,
             fryl_interval,
             magi2_interval,
+            cracdl_interval,
         ],
     )
 
