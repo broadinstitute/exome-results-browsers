@@ -1,33 +1,58 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
 import { BaseTable, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
-
-const ibdAnalysisGroups = ['IBD', 'CD', 'UC']
+import { IBDAnalysisGroup, ibdAnalysisGroups } from './IBDBrowser'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
-const formatToDecimals = (value, decimals = 3) => {
-  if (value == null) return '-'
-  return Number(value).toFixed(decimals)
-}
-const formatDecimal = (value) => formatToDecimals(value, 3)
+const formatToDecimals = (value: number | string | null | undefined, decimals = 3) => {
+  if (value === null || value === undefined) {
+    return '-'
+  }
 
-const formatScientific = (value, decimals = 2) => {
-  if (value == null) return '-'
-  if (value < 0.01) {
-    return Number(value).toExponential(decimals)
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+
+  return floatValue.toFixed(decimals)
+}
+
+const formatDecimal = (value: number | string | undefined) => {
+  return formatToDecimals(value, 3)
+}
+
+const formatScientific = (value: number | string | null | undefined, decimals = 2) => {
+  if (value === null || value === undefined) {
+    return '-'
+  }
+
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+
+  if (floatValue < 0.01) {
+    return floatValue.toExponential(decimals)
   }
   return formatToDecimals(value)
 }
 
-const formatPVal = (value) => {
-  if (value === 0) {
+const formatPVal = (value: number | string | null | undefined) => {
+  if (value === null || value === undefined) {
+    return '-'
+  }
+
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+  if (floatValue === 0) {
     return '2.2e-16'
   }
   return formatScientific(value)
@@ -54,26 +79,42 @@ const columnOptions = {
   },
 }
 
-const rowsWanted = ['PTV 0.001', 'NSyn 0.001']
+const rowsToRender = ['PTV 0.001', 'NSyn 0.001']
+const columnsToRender = ['Category', 'P-Value', 'Beta', 'Het P']
 
-const columnsWanted = ['Category', 'P-Value', 'Beta', 'Het P']
+type IBDGeneResult = {
+  n_cases: number
+  n_controls: number
+  damaging_missense_case_count: number
+  damaging_missense_control_count: number
+  damaging_missense_pval: number
+  damaging_missense_OR: number
+  ptv_case_count: number
+  ptv_control_count: number
+  ptv_pval: number
+  ptv_OR: number
+}
 
-const IBDGeneResult = ({ result }) => (
+interface IBDGeneResultProps {
+  result: IBDGeneResult
+}
+
+const IBDGeneResult = ({ result }: IBDGeneResultProps) => (
   <div>
     <Table>
       <thead>
         <tr>
-          {columnsWanted.map((column) => {
+          {columnsToRender.map((column) => {
             return <th scope="col">{column}</th>
           })}
         </tr>
       </thead>
 
       <tbody>
-        {rowsWanted.map((row) => (
+        {rowsToRender.map((row) => (
           <tr key={row}>
             <th scope="row">{row}</th>
-            {columnsWanted
+            {columnsToRender
               .filter((column) => column !== 'Category')
               .map((column) => (
                 <td key={column}>
@@ -97,22 +138,11 @@ const IBDGeneResult = ({ result }) => (
   </div>
 )
 
-IBDGeneResult.propTypes = {
-  result: PropTypes.shape({
-    n_cases: PropTypes.number,
-    n_controls: PropTypes.number,
-    damaging_missense_case_count: PropTypes.number,
-    damaging_missense_control_count: PropTypes.number,
-    damaging_missense_pval: PropTypes.number,
-    damaging_missense_OR: PropTypes.number,
-    ptv_case_count: PropTypes.number,
-    ptv_control_count: PropTypes.number,
-    ptv_pval: PropTypes.number,
-    ptv_OR: PropTypes.number,
-  }).isRequired,
+interface IBDGeneResultsProps {
+  results: Record<IBDAnalysisGroup, IBDGeneResult>
 }
 
-const IBDGeneResults = ({ results }) => (
+const IBDGeneResults = ({ results }: IBDGeneResultsProps) => (
   <>
     <h2>
       Gene Result{' '}
@@ -145,9 +175,5 @@ const IBDGeneResults = ({ results }) => (
     />
   </>
 )
-
-IBDGeneResults.propTypes = {
-  results: PropTypes.objectOf(PropTypes.object).isRequired,
-}
 
 export default IBDGeneResults

@@ -31,7 +31,7 @@ const IBDHomePage = () => (
       IBD: Inflammatory Bowel Disease exome meta-analysis consortium
     </HomePageHeading>
 
-    <Searchbox width="100%" />
+    <Searchbox id="IBD search" width="100%" />
     <p style={{ marginTop: '0.25em' }}>
       Or <Link to="/results">view all results</Link>
     </p>
