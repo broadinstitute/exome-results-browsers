@@ -11,7 +11,9 @@ import vepConsequences from '../base/vepConsequences'
 
 const variantConsequences = [...vepConsequences]
 
-const ibdAnalysisGroups = ['IBD', 'CD', 'UC']
+export type IBDAnalysisGroup = 'IBD' | 'CD' | 'UC'
+export const ibdAnalysisGroups: IBDAnalysisGroup[] = ['IBD', 'CD', 'UC']
+
 const defaultIBDAnalysisGroup = ibdAnalysisGroups[0]
 
 const IBDBrowser = () => {
