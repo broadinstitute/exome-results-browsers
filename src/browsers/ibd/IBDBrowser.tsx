@@ -16,6 +16,8 @@ export const ibdAnalysisGroups: IBDAnalysisGroup[] = ['IBD', 'CD', 'UC']
 
 const defaultIBDAnalysisGroup = ibdAnalysisGroups[0]
 
+const pValueOfZeroPlaceholder = '<1e-300'
+
 const IBDBrowser = () => {
   return (
     <Browser
@@ -40,14 +42,12 @@ const IBDBrowser = () => {
       defaultGeneResultSortKey="ptv_0_001_P_meta"
       geneResultColumns={[
         {
-          // key: 'variant_p',
           key: 'variant_p_meta',
           heading: 'Variant P-val',
           minWidth: 110,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
         },
         {
-          // key: 'variant_beta',
           key: 'variant_beta_meta',
           heading: 'Variant Beta',
           minWidth: 110,
@@ -57,13 +57,13 @@ const IBDBrowser = () => {
           key: 'variant_af_case',
           heading: 'Variant AF Case',
           minWidth: 110,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, '0'),
         },
         {
           key: 'ptv_0_001_P_meta',
           heading: 'PTV 0.001 P-val',
           minWidth: 110,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
         },
         {
           key: 'ptv_0_001_beta_meta',
@@ -75,7 +75,7 @@ const IBDBrowser = () => {
           key: 'nsyn_0_001_P_meta',
           heading: 'Nsyn 0.001 P-val',
           minWidth: 110,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
         },
         {
           key: 'nsyn_0_001_beta_meta',
@@ -93,7 +93,7 @@ const IBDBrowser = () => {
           key: 'group_result.P_meta',
           heading: 'P\u2011Value',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
         },
         {
           key: 'group_result.BETA_meta',
@@ -127,7 +127,7 @@ const IBDBrowser = () => {
           key: 'group_result.HetP',
           heading: 'Het P\u2011Value',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
         },
       ]}
       variantDetailColumns={[
@@ -135,73 +135,73 @@ const IBDBrowser = () => {
           key: 'group_result.P_Twist',
           heading: 'P (Twist)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
         },
         {
           key: 'group_result.BETA_Twist',
           heading: 'Beta (Twist)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, '0'),
         },
         {
           key: 'group_result.P_Nextera',
           heading: 'P (Nextera)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
         },
         {
           key: 'group_result.BETA_Nextera',
           heading: 'Beta (Nextera)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, '0'),
         },
         {
           key: 'group_result.P_Sanger_WES',
           heading: 'P (Sanger WES)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
         },
         {
           key: 'group_result.BETA_Sanger_WES',
           heading: 'Beta (Sanger WES)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, '0'),
         },
         {
           key: 'group_result.P_UKBB',
           heading: 'P (UKBB)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
         },
         {
           key: 'group_result.BETA_UKBB',
           heading: 'Beta (UKBB)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, '0'),
         },
         {
           key: 'group_result.P_Sanger_WGS',
           heading: 'P (Sanger WGS)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
         },
         {
           key: 'group_result.BETA_Sanger_WGS',
           heading: 'Beta (Sanger WGS)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, '0'),
         },
         {
           key: 'group_result.P_regeneron',
           heading: 'P (Regeneron)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
         },
         {
           key: 'group_result.BETA_regeneron',
           heading: 'Beta (Regeneron)',
           minWidth: 85,
-          render: (value) => renderFloatAsScientific(value),
+          render: (value) => renderFloatAsScientific(value, '0'),
         },
       ]}
       renderVariantTranscriptConsequences

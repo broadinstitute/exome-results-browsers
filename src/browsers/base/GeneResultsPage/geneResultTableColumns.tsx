@@ -16,42 +16,44 @@ interface GeneDatasetResultAPIResponse {
 }
 
 interface Exon {
-  feature_type: string,
-  start: number,
-  stop: number,
+  feature_type: string
+  start: number
+  stop: number
 }
 
 interface CanonicalTranscriptAPIResponse {
-  transcript_id: string,
-  strand: Strand,
-  start: number,
-  stop: number,
-  exons: Exon[],
+  transcript_id: string
+  strand: Strand
+  start: number
+  stop: number
+  exons: Exon[]
 }
 
-export type IndividualGeneGeneResultsAPIResponse = Partial<Record<DatasetId, GeneDatasetResultAPIResponse>>
+export type IndividualGeneGeneResultsAPIResponse = Partial<
+  Record<DatasetId, GeneDatasetResultAPIResponse>
+>
 
 export interface IndividualGeneAPIResponse {
-  gene_id: string,
-  hgnc_id: string,
-  symbol: string,
-  name: string,
-  previous_symbols: string[] | null,
-  alias_symbols: string[] | null,
-  omim_id: string,
-  search_terms: string[] | null,
-  exac_constraint: Constraint,
-  gnomad_v2_constraint: Constraint,
-  gnomad_v4_constraint: Constraint,
-  gene_results: IndividualGeneGeneResultsAPIResponse,
-  reference_genome: ReferenceGenome,
-  chrom: string,
-  strand: Strand,
-  start: number,
-  stop: number,
-  gencode_gene_symbol: string,
-  canonical_transcript_id: string,
-  canonical_transcript: CanonicalTranscriptAPIResponse,
+  gene_id: string
+  hgnc_id: string
+  symbol: string
+  name: string
+  previous_symbols: string[] | null
+  alias_symbols: string[] | null
+  omim_id: string
+  search_terms: string[] | null
+  exac_constraint: Constraint
+  gnomad_v2_constraint: Constraint
+  gnomad_v4_constraint: Constraint
+  gene_results: IndividualGeneGeneResultsAPIResponse
+  reference_genome: ReferenceGenome
+  chrom: string
+  strand: Strand
+  start: number
+  stop: number
+  gencode_gene_symbol: string
+  canonical_transcript_id: string
+  canonical_transcript: CanonicalTranscriptAPIResponse
 }
 
 // TK: TODO: should this type live here, or another file?
@@ -136,7 +138,7 @@ const getTableColumns = (geneResultColumns: GeneResultColumnConfig[]): GeneResul
     grow: 0,
     render: column.render
       ? (row, key) => column.render!(get(row, key))
-      : (row, key) => renderFloatAsScientific(get(row, key)),
+      : (row, key) => renderFloatAsScientific(get(row, key), '0'),
     renderForCSV: column.renderForCSV
       ? (row, key) => column.renderForCSV!(get(row, key))
       : (row, key) => get(row, key),

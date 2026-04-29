@@ -22,7 +22,7 @@ const renderOddsRatio = (value: number | string | null | undefined) => {
     return '0'
   }
 
-  if (value === "NaN" || Number.isNaN(value)) {
+  if (value === 'NaN' || Number.isNaN(value)) {
     return '-'
   }
 
@@ -56,6 +56,8 @@ const renderBipexFlags = (value: string) => {
 
   return ''
 }
+
+const pValueOfZeroPlaceholder = '0'
 
 const BipExBrowser = () => (
   <Browser
@@ -103,7 +105,7 @@ const BipExBrowser = () => (
         key: 'ptv_mis_p_value',
         heading: 'PTV+MIS p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value),
+        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
       },
       {
         key: 'ptv_mis_odds_ratio',
@@ -128,7 +130,7 @@ const BipExBrowser = () => (
         key: 'ptv_p_value',
         heading: 'PTV p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value),
+        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
       },
       {
         key: 'ptv_odds_ratio',
@@ -153,7 +155,7 @@ const BipExBrowser = () => (
         key: 'mis_p_value',
         heading: 'MIS p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value),
+        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
       },
       {
         key: 'mis_odds_ratio',
@@ -178,7 +180,7 @@ const BipExBrowser = () => (
         key: 'syn_p_value',
         heading: 'SYN p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value),
+        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
       },
       {
         key: 'syn_odds_ratio',

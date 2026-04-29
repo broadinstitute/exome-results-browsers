@@ -21,7 +21,10 @@ const NumberCell = styled.span`
   white-space: nowrap;
 `
 
-export const renderStringOrFloatPvalueAsScientific = (value: number | string | undefined | null) => {
+export const renderStringOrFloatPvalueAsScientific = (
+  value: number | string | undefined | null,
+  zeroValue: string,
+) => {
   if (value === null || value == undefined) {
     return '-'
   }
@@ -35,11 +38,14 @@ export const renderStringOrFloatPvalueAsScientific = (value: number | string | u
     return value
   }
 
-  return renderFloatAsScientific(floatValue)
+  return renderFloatAsScientific(floatValue, zeroValue)
 }
 
-export const renderFloatAsScientific = (value: number | string | undefined | null) => {
-  if (value === null || value == undefined) {
+export const renderFloatAsScientific = (
+  value: number | string | undefined | null,
+  zeroValue: string,
+) => {
+  if (value === null || value === undefined) {
     return '-'
   }
 
@@ -50,7 +56,7 @@ export const renderFloatAsScientific = (value: number | string | undefined | nul
 
   const truncated = Number(floatValue.toPrecision(3))
   if (truncated === 0) {
-    return <NumberCell>0 </NumberCell>
+    return <NumberCell>{zeroValue}</NumberCell>
   }
   return <NumberCell>{truncated.toExponential(2)} </NumberCell>
 }
