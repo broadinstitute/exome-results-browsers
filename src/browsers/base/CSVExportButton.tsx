@@ -10,6 +10,9 @@ const formatCell = (value: any): string => {
   if (typeof value === 'number') {
     return String(value)
   }
+
+  const stringValue = String(value)
+
   if (value.includes(',') || value.includes('"') || value.includes("'")) {
     return `"${value.replace(/"/g, '""')}"`
   }
