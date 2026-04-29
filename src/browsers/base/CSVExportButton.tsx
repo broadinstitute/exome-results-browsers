@@ -57,12 +57,13 @@ const downloadCSV = (data: CsvData, baseFileName: string) => {
   const link = document.createElement('a')
   link.setAttribute('href', url)
   link.setAttribute('download', `${baseFileName.replace(/\s+/g, '_')}_${timestamp}.csv`)
-  link.onclick = () => {
-    URL.revokeObjectURL(url)
-    link.remove()
-  }
   document.body.appendChild(link)
   link.click()
+  document.body.removeChild(link)
+
+  setTimeout(() => {
+    URL.revokeObjectURL(url)
+  }, 250)
 }
 
 const exportToCSV = (data: CsvData, columns: CsvColumn[], baseFileName: string) => {
