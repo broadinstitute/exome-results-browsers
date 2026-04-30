@@ -460,14 +460,14 @@ const VariantDetails = ({
 
   return (
     <VariantContainer>
-      <>
+      <div>
         <ExternalLink
           href={`https://gnomad.broadinstitute.org/variant/${variant.variant_id}?dataset=${gnomadDataset}`}
         >
           View in gnomAD
         </ExternalLink>
         {' '}for more information on variant consequences and population frequencies
-      </>
+      </div>
       <Columns>
         {datasetId !== 'GP2' && defaultGroupResult && (
           <Column>
