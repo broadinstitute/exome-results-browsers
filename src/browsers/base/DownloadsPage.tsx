@@ -20,7 +20,7 @@ const downloadUrl = (datasetId: DatasetId, file: string) => {
   } else if (datasetId === 'SCHEMA2') {
     return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2026-04-23/SCHEMA2/SCHEMA2_${file}`
   } else if (datasetId === 'IBD') {
-    return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2025-06-12/IBD/IBD${file}`
+    return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2025-06-12/IBD/IBD_${file}`
   }
 
   return `https://atgu-exome-browser-data.s3.amazonaws.com/${datasetId}/${datasetId}_${file}`
