@@ -95,7 +95,7 @@ const datasetLinks: DatasetLink[] = [
   },
 ]
 
-export default () => (
+const OtherStudies = () => (
   <>
     <p>
       This website contains results from one of several case-control studies of psychiatric diseases
@@ -109,7 +109,7 @@ export default () => (
           <>
             <h2>
               {ds.phenotype} -{' '}
-              <ExternalLink href={`https://${ds.id.toLowerCase()}`}>{ds.id}</ExternalLink>
+              <ExternalLink href={`https://${ds.id.toLowerCase()}.broadinstitute.org`}>{ds.id}</ExternalLink>
             </h2>
             <p>{ds.description}</p>
             <p>
@@ -120,3 +120,5 @@ export default () => (
       })}
   </>
 )
+
+export default OtherStudies
