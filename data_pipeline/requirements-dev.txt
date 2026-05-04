@@ -6,7 +6,7 @@
 #
 astroid==3.3.5
     # via pylint
-black==22.10.0
+black==26.3.1
     # via -r requirements-dev.in
 click==8.1.7
     # via
@@ -27,8 +27,9 @@ mypy-extensions==1.0.0
 packaging==24.1
     # via
     #   -c requirements.txt
+    #   black
     #   pytest
-pathspec==0.12.1
+pathspec==1.1.1
     # via black
 platformdirs==4.3.6
     # via
@@ -42,7 +43,9 @@ pygments==2.18.0
     #   pytest
 pylint==3.3.1
     # via -r requirements-dev.in
-pytest==8.4.1
+pytest==9.0.3
     # via -r requirements-dev.in
+pytokens==0.4.1
+    # via black
 tomlkit==0.13.2
     # via pylint
