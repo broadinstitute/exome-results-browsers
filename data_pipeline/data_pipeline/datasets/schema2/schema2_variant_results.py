@@ -50,7 +50,7 @@ def prepare_variant_results(test_genes, _output_root):
         variant_annotations = filter_results_table_to_test_gene_intervals(variant_annotations)
 
     variant_results = variant_results.select(
-        ac_case=hl.or_else(variant_results.AC_case, 0) + hl.or_else(variant_results.n_de_novo, 0),
+        ac_case=variant_results.AC_case,
         an_case=variant_results.AN_case,
         ac_ctrl=variant_results.AC_control,
         an_ctrl=variant_results.AN_control,
