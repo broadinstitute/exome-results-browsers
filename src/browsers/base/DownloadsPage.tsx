@@ -18,7 +18,7 @@ const downloadUrl = (datasetId: DatasetId, file: string) => {
   } else if (datasetId === 'BipEx2') {
     return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2026-04-14/BipEx2/BipEx2_${file}`
   } else if (datasetId === 'SCHEMA2') {
-    return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2026-04-23/SCHEMA2/SCHEMA2_${file}`
+    return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2026-05-07/SCHEMA2/SCHEMA2_${file}`
   } else if (datasetId === 'IBD') {
     return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2025-06-12/IBD/IBD_${file}`
   }
