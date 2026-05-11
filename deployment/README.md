@@ -114,11 +114,29 @@ the browsers and so cannot be attached to another instance in read-write mode.
    umount /mnt/disks/erb-data
    ```
 
-9. Disconnect from the instance (`# exit`), detach the disk (`$ exit`), and delete the instance.
+9. Disconnect from the instance, detach the disk, and delete the instance.
+
+   Exit `su` shell (`#`)
+
+   ```
+   exit
+   ```
+
+   Exit shell (`$`)
+
+   ```
+   exit
+   ```
+
+   Detach the disk
 
    ```
    gcloud compute instances detach-disk erb-temp-instance --disk=$DISK_NAME
+   ```
 
+   Delete the temp instance
+
+   ```
    gcloud --quiet compute instances delete erb-temp-instance
    ```
 
