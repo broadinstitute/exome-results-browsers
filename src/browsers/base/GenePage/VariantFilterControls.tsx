@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 // @ts-expect-error: no types in this version of @gnomad/ui
-import { CategoryFilterControl, Combobox, KeyboardShortcut, SearchInput } from '@gnomad/ui'
+import { CategoryFilterControl, KeyboardShortcut, SearchInput, Select } from '@gnomad/ui'
 
 import CSVExportButton from '../CSVExportButton'
 import { ConsequenceCategory, VariantConsequenceCategoryLabels } from '../Browser'
@@ -181,15 +181,18 @@ const VariantFilterControls = ({
               <>
                 {/* eslint-disable-next-line jsx-a11y/label-has-for,jsx-a11y/label-has-associated-control */}
                 <label htmlFor="analysis-group">Current analysis group</label>
-                <Combobox
+                <Select
                   id="analysis-group"
-                  options={variantAnalysisGroupOptions.map((group) => ({
-                    id: group,
-                    label: variantAnalysisGroupLabels[group] || group,
-                  }))}
-                  onSelect={(option: { id: string }) => onChangeAnalysisGroup(option.id)}
-                  value={variantAnalysisGroupLabels[selectedAnalysisGroup] || selectedAnalysisGroup}
-                />
+                  value={selectedAnalysisGroup}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChangeAnalysisGroup(e.target.value)}
+                  style={{ paddingRight: '10em' }}
+                >
+                  {variantAnalysisGroupOptions.map((group) => (
+                    <option key={group} value={group}>
+                      {variantAnalysisGroupLabels[group] || group}
+                    </option>
+                  ))}
+                </Select>
               </>
             )}
 

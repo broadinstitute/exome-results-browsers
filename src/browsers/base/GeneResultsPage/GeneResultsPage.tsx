@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 // @ts-expect-error: no types in this @gnomad/ui version
-import { Combobox, Page as BasePage, PageHeading, SearchInput, Tabs } from '@gnomad/ui'
+import { Page as BasePage, PageHeading, SearchInput, Select, Tabs } from '@gnomad/ui'
 
 import datasetConfig from '../../datasetConfig'
 import DocumentTitle from '../DocumentTitle'
@@ -84,17 +84,20 @@ const GeneResultsPage = ({
               <AnalysisGroupMenuWrapper>
                 {/* eslint-disable-next-line jsx-a11y/label-has-for,jsx-a11y/label-has-associated-control */}
                 <label htmlFor="analysis-group-menu">Current analysis group </label>
-                <Combobox
-                  id="analysis-group-menu"
-                  options={analysisGroupOptions.map((group) => ({
-                    id: group,
-                    label: group,
-                  }))}
+                <Select
+                  id="analysis-group"
                   value={selectedAnalysisGroup}
-                  onSelect={(option: { id: string }) => {
-                    setSelectedAnalysisGroup(option.id)
-                  }}
-                />
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setSelectedAnalysisGroup(e.target.value)
+                  }
+                  style={{ paddingRight: '10em' }}
+                >
+                  {analysisGroupOptions.map((group) => (
+                    <option key={group} value={group}>
+                      {analysisGroupOptions[group] || group}
+                    </option>
+                  ))}
+                </Select>
               </AnalysisGroupMenuWrapper>
             )}
 
