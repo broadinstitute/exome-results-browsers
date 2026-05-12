@@ -93,6 +93,12 @@ const datasetLinks: DatasetLink[] = [
       </p>
     ),
   },
+  {
+    id: 'IBD',
+    phenotype: 'Irritable Bowel Disease',
+    description:
+      'The Inflammatory Bowel Disease (IBD) Sequencing Consortium is a global collaboration dedicated to aggregating, generating, and analyzing high-throughput sequencing data of inflammatory bowel disease patients to improve our understanding of disease architecture and advance gene discovery. The consortium was formed in 2014 with a commitment to data sharing, diversity, and inclusivity - we hope that the findings from this study and others like it will provide a foundation for further investigation of disease mechanisms and therapeutic discovery. This browser is part of that overall effort to display and share these results with the wider scientific community. Partnering with the Broad Institute, the IBD Sequencing Consortium has sequenced more than 50,000 patients as of 2024 from 50 research cohorts across the world.'
+  },
 ]
 
 const OtherStudies = () => (
