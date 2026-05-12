@@ -8,42 +8,49 @@ import datasetConfig from '../datasetConfig'
 import Fetch from './Fetch'
 import { DatasetId } from './Browser'
 
-const BrowserLink = ({ datasetId }: { datasetId: DatasetId }) => (
-  <Switch>
-    <Route
-      path="/results"
-      render={() => (
-        <ExternalLink href={`https://${datasetId.toLowerCase()}.broadinstitute.org/results`}>
-          View results in {datasetId} browser
-        </ExternalLink>
-      )}
-    />
-    <Route
-      path="/gene/:geneIdOrName"
-      render={({ location, match }) => (
-        <Fetch path={`/gene/${match.params.geneIdOrName}`}>
-          {({ data }) => {
-            const label = data && data.gene ? data.gene.symbol : 'this gene'
-            return (
-              <ExternalLink
-                href={`https://${datasetId.toLowerCase()}.broadinstitute.org${location.pathname}`}
-              >
-                View {label} in {datasetId} browser
-              </ExternalLink>
-            )
-          }}
-        </Fetch>
-      )}
-    />
-    <Route
-      render={() => (
-        <ExternalLink href={`https://${datasetId.toLowerCase()}.broadinstitute.org`}>
-          Open {datasetId} browser
-        </ExternalLink>
-      )}
-    />
-  </Switch>
-)
+// TK: put this in a more central place, if it's needed elsewhere
+export const datasetToSubdomainOverrideMap = {
+  IBD: 'ibdseq',
+}
+
+const BrowserLink = ({ datasetId }: { datasetId: DatasetId }) => {
+  const subdomain = datasetToSubdomainOverrideMap[datasetId] || datasetId.toLowerCase()
+
+  return (
+    <Switch>
+      <Route
+        path="/results"
+        render={() => (
+          <ExternalLink href={`https://${subdomain}.broadinstitute.org/results`}>
+            View results in {datasetId} browser
+          </ExternalLink>
+        )}
+      />
+      <Route
+        path="/gene/:geneIdOrName"
+        render={({ location, match }) => (
+          <Fetch path={`/gene/${match.params.geneIdOrName}`}>
+            {({ data }) => {
+              const label = data && data.gene ? data.gene.symbol : 'this gene'
+              return (
+                <ExternalLink href={`https://${subdomain}.broadinstitute.org${location.pathname}`}>
+                  View {label} in {datasetId} browser
+                </ExternalLink>
+              )
+            }}
+          </Fetch>
+        )}
+      />
+      <Route
+        render={() => (
+          <ExternalLink href={`https://${subdomain}.broadinstitute.org`}>
+            Open {datasetId} browser
+          </ExternalLink>
+        )}
+      />
+    </Switch>
+  )
+}
 
 type DatasetLink = {
   id: DatasetId
@@ -71,12 +78,6 @@ const datasetLinks: DatasetLink[] = [
       'The Epi25 collaborative is a global collaboration committed to aggregating, sequencing, and deep-phenotyping up to 25,000 epilepsy patients to advance epilepsy genetics research. The Epi25 whole-exome sequencing (WES) case-control study is one of the collaborative&apos;s ongoing endeavors that aims to characterize the contribution of rare genetic variation to a spectrum of epilepsy syndromes to identify individual risk genes.',
   },
   {
-    id: 'SCHEMA',
-    phenotype: 'Schizophrenia',
-    description:
-      'The Schizophrenia Exome Sequencing Meta-analysis (SCHEMA) consortium is a large multi-site collaboration dedicated to aggregating, generating, and analyzing high-throughput sequencing data of schizophrenia patients to improve our understanding of disease architecture and advance gene discovery. The first results of this study have provided genome-wide significant results associating rare variants in individual genes to risk of schizophrenia, and later releases are planned with larger number of samples that will further increase power.',
-  },
-  {
     id: 'GP2',
     phenotype: 'Parkinsons',
     description: (
@@ -97,7 +98,13 @@ const datasetLinks: DatasetLink[] = [
     id: 'IBD',
     phenotype: 'Irritable Bowel Disease',
     description:
-      'The Inflammatory Bowel Disease (IBD) Sequencing Consortium is a global collaboration dedicated to aggregating, generating, and analyzing high-throughput sequencing data of inflammatory bowel disease patients to improve our understanding of disease architecture and advance gene discovery. The consortium was formed in 2014 with a commitment to data sharing, diversity, and inclusivity - we hope that the findings from this study and others like it will provide a foundation for further investigation of disease mechanisms and therapeutic discovery. This browser is part of that overall effort to display and share these results with the wider scientific community. Partnering with the Broad Institute, the IBD Sequencing Consortium has sequenced more than 50,000 patients as of 2024 from 50 research cohorts across the world.'
+      'The Inflammatory Bowel Disease (IBD) Sequencing Consortium is a global collaboration dedicated to aggregating, generating, and analyzing high-throughput sequencing data of inflammatory bowel disease patients to improve our understanding of disease architecture and advance gene discovery. The consortium was formed in 2014 with a commitment to data sharing, diversity, and inclusivity - we hope that the findings from this study and others like it will provide a foundation for further investigation of disease mechanisms and therapeutic discovery. This browser is part of that overall effort to display and share these results with the wider scientific community. Partnering with the Broad Institute, the IBD Sequencing Consortium has sequenced more than 50,000 patients as of 2024 from 50 research cohorts across the world.',
+  },
+  {
+    id: 'SCHEMA',
+    phenotype: 'Schizophrenia',
+    description:
+      'The Schizophrenia Exome Sequencing Meta-analysis (SCHEMA) consortium is a large multi-site collaboration dedicated to aggregating, generating, and analyzing high-throughput sequencing data of schizophrenia patients to improve our understanding of disease architecture and advance gene discovery. The first results of this study have provided genome-wide significant results associating rare variants in individual genes to risk of schizophrenia, and later releases are planned with larger number of samples that will further increase power.',
   },
 ]
 
@@ -111,11 +118,13 @@ const OtherStudies = () => (
     {datasetLinks
       .filter((ds) => ds.id !== datasetConfig.datasetId)
       .map((ds) => {
+        const subdomain = datasetToSubdomainOverrideMap[ds.id] || ds.id.toLowerCase()
+
         return (
           <>
             <h2>
               {ds.phenotype} -{' '}
-              <ExternalLink href={`https://${ds.id.toLowerCase()}.broadinstitute.org`}>{ds.id}</ExternalLink>
+              <ExternalLink href={`https://${subdomain}.broadinstitute.org`}>{ds.id}</ExternalLink>
             </h2>
             <p>{ds.description}</p>
             <p>
