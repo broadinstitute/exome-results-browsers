@@ -6,6 +6,7 @@ import { ExternalLink, List, ListItem, Modal, TextButton } from '@gnomad/ui'
 
 import datasetConfig from '../../datasetConfig'
 import { IndividualGeneAPIResponse } from '../GeneResultsPage/geneResultTableColumns'
+import { datasetToSubdomainOverrideMap } from '../OtherStudies'
 
 interface GeneReferencesProps {
   gene: IndividualGeneAPIResponse
@@ -156,8 +157,9 @@ const GeneInfo = ({ gene }: GeneInfoProps) => {
     { id: 'ASC' },
     { id: 'BipEx' },
     { id: 'Epi25' },
-    { id: 'SCHEMA' },
     { id: 'GP2' },
+    { id: 'IBD' },
+    { id: 'SCHEMA' },
   ].filter(({ id }) => id !== datasetConfig.datasetId)
 
   return (
@@ -198,14 +200,18 @@ const GeneInfo = ({ gene }: GeneInfoProps) => {
         <dt>Other studies</dt>
         <dd>
           {otherStudies
-            .map(({ id }) => (
-              <ExternalLink
-                key={id}
-                href={`https://${id.toLowerCase()}.broadinstitute.org/gene/${gene.gene_id}`}
-              >
-                {id}
-              </ExternalLink>
-            ))
+            .map(({ id }) => {
+              const subdomain = datasetToSubdomainOverrideMap[id] || id.toLowerCase()
+
+              return (
+                <ExternalLink
+                  key={id}
+                  href={`https://${subdomain}.broadinstitute.org/gene/${gene.gene_id}`}
+                >
+                  {id}
+                </ExternalLink>
+              )
+            })
             .reduce((acc: React.ReactNode[], link) => [...acc, ', ', link], [])
             .slice(1)}
         </dd>
