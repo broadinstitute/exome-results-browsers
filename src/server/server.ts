@@ -175,7 +175,7 @@ if (isDevelopment) {
 } else {
 
   const subdomainOverrides: Record<string, string> = {
-    ibdseq: 'ibd',
+    ibdseq: 'IBD',
   };
 
   const datasetBySubdomain: Record<string, string> = Object.keys(metadata.datasets).reduce(
