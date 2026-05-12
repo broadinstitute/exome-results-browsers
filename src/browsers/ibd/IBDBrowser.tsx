@@ -6,7 +6,6 @@ import { renderFloatAsScientific, renderFloatAsDecimal } from '../base/tableCell
 import IBDAboutPage from './IBDAboutPage'
 import IBDHomePage from './IBDHomePage'
 import IBDTermsPage from './IBDTermsPage'
-import IBDVariantFilter from './IBDVariantFilter'
 import vepConsequences from '../base/vepConsequences'
 
 const variantConsequences = [...vepConsequences]
@@ -103,18 +102,6 @@ const IBDBrowser = () => {
         },
       ]}
       variantConsequences={variantConsequences}
-      variantCustomFilter={{
-        component: IBDVariantFilter,
-        defaultFilter: {
-          onlyInAnalysis: false,
-        },
-        applyFilter: (variants, { onlyInAnalysis }) => {
-          if (onlyInAnalysis) {
-            return variants.filter((v) => v.group_result.in_analysis)
-          }
-          return variants
-        },
-      }}
       renderVariantAttributes={({ cadd, revel, polyphen, splice_ai: spliceAi, sift }) => [
         { label: 'CADD', content: cadd === null ? '–' : cadd },
         { label: 'Revel', content: revel === null ? '–' : revel },
