@@ -66,7 +66,8 @@ const GeneResultsPage = ({
       (result) =>
         (result.gene_id || '').includes(searchText) ||
         (result.gene_symbol || '').includes(searchText) ||
-        (result.gene_name || '').toUpperCase().includes(searchText)
+        (result.gene_name || '').toUpperCase().includes(searchText) ||
+        (result.group_results[selectedAnalysisGroup].gene_symbol || '').toUpperCase().includes(searchText)
     )
     .map((result) => ({
       ...result,
