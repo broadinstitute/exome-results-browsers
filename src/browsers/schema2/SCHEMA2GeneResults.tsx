@@ -50,6 +50,14 @@ type SchemaGeneResult = {
   ptv_mis_p_value: number
   ptv_mis_odds_ratio: string
 
+  mis_case_carrier: number
+  mis_control_carrier: number
+  mis_odds_ratio: string
+
+  syn_case_carrier: number
+  syn_control_carrier: number
+  syn_odds_ratio: string
+
   ptv_n_de_novo: number
   ptv_mis_n_de_novo: number
 
@@ -125,16 +133,54 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {safeRenderCount(result.ptv_mis_case_carrier)}
             </td>
             <td>{safeRenderCount(result.ptv_mis_control_carrier)}</td>
-            <td rowSpan={2} style={{ paddingLeft: '10px' }}>
+            <td style={{ paddingLeft: '10px' }}>
               {renderOddsRatio(result.ptv_mis_odds_ratio)}
             </td>
-            <td rowSpan={2} style={{ paddingLeft: '10px' }}>
+            <td style={{ paddingLeft: '10px' }}>
               {renderStringOrFloatPvalueAsScientific(result.ptv_mis_p_value)}
             </td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
               {safeRenderCount(result.ptv_mis_n_de_novo)}
             </td>
           </tr>
+
+
+          <tr>
+            <th scope="row">
+              <TooltipAnchor tooltip="Missense variants.">
+                <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>Missense</TooltipHint>
+              </TooltipAnchor>
+            </th>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+              {safeRenderCount(result.mis_case_carrier)}
+            </td>
+            <td>{safeRenderCount(result.mis_control_carrier)}</td>
+            <td style={{ paddingLeft: '10px' }}>{renderOddsRatio(result.mis_odds_ratio)}</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderStringOrFloatPvalueAsScientific(result.mis_p_value)}
+            </td>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
+            <td style={{ paddingLeft: '10px' }}>-</td>
+          </tr>
+
+          <tr>
+            <th scope="row">
+              <TooltipAnchor tooltip="Synonymous variants.">
+                <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>Synonymous</TooltipHint>
+              </TooltipAnchor>
+            </th>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+              {safeRenderCount(result.syn_case_carrier)}
+            </td>
+            <td>{safeRenderCount(result.syn_control_carrier)}</td>
+            <td style={{ paddingLeft: '10px' }}>{renderOddsRatio(result.syn_odds_ratio)}</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderStringOrFloatPvalueAsScientific(result.syn_p_value)}
+            </td>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
+            <td style={{ paddingLeft: '10px' }}>-</td>
+          </tr>
+
         </tbody>
       </Table>
       <p style={{ marginTop: '2rem', fontWeight: 'bold' }}>
