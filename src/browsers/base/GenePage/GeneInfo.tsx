@@ -7,6 +7,7 @@ import { ExternalLink, List, ListItem, Modal, TextButton } from '@gnomad/ui'
 import datasetConfig from '../../datasetConfig'
 import { IndividualGeneAPIResponse } from '../GeneResultsPage/geneResultTableColumns'
 import { datasetToSubdomainOverrideMap } from '../OtherStudies'
+import { DatasetId } from '../Browser'
 
 interface GeneReferencesProps {
   gene: IndividualGeneAPIResponse
@@ -162,9 +163,11 @@ const GeneInfo = ({ gene }: GeneInfoProps) => {
     { id: 'SCHEMA' },
   ].filter(({ id }) => id !== datasetConfig.datasetId)
 
+  const datasetsToDisplayAliasSymbols: DatasetId[] = ['BipEx2', 'SCHEMA2']
+
   return (
     <DescriptionList>
-      {datasetConfig.datasetId === 'BipEx2' &&
+      {datasetsToDisplayAliasSymbols.indexOf(datasetConfig.datasetId) !== -1 &&
         <AlternateGeneSymbolRows gene={gene} />
       }
 
