@@ -102,6 +102,14 @@ const SCHEMABrowser = () => (
     defaultGeneResultSortKey="schema_case_control_p_value"
     geneResultColumns={[
       {
+        key: 'schema_case_control_p_value',
+        heading: 'Case-Control SCHEMA2 P-value',
+        tooltip:
+          'SCHEMA2 p-value of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
+        minWidth: 100,
+        render: (value) => renderStringOrFloatPvalueAsScientific(value),
+      },
+      {
         key: 'ptv_case_carrier',
         heading: 'Case PTV',
         tooltip:
@@ -148,14 +156,6 @@ const SCHEMABrowser = () => (
         render: (value) => renderCount(value),
       },
       {
-        key: 'schema_case_control_p_value',
-        heading: 'Case-Control SCHEMA2 P-value',
-        tooltip:
-          'SCHEMA2 p-value of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
-        minWidth: 100,
-        render: (value) => renderStringOrFloatPvalueAsScientific(value),
-      },
-      {
         key: 'case_control_plus_de_novo_p_value',
         heading: 'Case-Control + de novo P-value',
         tooltip:
@@ -175,6 +175,52 @@ const SCHEMABrowser = () => (
         heading: 'OR PTV + Missense',
         tooltip:
           'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs + missense variants predicted to be damaging.',
+        minWidth: 110,
+        render: (value) => renderOddsRatio(value),
+      },
+      {
+        key: 'mis_case_carrier',
+        heading: 'Case Missense',
+        tooltip:
+          'Missense variants, aggregated counts from variants with minor allele count [MAC] <= 15',
+        minWidth: 100,
+        render: (value) => renderCount(value),
+      },
+      {
+        key: 'mis_control_carrier',
+        heading: 'Control Missense',
+        tooltip:
+          'Missense variants, aggregated counts from variants with minor allele count [MAC] <= 15',
+        minWidth: 100,
+        render: (value) => renderCount(value),
+      },
+      {
+        key: 'syn_case_carrier',
+        heading: 'Case Synonymous',
+        tooltip:
+          'Synonymous variants, aggregated counts from variants with minor allele count [MAC] <= 15',
+        minWidth: 100,
+        render: (value) => renderCount(value),
+      },
+      {
+        key: 'syn_control_carrier',
+        heading: 'Control Synonymous',
+        tooltip:
+          'Synonymous variants, aggregated counts from variants with minor allele count [MAC] <= 15',
+        minWidth: 100,
+        render: (value) => renderCount(value),
+      },
+      {
+        key: 'mis_odds_ratio',
+        heading: 'OR Missense',
+        tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
+        minWidth: 110,
+        render: (value) => renderOddsRatio(value),
+      },
+      {
+        key: 'syn_odds_ratio',
+        heading: 'OR Synonymous',
+        tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
         minWidth: 110,
         render: (value) => renderOddsRatio(value),
       },
