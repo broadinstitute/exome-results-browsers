@@ -7,8 +7,12 @@ import Epi25HomePage from './Epi25HomePage'
 import Epi25TermsPage from './Epi25TermsPage'
 import Epi25VariantFilter from './Epi25VariantFilter'
 
-const renderOddsRatio = (value) => {
-  if (value === null) {
+export type Epi25AnalysisGroup = 'EPI' | 'DEE' | 'GGE' | 'NAFE'
+export const epi25AnalysisGroups: Epi25AnalysisGroup[] = ['EPI', 'DEE', 'GGE', 'NAFE']
+export const epi25DefaultAnalysisGroup: Epi25AnalysisGroup = 'EPI'
+
+const renderOddsRatio = (value: number | string | null | undefined) => {
+  if (value === null || value === undefined) {
     return ''
   }
   if (value === 'Infinity') {
@@ -17,7 +21,12 @@ const renderOddsRatio = (value) => {
   if (value === 0) {
     return '0'
   }
-  return value.toPrecision(3)
+
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+  return floatValue.toPrecision(3)
 }
 
 const Epi25Browser = () => (
@@ -33,8 +42,8 @@ const Epi25Browser = () => (
       },
     ]}
     geneResultsPageHeading="Epi25 WES: gene burden results"
-    geneResultAnalysisGroupOptions={['EPI', 'DEE', 'GGE', 'NAFE']}
-    defaultGeneResultAnalysisGroup="EPI"
+    geneResultAnalysisGroupOptions={epi25AnalysisGroups}
+    defaultGeneResultAnalysisGroup={epi25DefaultAnalysisGroup}
     defaultGeneResultSortKey="ptv_pval"
     geneResultColumns={[
       {

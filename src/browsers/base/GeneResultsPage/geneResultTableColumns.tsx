@@ -6,7 +6,7 @@ import Highlighter from 'react-highlight-words'
 import { TooltipAnchor } from '@gnomad/ui'
 
 import Link from '../Link'
-import { renderFloatAsScientific } from '../tableCells'
+import { InputData, renderFloatAsScientific } from '../tableCells'
 import { DatasetId, GeneResultColumnConfig, ReferenceGenome } from '../Browser'
 import { Constraint } from '../GenePage/Constraint'
 import { Strand } from '../GenePage/TranscriptTrack'
@@ -138,7 +138,7 @@ const getTableColumns = (geneResultColumns: GeneResultColumnConfig[]): GeneResul
     grow: 0,
     render: column.render
       ? (row, key) => column.render!(get(row, key))
-      : (row, key) => renderFloatAsScientific(get(row, key), '0'),
+      : (row, key) => renderFloatAsScientific({ value: (get(row, key) as InputData), zeroValue: '0' }),
     renderForCSV: column.renderForCSV
       ? (row, key) => column.renderForCSV!(get(row, key))
       : (row, key) => get(row, key),

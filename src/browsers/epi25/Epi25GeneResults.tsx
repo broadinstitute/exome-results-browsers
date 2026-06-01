@@ -1,17 +1,17 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
 import { BaseTable, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
+import { Epi25AnalysisGroup, epi25AnalysisGroups, epi25DefaultAnalysisGroup } from './Epi25Browser'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
-const renderOddsRatio = (value) => {
-  if (value === null) {
+const renderOddsRatio = (value: number | string | null | undefined) => {
+  if (value === null || value === undefined) {
     return '-'
   }
   if (value === 'Infinity') {
@@ -20,11 +20,16 @@ const renderOddsRatio = (value) => {
   if (value === 0) {
     return '0'
   }
-  return value.toPrecision(3)
+
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+  return floatValue.toPrecision(3)
 }
 
-const renderPVal = (pval) => {
-  if (pval === null) {
+const renderPVal = (pval: number | undefined | null) => {
+  if (pval === null || pval === undefined) {
     return '-'
   }
   if (pval === 0) {
@@ -33,7 +38,28 @@ const renderPVal = (pval) => {
   return pval.toPrecision(3)
 }
 
-const Epi25GeneResult = ({ result }) => (
+
+type Epi25GeneResult = {
+  ptv_case_count: number | null
+  ptv_control_count: number | null
+  ptv_pval: number | null
+  ptv_OR: number | null
+
+  damaging_missense_case_count: number | null
+  damaging_missense_control_count: number | null
+  damaging_missense_pval: number | null
+  damaging_missense_OR: number | null
+
+  n_cases: number,
+  n_controls: number,
+}
+
+interface Epi25GeneResultProps {
+  result: Epi25GeneResult
+}
+
+
+const Epi25GeneResult = ({ result }: Epi25GeneResultProps) => (
   <div>
     <Table>
       <thead>
@@ -80,22 +106,12 @@ const Epi25GeneResult = ({ result }) => (
   </div>
 )
 
-Epi25GeneResult.propTypes = {
-  result: PropTypes.shape({
-    n_cases: PropTypes.number,
-    n_controls: PropTypes.number,
-    damaging_missense_case_count: PropTypes.number,
-    damaging_missense_control_count: PropTypes.number,
-    damaging_missense_pval: PropTypes.number,
-    damaging_missense_OR: PropTypes.number,
-    ptv_case_count: PropTypes.number,
-    ptv_control_count: PropTypes.number,
-    ptv_pval: PropTypes.number,
-    ptv_OR: PropTypes.number,
-  }).isRequired,
+interface Epi25GeneResultsProps {
+  results: Record<Epi25AnalysisGroup, Epi25GeneResult>
+
 }
 
-const Epi25GeneResults = ({ results }) => (
+const Epi25GeneResults = ({ results }: Epi25GeneResultsProps) => (
   <>
     <h2>
       Gene Result{' '}
@@ -123,7 +139,7 @@ const Epi25GeneResults = ({ results }) => (
       />
     </h2>
     <Tabs
-      tabs={['EPI', 'DEE', 'GGE', 'NAFE'].map((group) => ({
+      tabs={epi25AnalysisGroups.map((group) => ({
         id: group,
         label: group,
         render: () =>
@@ -136,9 +152,5 @@ const Epi25GeneResults = ({ results }) => (
     />
   </>
 )
-
-Epi25GeneResults.propTypes = {
-  results: PropTypes.objectOf(PropTypes.object).isRequired,
-}
 
 export default Epi25GeneResults
