@@ -45,6 +45,10 @@ const renderOddsRatio = (value) => {
   return value.toPrecision(3)
 }
 
+export const schemaAnalysisGroups = ['meta'] as const
+export type SCHEMAAnalysisGroup = typeof schemaAnalysisGroups[number]
+export const schemaDefaultAnalysisGroup: SCHEMAAnalysisGroup = 'meta'
+
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
     browserTitle="SCHEMA browser"
@@ -63,8 +67,8 @@ const SCHEMABrowser = () => (
       },
     ]}
     geneResultsPageHeading="Exome meta-analysis results"
-    geneResultAnalysisGroupOptions={['meta']}
-    defaultGeneResultAnalysisGroup="meta"
+    geneResultAnalysisGroupOptions={schemaAnalysisGroups}
+    defaultGeneResultAnalysisGroup={schemaDefaultAnalysisGroup}
     defaultGeneResultSortKey="P meta"
     geneResultColumns={[
       {
@@ -204,8 +208,8 @@ const SCHEMABrowser = () => (
         ),
       },
     ]}
-    defaultVariantAnalysisGroup="meta"
-    variantAnalysisGroupOptions={['meta']}
+    variantAnalysisGroupOptions={schemaAnalysisGroups}
+    defaultVariantAnalysisGroup={schemaDefaultAnalysisGroup}
     variantResultColumns={[
       {
         key: 'group_result.n_denovos',

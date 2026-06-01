@@ -4,7 +4,8 @@ import styled from 'styled-components'
 import { BaseTable, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
-import { Epi25AnalysisGroup, epi25AnalysisGroups, epi25DefaultAnalysisGroup } from './Epi25Browser'
+import { Epi25AnalysisGroup, epi25AnalysisGroups } from './Epi25Browser'
+import { renderOddsRatio } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
