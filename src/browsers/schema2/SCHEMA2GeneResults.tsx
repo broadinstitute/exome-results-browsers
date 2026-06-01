@@ -7,6 +7,7 @@ import HelpButton from '../base/HelpButton'
 import StyledContent from '../base/StyledContent'
 import geneResultsDescription from './content/generesults.md'
 import { renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import { SCHEMA2AnalysisGroup } from './SCHEMA2Browser'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -133,9 +134,7 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {safeRenderCount(result.ptv_mis_case_carrier)}
             </td>
             <td>{safeRenderCount(result.ptv_mis_control_carrier)}</td>
-            <td style={{ paddingLeft: '10px' }}>
-              {renderOddsRatio(result.ptv_mis_odds_ratio)}
-            </td>
+            <td style={{ paddingLeft: '10px' }}>{renderOddsRatio(result.ptv_mis_odds_ratio)}</td>
             <td style={{ paddingLeft: '10px' }}>
               {renderStringOrFloatPvalueAsScientific(result.ptv_mis_p_value)}
             </td>
@@ -143,7 +142,6 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {safeRenderCount(result.ptv_mis_n_de_novo)}
             </td>
           </tr>
-
 
           <tr>
             <th scope="row">
@@ -180,7 +178,6 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
             <td style={{ paddingLeft: '10px' }}>-</td>
           </tr>
-
         </tbody>
       </Table>
       <p style={{ marginTop: '2rem', fontWeight: 'bold' }}>
@@ -202,9 +199,7 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
 }
 
 interface SchemaGeneResultsProps {
-  results: {
-    meta: SchemaGeneResult
-  }
+  results: Record<SCHEMA2AnalysisGroup, SchemaGeneResult>
 }
 
 const SCHEMAGeneResults = ({ results }: SchemaGeneResultsProps) => (

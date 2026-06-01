@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Badge, BaseTable, ExternalLink } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
+import { BipEx2AnalysisGroup } from './BipEx2Browser'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -136,9 +137,7 @@ const BipExGeneResult = ({ result }: { result: ResultObject }) => (
 )
 
 interface BipExGeneResultsProps {
-  results: {
-    meta: ResultObject
-  }
+  results: Record<BipEx2AnalysisGroup, ResultObject>
 }
 
 const BipExGeneResults = ({ results }: BipExGeneResultsProps) => (

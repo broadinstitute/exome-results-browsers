@@ -176,13 +176,13 @@ type BrowserProps = {
   extraPages?: ExtraPage[]
 
   geneResultsPageHeading?: string
-  geneResultAnalysisGroupOptions?: string[]
-  defaultGeneResultAnalysisGroup?: string
+  geneResultAnalysisGroupOptions: readonly string[]
+  defaultGeneResultAnalysisGroup: string
   defaultGeneResultSortKey?: string
   geneResultColumns?: GeneResultColumnConfig[]
   geneResultTabs?: GeneResultTabConfig[]
 
-  variantAnalysisGroupOptions: string[]
+  variantAnalysisGroupOptions: readonly string[]
   defaultVariantAnalysisGroup: string
   variantAnalysisGroupLabels?: Record<string, string>
   variantResultColumns?: VariantColumnConfig[]

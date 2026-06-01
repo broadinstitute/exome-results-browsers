@@ -30,21 +30,25 @@ const renderOddsRatio = (value: number | string | null | undefined) => {
   return value.toPrecision(3)
 }
 
+export const bipexAnalysisGroups = [
+  'Bipolar Disorder',
+  'Bipolar Disorder 1',
+  'Bipolar Disorder 2',
+  'Bipolar with Psychosis',
+  'Bipolar without Psychosis',
+  'Bipolar (including Schizoaffective)',
+] as const
+export type BipExAnalysisGroup = typeof bipexAnalysisGroups[number]
+export const bipexDefaultAnalysisGroup: BipExAnalysisGroup = 'Bipolar Disorder'
+
 const BipExBrowser = () => (
   <Browser
     browserTitle="BipEx: Bipolar Exomes Browser"
     navBarBackgroundColor="#c24100"
     homePage={BipExHomePage}
     geneResultsPageHeading="Gene results"
-    geneResultAnalysisGroupOptions={[
-      'Bipolar Disorder',
-      'Bipolar Disorder 1',
-      'Bipolar Disorder 2',
-      'Bipolar Disorder with Psychosis',
-      'Bipolar Disorder without Psychosis',
-      'Bipolar Disorder (including Schizoaffective)',
-    ]}
-    defaultGeneResultAnalysisGroup="Bipolar Disorder"
+    geneResultAnalysisGroupOptions={bipexAnalysisGroups}
+    defaultGeneResultAnalysisGroup={bipexDefaultAnalysisGroup}
     defaultGeneResultSortKey="ptv_fisher_gnom_non_psych_pval"
     geneResultColumns={[
       {
@@ -106,15 +110,8 @@ const BipExBrowser = () => (
         render: renderOddsRatio,
       },
     ]}
-    defaultVariantAnalysisGroup="Bipolar Disorder"
-    variantAnalysisGroupOptions={[
-      'Bipolar Disorder',
-      'Bipolar Disorder 1',
-      'Bipolar Disorder 2',
-      'Bipolar Disorder with Psychosis',
-      'Bipolar Disorder without Psychosis',
-      'Bipolar Disorder (including Schizoaffective)',
-    ]}
+    variantAnalysisGroupOptions={bipexAnalysisGroups}
+    defaultVariantAnalysisGroup={bipexDefaultAnalysisGroup}
     variantResultColumns={[
       {
         key: 'group_result.estimate',

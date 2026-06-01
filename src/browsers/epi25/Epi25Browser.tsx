@@ -7,8 +7,8 @@ import Epi25HomePage from './Epi25HomePage'
 import Epi25TermsPage from './Epi25TermsPage'
 import Epi25VariantFilter from './Epi25VariantFilter'
 
-export type Epi25AnalysisGroup = 'EPI' | 'DEE' | 'GGE' | 'NAFE'
-export const epi25AnalysisGroups: Epi25AnalysisGroup[] = ['EPI', 'DEE', 'GGE', 'NAFE']
+export const epi25AnalysisGroups = ['EPI', 'DEE', 'GGE', 'NAFE'] as const
+export type Epi25AnalysisGroup = typeof epi25AnalysisGroups[number]
 export const epi25DefaultAnalysisGroup: Epi25AnalysisGroup = 'EPI'
 
 const renderOddsRatio = (value: number | string | null | undefined) => {
@@ -105,8 +105,8 @@ const Epi25Browser = () => (
         render: renderOddsRatio,
       },
     ]}
-    defaultVariantAnalysisGroup="EPI"
-    variantAnalysisGroupOptions={['EPI', 'DEE', 'GGE', 'NAFE']}
+    variantAnalysisGroupOptions={epi25AnalysisGroups}
+    defaultVariantAnalysisGroup={epi25DefaultAnalysisGroup}
     variantResultColumns={[
       {
         key: 'group_result.estimate',

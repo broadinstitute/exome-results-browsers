@@ -6,6 +6,7 @@ import { BaseTable, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 import HelpButton from '../base/HelpButton'
 import StyledContent from '../base/StyledContent'
 import geneResultsDescription from './content/generesults.md'
+import { SCHEMAAnalysisGroup } from './SCHEMABrowser'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -164,9 +165,7 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => (
 )
 
 interface SchemaGeneResultsProps {
-  results: {
-    meta: SchemaGeneResult
-  }
+  results: Record<SCHEMAAnalysisGroup, SchemaGeneResult>
 }
 
 const SCHEMAGeneResults = ({ results }: SchemaGeneResultsProps) => (

@@ -10,10 +10,9 @@ import vepConsequences from '../base/vepConsequences'
 
 const variantConsequences = [...vepConsequences]
 
-export type IBDAnalysisGroup = 'IBD' | 'CD' | 'UC'
-export const ibdAnalysisGroups: IBDAnalysisGroup[] = ['IBD', 'CD', 'UC']
-
-const defaultIBDAnalysisGroup = ibdAnalysisGroups[0]
+export const ibdAnalysisGroups = ['IBD', 'CD', 'UC'] as const
+export type IBDAnalysisGroup = typeof ibdAnalysisGroups[number]
+export const ibdDefaultAnalysisGroup: IBDAnalysisGroup = 'IBD'
 
 const pValueOfZeroPlaceholder = '<1e-300'
 
@@ -37,7 +36,7 @@ const IBDBrowser = () => {
       ]}
       geneResultsPageHeading="IBD: results by gene"
       geneResultAnalysisGroupOptions={ibdAnalysisGroups}
-      defaultGeneResultAnalysisGroup={defaultIBDAnalysisGroup}
+      defaultGeneResultAnalysisGroup={ibdDefaultAnalysisGroup}
       defaultGeneResultSortKey="ptv_0_001_P_meta"
       geneResultColumns={[
         {
@@ -84,7 +83,7 @@ const IBDBrowser = () => {
         },
       ]}
       variantAnalysisGroupOptions={ibdAnalysisGroups}
-      defaultVariantAnalysisGroup={defaultIBDAnalysisGroup}
+      defaultVariantAnalysisGroup={ibdDefaultAnalysisGroup}
       defaultVariantTableSortKey="group_result.P_meta"
       defaultVariantTableSortOrder="ascending"
       variantResultColumns={[

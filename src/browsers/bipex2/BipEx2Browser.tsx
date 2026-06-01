@@ -59,14 +59,18 @@ const renderBipexFlags = (value: string) => {
 
 const pValueOfZeroPlaceholder = '0'
 
+export const bipex2AnalysisGroups = ['meta'] as const
+export type BipEx2AnalysisGroup = typeof bipex2AnalysisGroups[number]
+export const bipex2DefaultAnalysisGroup: BipEx2AnalysisGroup = 'meta'
+
 const BipExBrowser = () => (
   <Browser
     browserTitle="DEMO - BipEx2"
     navBarBackgroundColor="#a6694b"
     homePage={BipExHomePage}
     geneResultsPageHeading="Gene results"
-    geneResultAnalysisGroupOptions={['meta']}
-    defaultGeneResultAnalysisGroup="meta"
+    geneResultAnalysisGroupOptions={bipex2AnalysisGroups}
+    defaultGeneResultAnalysisGroup={bipex2DefaultAnalysisGroup}
     defaultGeneResultSortKey="ptv_mis_p_value"
     geneResultColumns={[
       {
@@ -189,8 +193,8 @@ const BipExBrowser = () => (
         render: (value) => renderOddsRatio(value),
       },
     ]}
-    defaultVariantAnalysisGroup="meta"
-    variantAnalysisGroupOptions={['meta']}
+    variantAnalysisGroupOptions={bipex2AnalysisGroups}
+    defaultVariantAnalysisGroup={bipex2DefaultAnalysisGroup}
     variantResultColumns={[
       {
         key: 'group_result.mac',

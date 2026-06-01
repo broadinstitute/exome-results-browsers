@@ -79,6 +79,10 @@ const renderOddsRatio = (value: number | string | null | undefined) => {
   return floatValue.toPrecision(3)
 }
 
+export const schema2AnalysisGroups = ['meta'] as const
+export type SCHEMA2AnalysisGroup = typeof schema2AnalysisGroups[number]
+export const schema2DefaultAnalysisGroup: SCHEMA2AnalysisGroup = 'meta'
+
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
     browserTitle="SCHEMA2 demo"
@@ -97,8 +101,8 @@ const SCHEMABrowser = () => (
       },
     ]}
     geneResultsPageHeading="Exome meta-analysis results"
-    geneResultAnalysisGroupOptions={['meta']}
-    defaultGeneResultAnalysisGroup="meta"
+    geneResultAnalysisGroupOptions={schema2AnalysisGroups}
+    defaultGeneResultAnalysisGroup={schema2DefaultAnalysisGroup}
     defaultGeneResultSortKey="schema_case_control_p_value"
     geneResultColumns={[
       {
@@ -267,8 +271,8 @@ const SCHEMABrowser = () => (
         ),
       },
     ]}
-    defaultVariantAnalysisGroup="meta"
-    variantAnalysisGroupOptions={['meta']}
+    variantAnalysisGroupOptions={schema2AnalysisGroups}
+    defaultVariantAnalysisGroup={schema2DefaultAnalysisGroup}
     variantResultColumns={[
       {
         key: 'group_result.n_de_novo',
@@ -321,15 +325,15 @@ const SCHEMABrowser = () => (
       misfit_s: misfitS,
       pop_eve: popEve,
     }) => [
-        {
-          label: 'MisRank Percentile',
-          content: misrankPercentile === null ? '–' : misrankPercentile,
-        },
-        { label: 'MPC', content: mpc === null ? '–' : mpc },
-        { label: 'AlphaMissense', content: alphaMissense === null ? '–' : alphaMissense },
-        { label: 'MisFit S', content: misfitS === null ? '–' : misfitS },
-        { label: 'PopEVE', content: popEve === null ? '–' : popEve },
-      ]}
+      {
+        label: 'MisRank Percentile',
+        content: misrankPercentile === null ? '–' : misrankPercentile,
+      },
+      { label: 'MPC', content: mpc === null ? '–' : mpc },
+      { label: 'AlphaMissense', content: alphaMissense === null ? '–' : alphaMissense },
+      { label: 'MisFit S', content: misfitS === null ? '–' : misfitS },
+      { label: 'PopEVE', content: popEve === null ? '–' : popEve },
+    ]}
   />
 )
 

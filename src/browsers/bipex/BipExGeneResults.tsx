@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { BaseTable, ExternalLink, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
+import { BipExAnalysisGroup, bipexAnalysisGroups } from './BipExBrowser'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -123,34 +124,23 @@ const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
 )
 
 interface BipExResultObject {
-  n_cases: number,
-  n_controls: number,
-  ptv_case_count: number,
-  ptv_control_count: number,
-  ptv_fisher_gnom_non_psych_case_count: number,
-  ptv_fisher_gnom_non_psych_control_count: number,
-  ptv_fisher_gnom_non_psych_pval: number,
+  n_cases: number
+  n_controls: number
+  ptv_case_count: number
+  ptv_control_count: number
+  ptv_fisher_gnom_non_psych_case_count: number
+  ptv_fisher_gnom_non_psych_control_count: number
+  ptv_fisher_gnom_non_psych_pval: number
   // Odds ratio values may be a string 'inf' or a number
-  ptv_fisher_gnom_non_psych_OR: number | string,
-  damaging_missense_case_count: number,
-  damaging_missense_control_count: number,
-  damaging_missense_fisher_gnom_non_psych_case_count: number,
-  damaging_missense_fisher_gnom_non_psych_control_count: number,
-  damaging_missense_fisher_gnom_non_psych_pval: number,
+  ptv_fisher_gnom_non_psych_OR: number | string
+  damaging_missense_case_count: number
+  damaging_missense_control_count: number
+  damaging_missense_fisher_gnom_non_psych_case_count: number
+  damaging_missense_fisher_gnom_non_psych_control_count: number
+  damaging_missense_fisher_gnom_non_psych_pval: number
   // Odds ratio values may be a string 'inf' or a number
-  damaging_missense_fisher_gnom_non_psych_OR: number | string,
+  damaging_missense_fisher_gnom_non_psych_OR: number | string
 }
-
-const groups = [
-  'Bipolar Disorder',
-  'Bipolar Disorder 1',
-  'Bipolar Disorder 2',
-  'Bipolar Disorder with Psychosis',
-  'Bipolar Disorder without Psychosis',
-  'Bipolar Disorder (including Schizoaffective)',
-] as const
-
-type BipExAnalysisGroup = typeof groups[number]
 
 interface BipExGeneResultsProps {
   results: Record<BipExAnalysisGroup, BipExResultObject>
@@ -202,7 +192,7 @@ const BipExGeneResults = ({ results }: BipExGeneResultsProps) => (
       />
     </h2>
     <Tabs
-      tabs={groups.map((group) => ({
+      tabs={bipexAnalysisGroups.map((group) => ({
         id: group,
         label: group,
         render: () =>
