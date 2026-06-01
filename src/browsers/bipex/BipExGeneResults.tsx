@@ -5,28 +5,11 @@ import { BaseTable, ExternalLink, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
 import { BipExAnalysisGroup, bipexAnalysisGroups } from './BipExBrowser'
+import { renderOddsRatio } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
-
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return '-'
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-
-  const floatValue = typeof value === 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-  return floatValue.toPrecision(3)
-}
 
 const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
   <div>
@@ -90,7 +73,7 @@ const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
               ? '-'
               : result.ptv_fisher_gnom_non_psych_pval.toPrecision(3)}
           </td>
-          <td>{renderOddsRatio(result.ptv_fisher_gnom_non_psych_OR)}</td>
+          <td>{renderOddsRatio({ value: result.ptv_fisher_gnom_non_psych_OR })}</td>
         </tr>
         <tr>
           <th scope="row">Damaging Missense</th>
@@ -109,7 +92,7 @@ const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
               ? '-'
               : result.damaging_missense_fisher_gnom_non_psych_pval.toPrecision(3)}
           </td>
-          <td>{renderOddsRatio(result.damaging_missense_fisher_gnom_non_psych_OR)}</td>
+          <td>{renderOddsRatio({ value: result.damaging_missense_fisher_gnom_non_psych_OR })}</td>
         </tr>
       </tbody>
     </Table>

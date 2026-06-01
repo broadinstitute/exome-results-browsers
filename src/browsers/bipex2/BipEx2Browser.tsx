@@ -1,37 +1,13 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount, renderFloatAsScientific } from '../base/tableCells'
+import { renderCount, renderFloatAsScientific, renderOddsRatio } from '../base/tableCells'
 
 import BipExHomePage from './BipEx2HomePage'
 import BipExVariantFilter from './BipEx2VariantFilter'
 
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { TooltipAnchor, TooltipHint } from '@gnomad/ui'
-
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return ''
-  }
-
-  if (value === 'Infinity') {
-    return '∞'
-  }
-
-  if (value === 0) {
-    return '0'
-  }
-
-  if (value === 'NaN' || Number.isNaN(value)) {
-    return '-'
-  }
-
-  if (typeof value !== 'number') {
-    return `[FIXME: ${typeof value} | ${String(value)}]`
-  }
-
-  return value.toPrecision(3)
-}
 
 const renderBipexFlags = (value: string) => {
   const flagsArray = value.split(',')
@@ -115,7 +91,7 @@ const BipExBrowser = () => (
         key: 'ptv_mis_odds_ratio',
         heading: 'PTV+MIS Fisher odds ratio',
         minWidth: 85,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
       // ---
       {
@@ -140,7 +116,7 @@ const BipExBrowser = () => (
         key: 'ptv_odds_ratio',
         heading: 'PTV Fisher odds ratio',
         minWidth: 85,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
       // ---
       {
@@ -165,7 +141,7 @@ const BipExBrowser = () => (
         key: 'mis_odds_ratio',
         heading: 'MIS Fisher odds ratio',
         minWidth: 85,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
       // ---
       {
@@ -190,7 +166,7 @@ const BipExBrowser = () => (
         key: 'syn_odds_ratio',
         heading: 'SYN Fisher odds ratio',
         minWidth: 85,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
     ]}
     variantAnalysisGroupOptions={bipex2AnalysisGroups}

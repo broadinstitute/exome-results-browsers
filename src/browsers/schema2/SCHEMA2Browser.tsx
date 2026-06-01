@@ -3,7 +3,7 @@ import React from 'react'
 import ExomeResultsBrowser from '../base/Browser'
 import GeneResultsManhattanPlot from '../base/GeneResultsPage/GeneResultsManhattanPlot'
 import GeneResultsQQPlot from '../base/GeneResultsPage/GeneResultsQQPlot'
-import { renderCount, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import { renderCount, renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 import vepConsequences from '../base/vepConsequences'
 
 import SCHEMAAboutPage from './SCHEMA2AboutPage'
@@ -61,23 +61,6 @@ variantConsequences.splice(
     category: 'lof',
   }
 )
-
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return ''
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-  const floatValue = typeof value == 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-  return floatValue.toPrecision(3)
-}
 
 export const schema2AnalysisGroups = ['meta'] as const
 export type SCHEMA2AnalysisGroup = typeof schema2AnalysisGroups[number]
@@ -172,7 +155,7 @@ const SCHEMABrowser = () => (
         heading: 'OR PTV',
         tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
         minWidth: 110,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
       {
         key: 'ptv_mis_odds_ratio',
@@ -180,7 +163,7 @@ const SCHEMABrowser = () => (
         tooltip:
           'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs + missense variants predicted to be damaging.',
         minWidth: 110,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
       {
         key: 'mis_case_carrier',
@@ -219,14 +202,14 @@ const SCHEMABrowser = () => (
         heading: 'OR Missense',
         tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
         minWidth: 110,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
       {
         key: 'syn_odds_ratio',
         heading: 'OR Synonymous',
         tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
         minWidth: 110,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
     ]}
     geneResultTabs={[
@@ -325,15 +308,15 @@ const SCHEMABrowser = () => (
       misfit_s: misfitS,
       pop_eve: popEve,
     }) => [
-      {
-        label: 'MisRank Percentile',
-        content: misrankPercentile === null ? '–' : misrankPercentile,
-      },
-      { label: 'MPC', content: mpc === null ? '–' : mpc },
-      { label: 'AlphaMissense', content: alphaMissense === null ? '–' : alphaMissense },
-      { label: 'MisFit S', content: misfitS === null ? '–' : misfitS },
-      { label: 'PopEVE', content: popEve === null ? '–' : popEve },
-    ]}
+        {
+          label: 'MisRank Percentile',
+          content: misrankPercentile === null ? '–' : misrankPercentile,
+        },
+        { label: 'MPC', content: mpc === null ? '–' : mpc },
+        { label: 'AlphaMissense', content: alphaMissense === null ? '–' : alphaMissense },
+        { label: 'MisFit S', content: misfitS === null ? '–' : misfitS },
+        { label: 'PopEVE', content: popEve === null ? '–' : popEve },
+      ]}
   />
 )
 

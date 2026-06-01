@@ -6,31 +6,12 @@ import { BaseTable, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 import HelpButton from '../base/HelpButton'
 import StyledContent from '../base/StyledContent'
 import geneResultsDescription from './content/generesults.md'
-import { renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import { renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 import { SCHEMA2AnalysisGroup } from './SCHEMA2Browser'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
-
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value == undefined) {
-    return '-'
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-
-  if (value === 0) {
-    return '0'
-  }
-
-  const floatValue = typeof value == 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-  return floatValue.toPrecision(3)
-}
 
 const safeRenderCount = (value: number | null | undefined) => {
   if (value === null || value === undefined) {
@@ -112,7 +93,9 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {safeRenderCount(result.ptv_case_carrier)}
             </td>
             <td>{safeRenderCount(result.ptv_control_carrier)}</td>
-            <td style={{ paddingLeft: '10px' }}>{renderOddsRatio(result.ptv_odds_ratio)}</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatio({ value: result.ptv_odds_ratio })}
+            </td>
             <td style={{ paddingLeft: '10px' }}>
               {renderStringOrFloatPvalueAsScientific(result.ptv_p_value)}
             </td>
@@ -134,7 +117,9 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {safeRenderCount(result.ptv_mis_case_carrier)}
             </td>
             <td>{safeRenderCount(result.ptv_mis_control_carrier)}</td>
-            <td style={{ paddingLeft: '10px' }}>{renderOddsRatio(result.ptv_mis_odds_ratio)}</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatio({ value: result.ptv_mis_odds_ratio })}
+            </td>
             <td style={{ paddingLeft: '10px' }}>
               {renderStringOrFloatPvalueAsScientific(result.ptv_mis_p_value)}
             </td>
@@ -153,7 +138,9 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {safeRenderCount(result.mis_case_carrier)}
             </td>
             <td>{safeRenderCount(result.mis_control_carrier)}</td>
-            <td style={{ paddingLeft: '10px' }}>{renderOddsRatio(result.mis_odds_ratio)}</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatio({ value: result.mis_odds_ratio })}
+            </td>
             <td style={{ paddingLeft: '10px' }}>
               {renderStringOrFloatPvalueAsScientific(result.mis_p_value)}
             </td>
@@ -171,7 +158,9 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {safeRenderCount(result.syn_case_carrier)}
             </td>
             <td>{safeRenderCount(result.syn_control_carrier)}</td>
-            <td style={{ paddingLeft: '10px' }}>{renderOddsRatio(result.syn_odds_ratio)}</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatio({ value: result.syn_odds_ratio })}
+            </td>
             <td style={{ paddingLeft: '10px' }}>
               {renderStringOrFloatPvalueAsScientific(result.syn_p_value)}
             </td>

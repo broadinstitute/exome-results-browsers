@@ -5,29 +5,11 @@ import { Badge, BaseTable, ExternalLink } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
 import { BipEx2AnalysisGroup } from './BipEx2Browser'
+import { renderOddsRatio } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
-
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return '-'
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-
-  const floatValue = typeof value === 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-  return floatValue.toPrecision(3)
-}
-
 enum ResultEnum {
   n_cases,
   n_controls,
@@ -96,7 +78,7 @@ const createGeneTableRow = (
       <td>{safeReturnValue(object, `${categoryAbbreviation}_case_carrier`)}</td>
       <td>{safeReturnValue(object, `${categoryAbbreviation}_ctrl_carrier`)}</td>
       <td>{safeReturnValue(object, `${categoryAbbreviation}_p_value`)}</td>
-      <td>{renderOddsRatio(object[`${categoryAbbreviation}_odds_ratio`])}</td>
+      <td>{renderOddsRatio({ value: object[`${categoryAbbreviation}_odds_ratio`] })}</td>
     </tr>
   )
 }
