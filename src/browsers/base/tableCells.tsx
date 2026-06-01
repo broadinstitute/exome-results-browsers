@@ -21,9 +21,32 @@ const NumberCell = styled.span`
   white-space: nowrap;
 `
 
+export const renderOddsRatio = ({
+  value,
+  precision = 3,
+}: {
+  value: number | string | null | undefined
+  precision?: number
+}) => {
+  if (value === null || value === undefined) {
+    return '-'
+  }
+  if (value === 'Infinity') {
+    return '∞'
+  }
+  if (value === 0) {
+    return '0'
+  }
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+  return floatValue.toPrecision(precision)
+}
+
 export const renderStringOrFloatPvalueAsScientific = (
   value: number | string | undefined | null,
-  zeroValue: string,
+  zeroValue: string
 ) => {
   if (value === null || value == undefined) {
     return '-'
@@ -43,7 +66,7 @@ export const renderStringOrFloatPvalueAsScientific = (
 
 export const renderFloatAsScientific = (
   value: number | string | undefined | null,
-  zeroValue: string,
+  zeroValue: string
 ) => {
   if (value === null || value === undefined) {
     return '-'

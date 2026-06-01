@@ -1,34 +1,10 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount } from '../base/tableCells'
+import { renderCount, renderOddsRatio } from '../base/tableCells'
 
 import BipExHomePage from './BipExHomePage'
 import BipExVariantFilter from './BipExVariantFilter'
-
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return ''
-  }
-
-  if (value === 'Infinity') {
-    return '∞'
-  }
-
-  if (value === 0) {
-    return '0'
-  }
-
-  if (Number.isNaN(value)) {
-    return '-'
-  }
-
-  if (typeof value !== 'number') {
-    return `[FIXME: ${typeof value} | ${String(value)}]`
-  }
-
-  return value.toPrecision(3)
-}
 
 export const bipexAnalysisGroups = [
   'Bipolar Disorder',
@@ -84,7 +60,7 @@ const BipExBrowser = () => (
         key: 'ptv_fisher_gnom_non_psych_OR',
         heading: 'PTV Fisher odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio({ value: value }),
       },
       {
         key: 'damaging_missense_case_count',
@@ -107,7 +83,7 @@ const BipExBrowser = () => (
         key: 'damaging_missense_fisher_gnom_non_psych_OR',
         heading: 'Damaging Missense Fisher odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio({ value: value }),
       },
     ]}
     variantAnalysisGroupOptions={bipexAnalysisGroups}

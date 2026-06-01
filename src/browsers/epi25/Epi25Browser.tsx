@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount } from '../base/tableCells'
+import { renderCount, renderOddsRatio } from '../base/tableCells'
 
 import Epi25HomePage from './Epi25HomePage'
 import Epi25TermsPage from './Epi25TermsPage'
@@ -10,24 +10,6 @@ import Epi25VariantFilter from './Epi25VariantFilter'
 export const epi25AnalysisGroups = ['EPI', 'DEE', 'GGE', 'NAFE'] as const
 export type Epi25AnalysisGroup = typeof epi25AnalysisGroups[number]
 export const epi25DefaultAnalysisGroup: Epi25AnalysisGroup = 'EPI'
-
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return ''
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-
-  const floatValue = typeof value === 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-  return floatValue.toPrecision(3)
-}
 
 const Epi25Browser = () => (
   <Browser
@@ -79,7 +61,7 @@ const Epi25Browser = () => (
         key: 'ptv_OR',
         heading: 'PTV odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio({ value: value }),
       },
       {
         key: 'damaging_missense_case_count',
@@ -102,7 +84,7 @@ const Epi25Browser = () => (
         key: 'damaging_missense_OR',
         heading: 'Damaging Missense odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio({ value: value }),
       },
     ]}
     variantAnalysisGroupOptions={epi25AnalysisGroups}

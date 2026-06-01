@@ -7,23 +7,11 @@ import HelpButton from '../base/HelpButton'
 import StyledContent from '../base/StyledContent'
 import geneResultsDescription from './content/generesults.md'
 import { SCHEMAAnalysisGroup } from './SCHEMABrowser'
+import { renderOddsRatio } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
-
-const renderOddsRatio = (value: number | null | 'Infinity') => {
-  if (value === null) {
-    return '-'
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-  return value.toPrecision(3)
-}
 
 type SchemaGeneResult = {
   'Case PTV': number
@@ -97,7 +85,7 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => (
           </td>
           <td>{result['Ctrl PTV'] === null ? '—' : result['Ctrl PTV']}</td>
           <td rowSpan={2} style={{ paddingLeft: '10px' }}>
-            {renderOddsRatio(result['OR (Class I)'])}
+            {renderOddsRatio({ value: result['OR (Class I)'] })}
           </td>
           <td rowSpan={2} style={{ paddingLeft: '10px' }}>
             {result['P ca/co (Class 1)'] === null
@@ -141,7 +129,7 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => (
           </td>
           <td>{result['Ctrl mis2'] === null ? '—' : result['Ctrl mis2']}</td>
 
-          <td style={{ paddingLeft: '10px' }}>{renderOddsRatio(result['OR (Class II)'])}</td>
+          <td style={{ paddingLeft: '10px' }}>{renderOddsRatio({ value: result['OR (Class II)'] })}</td>
           <td style={{ paddingLeft: '10px' }}>
             {result['P ca/co (Class 2)'] === null
               ? '—'

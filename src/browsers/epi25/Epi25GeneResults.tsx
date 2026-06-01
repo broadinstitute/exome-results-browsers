@@ -11,24 +11,6 @@ const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return '-'
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-
-  const floatValue = typeof value === 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-  return floatValue.toPrecision(3)
-}
-
 const renderPVal = (pval: number | undefined | null) => {
   if (pval === null || pval === undefined) {
     return '-'
@@ -78,7 +60,7 @@ const Epi25GeneResult = ({ result }: Epi25GeneResultProps) => (
           <td>{result.ptv_case_count === null ? '-' : result.ptv_case_count}</td>
           <td>{result.ptv_control_count === null ? '-' : result.ptv_control_count}</td>
           <td>{renderPVal(result.ptv_pval)}</td>
-          <td>{renderOddsRatio(result.ptv_OR)}</td>
+          <td>{renderOddsRatio({ value: result.ptv_OR })}</td>
         </tr>
         <tr>
           <th scope="row">Damaging Missense</th>
@@ -93,7 +75,7 @@ const Epi25GeneResult = ({ result }: Epi25GeneResultProps) => (
               : result.damaging_missense_control_count}
           </td>
           <td>{renderPVal(result.damaging_missense_pval)}</td>
-          <td>{renderOddsRatio(result.damaging_missense_OR)}</td>
+          <td>{renderOddsRatio({ value: result.ptv_OR })}</td>
         </tr>
       </tbody>
     </Table>
