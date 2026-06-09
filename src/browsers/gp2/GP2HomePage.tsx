@@ -29,7 +29,7 @@ const GP2HomePage = () => (
     <DocumentTitle title="GP2 Browser" />
     <HomePageHeading>GP2: Global Parkinson&apos;s Genetics Program genome browser</HomePageHeading>
 
-    <Searchbox width="100%" />
+    <Searchbox id="gp2-search" width="100%" />
 
     <br />
     <br />
