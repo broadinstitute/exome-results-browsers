@@ -141,9 +141,7 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
             <td style={{ paddingLeft: '10px' }}>
               {renderOddsRatio({ value: result.mis_odds_ratio })}
             </td>
-            <td style={{ paddingLeft: '10px' }}>
-              {renderStringOrFloatPvalueAsScientific(result.mis_p_value)}
-            </td>
+            <td style={{ paddingLeft: '10px' }}>-</td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
             <td style={{ paddingLeft: '10px' }}>-</td>
           </tr>
@@ -161,9 +159,7 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
             <td style={{ paddingLeft: '10px' }}>
               {renderOddsRatio({ value: result.syn_odds_ratio })}
             </td>
-            <td style={{ paddingLeft: '10px' }}>
-              {renderStringOrFloatPvalueAsScientific(result.syn_p_value)}
-            </td>
+            <td style={{ paddingLeft: '10px' }}>-</td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
             <td style={{ paddingLeft: '10px' }}>-</td>
           </tr>
