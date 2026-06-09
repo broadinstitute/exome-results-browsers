@@ -63,7 +63,7 @@ def prepare_dataset(dataset_id, test_genes, output_local):
         combined_variant_results_ht = hl.read_table(combined_variant_results_path)
         combined_variant_annotations_ht = hl.read_table(combined_variant_annotations_path)
 
-        print(f"Preparing {dataset_id} variants hail table")
+        print(f"\n\n === Preparing {dataset_id} variants hail table")
         variant_results_module = importlib.import_module(
             f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_variant_results"
         )
@@ -73,7 +73,7 @@ def prepare_dataset(dataset_id, test_genes, output_local):
         validate_variant_results_table(variant_results)
         variant_results.write(os.path.join(output_path, "variant_results.ht"), overwrite=True)
 
-        print(f"Preparing {dataset_id} genes hail table")
+        print(f"\n\n === Preparing {dataset_id} genes hail table")
         gene_results_module = importlib.import_module(
             f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_gene_results"
         )
@@ -82,7 +82,7 @@ def prepare_dataset(dataset_id, test_genes, output_local):
         gene_results.write(os.path.join(output_path, "gene_results.ht"), overwrite=True)
 
     else:
-        print(f"Preparing {dataset_id} variants hail table")
+        print(f"\n\n === Preparing {dataset_id} variants hail table")
         variant_results_module = importlib.import_module(
             f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_variant_results"
         )
@@ -90,7 +90,7 @@ def prepare_dataset(dataset_id, test_genes, output_local):
         validate_variant_results_table(variant_results)
         variant_results.write(os.path.join(output_path, "variant_results.ht"), overwrite=True)
 
-        print(f"Preparing {dataset_id} genes hail table")
+        print(f"\n\n === Preparing {dataset_id} genes hail table")
         gene_results_module = importlib.import_module(
             f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_gene_results"
         )
@@ -129,6 +129,8 @@ def main():
         datasets_to_prepare = args.datasets
     else:
         datasets_to_prepare = all_datasets
+
+    print(f"\nPrepareing datasets: {list(datasets_to_prepare)} ...\n\n")
 
     # hl.init()
     hl.init(
