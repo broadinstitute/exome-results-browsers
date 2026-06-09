@@ -1,14 +1,33 @@
-import PropTypes from 'prop-types'
 import React from 'react'
 import styled from 'styled-components'
 
 import { BaseTable } from '@gnomad/ui'
+import { ASCGeneAnalysisGroup } from './ASCBrowser'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
+type AscGeneResult = {
+    xcase_dn_ptv: number
+    xcont_dn_ptv: number
+    xcase_dn_misa: number
+    xcont_dn_misa: number
+    xcase_dn_misb: number
+    xcont_dn_misb: number
+    xcase_dbs_ptv: number
+    xcont_dbs_ptv: number
+    xcase_swe_ptv: number
+    xcont_swe_ptv: number
+    xcase_tut: number
+    xcont_tut: number
+    qval: number
+}
 
-const ASCGeneResult = ({ result }) => (
+interface ASCGeneResultProps {
+  result: AscGeneResult
+}
+
+const ASCGeneResult = ({ result }: ASCGeneResultProps) => (
   <div>
     <Table>
       <thead>
@@ -59,33 +78,15 @@ const ASCGeneResult = ({ result }) => (
   </div>
 )
 
-ASCGeneResult.propTypes = {
-  result: PropTypes.shape({
-    xcase_dn_ptv: PropTypes.number,
-    xcont_dn_ptv: PropTypes.number,
-    xcase_dn_misa: PropTypes.number,
-    xcont_dn_misa: PropTypes.number,
-    xcase_dn_misb: PropTypes.number,
-    xcont_dn_misb: PropTypes.number,
-    xcase_dbs_ptv: PropTypes.number,
-    xcont_dbs_ptv: PropTypes.number,
-    xcase_swe_ptv: PropTypes.number,
-    xcont_swe_ptv: PropTypes.number,
-    xcase_tut: PropTypes.number,
-    xcont_tut: PropTypes.number,
-    qval: PropTypes.number,
-  }).isRequired,
+interface ASCGeneResultsProps {
+  results: Record<ASCGeneAnalysisGroup, AscGeneResult>
 }
 
-const ASCGeneResults = ({ results }) => (
+const ASCGeneResults = ({ results }: ASCGeneResultsProps) => (
   <>
     <h2>Gene Result</h2>
     {results.All ? <ASCGeneResult result={results.All} /> : <p>No result for this gene.</p>}
   </>
 )
-
-ASCGeneResults.propTypes = {
-  results: PropTypes.objectOf(PropTypes.object).isRequired,
-}
 
 export default ASCGeneResults
