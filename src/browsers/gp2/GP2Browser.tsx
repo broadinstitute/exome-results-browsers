@@ -3,7 +3,7 @@ import React from 'react'
 import { ExternalLink, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 
 import Browser from '../base/Browser'
-import { renderCount } from '../base/tableCells'
+import { renderCount, renderOddsRatio } from '../base/tableCells'
 
 import GP2AboutPage from './GP2AboutPage'
 import GP2HomePage from './GP2HomePage'
@@ -14,52 +14,37 @@ import { renderExponentialIfSmall } from '../base/GenePage/variantTableColumns'
 
 const variantConsequences = [...vepConsequences]
 
-const renderOddsRatio = (value) => {
-  if (value === null) {
-    return ''
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-  return value.toPrecision(3)
+export const gp2AnalysisGroups = [
+  'EUR',
+  'AAC',
+  'CAH',
+  'MDE',
+  'AMR',
+  'CAS',
+  'EAS',
+  'SAS',
+  'AJ',
+  'FIN',
+  'AFR',
+] as const
+export type GP2AnalysisGroup = typeof gp2AnalysisGroups[number]
+export const gp2DefaultAnalysisGroup: GP2AnalysisGroup = 'EUR'
+
+export const gp2AnalysisGroupLabels: Record<GP2AnalysisGroup, string> = {
+  AFR: 'African',
+  AAC: 'African Admixed',
+  AJ: 'Ashkenazi Jewish',
+  AMR: 'Latino and Indigenous people of the Americas',
+  EAS: 'East Asian',
+  EUR: 'European (non-Finnish)',
+  SAS: 'South Asian',
+  CAS: 'Central Asian',
+  MDE: 'Middle Eastern',
+  FIN: 'European (Finnish)',
+  CAH: 'Complex Admixture',
 }
 
 const GP2Browser = () => {
-  // FIXME: these analysis groups are relevant to the temp
-  //   Epi25 data we're using to populate the sparce
-  //   demo browser with only GP2 variant results
-  // This should be updated when we get Gene results
-  const analysisGroups = [
-    'EUR',
-    'AAC',
-    'CAH',
-    'MDE',
-    'AMR',
-    'CAS',
-    'EAS',
-    'SAS',
-    'AJ',
-    'FIN',
-    'AFR',
-  ]
-
-  const analysisGroupLabels = {
-    AFR: 'African',
-    AAC: 'African Admixed',
-    AJ: 'Ashkenazi Jewish',
-    AMR: 'Latino and Indigenous people of the Americas',
-    EAS: 'East Asian',
-    EUR: 'European (non-Finnish)',
-    SAS: 'South Asian',
-    CAS: 'Central Asian',
-    MDE: 'Middle Eastern',
-    FIN: 'European (Finnish)',
-    CAH: 'Complex Admixture',
-  }
-
   const geneResultColumns = [
     {
       key: 'n_cases',
@@ -139,13 +124,13 @@ const GP2Browser = () => {
         },
       ]}
       geneResultsPageHeading="GP2: gene burden results"
-      geneResultsAnalysisGroupOptions={analysisGroups}
-      defaultGeneResultAnalysisGroup="EUR"
+      geneResultsAnalysisGroupOptions={gp2AnalysisGroups}
+      defaultGeneResultAnalysisGroup={gp2DefaultAnalysisGroup}
       defaultGeneResultSortKey="ptv_pval"
       geneResultColumns={geneResultColumns}
-      variantAnalysisGroupOptions={analysisGroups}
-      defaultVariantAnalysisGroup="EUR"
-      variantAnalysisGroupLabels={analysisGroupLabels}
+      variantAnalysisGroupOptions={gp2AnalysisGroups}
+      defaultVariantAnalysisGroup={gp2DefaultAnalysisGroup}
+      variantAnalysisGroupLabels={gp2AnalysisGroupLabels}
       variantResultColumns={[
         {
           key: 'group_result.ces_ac_case',
