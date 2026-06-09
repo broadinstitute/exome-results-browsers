@@ -20,12 +20,13 @@ const NumberCell = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
 `
+export type InputData = number | string | null | undefined
 
 export const renderOddsRatio = ({
   value,
   precision = 3,
 }: {
-  value: number | string | null | undefined
+  value: InputData
   precision?: number
 }) => {
   if (value === null || value === undefined) {
@@ -44,10 +45,15 @@ export const renderOddsRatio = ({
   return floatValue.toPrecision(precision)
 }
 
-export const renderStringOrFloatPvalueAsScientific = (
-  value: number | string | undefined | null,
-  zeroValue: string
-) => {
+export const renderStringOrFloatPvalueAsScientific = ({
+  value,
+  zeroValue = '0',
+  decimalPlaces = 3,
+}: {
+  value: InputData
+  zeroValue?: string
+  decimalPlaces?: number
+}) => {
   if (value === null || value == undefined) {
     return '-'
   }
@@ -61,13 +67,22 @@ export const renderStringOrFloatPvalueAsScientific = (
     return value
   }
 
-  return renderFloatAsScientific(floatValue, zeroValue)
+  return renderFloatAsScientific({
+    value: floatValue,
+    zeroValue: zeroValue,
+    decimalPlaces: decimalPlaces,
+  })
 }
 
-export const renderFloatAsScientific = (
-  value: number | string | undefined | null,
+export const renderFloatAsScientific = ({
+  value,
+  zeroValue = '0',
+  decimalPlaces = 3,
+}: {
+  value: InputData
   zeroValue: string
-) => {
+  decimalPlaces: number
+}) => {
   if (value === null || value === undefined) {
     return '-'
   }
@@ -77,17 +92,33 @@ export const renderFloatAsScientific = (
     return value
   }
 
-  const truncated = Number(floatValue.toPrecision(3))
-  if (truncated === 0) {
+  if (floatValue === 0) {
     return <NumberCell>{zeroValue}</NumberCell>
   }
-  return <NumberCell>{truncated.toExponential(2)} </NumberCell>
+  return <NumberCell>{floatValue.toExponential(decimalPlaces)} </NumberCell>
 }
 
-export const renderFloatAsDecimal = (value: number | undefined | null) => {
+export const renderStringOrFloatAsDecimal = ({
+  value,
+  zeroValue = '0',
+  decimalPlaces = 3,
+}: {
+  value: InputData
+  zeroValue?: string
+  decimalPlaces?: number
+}) => {
   if (value === null || value === undefined) {
     return ''
   }
 
-  return <NumberCell>{value.toFixed(3)} </NumberCell>
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+
+  if (floatValue === 0) {
+    return <NumberCell>{zeroValue}</NumberCell>
+  }
+
+  return <NumberCell>{floatValue.toFixed(decimalPlaces)} </NumberCell>
 }

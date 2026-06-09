@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import { Badge, BaseTable, ExternalLink } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
-import { BipEx2AnalysisGroup } from './BipEx2Browser'
-import { renderOddsRatio } from '../base/tableCells'
+import { BipEx2AnalysisGroup, bipex2PValueOfZeroPlaceholder } from './BipEx2Browser'
+import { renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -78,6 +78,7 @@ const createGeneTableRow = (
       <td>{safeReturnValue(object, `${categoryAbbreviation}_case_carrier`)}</td>
       <td>{safeReturnValue(object, `${categoryAbbreviation}_ctrl_carrier`)}</td>
       <td>{safeReturnValue(object, `${categoryAbbreviation}_p_value`)}</td>
+      <td>{renderStringOrFloatPvalueAsScientific({ value: object[`${categoryAbbreviation}_p_value`] })}</td>
       <td>{renderOddsRatio({ value: object[`${categoryAbbreviation}_odds_ratio`] })}</td>
     </tr>
   )

@@ -2,8 +2,12 @@ import React from 'react'
 
 import { ExternalLink, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 
-import Browser from '../base/Browser'
-import { renderCount, renderOddsRatio } from '../base/tableCells'
+import Browser, { GeneResultColumnConfig } from '../base/Browser'
+import {
+  renderCount,
+  renderOddsRatio,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 
 import GP2AboutPage from './GP2AboutPage'
 import GP2HomePage from './GP2HomePage'
@@ -44,8 +48,10 @@ export const gp2AnalysisGroupLabels: Record<GP2AnalysisGroup, string> = {
   CAH: 'Complex Admixture',
 }
 
+export const gp2PValueOfZeroPlaceholder = '2.2e-16'
+
 const GP2Browser = () => {
-  const geneResultColumns = [
+  const geneResultColumns: GeneResultColumnConfig[] = [
     {
       key: 'n_cases',
       heading: 'Cases',
@@ -74,6 +80,11 @@ const GP2Browser = () => {
       key: 'ptv_pval',
       heading: 'PTV p\u2011val',
       minWidth: 85,
+      render: (value) =>
+        renderStringOrFloatPvalueAsScientific({
+          value: value,
+          zeroValue: gp2PValueOfZeroPlaceholder,
+        }),
     },
     {
       key: 'ptv_OR',
@@ -97,6 +108,11 @@ const GP2Browser = () => {
       key: 'damaging_missense_pval',
       heading: 'Damaging Missense p\u2011val',
       minWidth: 85,
+      render: (value) =>
+        renderStringOrFloatPvalueAsScientific({
+          value: value,
+          zeroValue: gp2PValueOfZeroPlaceholder,
+        }),
     },
     {
       key: 'damaging_missense_OR',
@@ -124,7 +140,7 @@ const GP2Browser = () => {
         },
       ]}
       geneResultsPageHeading="GP2: gene burden results"
-      geneResultsAnalysisGroupOptions={gp2AnalysisGroups}
+      geneResultAnalysisGroupOptions={gp2AnalysisGroups}
       defaultGeneResultAnalysisGroup={gp2DefaultAnalysisGroup}
       defaultGeneResultSortKey="ptv_pval"
       geneResultColumns={geneResultColumns}

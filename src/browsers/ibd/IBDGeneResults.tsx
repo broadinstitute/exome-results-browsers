@@ -4,59 +4,16 @@ import styled from 'styled-components'
 import { BaseTable, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
-import { IBDAnalysisGroup, ibdAnalysisGroups } from './IBDBrowser'
+import { IBDAnalysisGroup, ibdAnalysisGroups, ibdPValueOfZeroPlaceholder } from './IBDBrowser'
+import {
+  InputData,
+  renderStringOrFloatAsDecimal,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
-
-const formatToDecimals = (value: number | string | null | undefined, decimals = 3) => {
-  if (value === null || value === undefined) {
-    return '-'
-  }
-
-  const floatValue = typeof value === 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-
-  return floatValue.toFixed(decimals)
-}
-
-const formatDecimal = (value: number | string | undefined) => {
-  return formatToDecimals(value, 3)
-}
-
-const formatScientific = (value: number | string | null | undefined, decimals = 2) => {
-  if (value === null || value === undefined) {
-    return '-'
-  }
-
-  const floatValue = typeof value === 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-
-  if (floatValue < 0.01) {
-    return floatValue.toExponential(decimals)
-  }
-  return formatToDecimals(value)
-}
-
-const formatPVal = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return '-'
-  }
-
-  const floatValue = typeof value === 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-  if (floatValue === 0) {
-    return '2.2e-16'
-  }
-  return formatScientific(value)
-}
 
 const rowOptions = {
   'PTV 0.001': 'ptv_0_001',
@@ -67,20 +24,32 @@ const rowOptions = {
 const columnOptions = {
   'P-Value': {
     schemaName: 'P_meta',
-    renderFunction: formatPVal,
+    renderFunction: (value: InputData) =>
+      renderStringOrFloatPvalueAsScientific({
+        value: value,
+        zeroValue: ibdPValueOfZeroPlaceholder,
+      }),
   },
   Beta: {
     schemaName: 'beta_meta',
-    renderFunction: formatDecimal,
+    renderFunction: (value: InputData) => renderStringOrFloatAsDecimal({ value: value }),
   },
   'Het P': {
     schemaName: 'het_P_meta',
-    renderFunction: formatDecimal,
+    renderFunction: (value: InputData) => renderStringOrFloatAsDecimal({ value: value }),
   },
 }
 
-const rowsToRender = ['PTV 0.001', 'NSyn 0.001']
-const columnsToRender = ['Category', 'P-Value', 'Beta', 'Het P']
+type IBDGeneRowKey = keyof typeof rowOptions
+type IBDGeneColumnKey = keyof typeof columnOptions
+
+const rowsToRender: IBDGeneRowKey[] = ['PTV 0.001', 'NSyn 0.001']
+const columnsToRender: Array<'Category' | IBDGeneColumnKey> = [
+  'Category',
+  'P-Value',
+  'Beta',
+  'Het P',
+]
 
 type IBDGeneResult = {
   n_cases: number
@@ -93,6 +62,7 @@ type IBDGeneResult = {
   ptv_control_count: number
   ptv_pval: number
   ptv_OR: number
+  [key: string]: any
 }
 
 interface IBDGeneResultProps {
@@ -118,10 +88,9 @@ const IBDGeneResult = ({ result }: IBDGeneResultProps) => (
               .filter((column) => column !== 'Category')
               .map((column) => (
                 <td key={column}>
-                  {(() => {
-                    const toCheck = result[`${rowOptions[row]}_${columnOptions[column].schemaName}`]
-                    return toCheck === null ? '-' : columnOptions[column].renderFunction(toCheck)
-                  })()}
+                  {columnOptions[column].renderFunction(
+                    result[`${rowOptions[row]}_${columnOptions[column].schemaName}`]
+                  )}
                 </td>
               ))}
           </tr>

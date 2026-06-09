@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount } from '../base/tableCells'
+import { renderCount, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
 import ASCHomePage from './ASCHomePage'
 import ASCVariantFilter from './ASCVariantFilter'
@@ -117,6 +117,7 @@ const ASCBrowser = () => (
         key: 'qval',
         heading: 'Q\u2011Val',
         minWidth: 100,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
     ]}
     variantAnalysisGroupOptions={ascVariantAnalysisGroups}

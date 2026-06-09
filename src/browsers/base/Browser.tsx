@@ -153,7 +153,8 @@ export type VariantColumnConfig = {
   showOnDetails?: boolean
   isSortable?: boolean
   sortFunction?: (a: any, b: any) => number
-  sortKey?: string,
+  sortKey?: string
+  type?: string
 }
 
 export type ConsequenceCategory = 'lof' | 'missense' | 'synonymous' | 'other'
