@@ -2,6 +2,12 @@ import hail as hl
 
 
 def filter_results_table_to_test_gene_interval(results):
+
+    # ENSG00000169174
+    pcsk9_interval = hl.locus_interval(
+        "chr1", 55039447, 55064852, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+
     # ENSG00000177628
     gba1_interval = hl.locus_interval(
         "chr1", 155234452, 155244699, reference_genome="GRCh38", includes_start=True, includes_end=True
@@ -12,7 +18,7 @@ def filter_results_table_to_test_gene_interval(results):
         "chr22", 17084954, 17115694, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
 
-    results = hl.filter_intervals(results, [gba1_interval, il17ra_interval])
+    results = hl.filter_intervals(results, [pcsk9_interval, gba1_interval, il17ra_interval])
 
     return results
 
