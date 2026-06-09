@@ -173,6 +173,8 @@ def main():
     else:
         datasets_to_combine = all_datasets
 
+    print(f"\nCombining datasets: {list(datasets_to_combine)} ...\n\n")
+
     # hl.init()
     hl.init(
         spark_conf={
