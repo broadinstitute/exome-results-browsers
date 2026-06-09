@@ -1,7 +1,11 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount, renderOddsRatio } from '../base/tableCells'
+import {
+  renderCount,
+  renderOddsRatio,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 
 import BipExHomePage from './BipExHomePage'
 import BipExVariantFilter from './BipExVariantFilter'
@@ -55,6 +59,7 @@ const BipExBrowser = () => (
         key: 'ptv_fisher_gnom_non_psych_pval',
         heading: 'PTV Fisher p\u2011val',
         minWidth: 85,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'ptv_fisher_gnom_non_psych_OR',
@@ -78,6 +83,7 @@ const BipExBrowser = () => (
         key: 'damaging_missense_fisher_gnom_non_psych_pval',
         heading: 'Damaging Missense Fisher p\u2011val',
         minWidth: 85,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'damaging_missense_fisher_gnom_non_psych_OR',
@@ -103,6 +109,7 @@ const BipExBrowser = () => (
         key: 'group_result.p_value',
         heading: 'P\u2011Value',
         minWidth: 65,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'group_result.in_analysis',

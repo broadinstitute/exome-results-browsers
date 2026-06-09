@@ -7,7 +7,7 @@ import HelpButton from '../base/HelpButton'
 import StyledContent from '../base/StyledContent'
 import geneResultsDescription from './content/generesults.md'
 import { SCHEMAAnalysisGroup } from './SCHEMABrowser'
-import { renderOddsRatio } from '../base/tableCells'
+import { renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -88,15 +88,13 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => (
             {renderOddsRatio({ value: result['OR (Class I)'] })}
           </td>
           <td rowSpan={2} style={{ paddingLeft: '10px' }}>
-            {result['P ca/co (Class 1)'] === null
-              ? '—'
-              : result['P ca/co (Class 1)'].toPrecision(3)}
+            {renderStringOrFloatPvalueAsScientific({ value: result['P ca/co (Class 1)'] })}
           </td>
           <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
             {result['De novo PTV'] === null ? '—' : result['De novo PTV']}
           </td>
           <td rowSpan={3} style={{ paddingLeft: '10px' }}>
-            {result['P de novo'] === null ? '—' : result['P de novo'].toPrecision(3)}
+            {renderStringOrFloatPvalueAsScientific({ value: result['P de novo'] })}
           </td>
         </tr>
         <tr>
@@ -129,11 +127,11 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => (
           </td>
           <td>{result['Ctrl mis2'] === null ? '—' : result['Ctrl mis2']}</td>
 
-          <td style={{ paddingLeft: '10px' }}>{renderOddsRatio({ value: result['OR (Class II)'] })}</td>
           <td style={{ paddingLeft: '10px' }}>
-            {result['P ca/co (Class 2)'] === null
-              ? '—'
-              : result['P ca/co (Class 2)'].toPrecision(3)}
+            {renderOddsRatio({ value: result['OR (Class II)'] })}
+          </td>
+          <td style={{ paddingLeft: '10px' }}>
+            {renderStringOrFloatPvalueAsScientific({ value: result['P ca/co (Class 2)'] })}
           </td>
           <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
             {result['De novo mis2'] === null ? '—' : result['De novo mis2']}
@@ -143,11 +141,11 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => (
     </Table>
     <p style={{ fontWeight: 'bold' }}>
       Meta-analysis <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
-      {result['P meta'] === null ? '—' : result['P meta'].toPrecision(3)}
+      {renderStringOrFloatPvalueAsScientific({ value: result['P meta'] })}
     </p>
     <p style={{ fontWeight: 'bold' }}>
       Meta-analysis <span style={{ fontStyle: 'italic' }}>Q</span>-value:{' '}
-      {result['Q meta'] === null ? '—' : result['Q meta'].toPrecision(3)}
+      {renderStringOrFloatPvalueAsScientific({ value: result['Q meta'] })}
     </p>
   </div>
 )

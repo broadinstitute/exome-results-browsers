@@ -3,7 +3,7 @@ import React from 'react'
 import ExomeResultsBrowser from '../base/Browser'
 import GeneResultsManhattanPlot from '../base/GeneResultsPage/GeneResultsManhattanPlot'
 import GeneResultsQQPlot from '../base/GeneResultsPage/GeneResultsQQPlot'
-import { renderCount, renderOddsRatio } from '../base/tableCells'
+import { renderCount, renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 import vepConsequences from '../base/vepConsequences'
 
 import SCHEMAAboutPage from './SCHEMAAboutPage'
@@ -130,11 +130,14 @@ const SCHEMABrowser = () => (
         key: 'P meta',
         tooltip: 'Study-wide meta-analysis P-value.',
         minWidth: 100,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value })
+
       },
       {
         key: 'Q meta',
         tooltip: 'P-value adjusted for the False Discovery Rate.',
         minWidth: 100,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value })
       },
       {
         key: 'OR (Class I)',

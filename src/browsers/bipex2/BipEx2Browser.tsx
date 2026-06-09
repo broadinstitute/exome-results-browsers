@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount, renderFloatAsScientific, renderOddsRatio } from '../base/tableCells'
+import { renderCount, renderStringOrFloatPvalueAsScientific, renderOddsRatio } from '../base/tableCells'
 
 import BipExHomePage from './BipEx2HomePage'
 import BipExVariantFilter from './BipEx2VariantFilter'
@@ -32,8 +32,6 @@ const renderBipexFlags = (value: string) => {
 
   return ''
 }
-
-const pValueOfZeroPlaceholder = '0'
 
 export const bipex2AnalysisGroups = ['meta'] as const
 export type BipEx2AnalysisGroup = typeof bipex2AnalysisGroups[number]
@@ -85,7 +83,7 @@ const BipExBrowser = () => (
         key: 'ptv_mis_p_value',
         heading: 'PTV+MIS p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'ptv_mis_odds_ratio',
@@ -110,7 +108,7 @@ const BipExBrowser = () => (
         key: 'ptv_p_value',
         heading: 'PTV p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'ptv_odds_ratio',
@@ -135,7 +133,7 @@ const BipExBrowser = () => (
         key: 'mis_p_value',
         heading: 'MIS p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'mis_odds_ratio',
@@ -160,7 +158,7 @@ const BipExBrowser = () => (
         key: 'syn_p_value',
         heading: 'SYN p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'syn_odds_ratio',

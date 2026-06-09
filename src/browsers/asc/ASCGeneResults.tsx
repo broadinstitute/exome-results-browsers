@@ -3,24 +3,25 @@ import styled from 'styled-components'
 
 import { BaseTable } from '@gnomad/ui'
 import { ASCGeneAnalysisGroup } from './ASCBrowser'
+import { renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
 type AscGeneResult = {
-    xcase_dn_ptv: number
-    xcont_dn_ptv: number
-    xcase_dn_misa: number
-    xcont_dn_misa: number
-    xcase_dn_misb: number
-    xcont_dn_misb: number
-    xcase_dbs_ptv: number
-    xcont_dbs_ptv: number
-    xcase_swe_ptv: number
-    xcont_swe_ptv: number
-    xcase_tut: number
-    xcont_tut: number
-    qval: number
+  xcase_dn_ptv: number
+  xcont_dn_ptv: number
+  xcase_dn_misa: number
+  xcont_dn_misa: number
+  xcase_dn_misb: number
+  xcont_dn_misb: number
+  xcase_dbs_ptv: number
+  xcont_dbs_ptv: number
+  xcase_swe_ptv: number
+  xcont_swe_ptv: number
+  xcase_tut: number
+  xcont_tut: number
+  qval: number
 }
 
 interface ASCGeneResultProps {
@@ -73,7 +74,8 @@ const ASCGeneResult = ({ result }: ASCGeneResultProps) => (
       </tbody>
     </Table>
     <p>
-      <strong>Q-Val:</strong> {result.qval === null ? '—' : result.qval.toPrecision(4)}
+      <strong>Q-Val:</strong>{' '}
+      {renderStringOrFloatPvalueAsScientific({ value: result.qval, decimalPlaces: 4 })}
     </p>
   </div>
 )

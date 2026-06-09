@@ -1,7 +1,11 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount, renderOddsRatio } from '../base/tableCells'
+import {
+  renderCount,
+  renderOddsRatio,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 
 import Epi25HomePage from './Epi25HomePage'
 import Epi25TermsPage from './Epi25TermsPage'
@@ -10,6 +14,8 @@ import Epi25VariantFilter from './Epi25VariantFilter'
 export const epi25AnalysisGroups = ['EPI', 'DEE', 'GGE', 'NAFE'] as const
 export type Epi25AnalysisGroup = typeof epi25AnalysisGroups[number]
 export const epi25DefaultAnalysisGroup: Epi25AnalysisGroup = 'EPI'
+
+export const epi25PValueOfZeroPlaceholder = '2.2e-16'
 
 const Epi25Browser = () => (
   <Browser
@@ -56,6 +62,11 @@ const Epi25Browser = () => (
         key: 'ptv_pval',
         heading: 'PTV p\u2011val',
         minWidth: 85,
+        render: (value) =>
+          renderStringOrFloatPvalueAsScientific({
+            value: value,
+            zeroValue: epi25PValueOfZeroPlaceholder,
+          }),
       },
       {
         key: 'ptv_OR',
@@ -104,6 +115,7 @@ const Epi25Browser = () => (
         key: 'group_result.p_value',
         heading: 'P\u2011Value',
         minWidth: 65,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'group_result.in_analysis',

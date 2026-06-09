@@ -5,7 +5,7 @@ import { BaseTable, ExternalLink, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
 import { BipExAnalysisGroup, bipexAnalysisGroups } from './BipExBrowser'
-import { renderOddsRatio } from '../base/tableCells'
+import { renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -69,9 +69,9 @@ const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
               : result.ptv_fisher_gnom_non_psych_control_count}
           </td>
           <td>
-            {result.ptv_fisher_gnom_non_psych_pval === null
-              ? '-'
-              : result.ptv_fisher_gnom_non_psych_pval.toPrecision(3)}
+            {renderStringOrFloatPvalueAsScientific({
+              value: result.ptv_fisher_gnom_non_psych_pval,
+            })}
           </td>
           <td>{renderOddsRatio({ value: result.ptv_fisher_gnom_non_psych_OR })}</td>
         </tr>
@@ -88,9 +88,9 @@ const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
               : result.damaging_missense_fisher_gnom_non_psych_control_count}
           </td>
           <td>
-            {result.damaging_missense_fisher_gnom_non_psych_pval === null
-              ? '-'
-              : result.damaging_missense_fisher_gnom_non_psych_pval.toPrecision(3)}
+            {renderStringOrFloatPvalueAsScientific({
+              value: result.damaging_missense_fisher_gnom_non_psych_pval,
+            })}
           </td>
           <td>{renderOddsRatio({ value: result.damaging_missense_fisher_gnom_non_psych_OR })}</td>
         </tr>

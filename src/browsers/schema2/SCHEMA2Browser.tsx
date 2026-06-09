@@ -94,7 +94,7 @@ const SCHEMABrowser = () => (
         tooltip:
           'SCHEMA2 p-value of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
         minWidth: 100,
-        render: (value) => renderStringOrFloatPvalueAsScientific(value),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'ptv_case_carrier',
@@ -148,7 +148,7 @@ const SCHEMABrowser = () => (
         tooltip:
           'Weighted meta-analysis p-value combining the Case-Control SCHEMA2 p-value with the De Novo pvalue',
         minWidth: 100,
-        render: (value) => renderStringOrFloatPvalueAsScientific(value),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'ptv_odds_ratio',

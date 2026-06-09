@@ -97,13 +97,13 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {renderOddsRatio({ value: result.ptv_odds_ratio })}
             </td>
             <td style={{ paddingLeft: '10px' }}>
-              {renderStringOrFloatPvalueAsScientific(result.ptv_p_value)}
+              {renderStringOrFloatPvalueAsScientific({ value: result.ptv_p_value })}
             </td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
               {safeRenderCount(result.ptv_n_de_novo)}
             </td>
             <td rowSpan={2} style={{ paddingLeft: '10px' }}>
-              {renderStringOrFloatPvalueAsScientific(result.n_de_novo_p_value)}
+              {renderStringOrFloatPvalueAsScientific({ value: result.n_de_novo_p_value })}
             </td>
           </tr>
 
@@ -121,7 +121,7 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {renderOddsRatio({ value: result.ptv_mis_odds_ratio })}
             </td>
             <td style={{ paddingLeft: '10px' }}>
-              {renderStringOrFloatPvalueAsScientific(result.ptv_mis_p_value)}
+              {renderStringOrFloatPvalueAsScientific({ value: result.ptv_mis_p_value })}
             </td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
               {safeRenderCount(result.ptv_mis_n_de_novo)}

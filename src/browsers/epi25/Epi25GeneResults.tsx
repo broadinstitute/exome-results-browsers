@@ -4,23 +4,16 @@ import styled from 'styled-components'
 import { BaseTable, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
-import { Epi25AnalysisGroup, epi25AnalysisGroups } from './Epi25Browser'
-import { renderOddsRatio } from '../base/tableCells'
+import {
+  Epi25AnalysisGroup,
+  epi25AnalysisGroups,
+  epi25PValueOfZeroPlaceholder,
+} from './Epi25Browser'
+import { renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
-
-const renderPVal = (pval: number | undefined | null) => {
-  if (pval === null || pval === undefined) {
-    return '-'
-  }
-  if (pval === 0) {
-    return '2.2e-16'
-  }
-  return pval.toPrecision(3)
-}
-
 
 type Epi25GeneResult = {
   ptv_case_count: number | null
@@ -33,14 +26,13 @@ type Epi25GeneResult = {
   damaging_missense_pval: number | null
   damaging_missense_OR: number | null
 
-  n_cases: number,
-  n_controls: number,
+  n_cases: number
+  n_controls: number
 }
 
 interface Epi25GeneResultProps {
   result: Epi25GeneResult
 }
-
 
 const Epi25GeneResult = ({ result }: Epi25GeneResultProps) => (
   <div>
@@ -59,7 +51,12 @@ const Epi25GeneResult = ({ result }: Epi25GeneResultProps) => (
           <th scope="row">Protein-truncating</th>
           <td>{result.ptv_case_count === null ? '-' : result.ptv_case_count}</td>
           <td>{result.ptv_control_count === null ? '-' : result.ptv_control_count}</td>
-          <td>{renderPVal(result.ptv_pval)}</td>
+          <td>
+            {renderStringOrFloatPvalueAsScientific({
+              value: result.ptv_pval,
+              zeroValue: epi25PValueOfZeroPlaceholder,
+            })}
+          </td>
           <td>{renderOddsRatio({ value: result.ptv_OR })}</td>
         </tr>
         <tr>
@@ -74,7 +71,12 @@ const Epi25GeneResult = ({ result }: Epi25GeneResultProps) => (
               ? '-'
               : result.damaging_missense_control_count}
           </td>
-          <td>{renderPVal(result.damaging_missense_pval)}</td>
+          <td>
+            {renderStringOrFloatPvalueAsScientific({
+              value: result.damaging_missense_pval,
+              zeroValue: epi25PValueOfZeroPlaceholder,
+            })}
+          </td>
           <td>{renderOddsRatio({ value: result.ptv_OR })}</td>
         </tr>
       </tbody>
@@ -91,7 +93,6 @@ const Epi25GeneResult = ({ result }: Epi25GeneResultProps) => (
 
 interface Epi25GeneResultsProps {
   results: Record<Epi25AnalysisGroup, Epi25GeneResult>
-
 }
 
 const Epi25GeneResults = ({ results }: Epi25GeneResultsProps) => (
