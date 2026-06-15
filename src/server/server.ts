@@ -319,13 +319,28 @@ app.use('/', (req: Request, res: Response, next: NextFunction) => {
 })
 
 const datasetConfig: Record<string, any> = {}
+
 const getDatasetConfigJs = (dataset: string) => {
   if (!datasetConfig[dataset]) {
+
+    const datasetsWithClinvar = ["GP2"]
+    const thisDatasetRequestsClinvar = datasetsWithClinvar.includes(dataset);
+
+    const clinVarData = metadata.datasets?.["ClinVarGRCh38"];
+
     const datasetMetadata = {
       datasetId: dataset,
+      ...(thisDatasetRequestsClinvar && {
+        clinvar: {
+          variant_fields: metadata.variant_fields,
+          variant_info_field_names: clinVarData?.variant_info_field_names ?? [],
+          variant_info_field_types: clinVarData?.variant_info_field_types ?? [],
+        }
+      }),
       ...metadata,
-      ...metadata.datasets[dataset],
+      ...metadata.datasets?.[dataset],
     }
+
     datasetConfig[dataset] = `window.datasetConfig = ${JSON.stringify(datasetMetadata)}`
   }
   return datasetConfig[dataset]
