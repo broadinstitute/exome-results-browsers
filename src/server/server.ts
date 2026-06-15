@@ -266,11 +266,21 @@ app.post('/api/check-auth', (req: Request, res: Response) => {
 // Middleware
 // ================================================================================================
 
+const allowedQueryParamDatasets = ["ClinVarGRCh38"]
+
 // Store dataset on request object so other route handlers can use it.
 app.use('/', (req: Request, res: Response, next: NextFunction) => {
   let dataset: any
   try {
-    dataset = getDatasetForRequest(req)
+    if (
+      req.query.dataset
+      && typeof req.query.dataset === 'string'
+      && allowedQueryParamDatasets.includes(req.query.dataset)
+    ) {
+      dataset = req.query.dataset
+    } else {
+      dataset = getDatasetForRequest(req)
+    }
   } catch (err) { } // eslint-disable-line no-empty
 
   if (!dataset) {
