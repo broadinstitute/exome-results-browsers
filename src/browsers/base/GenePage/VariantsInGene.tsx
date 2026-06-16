@@ -47,7 +47,7 @@ const selectGroupResult = (variants: VariantRow[], group: string) => {
 }
 
 // TK: TODO: fixme: this type could possibly be GeneRow from Browser.tsx
-interface Gene {
+export interface Gene {
   gene_id: string
   reference_genome: ReferenceGenome
 }

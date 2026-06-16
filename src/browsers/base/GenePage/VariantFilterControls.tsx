@@ -8,14 +8,14 @@ import CSVExportButton from '../CSVExportButton'
 import { ConsequenceCategory, VariantConsequenceCategoryLabels } from '../Browser'
 import { VariantRow, VariantTableColumn } from './variantTableColumns'
 
-const consequenceCategoryColors = {
+export const consequenceCategoryColors = {
   lof: '#FF583F',
   missense: '#F0C94D',
   synonymous: 'green',
   other: '#757575',
 }
 
-const SettingsWrapper = styled.div`
+export const SettingsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -27,7 +27,7 @@ const SettingsWrapper = styled.div`
   }
 `
 
-const FiltersWrapper = styled.div`
+export const FiltersWrapper = styled.div`
   display: flex;
   flex-grow: 2;
   flex-direction: row;
@@ -58,7 +58,7 @@ const AnalysisGroupMenuWrapper = styled.div`
   }
 `
 
-const FiltersFirstColumn = styled.div`
+export const FiltersFirstColumn = styled.div`
   display: flex;
   flex-direction: column;
 
@@ -101,7 +101,7 @@ const SearchWrapper = styled.div`
   }
 `
 
-const keyboardShortcuts: Record<ConsequenceCategory, string> = {
+export const keyboardShortcuts: Record<ConsequenceCategory, string> = {
   lof: 'l',
   missense: 'm',
   synonymous: 's',
@@ -128,7 +128,7 @@ interface VariantFilterControlProps {
   variantTableColumns: VariantTableColumn[]
 }
 
-const lofCategories: ConsequenceCategory[] = ['lof', 'missense', 'synonymous', 'other']
+export const lofCategories: ConsequenceCategory[] = ['lof', 'missense', 'synonymous', 'other']
 
 const VariantFilterControls = ({
   consequenceCategoryLabels,
