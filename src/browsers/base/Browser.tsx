@@ -53,6 +53,11 @@ declare global {
       variant_group_result_field_types: string[]
       variant_info_field_names: string[]
       variant_info_field_types: string[]
+      clinvar?: {
+        variant_fields: string[]
+        variant_info_field_names: string[]
+        variant_info_field_types: string[]
+      }
     }
     gaTrackingId: string
     gtag: Gtag.Gtag
