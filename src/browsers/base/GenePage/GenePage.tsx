@@ -15,6 +15,7 @@ import GeneResults from './GeneResults'
 import { TrackPage, TrackPageSection } from './TrackPage'
 import TranscriptTrack from './TranscriptTrack'
 import VariantsInGene from './VariantsInGene'
+import ClinVarVariantsInGene from './ClinVarVariantsInGene'
 import {
   DatasetId,
   VariantColumnConfig,
@@ -160,6 +161,12 @@ const GenePage = ({
         <TranscriptTrack
           exons={gene.canonical_transcript.exons}
           strand={gene.canonical_transcript.strand}
+        />
+        <ClinVarVariantsInGene
+          datasetId={datasetId}
+          gene={gene}
+          variantConsequences={variantConsequences}
+          consequenceCategoryLabels={variantConsequenceCategoryLabels}
         />
         <VariantsInGene
           datasetId={datasetId}
