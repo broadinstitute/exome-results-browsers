@@ -28,13 +28,20 @@ def prepare_dataset(dataset_id, test_genes, output_local):
     if dataset_id.lower() == "gp2":
         print("running for GP2")
 
-        compute_combine = False
-
         combined_variant_results_path = os.path.join(output_path, "combined_variant_results.ht")
         combined_variant_annotations_path = os.path.join(output_path, "combined_variant_annotations.ht")
 
+        if output_local:
+            compute_combine = not (
+                os.path.exists(combined_variant_results_path) and os.path.exists(combined_variant_annotations_path)
+            )
+        else:
+            compute_combine = not (
+                hl.hadoop_exists(combined_variant_results_path) and hl.hadoop_exists(combined_variant_annotations_path)
+            )
+
         if compute_combine:
-            print("Creating combined table...")
+            print("Combined GP2 tables do not exist, creating them ...")
             ces_variant_results_path = pipeline_config.get(dataset_id, "ces_variant_results_path")
             ces_variant_results_ht = hl.read_table(ces_variant_results_path)
 
@@ -60,7 +67,9 @@ def prepare_dataset(dataset_id, test_genes, output_local):
             )
 
             combined_variant_results_ht.write(combined_variant_results_path, overwrite=True)
+            print("Wrote GP2 combined variant results table")
             combined_variant_annotations_ht.write(combined_variant_annotations_path, overwrite=True)
+            print("Wrote GP2 combined variant annotations table")
 
         # ---
 
