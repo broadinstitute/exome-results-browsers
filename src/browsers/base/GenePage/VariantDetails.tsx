@@ -34,6 +34,16 @@ const Columns = styled.div`
   }
 `
 
+const TableWrapper = styled.div`
+width: 100%;
+  overflow-x: auto;
+
+  th, td {
+    white-space: nowrap;
+  }
+`
+
+
 const CSQ_CODING_HIGH_IMPACT = [
   'transcript_ablation',
   'splice_acceptor_variant',
@@ -509,49 +519,51 @@ const VariantDetails = ({
       </Columns>
 
       <h2>Analysis Groups</h2>
-      <BaseTable>
-        <thead>
-          <tr>
-            <th scope="col">Group</th>
-            {renderedVariantColumns.map((c) => (
-              <th key={c.key} scope="col">
-                {c.heading}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {Object.keys(variant.group_results)
-            .sort((g1, g2) => {
-              if (g1 === defaultVariantAnalysisGroup) {
-                return -1
-              }
-              if (g2 === defaultVariantAnalysisGroup) {
-                return 1
-              }
-              return (variantAnalysisGroupLabels[g1] || g1).localeCompare(
-                variantAnalysisGroupLabels[g2] || g2
-              )
-            })
-            .map((analysisGroup) => {
-              const groupResult = variant.group_results[analysisGroup]
-              const rowVariant = { ...variant, group_result: groupResult }
+      <TableWrapper>
+        <BaseTable>
+          <thead>
+            <tr>
+              <th scope="col">Group</th>
+              {renderedVariantColumns.map((c) => (
+                <th key={c.key} scope="col">
+                  {c.heading}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Object.keys(variant.group_results)
+              .sort((g1, g2) => {
+                if (g1 === defaultVariantAnalysisGroup) {
+                  return -1
+                }
+                if (g2 === defaultVariantAnalysisGroup) {
+                  return 1
+                }
+                return (variantAnalysisGroupLabels[g1] || g1).localeCompare(
+                  variantAnalysisGroupLabels[g2] || g2
+                )
+              })
+              .map((analysisGroup) => {
+                const groupResult = variant.group_results[analysisGroup]
+                const rowVariant = { ...variant, group_result: groupResult }
 
-              return (
-                <tr key={analysisGroup}>
-                  <th scope="row">{variantAnalysisGroupLabels[analysisGroup] || analysisGroup}</th>
-                  {renderedVariantColumns.map((c) => (
-                    <td key={c.key}>
-                      {get(rowVariant, c.key) === null
-                        ? ''
-                        : (c.render || renderNumber)(get(rowVariant, c.key))}
-                    </td>
-                  ))}
-                </tr>
-              )
-            })}
-        </tbody>
-      </BaseTable>
+                return (
+                  <tr key={analysisGroup}>
+                    <th scope="row">{variantAnalysisGroupLabels[analysisGroup] || analysisGroup}</th>
+                    {renderedVariantColumns.map((c) => (
+                      <td key={c.key}>
+                        {get(rowVariant, c.key) === null
+                          ? ''
+                          : (c.render || renderNumber)(get(rowVariant, c.key))}
+                      </td>
+                    ))}
+                  </tr>
+                )
+              })}
+          </tbody>
+        </BaseTable>
+      </TableWrapper>
 
       {renderVariantTranscriptConsequences && variant.info && variant.info.transcript_consequences && (
         <>
