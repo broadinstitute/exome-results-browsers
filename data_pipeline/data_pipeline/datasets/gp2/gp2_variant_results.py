@@ -28,12 +28,29 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
         results = filter_results_table_to_test_gene_interval(results)
 
     results = results.annotate(
-        ac_case=results.ac_case[1],
-        ac_ctrl=results.ac_ctrl[1],
-        ac_other=hl.if_else(hl.is_defined(results.ac_other), results.ac_other[1], hl.null(hl.tint32)),
+        ac_pd=results.ac_pd[1],
+        ac_psp=hl.if_else(hl.is_defined(results.ac_psp), results.ac_other[1], hl.missing(hl.tint32)),
+        ac_dlb=hl.if_else(hl.is_defined(results.ac_dlb), results.ac_other[1], hl.missing(hl.tint32)),
+        ac_msa=hl.if_else(hl.is_defined(results.ac_msa), results.ac_other[1], hl.missing(hl.tint32)),
+        ac_ctrl=hl.if_else(hl.is_defined(results.ac_ctrl), results.ac_other[1], hl.missing(hl.tint32)),
+        ac_other=hl.if_else(hl.is_defined(results.ac_other), results.ac_other[1], hl.missing(hl.tint32)),
     )
-    results = results.drop("af_case", "af_ctrl", "af_other")
-    results = results.filter((results.ac_case > 0) | (results.ac_ctrl > 0))
+    results = results.drop(
+        "af_pd",
+        "af_psp",
+        "af_dlb",
+        "af_msa",
+        "af_ctrl",
+        "af_other",
+    )
+    results = results.filter(
+        (results.ac_pd > 0)
+        | (results.ac_psp > 0)
+        | (results.ac_dlb > 0)
+        | (results.ac_msa > 0)
+        | (results.ac_other > 0)
+        | (results.ac_ctrl > 0)
+    )
 
     results = results.group_by("locus", "alleles").aggregate(
         group_results=hl.dict(
@@ -43,8 +60,14 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
                     results.dataset,
                     hl.agg.take(
                         hl.struct(
-                            ac_case=results.ac_case,
-                            an_case=results.an_case,
+                            ac_pd=results.ac_pd,
+                            an_pd=results.an_pd,
+                            ac_psp=results.ac_psp,
+                            an_psp=results.an_psp,
+                            ac_dlb=results.ac_dlb,
+                            an_dlb=results.an_dlb,
+                            ac_msa=results.ac_msa,
+                            an_msa=results.an_msa,
                             ac_ctrl=results.ac_ctrl,
                             an_ctrl=results.an_ctrl,
                             ac_other=results.ac_other,
@@ -64,29 +87,47 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
                     item[0],
                     hl.bind(
                         lambda wgs_stats_array, ces_stats_array: hl.struct(
-                            wgs_ac_case=hl.if_else(
-                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_case, hl.null(hl.tint32)
+                            wgs_ac_pd=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_pd, hl.missing(hl.tint32)
                             ),
-                            wgs_an_case=hl.if_else(
-                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_case, hl.null(hl.tint32)
+                            wgs_an_pd=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_pd, hl.missing(hl.tint32)
+                            ),
+                            wgs_ac_psp=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_psp, hl.missing(hl.tint32)
+                            ),
+                            wgs_an_psp=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_psp, hl.missing(hl.tint32)
+                            ),
+                            wgs_ac_dlb=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_dlb, hl.missing(hl.tint32)
+                            ),
+                            wgs_an_dlb=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_dlb, hl.missing(hl.tint32)
+                            ),
+                            wgs_ac_msa=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_msa, hl.missing(hl.tint32)
+                            ),
+                            wgs_an_msa=hl.if_else(
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_msa, hl.missing(hl.tint32)
                             ),
                             wgs_ac_ctrl=hl.if_else(
-                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_ctrl, hl.null(hl.tint32)
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_ctrl, hl.missing(hl.tint32)
                             ),
                             wgs_an_ctrl=hl.if_else(
-                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_ctrl, hl.null(hl.tint32)
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_ctrl, hl.missing(hl.tint32)
                             ),
                             wgs_ac_other=hl.if_else(
-                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_other, hl.null(hl.tint32)
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].ac_other, hl.missing(hl.tint32)
                             ),
                             wgs_an_other=hl.if_else(
-                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_other, hl.null(hl.tint32)
+                                hl.len(wgs_stats_array) > 0, wgs_stats_array[0].an_other, hl.missing(hl.tint32)
                             ),
-                            ces_ac_case=hl.if_else(
-                                hl.len(ces_stats_array) > 0, ces_stats_array[0].ac_case, hl.null(hl.tint32)
+                            ces_ac_pd=hl.if_else(
+                                hl.len(ces_stats_array) > 0, ces_stats_array[0].ac_pd, hl.missing(hl.tint32)
                             ),
-                            ces_an_case=hl.if_else(
-                                hl.len(ces_stats_array) > 0, ces_stats_array[0].an_case, hl.null(hl.tint32)
+                            ces_an_pd=hl.if_else(
+                                hl.len(ces_stats_array) > 0, ces_stats_array[0].an_pd, hl.missing(hl.tint32)
                             ),
                         ),
                         item[1].get("WGS"),
@@ -126,6 +167,7 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
         hgvsp=annotations.hgvsp.split(":")[-1],
         info=hl.struct(
             cadd=annotations.cadd,
+            revel=annotations.revel,
             clinvar_variation_id=annotations.clinvar_variation_id,
             clinical_significance=annotations.clinical_significance,
             clinical_significance_category=annotations.clinical_significance_category,
