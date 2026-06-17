@@ -52,7 +52,11 @@ def prepare_dataset(dataset_id, test_genes, output_local):
             )
 
             combined_variant_results_ht, combined_variant_annotations_ht = combine_data_module.combine_input_data(
-                ces_variant_results_ht, wgs_variant_results_ht, ces_variant_annotations_ht, wgs_variant_annotations_ht
+                ces_variant_results_ht,
+                wgs_variant_results_ht,
+                ces_variant_annotations_ht,
+                wgs_variant_annotations_ht,
+                test_genes,
             )
 
             combined_variant_results_ht.write(combined_variant_results_path, overwrite=True)
