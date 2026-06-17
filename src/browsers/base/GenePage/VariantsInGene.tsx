@@ -339,16 +339,49 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
       visibleVariantWindow,
     } = this.state
 
-    // For GP2, we use e.g. 'wgs_ac_case', rather than just 'ac_case'
     const { datasetId } = this.state
-    const prefix = datasetId === 'GP2' ? 'wgs_' : ''
 
-    const cases = renderedVariants
-      .filter((v) => v.group_result[`${prefix}ac_case`] > 0)
-      .map((v) => ({ ...v, allele_freq: v.group_result[`${prefix}af_case`] }))
-    const controls = renderedVariants
-      .filter((v) => v.group_result[`${prefix}ac_ctrl`] > 0)
-      .map((v) => ({ ...v, allele_freq: v.group_result[`${prefix}af_ctrl`] }))
+    // TK: turn this into a filter in state that can be selected in GP2 dataset
+    // its like a secondary filter only for GP2
+    const selectedGroups: Record<string, boolean> = {
+      pd: true,
+      psp: true,
+      dlb: false,
+      msa: false
+    };
+    const activeGroups = Object.keys(selectedGroups).filter(group => selectedGroups[group]);
+
+    const cases = datasetId === 'GP2'
+      ? renderedVariants
+        .filter((v) => {
+          return activeGroups.some(group => {
+            const acKey = `wgs_ac_${group}`;
+            return v.group_result[acKey] > 0;
+          });
+        })
+        .map((v) => {
+          const summedAlleleFreq = activeGroups.reduce((totalFreq, group) => {
+            const afKey = `wgs_af_${group}`;
+            return totalFreq + (v.group_result[afKey] || 0);
+          }, 0);
+
+          return {
+            ...v,
+            allele_freq: summedAlleleFreq
+          };
+        })
+      : renderedVariants
+        .filter((v) => v.group_result.ac_case > 0)
+        .map((v) => ({ ...v, allele_freq: v.group_result.af_case }))
+
+
+    const controls = datasetId === 'GP2'
+      ? renderedVariants
+        .filter((v) => v.group_result.wgs_ac_ctrl > 0)
+        .map((v) => ({ ...v, allele_freq: v.group_result.wgs_af_ctrl }))
+      : renderedVariants
+        .filter((v) => v.group_result.ac_ctrl > 0)
+        .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
 
     return (
       <>
@@ -367,11 +400,14 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
             title="Viewing in table"
             variants={renderedVariants
               .slice(visibleVariantWindow[0], visibleVariantWindow[1] + 1)
-              .map((v) => ({
-                ...v,
-                allele_freq: v.group_result[`${prefix}af`],
-                isHighlighted: v.variant_id === hoveredVariant,
-              }))}
+              .map((v) => {
+                return (
+                  {
+                    ...v,
+                    allele_freq: v.group_result.af,
+                    isHighlighted: v.variant_id === hoveredVariant,
+                  })
+              })}
             variantColor={variantColor}
           />
         </Cursor>
@@ -450,15 +486,16 @@ const addSingleAF = (args: { groupResult: any; prefix: string; suffix: string })
   groupResult[`${prefix}af_${suffix}`] = af
 }
 
-const addOverallAF = (args: { groupResult: any; prefix: string }) => {
-  const { groupResult, prefix } = args
+const addOverallAF = (args: { groupResult: any }) => {
+  const { groupResult } = args
 
-  const caseAC = groupResult[`${prefix}ac_case`]
-  const caseAN = groupResult[`${prefix}an_case`]
-  const controlAC = groupResult[`${prefix}ac_ctrl`]
-  const controlAN = groupResult[`${prefix}an_ctrl`]
-  const caseAF = groupResult[`${prefix}af_case`]
-  const controlAF = groupResult[`${prefix}af_ctrl`]
+  const caseAC = groupResult.ac_case
+  const caseAN = groupResult.an_case
+  const caseAF = groupResult.af_case
+
+  const controlAC = groupResult.ac_ctrl
+  const controlAN = groupResult.an_ctrl
+  const controlAF = groupResult.af_ctrl
 
   let overallAF = null
 
@@ -470,7 +507,48 @@ const addOverallAF = (args: { groupResult: any; prefix: string }) => {
     overallAF = (caseAC + controlAC) / (caseAN + controlAN)
   }
 
-  groupResult[`${prefix}af`] = overallAF
+  groupResult.af = overallAF
+}
+
+const addOverallAFForGP2 = (args: { groupResult: any }) => {
+  const { groupResult } = args
+
+  const wgsPdAC = groupResult.wgs_ac_pd
+  const wgsPdAN = groupResult.wgs_an_pd
+  const wgsPdAF = groupResult.wgs_af_pd
+
+  const wgsPspAC = groupResult.wgs_ac_psp
+  const wgsPspAN = groupResult.wgs_an_psp
+  const wgsPspAF = groupResult.wgs_af_psp
+
+  const wgsDlbAC = groupResult.wgs_ac_dlb
+  const wgsDlbAN = groupResult.wgs_an_dlb
+  const wgsDlbAF = groupResult.wgs_af_dlb
+
+  const wgsMsaAC = groupResult.wgs_ac_msa
+  const wgsMsaAN = groupResult.wgs_an_msa
+  const wgsMsaAF = groupResult.wgs_af_msa
+
+  const wgsControlAC = groupResult.wgs_ac_ctrl
+  const wgsControlAN = groupResult.wgs_an_ctrl
+  const wgsControlAF = groupResult.wgs_af_ctrl
+
+  let overallAF = null
+
+  if (
+    ([wgsPdAF, wgsPspAF, wgsDlbAF, wgsMsaAF].every(item => item === null))
+    || wgsControlAF === null
+  ) {
+    overallAF = null
+  } else if (wgsPdAN + wgsPspAN + wgsDlbAN + wgsMsaAN + wgsControlAN === 0) {
+    overallAF = 0
+  } else {
+    const overallAC = wgsPdAC + wgsPspAC + wgsDlbAC + wgsMsaAC + wgsControlAC
+    const overallAN = wgsPdAN + wgsPspAN + wgsDlbAN + wgsMsaAN + wgsControlAN
+    overallAF = overallAC / overallAN
+  }
+
+  groupResult.af = overallAF
 }
 
 interface VariantConsequence {
@@ -547,15 +625,18 @@ const VariantsInGeneContainer = ({
                   if (datasetId !== 'GP2') {
                     addSingleAF({ groupResult, prefix: '', suffix: 'case' })
                     addSingleAF({ groupResult, prefix: '', suffix: 'ctrl' })
-                    addOverallAF({ groupResult, prefix: '' })
+                    addOverallAF({ groupResult })
                   }
 
                   if (datasetId === 'GP2') {
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'case' })
+                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'pd' })
+                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'psp' })
+                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'dlb' })
+                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'msa' })
                     addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'ctrl' })
                     addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'other' })
-                    addSingleAF({ groupResult, prefix: 'ces_', suffix: 'case' })
-                    addOverallAF({ groupResult, prefix: 'wgs_' })
+                    addSingleAF({ groupResult, prefix: 'ces_', suffix: 'pd' })
+                    addOverallAFForGP2({ groupResult })
                   }
 
                   variant.group_results[group] = groupResult

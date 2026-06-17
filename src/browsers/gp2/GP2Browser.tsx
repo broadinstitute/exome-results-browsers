@@ -14,7 +14,6 @@ import GP2HomePage from './GP2HomePage'
 import GP2TermsPage from './GP2TermsPage'
 
 import vepConsequences from '../base/vepConsequences'
-import { renderExponentialIfSmall } from '../base/GenePage/variantTableColumns'
 
 const variantConsequences = [...vepConsequences]
 
@@ -147,38 +146,7 @@ const GP2Browser = () => {
       variantAnalysisGroupOptions={gp2AnalysisGroups}
       defaultVariantAnalysisGroup={gp2DefaultAnalysisGroup}
       variantAnalysisGroupLabels={gp2AnalysisGroupLabels}
-      variantResultColumns={[
-        {
-          key: 'group_result.ces_ac_case',
-          heading: 'CES AC Case',
-          tooltip: 'Allele count in cases in clinical exome sequencing',
-          isSortable: true,
-          sortFunction: (a, b) => a - b,
-          sortKey: 'group_result.ces_ac_case',
-          minWidth: 75,
-          render: (value) => value,
-        },
-        {
-          key: 'group_result.ces_an_case',
-          heading: 'CES AN Case',
-          tooltip: 'Allele number in cases in clinical exome sequencing',
-          isSortable: true,
-          sortFunction: (a, b) => a - b,
-          sortKey: 'group_result.ces_an_case',
-          minWidth: 75,
-          render: (value) => value,
-        },
-        {
-          key: 'group_result.ces_af_case',
-          heading: 'CES AF Case',
-          tooltip: 'Allele frequency in case in clinical exome sequencing',
-          isSortable: true,
-          sortFunction: (a, b) => a - b,
-          sortKey: 'group_result.ces_af_ctrl',
-          minWidth: 80,
-          render: renderExponentialIfSmall,
-        },
-      ]}
+      variantResultColumns={[]}
       variantConsequences={variantConsequences}
       renderVariantAttributes={({ cadd, clinvar_variation_id: clinvarID, rsid }) => [
         { label: 'CADD', content: cadd === null ? '-' : cadd },

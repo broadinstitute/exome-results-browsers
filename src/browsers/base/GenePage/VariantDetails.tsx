@@ -35,14 +35,14 @@ const Columns = styled.div`
 `
 
 const TableWrapper = styled.div`
-width: 100%;
+  width: 100%;
   overflow-x: auto;
 
-  th, td {
+  th,
+  td {
     white-space: nowrap;
   }
 `
-
 
 const CSQ_CODING_HIGH_IMPACT = [
   'transcript_ablation',
@@ -400,22 +400,71 @@ const VariantDetails = ({
   ]
 
   const gp2Columns: VariantColumnConfig[] = [
+    // ---
     {
-      key: 'group_result.wgs_ac_case',
-      heading: 'WGS AC Case',
+      key: 'group_result.wgs_ac_pd',
+      heading: 'WGS AC PD',
       render: (value: number) => value,
     },
     {
-      key: 'group_result.wgs_an_case',
-      heading: 'WGS AN Case',
+      key: 'group_result.wgs_an_pd',
+      heading: 'WGS AN PD',
       render: (value: number) => value,
     },
     {
-      key: 'group_result.wgs_af_case',
-      heading: 'WGS AF Case',
+      key: 'group_result.wgs_af_pd',
+      heading: 'WGS AF PD',
       render: (value) => renderExponentialIfSmall(value),
     },
-
+    // ---
+    {
+      key: 'group_result.wgs_ac_psp',
+      heading: 'WGS AC PSP',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_an_psp',
+      heading: 'WGS AN PSP',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_af_psp',
+      heading: 'WGS AF PSP',
+      render: (value) => renderExponentialIfSmall(value),
+    },
+    // ---
+    {
+      key: 'group_result.wgs_ac_dlb',
+      heading: 'WGS AC DLB',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_an_dlb',
+      heading: 'WGS AN DLB',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_af_dlb',
+      heading: 'WGS AF DLB',
+      render: (value) => renderExponentialIfSmall(value),
+    },
+    // ---
+    {
+      key: 'group_result.wgs_ac_msa',
+      heading: 'WGS AC MSA',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_an_msa',
+      heading: 'WGS AN MSA',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_af_msa',
+      heading: 'WGS AF MSA',
+      render: (value) => renderExponentialIfSmall(value),
+    },
+    // ---
     {
       key: 'group_result.wgs_ac_ctrl',
       heading: 'WGS AC Control',
@@ -431,7 +480,7 @@ const VariantDetails = ({
       heading: 'WGS AF Control',
       render: renderExponentialIfSmall,
     },
-
+    // ---
     {
       key: 'group_result.wgs_ac_other',
       heading: 'WGS AC Other',
@@ -475,8 +524,8 @@ const VariantDetails = ({
           href={`https://gnomad.broadinstitute.org/variant/${variant.variant_id}?dataset=${gnomadDataset}`}
         >
           View in gnomAD
-        </ExternalLink>
-        {' '}for more information on variant consequences and population frequencies
+        </ExternalLink>{' '}
+        for more information on variant consequences and population frequencies
       </div>
       <Columns>
         {datasetId !== 'GP2' && defaultGroupResult && (
@@ -550,7 +599,9 @@ const VariantDetails = ({
 
                 return (
                   <tr key={analysisGroup}>
-                    <th scope="row">{variantAnalysisGroupLabels[analysisGroup] || analysisGroup}</th>
+                    <th scope="row">
+                      {variantAnalysisGroupLabels[analysisGroup] || analysisGroup}
+                    </th>
                     {renderedVariantColumns.map((c) => (
                       <td key={c.key}>
                         {get(rowVariant, c.key) === null
