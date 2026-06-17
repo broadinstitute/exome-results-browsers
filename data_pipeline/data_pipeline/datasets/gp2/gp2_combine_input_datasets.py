@@ -44,6 +44,7 @@ def combine_variant_annotations(ces_annotations_ht, wgs_annotations_ht):
         wgs_annotations_ht.hgvsc,
         wgs_annotations_ht.hgvsp,
         wgs_annotations_ht.cadd,
+        wgs_annotations_ht.revel,
     )
 
     combined_annotations_ht = ces_annotations_ht.union(wgs_annotations_ht)
