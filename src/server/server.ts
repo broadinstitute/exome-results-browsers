@@ -178,14 +178,15 @@ if (isDevelopment) {
     ibdseq: 'IBD',
   };
 
-  const datasetBySubdomain: Record<string, string> = Object.keys(metadata.datasets).reduce(
-    (acc, dataset) => ({
-      ...acc,
-      [dataset.toLowerCase()]: dataset,
-    }),
-    { ...subdomainOverrides }
-  );
-  getDatasetForRequest = (req: express.Request) => datasetBySubdomain[req.subdomains[0]]
+  // const datasetBySubdomain: Record<string, string> = Object.keys(metadata.datasets).reduce(
+  //   (acc, dataset) => ({
+  //     ...acc,
+  //     [dataset.toLowerCase()]: dataset,
+  //   }),
+  //   { ...subdomainOverrides }
+  // );
+  // getDatasetForRequest = (req: express.Request) => datasetBySubdomain[req.subdomains[0]]
+  getDatasetForRequest = () => 'GP2'
 }
 
 // ================================================================================================
