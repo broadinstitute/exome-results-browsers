@@ -239,7 +239,7 @@ def write_data_files(table_path, output_directory, genes=None, iterative=False):
     else:
         print("Writing out files in a single step...")
 
-        expected_datasets = ["ASC", "BipEx", "BipEx2", "Epi25", "GP2", "IBD", "SCHEMA", "SCHEMA2"]
+        expected_datasets = ["ASC", "BipEx", "BipEx2", "Epi25", "GP2", "IBD", "SCHEMA", "SCHEMA2", "ClinVarGRCh38"]
 
         counts_expr = {}
         for name in expected_datasets:
@@ -260,6 +260,7 @@ def write_data_files(table_path, output_directory, genes=None, iterative=False):
                 + ds.variant_counts.IBD
                 + ds.variant_counts.SCHEMA
                 + ds.variant_counts.SCHEMA2
+                + ds.variant_counts.ClinVarGRCh38
             )
         )
 
