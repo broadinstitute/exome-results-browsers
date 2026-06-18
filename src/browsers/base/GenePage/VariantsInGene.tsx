@@ -17,9 +17,13 @@ import { TrackPageSection } from './TrackPage'
 import VariantDetails from './VariantDetails'
 import VariantFilterControls, { FilterState } from './VariantFilterControls'
 import VariantTable, { SortOrder } from './VariantTable'
-import getVariantTableColumns, { VariantRow, VariantTableColumn } from './variantTableColumns'
+import getVariantTableColumns, {
+  VariantRow,
+  getVariantModalColumnConfig,
+} from './variantTableColumns'
 import {
   ConsequenceCategory,
+  DatasetId,
   ReferenceGenome,
   VariantColumnConfig,
   VariantConsequenceCategoryLabels,
@@ -89,6 +93,13 @@ interface VariantsInGeneState {
   visibleVariantWindow: [number, number]
 }
 
+const defaultGP2IncludedColumns = {
+  pd: true,
+  psp: true,
+  dlb: true,
+  msa: true,
+}
+
 class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState> {
   static defaultProps = {
     variantAnalysisGroupLabels: {},
@@ -99,8 +110,6 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
     variantDetailColumns: undefined,
     renderVariantTranscriptConsequences: false,
   }
-
-  tableColumns: VariantTableColumn[]
 
   constructor(props: VariantsInGeneProps) {
     super(props)
@@ -114,11 +123,8 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
       },
       searchText: '',
       custom: (props.variantCustomFilter || {}).defaultFilter,
+      gp2VariantColumnGroups: props.datasetId === 'GP2' ? defaultGP2IncludedColumns : undefined,
     }
-
-    this.tableColumns = getVariantTableColumns(
-      props.variantResultColumns.filter((c) => c.showOnGenePage !== false)
-    )
 
     const renderedVariants = this.sortVariants(
       this.filterVariants(
@@ -128,7 +134,9 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
       {
         sortKey: props.variantSortKey || 'variant_id',
         sortOrder: props.variantSortOrder || 'ascending',
-      }
+      },
+      props.variantResultColumns,
+      defaultFilter
     )
 
     this.state = {
@@ -147,14 +155,16 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
 
   onChangeAnalysisGroup = (analysisGroup: string) => {
     this.setState((state) => {
-      const { variants } = this.props
+      const { variants, variantResultColumns } = this.props
       const { filter, sortKey, sortOrder } = state
       const renderedVariants = this.sortVariants(
         this.filterVariants(selectGroupResult(variants, analysisGroup), filter),
         {
           sortKey,
           sortOrder,
-        }
+        },
+        variantResultColumns,
+        filter
       )
 
       return {
@@ -166,14 +176,16 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
 
   onChangeFilter = (newFilter: FilterState) => {
     this.setState((state) => {
-      const { variants } = this.props
-      const { selectedAnalysisGroup, sortKey, sortOrder } = state
+      const { variants, variantResultColumns } = this.props
+      const { filter, selectedAnalysisGroup, sortKey, sortOrder } = state
       const renderedVariants = this.sortVariants(
         this.filterVariants(selectGroupResult(variants, selectedAnalysisGroup), newFilter),
         {
           sortKey,
           sortOrder,
-        }
+        },
+        variantResultColumns,
+        filter
       )
 
       return {
@@ -193,7 +205,8 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
 
   onSort = (newSortKey: string) => {
     this.setState((state) => {
-      const { renderedVariants, sortKey } = state
+      const { variantResultColumns } = this.props
+      const { renderedVariants, sortKey, filter } = state
 
       let newSortOrder: SortOrder = 'descending'
       if (newSortKey === sortKey) {
@@ -202,10 +215,15 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
 
       // Since the filter hasn't changed, sort the currently rendered variants instead
       // of filtering the input variants.
-      const sortedVariants = this.sortVariants(renderedVariants, {
-        sortKey: newSortKey,
-        sortOrder: newSortOrder,
-      })
+      const sortedVariants = this.sortVariants(
+        renderedVariants,
+        {
+          sortKey: newSortKey,
+          sortOrder: newSortOrder,
+        },
+        variantResultColumns,
+        filter
+      )
 
       return {
         renderedVariants: sortedVariants,
@@ -220,11 +238,17 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
   }, 100)
 
   onClickPosition = (position: number) => {
-    const { renderedVariants } = this.state
-    const sortedVariants = this.sortVariants(renderedVariants, {
-      sortKey: 'variant_id',
-      sortOrder: 'ascending',
-    })
+    const { variantResultColumns } = this.props
+    const { filter, renderedVariants } = this.state
+    const sortedVariants = this.sortVariants(
+      renderedVariants,
+      {
+        sortKey: 'variant_id',
+        sortOrder: 'ascending',
+      },
+      variantResultColumns,
+      filter
+    )
 
     let index
     if (sortedVariants.length === 0 || position < sortedVariants[0].pos) {
@@ -249,7 +273,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
   }
 
   filterVariants(variants: VariantRow[], filter: FilterState) {
-    const { variantCustomFilter } = this.props
+    const { variantCustomFilter, datasetId } = this.props
 
     let filteredVariants = variants
 
@@ -276,6 +300,31 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
       )
     }
 
+    if (datasetId === 'GP2' && filter.gp2VariantColumnGroups) {
+      const activeGroups = Object.keys(filter.gp2VariantColumnGroups).filter(
+        (g) => filter.gp2VariantColumnGroups![g]
+      )
+
+      if (activeGroups.length === 0) {
+        filteredVariants = []
+      } else {
+        filteredVariants = filteredVariants
+          .filter((v) => {
+            return activeGroups.some((group) => v.group_result[`wgs_ac_${group}`] > 0)
+          })
+          .map((v) => {
+            const summedAlleleFreq = activeGroups.reduce((totalFreq, group) => {
+              return totalFreq + (v.group_result[`wgs_af_${group}`] || 0)
+            }, 0)
+
+            return {
+              ...v,
+              allele_freq: summedAlleleFreq,
+            }
+          })
+      }
+    }
+
     if (variantCustomFilter) {
       filteredVariants = variantCustomFilter.applyFilter(filteredVariants, filter.custom)
     }
@@ -285,9 +334,16 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
 
   sortVariants = (
     variants: VariantRow[],
-    { sortKey, sortOrder }: { sortKey: string; sortOrder: SortOrder }
+    { sortKey, sortOrder }: { sortKey: string; sortOrder: SortOrder },
+    variantResultColumns: VariantColumnConfig[],
+    currentFilter: FilterState
   ): VariantRow[] => {
-    const column = this.tableColumns.find((c) => c.key === sortKey)
+    const tableColumns = getVariantTableColumns({
+      variantResultColumns: variantResultColumns,
+      filter: currentFilter,
+    })
+
+    const column = tableColumns.find((c) => c.key === sortKey)
 
     if (!column) {
       return variants
@@ -341,47 +397,24 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
 
     const { datasetId } = this.state
 
-    // TK: turn this into a filter in state that can be selected in GP2 dataset
-    // its like a secondary filter only for GP2
-    const selectedGroups: Record<string, boolean> = {
-      pd: true,
-      psp: true,
-      dlb: false,
-      msa: false
-    };
-    const activeGroups = Object.keys(selectedGroups).filter(group => selectedGroups[group]);
+    const cases =
+      datasetId === 'GP2'
+        ? renderedVariants
+        : renderedVariants
+            .filter((v) => v.group_result.ac_case > 0)
+            .map((v) => ({ ...v, allele_freq: v.group_result.af_case }))
 
-    const cases = datasetId === 'GP2'
-      ? renderedVariants
-        .filter((v) => {
-          return activeGroups.some(group => {
-            const acKey = `wgs_ac_${group}`;
-            return v.group_result[acKey] > 0;
-          });
-        })
-        .map((v) => {
-          const summedAlleleFreq = activeGroups.reduce((totalFreq, group) => {
-            const afKey = `wgs_af_${group}`;
-            return totalFreq + (v.group_result[afKey] || 0);
-          }, 0);
+    const controls =
+      datasetId === 'GP2'
+        ? renderedVariants
+        : renderedVariants
+            .filter((v) => v.group_result.ac_ctrl > 0)
+            .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
 
-          return {
-            ...v,
-            allele_freq: summedAlleleFreq
-          };
-        })
-      : renderedVariants
-        .filter((v) => v.group_result.ac_case > 0)
-        .map((v) => ({ ...v, allele_freq: v.group_result.af_case }))
-
-
-    const controls = datasetId === 'GP2'
-      ? renderedVariants
-        .filter((v) => v.group_result.wgs_ac_ctrl > 0)
-        .map((v) => ({ ...v, allele_freq: v.group_result.wgs_af_ctrl }))
-      : renderedVariants
-        .filter((v) => v.group_result.ac_ctrl > 0)
-        .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
+    const currentTableColumns = getVariantTableColumns({
+      variantResultColumns,
+      filter,
+    })
 
     return (
       <>
@@ -401,12 +434,11 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
             variants={renderedVariants
               .slice(visibleVariantWindow[0], visibleVariantWindow[1] + 1)
               .map((v) => {
-                return (
-                  {
-                    ...v,
-                    allele_freq: v.group_result.af,
-                    isHighlighted: v.variant_id === hoveredVariant,
-                  })
+                return {
+                  ...v,
+                  allele_freq: v.group_result.af,
+                  isHighlighted: v.variant_id === hoveredVariant,
+                }
               })}
             variantColor={variantColor}
           />
@@ -414,20 +446,21 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
         <PositionAxisTrack />
         <TrackPageSection style={{ fontSize: '14px', marginTop: '1em' }}>
           <VariantFilterControls
+            datasetId={datasetId as DatasetId}
             consequenceCategoryLabels={variantConsequenceCategoryLabels}
             filter={filter}
             onChangeFilter={this.onChangeFilter}
             customFilterComponent={(variantCustomFilter || {}).component}
             geneId={gene.gene_id}
             renderedVariants={renderedVariants}
-            variantTableColumns={this.tableColumns}
+            variantTableColumns={currentTableColumns}
             variantAnalysisGroupLabels={variantAnalysisGroupLabels}
             variantAnalysisGroupOptions={variantAnalysisGroupOptions}
             selectedAnalysisGroup={selectedAnalysisGroup}
             onChangeAnalysisGroup={this.onChangeAnalysisGroup}
           />
           <VariantTable
-            columns={this.tableColumns}
+            columns={currentTableColumns}
             highlightText={filter.searchText}
             onClickVariant={this.onClickVariant}
             onHoverVariant={this.onHoverVariant}
@@ -460,6 +493,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
               additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
               variantDetailColumns={variantDetailColumns}
               renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
+              filter={filter}
             />
           </Modal>
         )}
@@ -536,8 +570,8 @@ const addOverallAFForGP2 = (args: { groupResult: any }) => {
   let overallAF = null
 
   if (
-    ([wgsPdAF, wgsPspAF, wgsDlbAF, wgsMsaAF].every(item => item === null))
-    || wgsControlAF === null
+    [wgsPdAF, wgsPspAF, wgsDlbAF, wgsMsaAF].every((item) => item === null) ||
+    wgsControlAF === null
   ) {
     overallAF = null
   } else if (wgsPdAN + wgsPspAN + wgsDlbAN + wgsMsaAN + wgsControlAN === 0) {

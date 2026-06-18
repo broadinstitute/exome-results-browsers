@@ -6,6 +6,7 @@ import styled from 'styled-components'
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { TextButton } from '@gnomad/ui'
 import { ConsequenceCategory, VariantColumnConfig } from '../Browser'
+import { FilterState } from './VariantFilterControls'
 
 const VariantIdButton = styled(TextButton)`
   overflow: hidden;
@@ -506,15 +507,37 @@ const gp2StatColumns: VariantTableColumn[] = [
   },
 ]
 
-const getVariantTableColumns = (
+type GetVariantTableColumnsProps = {
   variantResultColumns: VariantColumnConfig[]
-): VariantTableColumn[] => {
+  filter: FilterState
+}
+
+const getVariantTableColumns = ({
+  variantResultColumns,
+  filter,
+}: GetVariantTableColumnsProps): VariantTableColumn[] => {
   const { datasetId } = window.datasetConfig
 
   const datasetColumns = [...variantDescriptionColumns]
 
   if (datasetId === 'GP2') {
-    datasetColumns.push(...gp2StatColumns)
+    let renderedGP2Columns = gp2StatColumns
+
+    const allGP2CaseColumnGroups = Object.keys(filter.gp2VariantColumnGroups!)
+    const activeGP2CaseColumnGroups = allGP2CaseColumnGroups.filter(
+      (g) => filter.gp2VariantColumnGroups![g]
+    )
+    renderedGP2Columns = gp2StatColumns.filter((col) => {
+      const suffix = col.key.split('_').pop() as string
+
+      if (allGP2CaseColumnGroups.includes(suffix)) {
+        return activeGP2CaseColumnGroups.includes(suffix)
+      }
+
+      return true
+    })
+
+    datasetColumns.push(...renderedGP2Columns)
   } else {
     datasetColumns.push(...statColumns)
   }
