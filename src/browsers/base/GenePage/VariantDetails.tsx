@@ -8,6 +8,7 @@ import { BaseTable, ExternalLink, ListItem } from '@gnomad/ui'
 import { VariantAttribute, VariantAttributeList } from './VariantAttributes'
 import { renderExponentialIfSmall, VariantRow } from './variantTableColumns'
 import { ReferenceGenome, VariantColumnConfig } from '../Browser'
+import { FilterState } from './VariantFilterControls'
 
 const VariantContainer = styled.div`
   display: flex;
@@ -355,6 +356,7 @@ interface VariantDetailsProps {
   additionalVariantDetailSummaryColumns: VariantColumnConfig[] | undefined
   variantDetailColumns: VariantColumnConfig[] | undefined
   renderVariantTranscriptConsequences: boolean
+  filter: FilterState
 }
 
 const VariantDetails = ({
@@ -368,6 +370,7 @@ const VariantDetails = ({
   additionalVariantDetailSummaryColumns,
   variantDetailColumns,
   renderVariantTranscriptConsequences,
+  filter,
 }: VariantDetailsProps) => {
   const { datasetId } = window.datasetConfig
 
@@ -498,7 +501,21 @@ const VariantDetails = ({
     },
   ]
 
-  const datasetColumns = datasetId === 'GP2' ? gp2Columns : standardColumns
+  const allGP2CaseColumnGroups = Object.keys(filter.gp2VariantColumnGroups!)
+  const activeGP2CaseColumnGroups = allGP2CaseColumnGroups.filter(
+    (g) => filter.gp2VariantColumnGroups![g]
+  )
+  const renderedGP2Columns = gp2Columns.filter((col) => {
+    const suffix = col.key.split('_').pop() as string
+
+    if (allGP2CaseColumnGroups.includes(suffix)) {
+      return activeGP2CaseColumnGroups.includes(suffix)
+    }
+
+    return true
+  })
+
+  const datasetColumns = datasetId === 'GP2' ? renderedGP2Columns : standardColumns
 
   const renderedVariantColumns = variantDetailColumns || [
     ...datasetColumns,
