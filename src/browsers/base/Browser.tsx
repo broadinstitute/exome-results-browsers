@@ -137,8 +137,8 @@ export type GeneResultColumnConfig = {
   heading?: string
   minWidth?: number
   tooltip?: string
-  render?: (record: any) => React.ReactNode
-  renderForCSV?: (record: any) => string | number
+  render?: (record: any, row?: any) => React.ReactNode
+  renderForCSV?: (record: any, row?: any) => string | number
 }
 
 export type GeneResultTabConfig = {
