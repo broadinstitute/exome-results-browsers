@@ -24,7 +24,7 @@ export type InputData = number | string | null | undefined
 
 export const renderOddsRatio = ({
   value,
-  precision = 3,
+  precision = 2,
 }: {
   value: InputData
   precision?: number
@@ -42,7 +42,7 @@ export const renderOddsRatio = ({
   if (Number.isNaN(floatValue)) {
     return value
   }
-  return floatValue.toPrecision(precision)
+  return floatValue.toFixed(precision)
 }
 
 export const renderStringOrFloatPvalueAsScientific = ({
