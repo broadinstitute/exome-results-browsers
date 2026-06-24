@@ -2,26 +2,42 @@
 
 ## Setting up a development environment
 
-- Install [Node.js](https://nodejs.org/) and [Yarn (v1)](https://classic.yarnpkg.com/).
+- Install [Node.js](https://nodejs.org/), [Yarn (v1)](https://classic.yarnpkg.com/), and [Python](https://www.python.org).
 
-- Install dependencies.
+  - Confirm your using the versions specified in the `.tool_versions` file. For convenience, consider using a tool such as `asdf` or `mise` to manage this
 
-  ```
+- Install javascript dependencies.
+
+  ```bash
   yarn
   ```
 
 - Install [pre-commit](https://pre-commit.com/) and configure hooks.
 
-  ```
+  ```bash
   pre-commit install
   ```
 
-- For data pipeline development, install [Python](https://www.python.org/), dependencies, and development tools.
+- Install python dependencies and development tools.
 
-  ```
-  pip install -r data_pipeline/requirements.txt
-  pip install -r data_pipeline/requirements-dev.txt
-  ```
+  - (First time) Create a virtual env
+
+    ```bash
+    python -m venv
+    ```
+
+  - Activate the virtual environment
+
+    ```bash
+    source .venv/bin/activate
+    ```
+
+  - Install dependencies
+
+    ```bash
+    pip install -r data_pipeline/requirements.txt
+    pip install -r data_pipeline/requirements-dev.txt
+    ```
 
 ## Organization
 
@@ -39,67 +55,15 @@ and browser interface based on the request hostname.
     - geneResultComponents.js - Browser specific components for gene-level results
   - server - API code
 
-## Data pipeline
-
-See [data_pipeline/README.md](./data_pipeline/README.md) for instructions on running the
-data pipeline.
 
 ## Development
 
-### Running pipelines locally
+### Data
 
-Local files are written to
+See [data_pipeline/README.md](./data_pipeline/README.md) for instructions on running the
+data pipeline locally, and for production.
 
-`./{local_output_root}/{output_last_updated}/<dataset_name>/...`
-
-Where
-
-- `local_output_root`
-- `output_last_updated`
-
-are defined in `config.ini`
-
-**Generate local variant and gene result tables for the dataset(s) you want to test**
-
-```
-./data_pipeline/run_pipeline.py \
-  --environment local \
-  prepare_datasets \
-  --datasets Epi25 GP2 \
-  --output-local \
-  --test-gene PCSK9
-```
-
-
-**Combine the dataset(s)**
-
-```
-./data_pipeline/run_pipeline.py \
-  --environment local \
-  combine_datasets \
-  --datasets Epi25 GP2 \
-  --output-local
-```
-
-**Write result files**
-
-```
-./data_pipeline/write_results_files.py \
-  <COMBINED_HT_PATH> \
-  <OUTPUT_PATH> \
-  --genes <ENSG_ID_TO_WRITE>
-```
-
-e.g.
-
-```
-./data_pipeline/write_results_files.py \
-  ./data/output-data/combined/2025-05-12/combined.ht \
-  ./data/2025-05-12 \
-  --genes ENSG00000169174 ENSG00000167207 ENSG00000164062 ENSG00000187796 ENSG00000179526 ENSG00000149927
-```
-
-Use these file(s) with a local instance of the app, describe below
+Use these files produced by the pipeline to serve data from a local backend, to a local frontend, as described below
 
 ### Running the app locally
 
@@ -116,61 +80,19 @@ RESULTS_DATA_DIRECTORY=/path/to/results/data ./start.sh $BROWSER_NAME
 For example:
 
 ```
-RESULTS_DATA_DIRECTORY=/data/2025-05-12 ./start.sh Epi25
+RESULTS_DATA_DIRECTORY=data/2026-06-17_test-gp2-pcsk9-gba1-il17ra ./start.sh GP2
 ```
 
 This runs the server with nodemon and frontend with webpack-dev-server, so that each is
 rebuilt/reloaded when a source file is changed. `RESULTS_DATA_DIRECTORY` should be the path
 to a directory where the data pipeline results files were written.
 
-For frontend development, instead of running a server locally, API requests can be proxied
+For frontend only development, instead of running a server locally, API requests can be proxied
 to the production environment.
 
 ```
 ./start.sh $BROWSER_NAME --proxy-api
 ```
-
-### Docker
-
-The Docker build copies a `build.env` file and reads environment variables from it. Currently,
-the only values in `build.env` are Google Analytics tracking IDs for the production deployment.
-Thus, an empty file will work for development.
-
-```
-touch build.env
-```
-
-Build the Docker image.
-
-```
-docker build -t exome-results-browsers .
-```
-
-Run the Docker image. A directory containing results files output from the data pipeline must
-be attached as a volume and the `RESULTS_DATA_DIRECTORY` environment variable set to that
-volume's mount point.
-
-```
-docker run --rm -ti --init \
-   -v /path/to/results/data:/var/lib/results \
-   -e RESULTS_DATA_DIRECTORY=/var/lib/results \
-   -p 8000:8000 \
-   exome-results-browsers
-```
-
-The Docker image is configured to run the application in production mode, where the current
-dataset/browser is determined by the subdomain of the requested URL. One way to make this
-work locally is adding hostnames to `/etc/hosts`:
-
-```
-127.0.0.1 asc.dev.localhost
-127.0.0.1 bipex.dev.localhost
-127.0.0.1 epi25.dev.localhost
-127.0.0.1 schema.dev.localhost
-```
-
-With those lines added to `/etc/hosts`, the browsers can be accessed at
-`http://asc.dev.localhost:8000`, `http://bipex.dev.localhost:8000`, etc.
 
 ## Adding a new browser
 
