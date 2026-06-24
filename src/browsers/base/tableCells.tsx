@@ -80,8 +80,8 @@ export const renderFloatAsScientific = ({
   decimalPlaces = 3,
 }: {
   value: InputData
-  zeroValue: string
-  decimalPlaces: number
+  zeroValue?: string
+  decimalPlaces?: number
 }) => {
   if (value === null || value === undefined) {
     return '-'
