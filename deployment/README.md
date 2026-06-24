@@ -4,153 +4,11 @@
 
 See [data_pipeline/README.md](../data_pipeline/README.md) for instructions on running the data pipeline.
 
-## Results files
+## Writing results files to a persistent disk
 
-For the production deployment, results files created by the last step of the data pipeline must be stored
-on a Persistent Disk.
+See [data_pipeline/WRITE_RESULTS_FILES.md](../data_pipeline/WRITE_RESULTS_FILES.md) for using the `combined.ht` produced by the data pipeline to write results files to a persistent disk in GCS.
 
-A persistent disk can only be [attached to multiple instances](https://cloud.google.com/compute/docs/disks/add-persistent-disk#use_multi_instances)
-if it is attached to all those instances in read-only mode. Thus, updating browser data without downtime
-requires creating a new disk since any existing disk with current data is attached to the GKE node serving
-the browsers and so cannot be attached to another instance in read-write mode.
-
-1. Create a temporary GCE instance.
-
-   Debian 11 is used here to have Python 3.9
-
-   ```
-   gcloud --quiet compute instances create erb-temp-instance \
-      --machine-type=n1-standard-16 \
-      --image-family projects/debian-cloud/global/images/family/debian-11 \
-      --boot-disk-size=200GB \
-      --service-account=erb-data-pipeline@exac-gnomad.iam.gserviceaccount.com
-   ```
-
-2. Create a persistent disk and attach it to the instance.
-
-   Change the `LABEL` variable if this is not for prod, e.g. `schema2-demo`
-
-   ```
-   LABEL="prod"
-   TIMESTAMP=$(date '+%Y-%m-%d--%H-%M')
-   DISK_NAME="erb-data-$LABEL-$TIMESTAMP"
-
-   gcloud compute disks create $DISK_NAME \
-     --size=200GB \
-     --type=pd-standard
-
-   gcloud compute instances attach-disk erb-temp-instance \
-     --disk=$DISK_NAME \
-     --device-name=erb-data
-   ```
-
-3. Upload script to instance.
-
-   ```
-   gcloud --quiet compute scp \
-     ./data_pipeline/write_results_files.py \
-     erb-temp-instance:/tmp
-   ```
-
-4. SSH into the instance and mount and format the disk.
-
-   SSH in
-
-   ```
-   gcloud compute ssh erb-temp-instance
-   ```
-
-   Start interactive root session
-
-   ```
-   sudo su -
-   ```
-
-
-   Format the disk, mount the disk
-   ```
-   mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/disk/by-id/google-erb-data
-
-   mkdir -p /mnt/disks/erb-data
-   mount -o discard,defaults /dev/disk/by-id/google-erb-data /mnt/disks/erb-data
-   ```
-
-5. Install Hail.
-
-   Install Java 11
-
-   ```
-   apt-get update && \
-   apt-get install -y \
-     openjdk-11-jre-headless \
-     g++ \
-     python3.9 \
-     python3-pip \
-     libopenblas-base \
-     liblapack3
-   ```
-
-   Install Hail and tqdm. Versions should be kept in sync with requirements.txt
-
-   ```
-   python3.9 -m pip install hail==0.2.126 tqdm==4.66.5
-   ```
-
-6. Copy results data from GCS.
-
-   ```
-   gsutil cp -r gs://exome-results-browsers/output-data/combined/<YYYY-MM-DD_DATE>/combined.ht /tmp
-   ```
-
-7. Write results files to persistent disk.
-
-   ```
-   /tmp/write_results_files.py /tmp/combined.ht /mnt/disks/erb-data/results --environment gce
-   ```
-
-8. Unmount disk.
-
-   ```
-   umount /mnt/disks/erb-data
-   ```
-
-9. Disconnect from the instance, detach the disk, and delete the instance.
-
-   Exit `su` shell (`#`)
-
-   ```
-   exit
-   ```
-
-   Exit shell (`$`)
-
-   ```
-   exit
-   ```
-
-   Detach the disk
-
-   ```
-   gcloud compute instances detach-disk erb-temp-instance --disk=$DISK_NAME
-   ```
-
-   Delete the temp instance
-
-   ```
-   gcloud --quiet compute instances delete erb-temp-instance
-   ```
-
-To use the new disk in a deployed instance of the browsers, modify the respective manifest in the [gnomAD deployments](https://github.com/broadinstitute/gnomad-deployments) repo, then run `kubectl apply -k <DEPLOYMENT>/`
-
-E.g. to update the `demo` deployment's disk to use a newly created one:
-
-- Navigate to `gnomad-deployments/exome-results-browsers`
-- Change the `pdName` value in `.../exome-results-browsers/demo/kustomization.yaml`
-- VPN into the broad, point your `gcloud` and `kubernetes` at gnomAD (where we deploy the ERBs)
-- Run `kubectl apply -k demo/`
-
-
-## Docker image
+## Frontend/Backend Docker image
 
 The Docker build copies a `build.env` file and reads environment variables from it. Create the `build.env`
 file and fill in values for variables.
@@ -171,11 +29,13 @@ Note that the `DEMO_PASSWORD` should be a string with no `""`s, if quotes are in
 
 **Build the Docker image. The build script tags the image with the current git revision.**
 
+Build the docker image with a default tag of the git revision
+
 ```
 ./deployment/build-docker-image.sh
 ```
 
-or
+Use the flags for convenience to give the image a custom tag, and push it to the artifact registry
 
 ```
 ./deployment/build-docker-image.sh --no-cache --tag <TAG_NAME> --push
@@ -189,32 +49,46 @@ e.g.
 
 ## Deployments
 
-This repository contains a base [kubernetes deployment](./manifests/), that is appropriate for extending to your needs using [kustomize](https://kustomize.io/). You can deploy the base configuration as-is, with:
+The [gnomad-deployments](https://github.com/broadinstitute/gnomad-deployments) repository contains a base kubernetes deployment, and additional kustomizations on top of that.
+
+To manage deployments, run the following commands from the `gnomad-deployments` repository. You must be VPN'd into the broad to apply changes.
+
+Deployments are primarily updated by updating the docker image for any change in the app running in deployment, or by updating the persistent disk to update the data that serves the deployent.
+
+### Updating/Creating a demo deployment
+
+Demo deployments for exome results browsers are workload on the `exac-gnomad` kubernetes cluster that gnomAD exists on. Creating new demo deployments, or updating existing ones is done by creating or updating kustomization files with new resources, and applying the updates.
+
+If creating a new demo, create a new directory in the `exome-results-browsers` dir. Use the existing `demo` directory as a template. Since production manages API responses by dataset using subdomains, demos currently require manually setting this dataset in the API, and creating a seperate demo deployment per running demo.
+
+See: https://github.com/broadinstitute/exome-results-browsers/pull/155 for sample app changes
+See: https://github.com/broadinstitute/gnomad-deployments/pull/32 for the corresponding deployment PR
+
+In this new demo directory, or in an existing one, update the docker image to include new app changes, and persistent disk for data changes, in the `kustomization.yaml` file, as needed. See [this commit](https://github.com/broadinstitute/gnomad-deployments/pull/32/changes/205cd6da7820fb22169cd72636298f64ea6ae5cd) for a recent example.
+
+Apply the changes with
 
 ```bash
-kubectl apply -k deployment/manifests
+kubectl apply -k exome-results-browsers/<DEMO_DIR>
 ```
 
-If you would like to extend your deployment with things like an Ingress, additional environment variables, different docker image tags, etc, you can create a new kustomization in [gnomad-deployments](https://github.com/broadinstitute/gnomad-deployments/blob/main/exome-results-browsers), or a new local directory on your laptop if you don't want to check the kustomization into source control.
-
-### Production Deployment
-
-## Building the Docker image
-
-For production, docker images are automatically built after a push to the main branch. After a successful image build, the cloudbuild runs a task to update update the prod deployment manifest in the [gnomad-deployments](https://github.com/broadinstitute/gnomad-deployments) repository.
-
-## Updating the production kustomization
-
-Updates to the production deployment should happen automatically via Cloudbuild, however, if you need to manually update the production deployment, including its ingress and managed certificate, that can be done in [gnomad-deployments](https://github.com/broadinstitute/gnomad-deployments/blob/main/exome-results-browsers/prod). To update the production deployment, update the image tag or make other changes in the [prod kustomization](https://github.com/broadinstitute/gnomad-deployments/blob/main/exome-results-browsers/prod/kustomization.yaml) and view the changes:
+e.g.
 
 ```bash
-# view/inspect the updated deployment
-cd gnomad-deployments/exome-results-browsers/prod
-kustomize build .
-
+kubectl apply -k exome-results-browsers/bipex2-demo
 ```
 
-if all looks as expected, commit the changes back to the main branch of the deployments repository, and our deployment tool will apply them.
+### Updating the production deployment
+
+The production exome results browser deployment is a workload on the `exac-gnomad` kubernetes cluster that gnomAD exists on. Updating production is done by updating kustomization files with new resources, and applying the updates.
+
+Updates to production happen manually via an updating of the `base` dir's `deployment.yaml`'s persistent disk and the `prod` dirs `kustomization.yaml`. See [this commit](https://github.com/broadinstitute/gnomad-deployments/pull/34/changes/a45c32c51b847f934da979e3651dcec8de08a305) for a recent example of updating production's docker image, and persistent disk.
+
+Apply the changes with
+
+```bash
+kubectl apply -k exome-results-browsers/prod
+```
 
 ## GKE resources
 
