@@ -91,6 +91,25 @@ const BipExBrowser = () => (
         minWidth: 85,
         render: (value) => renderOddsRatio({ value: value }),
       },
+      {
+        key: 'ptv_mis_odds_ratio_ci',
+        heading: 'PTV+MIS Fisher odds ratio CI',
+        tooltip: 'The 95th percentile confidence ratio lower and upper bounds, in the format: (lower, upper)',
+        minWidth: 110,
+        render: (_value, row) => {
+          const oddsRatio = renderOddsRatio({ value: row.ptv_mis_odds_ratio })
+          const shouldRenderOddsRatioCI = !['-', '∞', '0'].includes(oddsRatio.toString())
+          if (!shouldRenderOddsRatioCI) {
+            return '-'
+          }
+
+          return (
+            <span>
+              {`(${renderOddsRatio({ value: row.ptv_mis_odds_ratio_95_ci_lower_bound })} - ${renderOddsRatio({ value: row.ptv_mis_odds_ratio_95_ci_upper_bound })})`}
+            </span>
+          )
+        },
+      },
       // ---
       {
         key: 'ptv_case_carrier',
@@ -115,6 +134,25 @@ const BipExBrowser = () => (
         heading: 'PTV Fisher odds ratio',
         minWidth: 85,
         render: (value) => renderOddsRatio({ value: value }),
+      },
+      {
+        key: 'ptv_odds_ratio_ci',
+        heading: 'PTV Fisher odds ratio CI',
+        minWidth: 110,
+        tooltip: 'The 95th percentile confidence ratio lower and upper bounds, in the format: (lower, upper)',
+        render: (_value, row) => {
+          const oddsRatio = renderOddsRatio({ value: row.ptv_odds_ratio })
+          const shouldRenderOddsRatioCI = !['-', '∞', '0'].includes(oddsRatio.toString())
+          if (!shouldRenderOddsRatioCI) {
+            return '-'
+          }
+
+          return (
+            <span>
+              {`(${renderOddsRatio({ value: row.ptv_odds_ratio_95_ci_lower_bound })} - ${renderOddsRatio({ value: row.ptv_odds_ratio_95_ci_upper_bound })})`}
+            </span>
+          )
+        }
       },
       // ---
       {
@@ -141,6 +179,26 @@ const BipExBrowser = () => (
         minWidth: 85,
         render: (value) => renderOddsRatio({ value: value }),
       },
+      {
+        key: 'mis_odds_ratio_ci',
+        heading: 'MIS Fisher odds ratio CI',
+        minWidth: 110,
+        tooltip: 'The 95th percentile confidence ratio lower and upper bounds, in the format: (lower, upper)',
+        render: (_value, row) => {
+          const oddsRatio = renderOddsRatio({ value: row.mis_odds_ratio })
+          const shouldRenderOddsRatioCI = !['-', '∞', '0'].includes(oddsRatio.toString())
+          if (!shouldRenderOddsRatioCI) {
+            return '-'
+          }
+
+          return (
+            <span>
+              {`(${renderOddsRatio({ value: row.mis_odds_ratio_95_ci_lower_bound })} - ${renderOddsRatio({ value: row.mis_odds_ratio_95_ci_upper_bound })})`}
+            </span>
+          )
+
+        }
+      },
       // ---
       {
         key: 'syn_case_carrier',
@@ -166,31 +224,51 @@ const BipExBrowser = () => (
         minWidth: 85,
         render: (value) => renderOddsRatio({ value: value }),
       },
+      {
+        key: 'syn_odds_ratio_ci',
+        heading: 'SYN Fisher odds ratio CI (Lower bound - upper bound)',
+        minWidth: 110,
+        tooltip: 'The 95th percentile confidence ratio lower and upper bounds, in the format: (lower bound, upper bound)',
+        render: (_value, row) => {
+          const oddsRatio = renderOddsRatio({ value: row.syn_odds_ratio })
+          const shouldRenderOddsRatioCI = !['-', '∞', '0'].includes(oddsRatio.toString())
+          if (!shouldRenderOddsRatioCI) {
+            return '-'
+          }
+
+          return (
+            <span>
+              {`(${renderOddsRatio({ value: row.syn_odds_ratio_95_ci_lower_bound })} - ${renderOddsRatio({ value: row.syn_odds_ratio_95_ci_upper_bound })})`}
+            </span>
+          )
+        },
+      },
     ]}
     variantAnalysisGroupOptions={bipex2AnalysisGroups}
     defaultVariantAnalysisGroup={bipex2DefaultAnalysisGroup}
-    variantResultColumns={[
-      {
-        key: 'group_result.mac',
-        heading: 'MAC',
-        minWidth: 65,
-      },
-      {
-        key: 'group_result.missense_passing',
-        heading: 'Missense passing',
-        minWidth: 85,
-        render: (value) => (value ? 'yes' : ''),
-        renderForCSV: (value) => (value ? 'yes' : ''),
-      },
-      {
-        key: 'group_result.in_analysis',
-        heading: 'In analysis',
-        minWidth: 85,
-        render: (value) => (value ? 'yes' : ''),
-        renderForCSV: (value) => (value ? 'yes' : ''),
-        showOnDetails: false,
-      },
-    ]}
+    variantResultColumns={
+      [
+        {
+          key: 'group_result.mac',
+          heading: 'MAC',
+          minWidth: 65,
+        },
+        {
+          key: 'group_result.missense_passing',
+          heading: 'Missense passing',
+          minWidth: 85,
+          render: (value) => (value ? 'yes' : ''),
+          renderForCSV: (value) => (value ? 'yes' : ''),
+        },
+        {
+          key: 'group_result.in_analysis',
+          heading: 'In analysis',
+          minWidth: 85,
+          render: (value) => (value ? 'yes' : ''),
+          renderForCSV: (value) => (value ? 'yes' : ''),
+          showOnDetails: false,
+        },
+      ]}
     variantCustomFilter={{
       component: BipExVariantFilter,
       defaultFilter: {
