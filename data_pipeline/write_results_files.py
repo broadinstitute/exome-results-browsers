@@ -7,6 +7,8 @@ from json.encoder import encode_basestring_ascii, _make_iterencode
 import multiprocessing
 import os
 import sys
+import glob
+import shutil
 
 import hail as hl
 from tqdm import tqdm
@@ -107,36 +109,40 @@ def write_gene_summary_file(output_directory, ds):
             output_file.write(json.dumps({"results": gene_results}, cls=ResultEncoder))
 
 
-def write_json_files(output_directory, tsv_filename, n_rows):
+def write_json_files(output_directory, tsv_dirname, n_rows):
     csv.field_size_limit(sys.maxsize)
     os.makedirs(f"{output_directory}/genes", exist_ok=True)
 
+    def iter_part_files(directory):
+        for part_file in glob.glob(f"{directory}/part-*"):
+            with open(part_file, encoding="utf-8") as data_file:
+                reader = csv.reader(data_file, delimiter="\t")
+                for row in reader:
+                    yield row
+
     with multiprocessing.get_context("spawn").Pool() as pool:
-        with open(f"{output_directory}/{tsv_filename}", encoding="utf-8") as data_file:
+        row_generator = iter_part_files(f"{output_directory}/{tsv_dirname}")
+        for gene_id, gene_grch37, gene_grch38, all_variants in tqdm(pool.imap(split_data, row_generator), total=n_rows):
+            num = int(gene_id.lstrip("ENSGR"))
+            gene_dir = f"{output_directory}/genes/{str(num % 1000).zfill(3)}"
+            os.makedirs(gene_dir, exist_ok=True)
 
-            reader = csv.reader(data_file, delimiter="\t")
-            for gene_id, gene_grch37, gene_grch38, all_variants in tqdm(pool.imap(split_data, reader), total=n_rows):
-                num = int(gene_id.lstrip("ENSGR"))
-                gene_dir = f"{output_directory}/genes/{str(num % 1000).zfill(3)}"
-                os.makedirs(gene_dir, exist_ok=True)
+            if gene_grch37:
+                with open(f"{gene_dir}/{gene_id}_GRCh37.json", mode="w", encoding="utf-8") as out_file:
+                    out_file.write(gene_grch37)
 
-                if gene_grch37:
-                    with open(f"{gene_dir}/{gene_id}_GRCh37.json", mode="w", encoding="utf-8") as out_file:
-                        out_file.write(gene_grch37)
+            if gene_grch38:
+                with open(f"{gene_dir}/{gene_id}_GRCh38.json", mode="w", encoding="utf-8") as out_file:
+                    out_file.write(gene_grch38)
 
-                if gene_grch38:
-                    with open(f"{gene_dir}/{gene_id}_GRCh38.json", mode="w", encoding="utf-8") as out_file:
-                        out_file.write(gene_grch38)
+            for dataset, dataset_variants in all_variants.items():
+                if dataset_variants:
+                    with open(
+                        f"{gene_dir}/{gene_id}_{dataset.lower()}_variants.json", mode="w", encoding="utf-8"
+                    ) as out_file:
+                        out_file.write(dataset_variants)
 
-                for dataset, dataset_variants in all_variants.items():
-                    if dataset_variants:
-                        with open(
-                            f"{gene_dir}/{gene_id}_{dataset.lower()}_variants.json", mode="w", encoding="utf-8"
-                        ) as out_file:
-                            out_file.write(dataset_variants)
-
-    os.remove(f"{output_directory}/{tsv_filename}")
-    os.remove(f"{output_directory}/.{tsv_filename}.crc")
+    shutil.rmtree(f"{output_directory}/{tsv_dirname}")
 
 
 def process_variants_iteratively(output_directory, ds):
@@ -221,18 +227,13 @@ def write_data_files(table_path, output_directory, genes=None, iterative=False):
     if genes:
         ds = ds.filter(hl.set(genes).contains(ds.gene_id))
 
-        temp_file_name = "temp.tsv"
+        temp_dir_name = "temp_parts"
         n_rows = ds.count()
-        ds.select(data=hl.json(ds.row)).export(f"{output_directory}/{temp_file_name}", header=False)
+        ds.select(data=hl.json(ds.row)).export(
+            f"{output_directory}/{temp_dir_name}", header=False, parallel="separate_header"
+        )
 
-        write_json_files(output_directory, temp_file_name, n_rows)
-
-        return
-
-    elif iterative:
-        print("Writing out files iteratively...")
-
-        process_variants_iteratively(output_directory, ds)
+        write_json_files(output_directory, temp_dir_name, n_rows)
 
         return
 
@@ -276,14 +277,16 @@ def write_data_files(table_path, output_directory, genes=None, iterative=False):
         ds_filtered = ds.filter(ds.total_variants <= VARIANT_THRESHOLD)
         ds_filtered = ds_filtered.drop("variant_counts", "total_variants")
 
-        temp_file_name = "temp.tsv"
+        temp_dir_name = "temp_parts"
         n_rows = ds_filtered.count()
 
         ds_filtered = ds_filtered.repartition(500)
 
-        ds_filtered.select(data=hl.json(ds_filtered.row)).export(f"{output_directory}/{temp_file_name}", header=False)
+        ds_filtered.select(data=hl.json(ds_filtered.row)).export(
+            f"{output_directory}/{temp_dir_name}", header=False, parallel="separate_header"
+        )
 
-        write_json_files(output_directory, temp_file_name, n_rows)
+        write_json_files(output_directory, temp_dir_name, n_rows)
 
         return
 
