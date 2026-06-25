@@ -153,7 +153,7 @@ const GP2Browser = () => {
         { label: 'REVEL', content: revel === null ? '–' : revel },
         {
           label: (
-            <TooltipAnchor tooltip="ClinVar data last updated September 18, 2025">
+            <TooltipAnchor tooltip="ClinVar data last updated June 6, 2026">
               <TooltipHint>ClinVar ID</TooltipHint>
             </TooltipAnchor>
           ),
