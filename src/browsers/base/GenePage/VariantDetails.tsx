@@ -499,6 +499,23 @@ const VariantDetails = ({
       heading: 'WGS AF Other',
       render: renderExponentialIfSmall,
     },
+    // ---
+    {
+      key: 'group_result.ces_ac_pd',
+      heading: 'CES AC PD',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.ces_an_pd',
+      heading: 'CES AN PD',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.ces_af_pd',
+      heading: 'CES AF PD',
+      render: (value) => renderExponentialIfSmall(value),
+    },
+
   ]
 
   const allGP2CaseColumnGroups = Object.keys(filter.gp2VariantColumnGroups!)
