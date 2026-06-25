@@ -148,8 +148,9 @@ const GP2Browser = () => {
       variantAnalysisGroupLabels={gp2AnalysisGroupLabels}
       variantResultColumns={[]}
       variantConsequences={variantConsequences}
-      renderVariantAttributes={({ cadd, clinvar_variation_id: clinvarID, rsid }) => [
+      renderVariantAttributes={({ cadd, revel, clinvar_variation_id: clinvarID, rsid }) => [
         { label: 'CADD', content: cadd === null ? '-' : cadd },
+        { label: 'Revel', content: revel === null ? '–' : revel },
         {
           label: (
             <TooltipAnchor tooltip="ClinVar data last updated September 18, 2025">
