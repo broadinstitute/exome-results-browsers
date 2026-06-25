@@ -32,8 +32,6 @@ def prepare_clinvar_variants(test_genes):
     if test_genes:
         ht_clinvar = filter_clinvar_table_to_test_gene_interval(ht_clinvar)
 
-    ht_clinvar.describe()
-
     def get_best_consequence(csq_array):
         mane_csqs = csq_array.filter(lambda c: c.is_mane_select)
         canonical_csqs = csq_array.filter(lambda c: c.is_canonical)
