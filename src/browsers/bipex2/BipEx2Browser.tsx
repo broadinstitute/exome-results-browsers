@@ -94,7 +94,7 @@ const BipExBrowser = () => (
       {
         key: 'ptv_mis_odds_ratio_ci',
         heading: 'PTV+MIS Fisher odds ratio CI',
-        tooltip: 'The 95th percentile confidence ratio lower and upper bounds, in the format: (lower, upper)',
+        tooltip: 'The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)',
         minWidth: 110,
         render: (_value, row) => {
           const oddsRatio = renderOddsRatio({ value: row.ptv_mis_odds_ratio })
@@ -139,7 +139,7 @@ const BipExBrowser = () => (
         key: 'ptv_odds_ratio_ci',
         heading: 'PTV Fisher odds ratio CI',
         minWidth: 110,
-        tooltip: 'The 95th percentile confidence ratio lower and upper bounds, in the format: (lower, upper)',
+        tooltip: 'The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)',
         render: (_value, row) => {
           const oddsRatio = renderOddsRatio({ value: row.ptv_odds_ratio })
           const shouldRenderOddsRatioCI = !['-', '∞', '0'].includes(oddsRatio.toString())
@@ -183,7 +183,7 @@ const BipExBrowser = () => (
         key: 'mis_odds_ratio_ci',
         heading: 'MIS Fisher odds ratio CI',
         minWidth: 110,
-        tooltip: 'The 95th percentile confidence ratio lower and upper bounds, in the format: (lower, upper)',
+        tooltip: 'The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)',
         render: (_value, row) => {
           const oddsRatio = renderOddsRatio({ value: row.mis_odds_ratio })
           const shouldRenderOddsRatioCI = !['-', '∞', '0'].includes(oddsRatio.toString())
@@ -226,9 +226,9 @@ const BipExBrowser = () => (
       },
       {
         key: 'syn_odds_ratio_ci',
-        heading: 'SYN Fisher odds ratio CI (Lower bound - upper bound)',
+        heading: 'SYN Fisher odds ratio CI',
         minWidth: 110,
-        tooltip: 'The 95th percentile confidence ratio lower and upper bounds, in the format: (lower bound, upper bound)',
+        tooltip: 'The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)',
         render: (_value, row) => {
           const oddsRatio = renderOddsRatio({ value: row.syn_odds_ratio })
           const shouldRenderOddsRatioCI = !['-', '∞', '0'].includes(oddsRatio.toString())

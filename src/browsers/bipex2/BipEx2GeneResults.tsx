@@ -86,21 +86,28 @@ const createGeneTableRow = (
   categoryAbbreviation: CategoryAbbreviation
 ) => {
   const oddsRatio = renderOddsRatio({ value: object[`${categoryAbbreviation}_odds_ratio`] })
-  const oddsRatio95CILowerBound = renderOddsRatio({ value: object[`${categoryAbbreviation}_odds_ratio_95_ci_lower_bound`] })
-  const oddsRatio95CIUpperBound = renderOddsRatio({ value: object[`${categoryAbbreviation}_odds_ratio_95_ci_upper_bound`] })
+  const oddsRatio95CILowerBound = renderOddsRatio({
+    value: object[`${categoryAbbreviation}_odds_ratio_95_ci_lower_bound`],
+  })
+  const oddsRatio95CIUpperBound = renderOddsRatio({
+    value: object[`${categoryAbbreviation}_odds_ratio_95_ci_upper_bound`],
+  })
 
   return (
     <tr>
       <th scope="row">{category}</th>
       <td>{safeReturnValue(object, `${categoryAbbreviation}_case_carrier`)}</td>
       <td>{safeReturnValue(object, `${categoryAbbreviation}_ctrl_carrier`)}</td>
-      <td>{renderStringOrFloatPvalueAsScientific({ value: object[`${categoryAbbreviation}_p_value`] })}</td>
+      <td>
+        {renderStringOrFloatPvalueAsScientific({
+          value: object[`${categoryAbbreviation}_p_value`],
+        })}
+      </td>
       <td>{oddsRatio}</td>
       <td>
         {oddsRatio === '-' && '-'}
         {oddsRatio !== '-' &&
-          `(${oddsRatio95CILowerBound.toString()} - ${oddsRatio95CIUpperBound})`
-        }
+          `(${oddsRatio95CILowerBound.toString()} - ${oddsRatio95CIUpperBound})`}
       </td>
     </tr>
   )
@@ -123,7 +130,7 @@ const BipExGeneResult = ({ result }: { result: ResultObject }) => (
           <th scope="col">P-value</th>
           <th scope="col">Odds Ratio</th>
           <th scope="col">
-            <TooltipAnchor tooltip="The 95th percentile confidence ratio upper and lower bounds, in the format: (lower bound, upper bound)">
+            <TooltipAnchor tooltip="The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)">
               <TooltipHint> Odds Ratio CI</TooltipHint>
             </TooltipAnchor>
           </th>
