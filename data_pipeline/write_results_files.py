@@ -145,78 +145,7 @@ def write_json_files(output_directory, tsv_dirname, n_rows):
     shutil.rmtree(f"{output_directory}/{tsv_dirname}")
 
 
-def process_variants_iteratively(output_directory, ds):
-    def output_expected_time(it):
-        print(f"Iterations remaining: {it}")
-        expected_time_minutes = it * 2.5
-        expected_time_hours = int(expected_time_minutes // 60)
-        remaining_minutes = int(expected_time_minutes % 60)
-        if expected_time_hours == 0:
-            print(f"Expected time = {remaining_minutes}m")
-        else:
-            print(f"Expected time = {expected_time_hours}h{remaining_minutes}m")
-
-    # (<chromosome> , <number of chunks>)
-    chroms = [
-        ("1", 5),
-        ("2", 7),  # Chr2 has TTN
-        ("3", 8),  # Chr3 has CNTNAP3
-        ("4", 7),
-        ("5", 7),
-        ("6", 7),
-        ("7", 6),
-        ("8", 8),  # Chr8 has CSMD1, ADAMTS9
-        ("9", 6),  # Chr8 has PTPRD
-        ("10", 6),
-        ("11", 8),
-        ("12", 6),
-        ("13", 3),
-        ("14", 3),
-        ("15", 3),
-        ("16", 3),  # Chr16 has RBFOX1, WWOX
-        ("17", 3),
-        ("18", 3),
-        ("19", 2),
-        ("20", 2),  # Chr20 has LRP1B
-        ("21", 1),
-        ("22", 1),
-        ("X", 1),
-        ("Y", 1),
-    ]
-
-    it = 0
-    for ch in chroms:
-        it += ch[1]
-    output_expected_time(it)
-
-    # filter out large individual genes to avoid Hail OOM errors
-    large_gene_symbols = hl.set(["TTN", "CNTNAP3", "CSMD1", "ADAMTS9", "PTPRD", "WWOX", "RBFOX1", "LRP1B"])
-    ds = ds.filter(large_gene_symbols.contains(ds.symbol), keep=False)
-
-    for chrom in chroms:
-        chro = chrom[0]
-        chunks = chrom[1]
-        print(f"\nLooping for just chr{chro}")
-
-        for i in range(chunks):
-            print(f" -- chr{chro} - Loop ({i + 1}/{chunks})")
-
-            filtered = ds.filter(ds.GRCh38.chrom == chro)
-            filtered = filtered.filter(filtered.GRCh38.start % chunks == i)
-
-            temp_file_name = f"temp_chr{chro}-{i+1}.tsv"
-            n_rows = filtered.count()
-            filtered.select(data=hl.json(filtered.row)).export(f"{output_directory}/{temp_file_name}", header=False)
-
-            write_json_files(output_directory, temp_file_name, n_rows)
-
-            it -= 1
-            output_expected_time(it)
-
-    return
-
-
-def write_data_files(table_path, output_directory, genes=None, iterative=False):
+def write_data_files(table_path, output_directory, genes=None):
     if output_directory.startswith("gs://"):
         raise ValueError("Google Storage paths are not supported for output_directory")
 
@@ -330,7 +259,6 @@ if __name__ == "__main__":
     parser.add_argument("combined_hail_table")
     parser.add_argument("output_directory")
     parser.add_argument("--genes", nargs="+")
-    parser.add_argument("--iterative", action="store_true")
     parser.add_argument(
         "--environment",
         choices=["local", "gce"],
@@ -341,6 +269,6 @@ if __name__ == "__main__":
 
     init_hail(args.environment)
 
-    write_data_files(args.combined_hail_table, args.output_directory, args.genes, args.iterative)
+    write_data_files(args.combined_hail_table, args.output_directory, args.genes)
 
     print("Finished")
