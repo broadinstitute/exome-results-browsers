@@ -285,6 +285,6 @@ If you are unsure, you can prepare all the downloads files with the `--datasets 
 The combined Hail Table must be exported to JSON files which are served by the API. This is done
 by the `write_results_files.py` script.
 
-For production, a VM is used to do this. See [deployment/README.md](../deployment/README.md) for documentation on doing this
+For production, a VM is used to do this. See [WRITE_RESULTS_FILES](./WRITE_RESULTS_FILES.md) for documentation on doing this
 
 Once the files are written to a persistent disk, see [deployment/README.md](../deployment/README.md#deployments) for docs on how to use the disk in a demo/production update.
