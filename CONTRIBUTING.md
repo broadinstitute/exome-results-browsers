@@ -261,3 +261,7 @@ to the production environment.
   - applyFilter (function) - Function to filter list of variants based on current filter settings.
 
 - renderVariantAttributes (function) - Function to render `info` field of a variant.
+
+## Deployment to Production
+
+See [deployment/README.md](./deployment/README.md)
