@@ -150,7 +150,7 @@ const GP2Browser = () => {
       variantConsequences={variantConsequences}
       renderVariantAttributes={({ cadd, revel, clinvar_variation_id: clinvarID, rsid }) => [
         { label: 'CADD', content: cadd === null ? '-' : cadd },
-        { label: 'Revel', content: revel === null ? '–' : revel },
+        { label: 'REVEL', content: revel === null ? '–' : revel },
         {
           label: (
             <TooltipAnchor tooltip="ClinVar data last updated September 18, 2025">
