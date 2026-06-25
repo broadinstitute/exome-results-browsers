@@ -229,6 +229,8 @@ const ClinVarVariantsInGene = ({
     )
   })
 
+  const clinVarReleaseDate = "June 6, 2026"
+
   return (
     <>
       <div style={{ marginBottom: '1em' }}>
@@ -250,6 +252,7 @@ const ClinVarVariantsInGene = ({
               clinvarVariants={filteredClinvarVariants}
               includedClinicalSignificanceCategories={filter.includedClinicalSignificanceCategories}
             />
+            <p>Data displayed here is from ClinVar's {clinVarReleaseDate} release.</p>
           </div>
         </InnerWrapper>
       </div >
@@ -273,10 +276,10 @@ interface ClinVarVariantsInGeneContainerProps {
 
 
 const InnerWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-`
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        `
 
 const ClinVarVariantsInGeneContainer = ({
   datasetId,
