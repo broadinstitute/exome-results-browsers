@@ -29,10 +29,10 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
 
     results = results.annotate(
         ac_pd=results.ac_pd[1],
-        ac_psp=hl.if_else(hl.is_defined(results.ac_psp), results.ac_other[1], hl.missing(hl.tint32)),
-        ac_dlb=hl.if_else(hl.is_defined(results.ac_dlb), results.ac_other[1], hl.missing(hl.tint32)),
-        ac_msa=hl.if_else(hl.is_defined(results.ac_msa), results.ac_other[1], hl.missing(hl.tint32)),
-        ac_ctrl=hl.if_else(hl.is_defined(results.ac_ctrl), results.ac_other[1], hl.missing(hl.tint32)),
+        ac_psp=hl.if_else(hl.is_defined(results.ac_psp), results.ac_psp[1], hl.missing(hl.tint32)),
+        ac_dlb=hl.if_else(hl.is_defined(results.ac_dlb), results.ac_dlb[1], hl.missing(hl.tint32)),
+        ac_msa=hl.if_else(hl.is_defined(results.ac_msa), results.ac_msa[1], hl.missing(hl.tint32)),
+        ac_ctrl=hl.if_else(hl.is_defined(results.ac_ctrl), results.ac_ctrl[1], hl.missing(hl.tint32)),
         ac_other=hl.if_else(hl.is_defined(results.ac_other), results.ac_other[1], hl.missing(hl.tint32)),
     )
     results = results.drop(

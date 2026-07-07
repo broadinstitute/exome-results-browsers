@@ -57,20 +57,20 @@ def variant_hts():
                 "ac_pd": [200, 20],
                 "an_pd": 200,
                 "af_pd": [1, 0.1],
-                "ac_psp": [200, 20],
-                "an_psp": 200,
+                "ac_psp": [200, 21],
+                "an_psp": 201,
                 "af_psp": [1, 0.1],
-                "ac_dlb": [200, 20],
-                "an_dlb": 200,
+                "ac_dlb": [200, 22],
+                "an_dlb": 202,
                 "af_dlb": [1, 0.1],
-                "ac_msa": [200, 20],
-                "an_msa": 200,
+                "ac_msa": [200, 23],
+                "an_msa": 203,
                 "af_msa": [1, 0.1],
-                "ac_ctrl": [200, 20],
-                "an_ctrl": 200,
+                "ac_ctrl": [200, 24],
+                "an_ctrl": 204,
                 "af_ctrl": [1, 0.1],
-                "ac_other": [200, 20],
-                "an_other": 200,
+                "ac_other": [200, 25],
+                "an_other": 205,
                 "af_other": [1, 0.1],
             },
             {
@@ -280,6 +280,12 @@ def test_gp2_prepare_variants(variant_hts, annotation_hts):
     assert filtered_test.count() == 1
 
     group_results_dict = filtered_test.group_results.collect()
-    group_results_eur_array = group_results_dict[0].get("EUR", {})
+    group_results_eur = group_results_dict[0].get("EUR", {})
 
-    assert len(group_results_eur_array) == 14
+    assert len(group_results_eur) == 14
+    assert group_results_eur.wgs_ac_pd == 20
+    assert group_results_eur.wgs_ac_psp == 21
+    assert group_results_eur.wgs_ac_dlb == 22
+    assert group_results_eur.wgs_ac_msa == 23
+    assert group_results_eur.wgs_ac_ctrl == 24
+    assert group_results_eur.wgs_ac_other == 25
