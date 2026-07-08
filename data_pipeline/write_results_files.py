@@ -232,16 +232,22 @@ def init_hail(env="local"):
         )
     elif env == "gce":
         # tailored to n1-standard-16 used in deployment/README.md
-        print("Running with pyspark settings tailored to n1-standard-16")
+        print("Running with pyspark settings tailored to n1-standard-32")
         hl.init(
-            # Feb 21, 2025. Copied settings from Hail's dataproc start source
             spark_conf={
-                "spark.driver.memory": "49g",
-                "spark.executor.memory": "11g",
-                "spark.executor.memoryOverhead": "3g",
-                "spark.executor.cores": "4",
-                "yarn:yarn.nodemanager.resource.memory-mb": "58982",
-                "yarn:yarn.scheduler.maximum-allocation-mb": "14745",
+                # Driver
+                "spark.driver.memory": "96g",
+    
+                # Executor configuration: 4 executors × 8 cores
+                "spark.executor.memory": "20g",
+                "spark.executor.memoryOverhead": "4g",
+                "spark.executor.cores": "8",
+    
+                # YARN memory limits
+                "yarn:yarn.nodemanager.resource.memory-mb": "117964",
+                "yarn:yarn.scheduler.maximum-allocation-mb": "24576",
+    
+                # Other settings
                 "spark:spark.memory.storageFraction": "0.2",
                 "spark.task.maxFailures": "20",
                 "spark.driver.extraJavaOptions": "-Xss4M",
