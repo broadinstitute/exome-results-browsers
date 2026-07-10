@@ -1,6 +1,5 @@
 import hail as hl
 
-
 ALLOWED_RESULT_TYPES = {hl.tbool, hl.tfloat32, hl.tfloat64, hl.tint32, hl.tint64, hl.tstr}
 
 
