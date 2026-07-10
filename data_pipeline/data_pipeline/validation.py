@@ -16,9 +16,9 @@ def validate_gene_results_table(ds):
     assert isinstance(ds.group_results.dtype.value_type, hl.tstruct), "'group_results' value must be a struct"
 
     for typ in ds.group_results.dtype.value_type.types:
-        assert (
-            typ in ALLOWED_RESULT_TYPES
-        ), f"'group_results' fields may only be one of {', '.join(map(str, ALLOWED_RESULT_TYPES))}"
+        assert typ in ALLOWED_RESULT_TYPES, (
+            f"'group_results' fields may only be one of {', '.join(map(str, ALLOWED_RESULT_TYPES))}"
+        )
 
 
 def validate_variant_results_table(ds):
@@ -42,12 +42,12 @@ def validate_variant_results_table(ds):
     assert isinstance(ds.group_results.dtype.value_type, hl.tstruct), "'group_results' value must be a struct"
 
     for typ in ds.group_results.dtype.value_type.types:
-        assert (
-            typ in ALLOWED_RESULT_TYPES
-        ), f"'group_results' fields may only be one of {', '.join(map(str, ALLOWED_RESULT_TYPES))}"
+        assert typ in ALLOWED_RESULT_TYPES, (
+            f"'group_results' fields may only be one of {', '.join(map(str, ALLOWED_RESULT_TYPES))}"
+        )
 
     assert isinstance(ds.info.dtype, hl.tstruct), "'info' must be a struct"
     for typ in ds.info.dtype.types:
-        assert (
-            typ in ALLOWED_RESULT_TYPES
-        ), f"'info' fields may only be one of {', '.join(map(str, ALLOWED_RESULT_TYPES))}"
+        assert typ in ALLOWED_RESULT_TYPES, (
+            f"'info' fields may only be one of {', '.join(map(str, ALLOWED_RESULT_TYPES))}"
+        )
