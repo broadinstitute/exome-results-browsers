@@ -1,0 +1,23 @@
+[project]
+name = "exome-pipeline"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "hail==0.2.138",
+    "tqdm",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["data_pipeline"]

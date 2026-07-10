@@ -1,4 +1,0 @@
--c requirements.txt
-black==22.10.0
-pylint
-pytest
