@@ -1,25 +1,7 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-
-
-def filter_results_table_to_test_gene(results):
-    test_gene_symbols = [
-        "PCSK9",  # ENSG00000169174
-        "AKAP11",  # ENSG00000023516
-        "SHANK1",  # ENSG00000161681
-        "FRYL",  # ENSG00000075539
-        "MAGI2",  # ENSG00000187391
-        "KIAA1211L",  # ENSG00000196872
-        "C1orf61",  # ENSG00000125462
-    ]
-
-    test_gene_symbols = [gene.upper() for gene in test_gene_symbols]
-    test_gene_set = hl.literal(test_gene_symbols)
-
-    results = results.filter(test_gene_set.contains(results.gene_symbol.upper()))
-
-    return results.persist()
+from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes
 
 
 def annotate_false_discovery_rate_significant_genes(results):
@@ -103,7 +85,7 @@ def prepare_gene_results(test_genes, _output_root):
     results = annotate_false_discovery_rate_significant_genes(results)
 
     if test_genes:
-        results = filter_results_table_to_test_gene(results)
+        results = filter_gene_results_to_test_genes(results, "gene_symbol", pipeline_config.get("BipEx2", "test_genes").split(","))
 
     n_cases = hl.eval(results.globals["case_total"])
     n_controls = hl.eval(results.globals["control_total"])

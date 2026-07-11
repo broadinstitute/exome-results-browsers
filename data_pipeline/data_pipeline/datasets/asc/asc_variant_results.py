@@ -1,6 +1,7 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals
 
 CONSEQUENCE_TERMS = [
     "transcript_ablation",
@@ -48,25 +49,14 @@ CONSEQUENCE_TERMS = [
 CONSEQUENCE_TERM_RANKS = hl.dict({term: rank for rank, term in enumerate(CONSEQUENCE_TERMS)})
 
 
-def filter_results_table_to_test_gene_intervals(results):
-    pcsk9_interval = hl.locus_interval(
-        "1", 55505221, 55530525, reference_genome="GRCh37", includes_start=True, includes_end=True
-    )
-
-    chd8_interval = hl.locus_interval(
-        "14", 21853353, 21924285, reference_genome="GRCh37", includes_start=True, includes_end=True
-    )
-
-    results = hl.filter_intervals(results, [pcsk9_interval, chd8_interval])
-
-    return results.persist()
-
-
 def prepare_variant_results(test_genes, _output_root):
     annotations = None
     results = None
 
     NUM_PARTITIONS = 10 if test_genes else 100
+
+    if test_genes:
+        test_intervals = parse_test_gene_intervals(pipeline_config.get("ASC", "test_gene_intervals"))
 
     for group in ("dn", "dbs", "swe"):
         group_annotations_path = pipeline_config.get("ASC", f"{group}_variant_annotations_path")
@@ -102,7 +92,7 @@ def prepare_variant_results(test_genes, _output_root):
         group_annotations = group_annotations.drop("v")
 
         if test_genes:
-            group_annotations = filter_results_table_to_test_gene_intervals(group_annotations)
+            group_annotations = filter_variant_results_to_test_gene_intervals(group_annotations, test_intervals)
 
         group_annotations = group_annotations.repartition(NUM_PARTITIONS, shuffle=True)
 
@@ -139,7 +129,7 @@ def prepare_variant_results(test_genes, _output_root):
         group_results = group_results.drop("v")
 
         if test_genes:
-            group_results = filter_results_table_to_test_gene_intervals(group_results)
+            group_results = filter_variant_results_to_test_gene_intervals(group_results, test_intervals)
 
         group_results = group_results.repartition(NUM_PARTITIONS, shuffle=True)
 

@@ -3,14 +3,7 @@ import os
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-
-
-def filter_results_table_to_test_gene(results):
-    test_gene_symbols = ["PCSK9", "NOD2"]
-    test_gene_set = hl.literal(test_gene_symbols)
-
-    results = results.filter(test_gene_set.contains(results.gene_symbol))
-    return results.persist()
+from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes
 
 
 def prepare_gene_results(test_genes, output_root):
@@ -21,7 +14,7 @@ def prepare_gene_results(test_genes, output_root):
     results = hl.read_table(pipeline_config.get("IBD", "gene_results_path"))
 
     if test_genes:
-        results = filter_results_table_to_test_gene(results)
+        results = filter_gene_results_to_test_genes(results, "gene_symbol", pipeline_config.get("IBD", "test_genes").split(","))
 
     results = results.select_globals()
 
