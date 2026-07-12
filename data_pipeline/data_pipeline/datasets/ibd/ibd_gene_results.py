@@ -14,7 +14,9 @@ def prepare_gene_results(test_genes, output_root):
     results = hl.read_table(pipeline_config.get("IBD", "gene_results_path"))
 
     if test_genes:
-        results = filter_gene_results_to_test_genes(results, "gene_symbol", pipeline_config.get("IBD", "test_genes").split(","))
+        results = filter_gene_results_to_test_genes(
+            results, "gene_symbol", pipeline_config.get("IBD", "test_genes").split(",")
+        )
 
     results = results.select_globals()
 

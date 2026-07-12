@@ -16,7 +16,9 @@ def prepare_gene_results(_test_genes, _output_root):
     #     no ClinVar gene data, and we're using epi25 data just to
     #     appease the pipeline
     if True:  # pylint: disable=using-constant-test
-        results = filter_gene_results_to_test_genes(results, "gene_symbol", pipeline_config.get("ClinVarGRCh38", "test_genes").split(","))
+        results = filter_gene_results_to_test_genes(
+            results, "gene_symbol", pipeline_config.get("ClinVarGRCh38", "test_genes").split(",")
+        )
 
     results = results.select_globals()
 

@@ -8,7 +8,9 @@ def prepare_variant_results(test_genes, _output_root):
     results = hl.read_table(pipeline_config.get("Epi25", "variant_results_path"))
 
     if test_genes:
-        results = filter_variant_results_to_test_gene_intervals(results, parse_test_gene_intervals(pipeline_config.get("Epi25", "test_gene_intervals")))
+        results = filter_variant_results_to_test_gene_intervals(
+            results, parse_test_gene_intervals(pipeline_config.get("Epi25", "test_gene_intervals"))
+        )
 
     # Get unique variants from results table
     variants = results.group_by(results.locus, results.alleles).aggregate()

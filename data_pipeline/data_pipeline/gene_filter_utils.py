@@ -7,7 +7,9 @@ def parse_test_gene_intervals(intervals_str):
         chrom, rest = part.strip().split(":")
         start, end = rest.split("-")
         ref = "GRCh38" if chrom.startswith("chr") else "GRCh37"
-        intervals.append(hl.locus_interval(chrom, int(start), int(end), reference_genome=ref, includes_start=True, includes_end=True))
+        intervals.append(
+            hl.locus_interval(chrom, int(start), int(end), reference_genome=ref, includes_start=True, includes_end=True)
+        )
     return intervals
 
 

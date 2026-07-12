@@ -8,7 +8,9 @@ def prepare_clinvar_variants(test_genes):
     ht_clinvar = hl.read_table(pipeline_config.get("ClinVarGRCh38", "variant_results_path"))
 
     if test_genes:
-        ht_clinvar = filter_variant_results_to_test_gene_intervals(ht_clinvar, parse_test_gene_intervals(pipeline_config.get("ClinVarGRCh38", "test_gene_intervals")))
+        ht_clinvar = filter_variant_results_to_test_gene_intervals(
+            ht_clinvar, parse_test_gene_intervals(pipeline_config.get("ClinVarGRCh38", "test_gene_intervals"))
+        )
 
     def get_best_consequence(csq_array):
         mane_csqs = csq_array.filter(lambda c: c.is_mane_select)

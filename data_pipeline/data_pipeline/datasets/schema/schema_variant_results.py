@@ -11,7 +11,9 @@ def prepare_variant_results(test_genes, _output_root):
     results = hl.read_table(results_path)
 
     if test_genes:
-        results = filter_variant_results_to_test_gene_intervals(results, parse_test_gene_intervals(pipeline_config.get("SCHEMA", "test_gene_intervals")))
+        results = filter_variant_results_to_test_gene_intervals(
+            results, parse_test_gene_intervals(pipeline_config.get("SCHEMA", "test_gene_intervals"))
+        )
 
     results = results.drop("v", "af_case", "af_ctrl")
 

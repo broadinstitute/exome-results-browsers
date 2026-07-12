@@ -6,7 +6,9 @@ from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_
 
 def prepare_variant_results(results, annotations, test_genes, _output_root):
     if test_genes:
-        results = filter_variant_results_to_test_gene_intervals(results, parse_test_gene_intervals(pipeline_config.get("GP2", "test_gene_intervals")))
+        results = filter_variant_results_to_test_gene_intervals(
+            results, parse_test_gene_intervals(pipeline_config.get("GP2", "test_gene_intervals"))
+        )
 
     results = results.annotate(
         ac_pd=results.ac_pd[1],

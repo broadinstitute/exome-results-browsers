@@ -85,7 +85,9 @@ def prepare_gene_results(test_genes, _output_root):
     results = annotate_false_discovery_rate_significant_genes(results)
 
     if test_genes:
-        results = filter_gene_results_to_test_genes(results, "gene_symbol", pipeline_config.get("BipEx2", "test_genes").split(","))
+        results = filter_gene_results_to_test_genes(
+            results, "gene_symbol", pipeline_config.get("BipEx2", "test_genes").split(",")
+        )
 
     n_cases = hl.eval(results.globals["case_total"])
     n_controls = hl.eval(results.globals["control_total"])

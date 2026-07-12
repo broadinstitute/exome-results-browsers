@@ -49,7 +49,9 @@ def prepare_gene_results(test_genes, _output_root):
     gene_results = gene_results.drop("Gene")
 
     if test_genes:
-        gene_results = filter_gene_results_to_test_genes(gene_results, "gene_symbol", pipeline_config.get("SCHEMA2", "test_genes").split(","))
+        gene_results = filter_gene_results_to_test_genes(
+            gene_results, "gene_symbol", pipeline_config.get("SCHEMA2", "test_genes").split(",")
+        )
 
     # TK: suggest analyst include this in input file, then pull this number from there
     n_cases = 87_959

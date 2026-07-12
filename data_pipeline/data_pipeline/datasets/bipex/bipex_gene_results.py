@@ -8,7 +8,9 @@ def prepare_gene_results(test_genes, _output_root):
     results = hl.read_table(pipeline_config.get("BipEx", "gene_results_path"))
 
     if test_genes:
-        results = filter_gene_results_to_test_genes(results, "gene_symbol", pipeline_config.get("BipEx", "test_genes").split(","))
+        results = filter_gene_results_to_test_genes(
+            results, "gene_symbol", pipeline_config.get("BipEx", "test_genes").split(",")
+        )
 
     results = results.select_globals()
 

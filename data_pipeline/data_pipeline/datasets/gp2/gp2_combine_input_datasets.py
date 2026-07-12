@@ -1,4 +1,3 @@
-import hail as hl
 
 from data_pipeline.config import pipeline_config
 from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals

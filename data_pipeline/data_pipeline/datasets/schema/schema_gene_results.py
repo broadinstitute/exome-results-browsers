@@ -35,7 +35,9 @@ def prepare_gene_results(test_genes, _output_root):
     )
 
     if test_genes:
-        ds = filter_gene_results_to_test_genes(ds, "Gene Symbol", pipeline_config.get("SCHEMA", "test_genes").split(","))
+        ds = filter_gene_results_to_test_genes(
+            ds, "Gene Symbol", pipeline_config.get("SCHEMA", "test_genes").split(",")
+        )
 
     # Parse upper and lower bounds out of odds ratio columns
     def _parse_odds_ratio(field_name):
