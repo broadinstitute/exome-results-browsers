@@ -16,4 +16,4 @@ We would like to thank the many tens of thousands of participants who generously
 
 **Citations in publications**
 
-We request that any use of data from the GP2 browser cite the consortium's paper, [_GP2: The Global Parkinson's Genetics Program_](https://doi.org/10.1002/mds.28494), and the the browser release paper: [_The Global Parkinson's Disease Genetics (GP2) Genome Browser_](https://doi.org/10.1002/mds.70309) with the appropriate DOI corresponding to the specific data release version utilized (see [https://zenodo.org/records/17753486](https://zenodo.org/records/17753486) for the full list of version-specific DOIs).
+We request that any use of data from the GP2 browser cite the consortium's paper, [_GP2: The Global Parkinson's Genetics Program_](https://doi.org/10.1002/mds.28494), and the the browser release paper: [_The Global Parkinson's Disease Genetics (GP2) Genome Browser_](https://doi.org/10.1002/mds.70309) with the appropriate DOI corresponding to the specific data release version utilized (see [https://zenodo.org/records/20932193](https://zenodo.org/records/20932193) for the full list of version-specific DOIs).
