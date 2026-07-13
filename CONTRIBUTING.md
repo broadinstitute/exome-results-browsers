@@ -44,7 +44,7 @@ and browser interface based on the request hostname.
   - data_pipeline
     - datasets - Browser specific data pipelines
     - pipelines - Shared data pipelines
-  - pipeline_config.ini - Data URLs
+    - pipeline_config.ini - Data URLs
 - src
   - browsers - Frontend code
     - base - Shared browser code
@@ -149,7 +149,7 @@ to the production environment.
 
     The `prepare_datasets` pipeline validates the schema of the Hail Table returned by this function.
 
-  - Add dataset name to the `datasets.datasets` configuration in `data_pipeline/pipeline_config.ini`.
+  - Add dataset name to the `datasets.datasets` configuration in `data_pipeline/data_pipeline/pipeline_config.ini`.
 
 - Create the browser frontend.
 

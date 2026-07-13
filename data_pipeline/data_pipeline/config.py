@@ -1,17 +1,17 @@
 import configparser
 import os
 
-# This configuration file will be read in three places:
-# 1. By run.py when starting a pipeline
-# 2. By pipelines when running locally
-# 3. By pipelines on a Dataproc cluster
-#
-# In all cases, pipeline_config.ini should be in the current working directory.
-# In the first two, run.py sets the working directory to the directory containing pipeline_config.ini.
-# In the third, the `--files` argument of `gcloud dataproc jobs submit` is used to upload pipeline_config.ini
-# to the Dataproc cluster, where it is placed in the job's working directory.
 pipeline_config = configparser.ConfigParser()
-pipeline_config.read("pipeline_config.ini")
+
+if "HAIL_DATAPROC" in os.environ:
+    # `hailctl dataproc start` sets HAIL_DATAPROC on cluster nodes. On a Dataproc job,
+    # `gcloud dataproc jobs submit --files=pipeline_config.ini` places the file directly
+    # in the job's working directory, so it's found by name alone.
+    pipeline_config.read("pipeline_config.ini")
+else:
+    # Running locally (directly or via run_pipeline.py): read the copy of pipeline_config.ini
+    # that lives alongside this file, regardless of the current working directory.
+    pipeline_config.read(os.path.join(os.path.dirname(__file__), "pipeline_config.ini"))
 
 # Verify that required configuration is set
 REQUIRED_CONFIGURATION = [
