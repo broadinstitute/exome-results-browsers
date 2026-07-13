@@ -12,7 +12,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
 
    ```
    gcloud --quiet compute instances create erb-temp-instance \
-      --machine-type=n1-standard-16 \
+      --machine-type=n1-standard-32 \
       --image-family projects/debian-cloud/global/images/family/debian-11 \
       --boot-disk-size=200GB \
       --service-account=erb-data-pipeline@exac-gnomad.iam.gserviceaccount.com
@@ -28,7 +28,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
    DISK_NAME="erb-data-$LABEL-$TIMESTAMP"
 
    gcloud compute disks create $DISK_NAME \
-     --size=200GB \
+     --size=250GB \
      --type=pd-standard
 
    gcloud compute instances attach-disk erb-temp-instance \
@@ -91,13 +91,17 @@ mount -o discard,defaults /dev/disk/by-id/google-erb-data /mnt/disks/erb-data
 6. Copy results data from GCS.
 
    ```
-   gsutil cp -r gs://exome-results-browsers/output-data/combined/<YYYY-MM-DD_DATE>/combined.ht /tmp
+   gsutil -m cp -r gs://exome-results-browsers/output-data/combined/<YYYY-MM-DD_DATE>/combined.ht /tmp
    ```
 
-7. Write results files to persistent disk.
+7. Write results files to persistent disk (note this may take > 1 hour)
 
    ```
-   /tmp/write_results_files.py /tmp/combined.ht /mnt/disks/erb-data/results --environment gce
+   nohup /tmp/write_results_files.py \
+    /tmp/combined.ht \
+    /mnt/disks/erb-data/results \
+    --environment gce \
+    > write_results.log 2>&1 &
    ```
 
 8. Unmount disk.
