@@ -4,7 +4,7 @@ import sys
 
 import hail as hl
 
-from data_pipeline.config import pipeline_config
+from data_pipeline.config import get_output_root, pipeline_config
 
 VARIANT_FIELDS = [
     "variant_id",
@@ -134,17 +134,6 @@ def combine_datasets(dataset_ids, output_root):
         )
 
     return ds
-
-
-def get_output_root(output_local):
-    output_location = "local" if output_local else "gcs"
-    output_root = pipeline_config.get("output", f"{output_location}_output_root")
-
-    if output_local:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        output_root = os.path.abspath(os.path.join(script_dir, "..", "..", "..", output_root))
-
-    return output_root
 
 
 def main():

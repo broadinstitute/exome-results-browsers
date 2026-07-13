@@ -6,24 +6,12 @@ import sys
 import hail as hl
 import hailtop.fs as hfs
 
-from data_pipeline.config import pipeline_config
+from data_pipeline.config import get_output_root, pipeline_config
 from data_pipeline.validation import validate_gene_results_table, validate_variant_results_table
 
 
-def get_output_root(output_local):
-    output_location = "local" if output_local else "gcs"
-    output_root = pipeline_config.get("output", f"{output_location}_output_root")
-
-    if output_local:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        output_root = os.path.abspath(os.path.join(script_dir, "..", "..", "..", output_root))
-
-    return output_root
-
-
-def prepare_dataset(dataset_id, test_genes, output_local):
+def prepare_dataset(dataset_id, test_genes, output_root):
     update_date = pipeline_config.get(dataset_id, "output_last_updated")
-    output_root = get_output_root(output_local)
     output_path = f"{output_root}/{dataset_id.lower()}/{update_date}"
 
     if dataset_id.lower() == "gp2":
@@ -32,14 +20,9 @@ def prepare_dataset(dataset_id, test_genes, output_local):
         combined_variant_results_path = os.path.join(output_path, "combined_variant_results.ht")
         combined_variant_annotations_path = os.path.join(output_path, "combined_variant_annotations.ht")
 
-        if output_local:
-            compute_combine = not (
-                os.path.exists(combined_variant_results_path) and os.path.exists(combined_variant_annotations_path)
-            )
-        else:
-            compute_combine = not (
-                hfs.exists(combined_variant_results_path) and hfs.exists(combined_variant_annotations_path)
-            )
+        compute_combine = not (
+            hfs.exists(combined_variant_results_path) and hfs.exists(combined_variant_annotations_path)
+        )
 
         if compute_combine:
             print("Combined GP2 tables do not exist, creating them ...")
@@ -167,8 +150,9 @@ def main():
         },
     )
 
+    output_root = get_output_root(args.output_local)
     for dataset in datasets_to_prepare:
-        prepare_dataset(dataset, args.test_genes, args.output_local)
+        prepare_dataset(dataset, args.test_genes, output_root)
 
 
 if __name__ == "__main__":
