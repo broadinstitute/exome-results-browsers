@@ -1,4 +1,5 @@
 import configparser
+import os
 
 # This configuration file will be read in three places:
 # 1. By run.py when starting a pipeline
@@ -25,3 +26,18 @@ try:
 # pylint: disable=broad-exception-raised
 except (configparser.NoOptionError, AssertionError) as exc:
     raise ValueError(f"Missing required configuration '{section}.{option}'") from exc
+
+# Repo root, used to resolve local output paths (which are relative) regardless of
+# which pipeline script is doing the resolving.
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+
+def get_output_root(output_local, is_downloads=False):
+    output_location = "local" if output_local else "gcs"
+    downloads_string = "_downloads" if is_downloads else ""
+    output_root = pipeline_config.get("output", f"{output_location}{downloads_string}_output_root")
+
+    if output_local:
+        output_root = os.path.abspath(os.path.join(REPO_ROOT, output_root))
+
+    return output_root
