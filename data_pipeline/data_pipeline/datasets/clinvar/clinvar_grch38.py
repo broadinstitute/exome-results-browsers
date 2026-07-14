@@ -26,7 +26,6 @@ def filter_clinvar_table_to_test_gene_interval(ht_clinvar):
 
 
 def prepare_clinvar_variants(test_genes):
-    # ht_clinvar = hl.read_table(pipeline_config.get("reference_data", "clinvar_grch38_path"))
     ht_clinvar = hl.read_table(pipeline_config.get("ClinVarGRCh38", "variant_results_path"))
 
     if test_genes:
