@@ -4,18 +4,11 @@ import hail as hl
 import hailtop.fs as hfs
 
 from data_pipeline.config import pipeline_config
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals
 
 
-def filter_results_table_to_test_gene_interval(results):
-    nod2_interval = hl.locus_interval(
-        "chr16", 50693588, 50734041, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    results = hl.filter_intervals(results, [nod2_interval])
-
-    results = results.repartition(1)
-
-    return results.persist()
+def _ibd_test_intervals():
+    return parse_test_gene_intervals(pipeline_config.get("IBD", "test_gene_intervals"))
 
 
 def add_vep_to_annotations(staging_output_path, variants_ht, annotations_ht, test_genes):
@@ -38,7 +31,7 @@ def add_vep_to_annotations(staging_output_path, variants_ht, annotations_ht, tes
     vepped_variants_ht = hl.read_table(vepped_path)
 
     if test_genes is not None:
-        vepped_variants_ht = filter_results_table_to_test_gene_interval(vepped_variants_ht)
+        vepped_variants_ht = filter_variant_results_to_test_gene_intervals(vepped_variants_ht, _ibd_test_intervals())
 
     annotations_ht = annotations_ht.annotate(vep=vepped_variants_ht[annotations_ht.locus, annotations_ht.alleles].vep)
 
@@ -76,8 +69,7 @@ def generate_gene_id_per_variant_table(vepped_path, test_genes):
 
     if test_genes:
         print("Subsetting vepped table in gen. gene ID to only those in variants")
-        vepped_variants_ht = filter_results_table_to_test_gene_interval(vepped_variants_ht)
-        vepped_variants_ht = vepped_variants_ht.persist()
+        vepped_variants_ht = filter_variant_results_to_test_gene_intervals(vepped_variants_ht, _ibd_test_intervals())
 
     transcript_consequences_ht = vepped_variants_ht.select(csqs=vepped_variants_ht.vep.transcript_consequences)
     exploded_csqs_ht = transcript_consequences_ht.explode("csqs")
@@ -227,7 +219,7 @@ def prepare_variant_results(test_genes, output_root):
     results = hl.read_table(pipeline_config.get("IBD", "variant_results_path")).drop("filter")
 
     if test_genes:
-        results = filter_results_table_to_test_gene_interval(results)
+        results = filter_variant_results_to_test_gene_intervals(results, _ibd_test_intervals())
 
     # Get unique variants from results table
     variants = results.group_by(results.locus, results.alleles).aggregate()

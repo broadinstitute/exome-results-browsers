@@ -1,23 +1,7 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-
-
-def filter_results_table_to_test_gene(results):
-    test_gene_symbols = [
-        "PCSK9",
-        "SETD1A",
-        "SAMD11",
-        # gnomAD's gencode version calls 'WDR78', 'DNAI4',
-        #   should be WDR78 in gene table, DNAI4 on single gene page
-        "WDR78",
-    ]
-
-    test_gene_symbols = [gene.upper() for gene in test_gene_symbols]
-    test_gene_set = hl.literal(test_gene_symbols)
-
-    results = results.filter(test_gene_set.contains(results["gene_symbol"].upper()))
-    return results.persist()
+from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes
 
 
 def build_gene_lookup_ht(gene_models_ht):
@@ -65,7 +49,9 @@ def prepare_gene_results(test_genes, _output_root):
     gene_results = gene_results.drop("Gene")
 
     if test_genes:
-        gene_results = filter_results_table_to_test_gene(gene_results)
+        gene_results = filter_gene_results_to_test_genes(
+            gene_results, "gene_symbol", pipeline_config.get("SCHEMA2", "test_genes").split(",")
+        )
 
     # TK: suggest analyst include this in input file, then pull this number from there
     n_cases = 87_959

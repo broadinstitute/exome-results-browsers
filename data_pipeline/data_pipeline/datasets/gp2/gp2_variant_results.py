@@ -1,33 +1,14 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-
-
-def filter_results_table_to_test_gene_interval(results):
-
-    # ENSG00000169174
-    pcsk9_interval = hl.locus_interval(
-        "chr1", 55039447, 55064852, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    # ENSG00000177628
-    gba1_interval = hl.locus_interval(
-        "chr1", 155234452, 155244699, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    # ENSG00000177663
-    il17ra_interval = hl.locus_interval(
-        "chr22", 17084954, 17115694, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    results = hl.filter_intervals(results, [pcsk9_interval, gba1_interval, il17ra_interval])
-
-    return results
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals
 
 
 def prepare_variant_results(results, annotations, test_genes, _output_root):
     if test_genes:
-        results = filter_results_table_to_test_gene_interval(results)
+        results = filter_variant_results_to_test_gene_intervals(
+            results, parse_test_gene_intervals(pipeline_config.get("GP2", "test_gene_intervals"))
+        )
 
     results = results.annotate(
         ac_pd=results.ac_pd[1],

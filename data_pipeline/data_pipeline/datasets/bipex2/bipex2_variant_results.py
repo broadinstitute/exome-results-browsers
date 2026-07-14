@@ -1,59 +1,16 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-
-
-def filter_results_table_to_test_gene_intervals(results):
-
-    # ENSG00000169174
-    pcsk9_interval = hl.locus_interval(
-        "chr1", 55039447, 55064852, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    # ENSG00000023516
-    akap11_interval = hl.locus_interval(
-        "chr13", 42272152, 42323261, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    # ENSG00000161681
-    shank1_interval = hl.locus_interval(
-        "chr19", 50659255, 50719802, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    # ENSG00000075539
-    fryl_interval = hl.locus_interval(
-        "chr4", 48497357, 48780322, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-    # ENSG00000187391
-    magi2_interval = hl.locus_interval(
-        "chr7", 78017055, 79453667, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    # ENSG00000196872 - KIAA1211L, or CRACDL
-    cracdl_interval = hl.locus_interval(
-        "chr2", 98793846, 98936259, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    results = hl.filter_intervals(
-        results,
-        [
-            pcsk9_interval,
-            akap11_interval,
-            shank1_interval,
-            fryl_interval,
-            magi2_interval,
-            cracdl_interval,
-        ],
-    )
-
-    return results.persist()
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals
 
 
 def prepare_variant_results(test_genes, _output_root):
     results = hl.read_table(pipeline_config.get("BipEx2", "variant_results_path"))
 
     if test_genes:
-        results = filter_results_table_to_test_gene_intervals(results)
+        results = filter_variant_results_to_test_gene_intervals(
+            results, parse_test_gene_intervals(pipeline_config.get("BipEx2", "test_gene_intervals"))
+        )
 
     # Get unique variants from results table
     variants = results.group_by(results.locus, results.alleles).aggregate()
