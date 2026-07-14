@@ -95,7 +95,7 @@ def main():
                 [
                     "--cluster=exome-results",
                     f"--py-files={tmp_file.name}",
-                    f"--files={os.path.join(package_dir, 'pipeline_config.ini')}",
+                    f"--files={os.path.join(PIPELINE_DIR, 'pipeline_config.ini')}",
                     os.path.join(package_dir, "pipelines", f"{args.pipeline}.py"),
                 ]
             )

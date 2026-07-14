@@ -1,6 +1,13 @@
 import configparser
 import os
 
+# Root of the data_pipeline subproject (contains pipeline_config.ini, run_pipeline.py, etc.).
+PIPELINE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+# Root of the overall repo, used to resolve local output paths (which are relative) regardless of
+# which pipeline script is doing the resolving.
+REPO_ROOT = os.path.dirname(PIPELINE_DIR)
+
 pipeline_config = configparser.ConfigParser()
 
 if "HAIL_DATAPROC" in os.environ:
@@ -10,8 +17,8 @@ if "HAIL_DATAPROC" in os.environ:
     pipeline_config.read("pipeline_config.ini")
 else:
     # Running locally (directly or via run_pipeline.py): read the copy of pipeline_config.ini
-    # that lives alongside this file, regardless of the current working directory.
-    pipeline_config.read(os.path.join(os.path.dirname(__file__), "pipeline_config.ini"))
+    # at the root of the data_pipeline subproject, regardless of the current working directory.
+    pipeline_config.read(os.path.join(PIPELINE_DIR, "pipeline_config.ini"))
 
 # Verify that required configuration is set
 REQUIRED_CONFIGURATION = [
@@ -26,10 +33,6 @@ try:
 # pylint: disable=broad-exception-raised
 except (configparser.NoOptionError, AssertionError) as exc:
     raise ValueError(f"Missing required configuration '{section}.{option}'") from exc
-
-# Repo root, used to resolve local output paths (which are relative) regardless of
-# which pipeline script is doing the resolving.
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
 def get_output_root(output_local, is_downloads=False):
