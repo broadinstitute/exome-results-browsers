@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
 import subprocess
 
 
@@ -13,9 +12,6 @@ def main():
 
     if args.cluster_args and args.cluster_args[0] == "--":
         args.cluster_args = args.cluster_args[1:]
-
-    # Set working directory so that config.py finds pipeline_config.ini
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
     from data_pipeline.config import pipeline_config  # pylint: disable=import-outside-toplevel
 
