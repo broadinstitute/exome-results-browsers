@@ -21,24 +21,36 @@ const safeRenderCount = (value: number | null | undefined) => {
   return value
 }
 
+const renderOddsRatioCI = (ci: string | null | undefined) => {
+  if (ci === null || ci === undefined || ci === '') {
+    return '-'
+  }
+
+  return `(${ci})`
+}
+
 type SchemaGeneResult = {
   ptv_case_carrier: number
   ptv_control_carrier: number
   ptv_p_value: number
   ptv_odds_ratio: string
+  ptv_odds_ratio_95_ci: string
 
   ptv_mis_case_carrier: number
   ptv_mis_control_carrier: number
   ptv_mis_p_value: number
   ptv_mis_odds_ratio: string
+  ptv_mis_odds_ratio_95_ci: string
 
   mis_case_carrier: number
   mis_control_carrier: number
   mis_odds_ratio: string
+  mis_odds_ratio_95_ci: string
 
   syn_case_carrier: number
   syn_control_carrier: number
   syn_odds_ratio: string
+  syn_odds_ratio_95_ci: string
 
   ptv_n_de_novo: number
   ptv_mis_n_de_novo: number
@@ -70,6 +82,11 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               Odds Ratio
             </th>
             <th scope="col" style={{ paddingLeft: '10px' }}>
+              <TooltipAnchor tooltip="The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)">
+                <TooltipHint>Odds Ratio CI</TooltipHint>
+              </TooltipAnchor>
+            </th>
+            <th scope="col" style={{ paddingLeft: '10px' }}>
               Case/Control <span style={{ fontStyle: 'italic' }}>P</span>-value
             </th>
             <th scope="col" style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
@@ -97,6 +114,9 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {renderOddsRatio({ value: result.ptv_odds_ratio })}
             </td>
             <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatioCI(result.ptv_odds_ratio_95_ci)}
+            </td>
+            <td style={{ paddingLeft: '10px' }}>
               {renderStringOrFloatPvalueAsScientific({ value: result.ptv_p_value })}
             </td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
@@ -121,6 +141,9 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {renderOddsRatio({ value: result.ptv_mis_odds_ratio })}
             </td>
             <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatioCI(result.ptv_mis_odds_ratio_95_ci)}
+            </td>
+            <td style={{ paddingLeft: '10px' }}>
               {renderStringOrFloatPvalueAsScientific({ value: result.ptv_mis_p_value })}
             </td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
@@ -141,6 +164,9 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
             <td style={{ paddingLeft: '10px' }}>
               {renderOddsRatio({ value: result.mis_odds_ratio })}
             </td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatioCI(result.mis_odds_ratio_95_ci)}
+            </td>
             <td style={{ paddingLeft: '10px' }}>-</td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
             <td style={{ paddingLeft: '10px' }}>-</td>
@@ -158,6 +184,9 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
             <td>{safeRenderCount(result.syn_control_carrier)}</td>
             <td style={{ paddingLeft: '10px' }}>
               {renderOddsRatio({ value: result.syn_odds_ratio })}
+            </td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatioCI(result.syn_odds_ratio_95_ci)}
             </td>
             <td style={{ paddingLeft: '10px' }}>-</td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
