@@ -6,7 +6,11 @@ import { BaseTable, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 import HelpButton from '../base/HelpButton'
 import StyledContent from '../base/StyledContent'
 import geneResultsDescription from './content/generesults.md'
-import { renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import {
+  renderOddsRatio,
+  renderOddsRatioCI,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 import { SCHEMA2AnalysisGroup } from './SCHEMA2Browser'
 
 const Table = styled(BaseTable)`
@@ -19,14 +23,6 @@ const safeRenderCount = (value: number | null | undefined) => {
   }
 
   return value
-}
-
-const renderOddsRatioCI = (ci: string | null | undefined) => {
-  if (ci === null || ci === undefined || ci === '') {
-    return '-'
-  }
-
-  return `(${ci})`
 }
 
 type SchemaGeneResult = {
@@ -114,7 +110,10 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {renderOddsRatio({ value: result.ptv_odds_ratio })}
             </td>
             <td style={{ paddingLeft: '10px' }}>
-              {renderOddsRatioCI(result.ptv_odds_ratio_95_ci)}
+              {renderOddsRatioCI({
+                oddsRatio: result.ptv_odds_ratio,
+                confidenceInterval: result.ptv_odds_ratio_95_ci,
+              })}
             </td>
             <td style={{ paddingLeft: '10px' }}>
               {renderStringOrFloatPvalueAsScientific({ value: result.ptv_p_value })}
@@ -141,7 +140,10 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {renderOddsRatio({ value: result.ptv_mis_odds_ratio })}
             </td>
             <td style={{ paddingLeft: '10px' }}>
-              {renderOddsRatioCI(result.ptv_mis_odds_ratio_95_ci)}
+              {renderOddsRatioCI({
+                oddsRatio: result.ptv_mis_odds_ratio,
+                confidenceInterval: result.ptv_mis_odds_ratio_95_ci,
+              })}
             </td>
             <td style={{ paddingLeft: '10px' }}>
               {renderStringOrFloatPvalueAsScientific({ value: result.ptv_mis_p_value })}
@@ -165,7 +167,10 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {renderOddsRatio({ value: result.mis_odds_ratio })}
             </td>
             <td style={{ paddingLeft: '10px' }}>
-              {renderOddsRatioCI(result.mis_odds_ratio_95_ci)}
+              {renderOddsRatioCI({
+                oddsRatio: result.mis_odds_ratio,
+                confidenceInterval: result.mis_odds_ratio_95_ci,
+              })}
             </td>
             <td style={{ paddingLeft: '10px' }}>-</td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
@@ -186,7 +191,10 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
               {renderOddsRatio({ value: result.syn_odds_ratio })}
             </td>
             <td style={{ paddingLeft: '10px' }}>
-              {renderOddsRatioCI(result.syn_odds_ratio_95_ci)}
+              {renderOddsRatioCI({
+                oddsRatio: result.syn_odds_ratio,
+                confidenceInterval: result.syn_odds_ratio_95_ci,
+              })}
             </td>
             <td style={{ paddingLeft: '10px' }}>-</td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>

@@ -5,7 +5,11 @@ import { Badge, BaseTable, ExternalLink, TooltipAnchor, TooltipHint } from '@gno
 
 import HelpButton from '../base/HelpButton'
 import { BipEx2AnalysisGroup } from './BipEx2Browser'
-import { renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import {
+  renderOddsRatio,
+  renderOddsRatioCI,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -85,7 +89,7 @@ const createGeneTableRow = (
   category: string,
   categoryAbbreviation: CategoryAbbreviation
 ) => {
-  const oddsRatio = renderOddsRatio({ value: object[`${categoryAbbreviation}_odds_ratio`] })
+  const oddsRatio = object[`${categoryAbbreviation}_odds_ratio`]
   const oddsRatio95CILowerBound = renderOddsRatio({
     value: object[`${categoryAbbreviation}_odds_ratio_95_ci_lower_bound`],
   })
@@ -103,11 +107,12 @@ const createGeneTableRow = (
           value: object[`${categoryAbbreviation}_p_value`],
         })}
       </td>
-      <td>{oddsRatio}</td>
+      <td>{renderOddsRatio({ value: oddsRatio })}</td>
       <td>
-        {oddsRatio === '-' && '-'}
-        {oddsRatio !== '-' &&
-          `(${oddsRatio95CILowerBound.toString()} - ${oddsRatio95CIUpperBound})`}
+        {renderOddsRatioCI({
+          oddsRatio,
+          confidenceInterval: `${oddsRatio95CILowerBound} - ${oddsRatio95CIUpperBound}`,
+        })}
       </td>
     </tr>
   )
