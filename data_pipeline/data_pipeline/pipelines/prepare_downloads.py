@@ -1,23 +1,22 @@
 import argparse
-import os
 import sys
 from tempfile import NamedTemporaryFile
 
 import hail as hl
 
 from data_pipeline.config import get_output_root, pipeline_config
+from data_pipeline.paths import (
+    dataset_gene_results_path,
+    dataset_gene_results_tsv_path,
+    dataset_variant_results_path,
+    dataset_variant_results_tsv_path,
+    dataset_variant_results_vcf_path,
+)
 from data_pipeline.validation import validate_gene_results_table, validate_variant_results_table
 
 
 def prepare_downloads_for_dataset(dataset_id, prepared_output_root, downloads_output_root):
-    update_date = pipeline_config.get(dataset_id, "output_last_updated")
-
-    prepared_output_path = f"{prepared_output_root}/{dataset_id.lower()}/{update_date}"
-    downloads_output_path = f"{downloads_output_root}/{update_date}"
-    downloads_output_prefix = os.path.join(downloads_output_path, dataset_id)
-
-    gene_results_path = os.path.join(prepared_output_path, "gene_results.ht")
-    gene_results = hl.read_table(gene_results_path)
+    gene_results = hl.read_table(dataset_gene_results_path(prepared_output_root, dataset_id))
     validate_gene_results_table(gene_results)
 
     gene_group_result_fields = gene_results.group_results.dtype.value_type.fields
@@ -31,10 +30,9 @@ def prepare_downloads_for_dataset(dataset_id, prepared_output_root, downloads_ou
     )
     gene_results_dsv = gene_results_dsv.explode(gene_results_dsv.group_results, name="group_result")
     gene_results_dsv = gene_results_dsv.transmute(**gene_results_dsv.group_result)
-    gene_results_dsv.export(os.path.join(downloads_output_prefix, f"{dataset_id}_gene_results.tsv.bgz"))
+    gene_results_dsv.export(dataset_gene_results_tsv_path(downloads_output_root, dataset_id))
 
-    variant_results_path = os.path.join(prepared_output_path, "variant_results.ht")
-    variant_results = hl.read_table(variant_results_path)
+    variant_results = hl.read_table(dataset_variant_results_path(prepared_output_root, dataset_id))
     validate_variant_results_table(variant_results)
 
     variant_group_result_fields = variant_results.group_results.dtype.value_type.fields
@@ -49,7 +47,7 @@ def prepare_downloads_for_dataset(dataset_id, prepared_output_root, downloads_ou
     )
     variant_results_dsv = variant_results_dsv.explode(variant_results_dsv.group_results, name="group_result")
     variant_results_dsv = variant_results_dsv.transmute(**variant_results_dsv.group_result)
-    variant_results_dsv.export(os.path.join(downloads_output_prefix, f"{dataset_id}_variant_results.tsv.bgz"))
+    variant_results_dsv.export(dataset_variant_results_tsv_path(downloads_output_root, dataset_id))
 
     variant_results_groups = variant_results.aggregate(
         hl.agg.explode(hl.agg.collect_as_set, variant_results.group_results.keys())
@@ -96,7 +94,7 @@ def prepare_downloads_for_dataset(dataset_id, prepared_output_root, downloads_ou
 
         hl.export_vcf(
             variant_results_vcf,
-            os.path.join(downloads_output_prefix, f"{dataset_id}_variant_results.vcf.bgz"),
+            dataset_variant_results_vcf_path(downloads_output_root, dataset_id),
             append_to_header=f"file://{header_file.name}",
             metadata={
                 "info": {**{f: {"Number": str(len(variant_results_groups))} for f in variant_group_result_fields}}

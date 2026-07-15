@@ -1,10 +1,15 @@
 import argparse
-import os
 import sys
 
 import hail as hl
 
 from data_pipeline.config import get_output_root, pipeline_config
+from data_pipeline.paths import (
+    combined_dataset_path,
+    dataset_gene_results_path,
+    dataset_variant_results_path,
+    gene_models_path,
+)
 
 VARIANT_FIELDS = [
     "variant_id",
@@ -18,18 +23,13 @@ VARIANT_FIELDS = [
 
 
 def combine_datasets(dataset_ids, output_root):
-    gene_models_last_updated = pipeline_config.get("reference_data", "output_last_updated")
-    gene_models_path = f"{output_root}/gene_models/{gene_models_last_updated}/gene_models.ht"
-    ds = hl.read_table(gene_models_path)
+    ds = hl.read_table(gene_models_path(output_root))
 
     ds = ds.annotate(gene_results=hl.struct(), variants=hl.struct())
     ds = ds.annotate_globals(meta=hl.struct(variant_fields=VARIANT_FIELDS, datasets=hl.struct()))
 
     for dataset_id in dataset_ids:
-        dataset_last_updated = pipeline_config.get(dataset_id, "output_last_updated")
-        dataset_path = os.path.join(output_root, dataset_id.lower(), dataset_last_updated)
-
-        gene_results = hl.read_table(os.path.join(dataset_path, "gene_results.ht"))
+        gene_results = hl.read_table(dataset_gene_results_path(output_root, dataset_id))
 
         gene_group_result_field_names = gene_results.group_results.dtype.value_type.fields
         gene_group_result_field_types = [
@@ -50,7 +50,7 @@ def combine_datasets(dataset_ids, output_root):
 
         ds = ds.annotate(gene_results=ds.gene_results.annotate(**{dataset_id: gene_results[ds.gene_id]}))
 
-        variant_results = hl.read_table(os.path.join(dataset_path, "variant_results.ht"))
+        variant_results = hl.read_table(dataset_variant_results_path(output_root, dataset_id))
 
         reference_genome = variant_results.locus.dtype.reference_genome.name
         variant_info_field_names = variant_results.info.dtype.fields
@@ -172,10 +172,8 @@ def main():
     )
 
     output_root = get_output_root(args.output_local)
-    combined_output_date = pipeline_config.get("output", "output_last_updated")
-    output_path = os.path.join(output_root, "combined", combined_output_date, "combined.ht")
     combined_ht = combine_datasets(datasets_to_combine, output_root)
-    combined_ht.write(output_path, overwrite=True)
+    combined_ht.write(combined_dataset_path(output_root), overwrite=True)
 
 
 if __name__ == "__main__":
