@@ -4,4 +4,4 @@ This genome browser displays variant and gene-level data from individuals of div
 
 We would like to thank the many tens of thousands of participants who generously contributed to our effort. In addition, we want to sincerely thank all the GP2 members who are involved in the program. A complete list of GP2 members can be found [here](https://gp2.org/research-community/partners/) and [here](https://doi.org/10.5281/zenodo.7904831).
 
-Genome browser results were last updated September 18, 2025.
+Genome browser results were last updated July 1, 2026.

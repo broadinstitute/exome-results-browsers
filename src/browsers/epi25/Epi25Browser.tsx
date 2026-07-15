@@ -1,24 +1,21 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount } from '../base/tableCells'
+import {
+  renderCount,
+  renderOddsRatio,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 
 import Epi25HomePage from './Epi25HomePage'
 import Epi25TermsPage from './Epi25TermsPage'
 import Epi25VariantFilter from './Epi25VariantFilter'
 
-const renderOddsRatio = (value) => {
-  if (value === null) {
-    return ''
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-  return value.toPrecision(3)
-}
+export const epi25AnalysisGroups = ['EPI', 'DEE', 'GGE', 'NAFE'] as const
+export type Epi25AnalysisGroup = typeof epi25AnalysisGroups[number]
+export const epi25DefaultAnalysisGroup: Epi25AnalysisGroup = 'EPI'
+
+export const epi25PValueOfZeroPlaceholder = '2.2e-16'
 
 const Epi25Browser = () => (
   <Browser
@@ -33,8 +30,8 @@ const Epi25Browser = () => (
       },
     ]}
     geneResultsPageHeading="Epi25 WES: gene burden results"
-    geneResultAnalysisGroupOptions={['EPI', 'DEE', 'GGE', 'NAFE']}
-    defaultGeneResultAnalysisGroup="EPI"
+    geneResultAnalysisGroupOptions={epi25AnalysisGroups}
+    defaultGeneResultAnalysisGroup={epi25DefaultAnalysisGroup}
     defaultGeneResultSortKey="ptv_pval"
     geneResultColumns={[
       {
@@ -65,12 +62,17 @@ const Epi25Browser = () => (
         key: 'ptv_pval',
         heading: 'PTV p\u2011val',
         minWidth: 85,
+        render: (value) =>
+          renderStringOrFloatPvalueAsScientific({
+            value: value,
+            zeroValue: epi25PValueOfZeroPlaceholder,
+          }),
       },
       {
         key: 'ptv_OR',
         heading: 'PTV odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio({ value: value }),
       },
       {
         key: 'damaging_missense_case_count',
@@ -93,11 +95,11 @@ const Epi25Browser = () => (
         key: 'damaging_missense_OR',
         heading: 'Damaging Missense odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio({ value: value }),
       },
     ]}
-    defaultVariantAnalysisGroup="EPI"
-    variantAnalysisGroupOptions={['EPI', 'DEE', 'GGE', 'NAFE']}
+    variantAnalysisGroupOptions={epi25AnalysisGroups}
+    defaultVariantAnalysisGroup={epi25DefaultAnalysisGroup}
     variantResultColumns={[
       {
         key: 'group_result.estimate',
@@ -113,6 +115,7 @@ const Epi25Browser = () => (
         key: 'group_result.p_value',
         heading: 'P\u2011Value',
         minWidth: 65,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'group_result.in_analysis',

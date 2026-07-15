@@ -3,7 +3,7 @@ import React from 'react'
 import ExomeResultsBrowser from '../base/Browser'
 import GeneResultsManhattanPlot from '../base/GeneResultsPage/GeneResultsManhattanPlot'
 import GeneResultsQQPlot from '../base/GeneResultsPage/GeneResultsQQPlot'
-import { renderCount } from '../base/tableCells'
+import { renderCount, renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 import vepConsequences from '../base/vepConsequences'
 
 import SCHEMAAboutPage from './SCHEMAAboutPage'
@@ -32,18 +32,9 @@ variantConsequences.splice(
   }
 )
 
-const renderOddsRatio = (value) => {
-  if (value === null) {
-    return ''
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-  return value.toPrecision(3)
-}
+export const schemaAnalysisGroups = ['meta'] as const
+export type SCHEMAAnalysisGroup = typeof schemaAnalysisGroups[number]
+export const schemaDefaultAnalysisGroup: SCHEMAAnalysisGroup = 'meta'
 
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
@@ -63,8 +54,8 @@ const SCHEMABrowser = () => (
       },
     ]}
     geneResultsPageHeading="Exome meta-analysis results"
-    geneResultAnalysisGroupOptions={['meta']}
-    defaultGeneResultAnalysisGroup="meta"
+    geneResultAnalysisGroupOptions={schemaAnalysisGroups}
+    defaultGeneResultAnalysisGroup={schemaDefaultAnalysisGroup}
     defaultGeneResultSortKey="P meta"
     geneResultColumns={[
       {
@@ -139,11 +130,14 @@ const SCHEMABrowser = () => (
         key: 'P meta',
         tooltip: 'Study-wide meta-analysis P-value.',
         minWidth: 100,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value })
+
       },
       {
         key: 'Q meta',
         tooltip: 'P-value adjusted for the False Discovery Rate.',
         minWidth: 100,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value })
       },
       {
         key: 'OR (Class I)',
@@ -151,7 +145,7 @@ const SCHEMABrowser = () => (
         tooltip:
           'In-sample odds ratio of Class I variants, defined as PTVs and MPC > 3 missense variants.',
         minWidth: 110,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio({ value: value }),
       },
       {
         key: 'OR (Class II)',
@@ -159,7 +153,7 @@ const SCHEMABrowser = () => (
         tooltip:
           'In-sample odds ratio of Class II variants, defined as MPC 2 - 3 missense variants.',
         minWidth: 110,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio({ value: value }),
       },
     ]}
     geneResultTabs={[
@@ -204,8 +198,8 @@ const SCHEMABrowser = () => (
         ),
       },
     ]}
-    defaultVariantAnalysisGroup="meta"
-    variantAnalysisGroupOptions={['meta']}
+    variantAnalysisGroupOptions={schemaAnalysisGroups}
+    defaultVariantAnalysisGroup={schemaDefaultAnalysisGroup}
     variantResultColumns={[
       {
         key: 'group_result.n_denovos',

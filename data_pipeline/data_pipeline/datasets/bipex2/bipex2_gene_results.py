@@ -116,22 +116,34 @@ def prepare_gene_results(test_genes, _output_root):
     # Select result fields, discard gene information
     results = results.select(
         analysis_group="meta",
+        #
         syn_case_carrier=results["SYN Case Carrier"],
         syn_ctrl_carrier=results["SYN Control Carrier"],
         syn_p_value=results["SYN P-value"],
         syn_odds_ratio=results["SYN Odds Ratio"],
+        syn_odds_ratio_95_ci_lower_bound=results["SYN Odds Ratio 95% CI"][0],
+        syn_odds_ratio_95_ci_upper_bound=results["SYN Odds Ratio 95% CI"][1],
+        #
         mis_case_carrier=results["MIS Case Carrier"],
         mis_ctrl_carrier=results["MIS Control Carrier"],
         mis_p_value=results["MIS P-value"],
         mis_odds_ratio=results["MIS Odds Ratio"],
+        mis_odds_ratio_95_ci_lower_bound=results["MIS Odds Ratio 95% CI"][0],
+        mis_odds_ratio_95_ci_upper_bound=results["MIS Odds Ratio 95% CI"][1],
+        #
         ptv_case_carrier=results["PTV Case Carrier"],
         ptv_ctrl_carrier=results["PTV Control Carrier"],
         ptv_p_value=results["PTV P-value"],
         ptv_odds_ratio=results["PTV Odds Ratio"],
+        ptv_odds_ratio_95_ci_lower_bound=results["PTV Odds Ratio 95% CI"][0],
+        ptv_odds_ratio_95_ci_upper_bound=results["PTV Odds Ratio 95% CI"][1],
+        #
         ptv_mis_case_carrier=results["PTV+MIS Case Carrier"],
         ptv_mis_ctrl_carrier=results["PTV+MIS Control Carrier"],
         ptv_mis_p_value=results["PTV+MIS P-value"],
         ptv_mis_odds_ratio=results["PTV+MIS Odds Ratio"],
+        ptv_mis_odds_ratio_95_ci_lower_bound=results["PTV+MIS Odds Ratio 95% CI"][0],
+        ptv_mis_odds_ratio_95_ci_upper_bound=results["PTV+MIS Odds Ratio 95% CI"][1],
         #
         flags=results["flags"],
     )

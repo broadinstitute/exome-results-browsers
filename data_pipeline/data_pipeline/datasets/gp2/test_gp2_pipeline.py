@@ -18,12 +18,9 @@ def variant_hts():
                 "variant_id": "chr1_10000_C_T",
                 "dataset": "CES",
                 "ancestry": "EUR",
-                "ac_case": [600, 20],
-                "an_case": 600,
-                "af_case": [1, 0.033],
-                "ac_ctrl": [300, 3],
-                "an_ctrl": 300,
-                "af_ctrl": [1, 0.01],
+                "ac_pd": [600, 20],
+                "an_pd": 600,
+                "af_pd": [1, 0.033],
             },
             {
                 "locus": hl.locus("chr1", 10001, reference_genome="GRCh38"),
@@ -31,12 +28,9 @@ def variant_hts():
                 "variant_id": "chr1_10001_C_T",
                 "dataset": "CES",
                 "ancestry": "EUR",
-                "ac_case": [800, 20],
-                "an_case": 800,
-                "af_case": [1, 0.025],
-                "ac_ctrl": [100, 5],
-                "an_ctrl": 100,
-                "af_ctrl": [1, 0.05],
+                "ac_pd": [800, 20],
+                "an_pd": 800,
+                "af_pd": [1, 0.025],
             },
         ],
         schema=hl.tstruct(
@@ -45,12 +39,9 @@ def variant_hts():
             variant_id=hl.tstr,
             dataset=hl.tstr,
             ancestry=hl.tstr,
-            ac_case=hl.tarray(hl.tint32),
-            an_case=hl.tint32,
-            af_case=hl.tarray(hl.tfloat64),
-            ac_ctrl=hl.tarray(hl.tint32),
-            an_ctrl=hl.tint32,
-            af_ctrl=hl.tarray(hl.tfloat64),
+            ac_pd=hl.tarray(hl.tint32),
+            an_pd=hl.tint32,
+            af_pd=hl.tarray(hl.tfloat64),
         ),
     )
     ces_variant_ht = ces_variant_ht.key_by("locus", "alleles")
@@ -63,15 +54,24 @@ def variant_hts():
                 "variant_id": "chr1_10000_C_T",
                 "dataset": "WGS",
                 "ancestry": "EUR",
-                "ac_case": [200, 20],
-                "an_case": 200,
-                "af_case": [1, 0.1],
-                "ac_other": [300, 15],
-                "an_other": 300,
-                "af_other": [1, 0.05],
-                "ac_ctrl": [100, 3],
-                "an_ctrl": 100,
-                "af_ctrl": [1, 0.03],
+                "ac_pd": [200, 20],
+                "an_pd": 200,
+                "af_pd": [1, 0.1],
+                "ac_psp": [200, 21],
+                "an_psp": 201,
+                "af_psp": [1, 0.1],
+                "ac_dlb": [200, 22],
+                "an_dlb": 202,
+                "af_dlb": [1, 0.1],
+                "ac_msa": [200, 23],
+                "an_msa": 203,
+                "af_msa": [1, 0.1],
+                "ac_ctrl": [200, 24],
+                "an_ctrl": 204,
+                "af_ctrl": [1, 0.1],
+                "ac_other": [200, 25],
+                "an_other": 205,
+                "af_other": [1, 0.1],
             },
             {
                 "locus": hl.locus("chr1", 10002, reference_genome="GRCh38"),
@@ -79,15 +79,24 @@ def variant_hts():
                 "variant_id": "chr1_10002_C_T",
                 "dataset": "WGS",
                 "ancestry": "EUR",
-                "ac_case": [400, 20],
-                "an_case": 400,
-                "af_case": [1, 0.05],
-                "ac_other": [300, 30],
-                "an_other": 300,
-                "af_other": [1, 0.1],
-                "ac_ctrl": [50, 5],
-                "an_ctrl": 50,
-                "af_ctrl": [1, 0.1],
+                "ac_pd": [400, 20],
+                "an_pd": 400,
+                "af_pd": [1, 0.05],
+                "ac_psp": [400, 20],
+                "an_psp": 400,
+                "af_psp": [1, 0.05],
+                "ac_dlb": [400, 20],
+                "an_dlb": 400,
+                "af_dlb": [1, 0.05],
+                "ac_msa": [400, 20],
+                "an_msa": 400,
+                "af_msa": [1, 0.05],
+                "ac_ctrl": [400, 20],
+                "an_ctrl": 400,
+                "af_ctrl": [1, 0.05],
+                "ac_other": [400, 20],
+                "an_other": 400,
+                "af_other": [1, 0.05],
             },
         ],
         schema=hl.tstruct(
@@ -96,15 +105,24 @@ def variant_hts():
             variant_id=hl.tstr,
             dataset=hl.tstr,
             ancestry=hl.tstr,
-            ac_case=hl.tarray(hl.tint32),
-            an_case=hl.tint32,
-            af_case=hl.tarray(hl.tfloat64),
-            ac_other=hl.tarray(hl.tint32),
-            an_other=hl.tint32,
-            af_other=hl.tarray(hl.tfloat64),
+            ac_pd=hl.tarray(hl.tint32),
+            an_pd=hl.tint32,
+            af_pd=hl.tarray(hl.tfloat64),
+            ac_psp=hl.tarray(hl.tint32),
+            an_psp=hl.tint32,
+            af_psp=hl.tarray(hl.tfloat64),
+            ac_dlb=hl.tarray(hl.tint32),
+            an_dlb=hl.tint32,
+            af_dlb=hl.tarray(hl.tfloat64),
+            ac_msa=hl.tarray(hl.tint32),
+            an_msa=hl.tint32,
+            af_msa=hl.tarray(hl.tfloat64),
             ac_ctrl=hl.tarray(hl.tint32),
             an_ctrl=hl.tint32,
             af_ctrl=hl.tarray(hl.tfloat64),
+            ac_other=hl.tarray(hl.tint32),
+            an_other=hl.tint32,
+            af_other=hl.tarray(hl.tfloat64),
         ),
     )
     wgs_variant_ht = wgs_variant_ht.key_by("locus", "alleles")
@@ -129,7 +147,8 @@ def annotation_hts():
                 "gene_name": "ABC123",
                 "hgvsc": "ENST00000234567.1:n.123C>T",
                 "hgvsp": None,
-                "cadd": 1.23,
+                "cadd": 1.01,
+                "revel": 2.01,
             },
             {
                 "locus": hl.locus("chr1", 10001, reference_genome="GRCh38"),
@@ -141,7 +160,8 @@ def annotation_hts():
                 "gene_name": "ABC123",
                 "hgvsc": "ENST00000234567.1:n.234G>C",
                 "hgvsp": None,
-                "cadd": 5.67,
+                "cadd": 1.02,
+                "revel": 2.02,
             },
         ],
         schema=hl.tstruct(
@@ -155,6 +175,7 @@ def annotation_hts():
             hgvsc=hl.tstr,
             hgvsp=hl.tstr,
             cadd=hl.tfloat64,
+            revel=hl.tfloat64,
         ),
     )
     ces_annotation_ht = ces_annotation_ht.key_by("locus", "alleles")
@@ -171,7 +192,8 @@ def annotation_hts():
                 "gene_name": "ABC123",
                 "hgvsc": "ENST00000234567.1:n.123C>T",
                 "hgvsp": None,
-                "cadd": 2.34,
+                "cadd": 1.03,
+                "revel": 2.03,
             },
             {
                 "locus": hl.locus("chr1", 10002, reference_genome="GRCh38"),
@@ -183,7 +205,8 @@ def annotation_hts():
                 "gene_name": "ABC123",
                 "hgvsc": "ENST00000234567.1:n.234G>C",
                 "hgvsp": None,
-                "cadd": 4.56,
+                "cadd": 1.04,
+                "revel": 2.04,
             },
         ],
         schema=hl.tstruct(
@@ -197,6 +220,7 @@ def annotation_hts():
             hgvsc=hl.tstr,
             hgvsp=hl.tstr,
             cadd=hl.tfloat64,
+            revel=hl.tfloat64,
         ),
     )
     wgs_annotation_ht = wgs_annotation_ht.key_by("locus", "alleles")
@@ -241,11 +265,13 @@ def test_gp2_prepare_variants(variant_hts, annotation_hts):
     ces_annotation_ht = annotation_hts["ces_annotation_ht"]
     wgs_annotation_ht = annotation_hts["wgs_annotation_ht"]
 
+    output_local = False
     combined_variant_ht, combined_annotation_ht = combine_input_data(
         ces_variant_ht,
         wgs_variant_ht,
         ces_annotation_ht,
         wgs_annotation_ht,
+        output_local,
     )
 
     variants_ht = prepare_variant_results(combined_variant_ht, combined_annotation_ht, None, None)
@@ -254,6 +280,12 @@ def test_gp2_prepare_variants(variant_hts, annotation_hts):
     assert filtered_test.count() == 1
 
     group_results_dict = filtered_test.group_results.collect()
-    group_results_eur_array = group_results_dict[0].get("EUR", {})
+    group_results_eur = group_results_dict[0].get("EUR", {})
 
-    assert len(group_results_eur_array) == 2
+    assert len(group_results_eur) == 14
+    assert group_results_eur.wgs_ac_pd == 20
+    assert group_results_eur.wgs_ac_psp == 21
+    assert group_results_eur.wgs_ac_dlb == 22
+    assert group_results_eur.wgs_ac_msa == 23
+    assert group_results_eur.wgs_ac_ctrl == 24
+    assert group_results_eur.wgs_ac_other == 25

@@ -26,7 +26,7 @@ export default () => (
     <DocumentTitle title="ASC browser" />
     <HomePageHeading>Autism Sequencing Consortium exome analysis</HomePageHeading>
 
-    <Searchbox width="100%" />
+    <Searchbox id="asc-search" width="100%" />
     <p style={{ marginTop: '0.25em' }}>
       Or <Link to="/results">view all results</Link>
     </p>

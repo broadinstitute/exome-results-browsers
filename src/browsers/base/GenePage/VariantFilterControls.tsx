@@ -2,20 +2,20 @@ import React from 'react'
 import styled from 'styled-components'
 
 // @ts-expect-error: no types in this version of @gnomad/ui
-import { CategoryFilterControl, KeyboardShortcut, SearchInput, Select } from '@gnomad/ui'
+import { CategoryFilterControl, Checkbox, KeyboardShortcut, SearchInput, Select } from '@gnomad/ui'
 
 import CSVExportButton from '../CSVExportButton'
-import { ConsequenceCategory, VariantConsequenceCategoryLabels } from '../Browser'
+import { ConsequenceCategory, DatasetId, VariantConsequenceCategoryLabels } from '../Browser'
 import { VariantRow, VariantTableColumn } from './variantTableColumns'
 
-const consequenceCategoryColors = {
+export const consequenceCategoryColors = {
   lof: '#FF583F',
   missense: '#F0C94D',
   synonymous: 'green',
   other: '#757575',
 }
 
-const SettingsWrapper = styled.div`
+export const SettingsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -27,7 +27,7 @@ const SettingsWrapper = styled.div`
   }
 `
 
-const FiltersWrapper = styled.div`
+export const FiltersWrapper = styled.div`
   display: flex;
   flex-grow: 2;
   flex-direction: row;
@@ -58,7 +58,7 @@ const AnalysisGroupMenuWrapper = styled.div`
   }
 `
 
-const FiltersFirstColumn = styled.div`
+export const FiltersFirstColumn = styled.div`
   display: flex;
   flex-direction: column;
 
@@ -101,7 +101,7 @@ const SearchWrapper = styled.div`
   }
 `
 
-const keyboardShortcuts: Record<ConsequenceCategory, string> = {
+export const keyboardShortcuts: Record<ConsequenceCategory, string> = {
   lof: 'l',
   missense: 'm',
   synonymous: 's',
@@ -112,9 +112,11 @@ export interface FilterState {
   includeCategories: Record<ConsequenceCategory, boolean>
   searchText: string
   custom: any // TK: TODO: fixme: any!!,
+  gp2VariantColumnGroups?: Record<string, boolean>;
 }
 
 interface VariantFilterControlProps {
+  datasetId: DatasetId
   consequenceCategoryLabels: VariantConsequenceCategoryLabels
   customFilterComponent: any
   filter: FilterState
@@ -128,9 +130,10 @@ interface VariantFilterControlProps {
   variantTableColumns: VariantTableColumn[]
 }
 
-const lofCategories: ConsequenceCategory[] = ['lof', 'missense', 'synonymous', 'other']
+export const lofCategories: ConsequenceCategory[] = ['lof', 'missense', 'synonymous', 'other']
 
 const VariantFilterControls = ({
+  datasetId,
   consequenceCategoryLabels,
   customFilterComponent: CustomFilterComponent,
   filter,
@@ -143,6 +146,14 @@ const VariantFilterControls = ({
   variantAnalysisGroupOptions,
   variantTableColumns,
 }: VariantFilterControlProps) => {
+
+  const gp2Checkboxes = [
+    { key: 'pd', label: 'PD' },
+    { key: 'psp', label: 'PSP' },
+    { key: 'dlb', label: 'DLB' },
+    { key: 'msa', label: 'MSA' },
+  ];
+
   return (
     <SettingsWrapper>
       <FiltersWrapper>
@@ -207,6 +218,7 @@ const VariantFilterControls = ({
         </FiltersFirstColumn>
 
         <FiltersSecondColumn>
+
           {CustomFilterComponent && (
             <CustomFilterComponent
               value={filter.custom}
@@ -214,6 +226,33 @@ const VariantFilterControls = ({
                 onChangeFilter({ ...filter, custom: customFilter })
               }}
             />
+          )}
+
+          {datasetId === 'GP2' && filter.gp2VariantColumnGroups && (
+            <div style={{ marginTop: CustomFilterComponent ? '1em' : '0' }}>
+              <span style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5em' }}>
+                GP2 Case groups included in table columns
+              </span>
+              <div style={{ display: 'flex', gap: '1em' }}>
+                {gp2Checkboxes.map(({ key, label }) => (
+                  <Checkbox
+                    key={key}
+                    id={`gp2-group-checkbox-${key}`}
+                    label={label}
+                    checked={filter.gp2VariantColumnGroups![key]}
+                    onChange={(isChecked: boolean) => {
+                      onChangeFilter({
+                        ...filter,
+                        gp2VariantColumnGroups: {
+                          ...filter.gp2VariantColumnGroups,
+                          [key]: isChecked,
+                        },
+                      })
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
           )}
         </FiltersSecondColumn>
       </FiltersWrapper>

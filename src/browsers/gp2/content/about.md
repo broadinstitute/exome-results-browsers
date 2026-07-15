@@ -8,6 +8,12 @@ The Global Parkinson’s Genetics Program ([GP2](https://gp2.org/)) is a resourc
 
 A full list of GP2 sites and principal investigators can be found [here](https://doi.org/10.5281/zenodo.7904831).
 
+
 **Acknowledgements**
 
 We would like to thank the many tens of thousands of participants who generously contributed to our effort. In addition, we want to sincerely thank all the GP2 members who are involved in the program.
+
+
+**Citations in publications**
+
+We request that any use of data from the GP2 browser cite the consortium's paper, [_GP2: The Global Parkinson's Genetics Program_](https://doi.org/10.1002/mds.28494), and the the browser release paper: [_The Global Parkinson's Disease Genetics (GP2) Genome Browser_](https://doi.org/10.1002/mds.70309) with the appropriate DOI corresponding to the specific data release version utilized (see [https://zenodo.org/records/20932193](https://zenodo.org/records/20932193) for the full list of version-specific DOIs).

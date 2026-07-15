@@ -1,10 +1,23 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount } from '../base/tableCells'
+import { renderCount, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
 import ASCHomePage from './ASCHomePage'
 import ASCVariantFilter from './ASCVariantFilter'
+
+export const ascGeneAnalysisGroups = ['All'] as const
+export type ASCGeneAnalysisGroup = typeof ascGeneAnalysisGroups[number]
+export const ascGeneDefaultAnalysisGroup: ASCGeneAnalysisGroup = 'All'
+
+export const ascVariantAnalysisGroups = ['ASC_DN', 'SWE', 'DBS'] as const
+export type ASCVariantAnalysisGroup = typeof ascVariantAnalysisGroups[number]
+export const ascVariantDefaultAnalysisGroup: ASCVariantAnalysisGroup = 'ASC_DN'
+export const ascVariantAnalysisGroupLabels: Record<ASCVariantAnalysisGroup, string> = {
+  ASC_DN: 'De novo variants',
+  SWE: 'Swedish cohort',
+  DBS: 'iPSYCH ("Danish blood spot") cohort',
+}
 
 const ASCBrowser = () => (
   <Browser
@@ -12,8 +25,8 @@ const ASCBrowser = () => (
     navBarBackgroundColor="#23509c"
     homePage={ASCHomePage}
     geneResultsPageHeading="Results"
-    geneResultAnalysisGroupOptions={['All']}
-    defaultGeneResultAnalysisGroup="All"
+    geneResultAnalysisGroupOptions={ascGeneAnalysisGroups}
+    defaultGeneResultAnalysisGroup={ascGeneDefaultAnalysisGroup}
     defaultGeneResultSortKey="qval"
     geneResultColumns={[
       {
@@ -104,15 +117,12 @@ const ASCBrowser = () => (
         key: 'qval',
         heading: 'Q\u2011Val',
         minWidth: 100,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
     ]}
-    defaultVariantAnalysisGroup="ASC_DN"
-    variantAnalysisGroupOptions={['ASC_DN', 'SWE', 'DBS']}
-    variantAnalysisGroupLabels={{
-      ASC_DN: 'De novo variants',
-      SWE: 'Swedish cohort',
-      DBS: 'iPSYCH ("Danish blood spot") cohort',
-    }}
+    variantAnalysisGroupOptions={ascVariantAnalysisGroups}
+    defaultVariantAnalysisGroup={ascVariantDefaultAnalysisGroup}
+    variantAnalysisGroupLabels={ascVariantAnalysisGroupLabels}
     variantResultColumns={[
       {
         key: 'group_result.in_analysis',

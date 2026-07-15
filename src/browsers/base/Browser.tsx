@@ -53,6 +53,11 @@ declare global {
       variant_group_result_field_types: string[]
       variant_info_field_names: string[]
       variant_info_field_types: string[]
+      clinvar?: {
+        variant_fields: string[]
+        variant_info_field_names: string[]
+        variant_info_field_types: string[]
+      }
     }
     gaTrackingId: string
     gtag: Gtag.Gtag
@@ -132,8 +137,8 @@ export type GeneResultColumnConfig = {
   heading?: string
   minWidth?: number
   tooltip?: string
-  render?: (record: any) => React.ReactNode
-  renderForCSV?: (record: any) => string | number
+  render?: (record: any, row?: any) => React.ReactNode
+  renderForCSV?: (record: any, row?: any) => string | number
 }
 
 export type GeneResultTabConfig = {
@@ -151,6 +156,10 @@ export type VariantColumnConfig = {
   renderForCSV?: (record: any) => string | number
   showOnGenePage?: boolean
   showOnDetails?: boolean
+  isSortable?: boolean
+  sortFunction?: (a: any, b: any) => number
+  sortKey?: string
+  type?: string
 }
 
 export type ConsequenceCategory = 'lof' | 'missense' | 'synonymous' | 'other'
@@ -176,13 +185,13 @@ type BrowserProps = {
   extraPages?: ExtraPage[]
 
   geneResultsPageHeading?: string
-  geneResultAnalysisGroupOptions?: string[]
-  defaultGeneResultAnalysisGroup?: string
+  geneResultAnalysisGroupOptions: readonly string[]
+  defaultGeneResultAnalysisGroup: string
   defaultGeneResultSortKey?: string
   geneResultColumns?: GeneResultColumnConfig[]
   geneResultTabs?: GeneResultTabConfig[]
 
-  variantAnalysisGroupOptions: string[]
+  variantAnalysisGroupOptions: readonly string[]
   defaultVariantAnalysisGroup: string
   variantAnalysisGroupLabels?: Record<string, string>
   variantResultColumns?: VariantColumnConfig[]

@@ -13,8 +13,16 @@ The data pipeline for the results browsers has 4 main steps.
 
 - `write_results_files` exports combined Hail table to JSON files to be served by API.
 
-The output location of `prepare_gene_models`, `prepare_datasets`, and `combine_datasets` is
-controlled by the `output.staging_path` option in `pipeline_config.ini`.
+Configuration of the paths these steps write to is handled in `pipeline_config.ini`.
+
+The output paths the steps above write to are combined by the `output.gcs_output_root` and `output.local_output_root` options in `pipeline_config.ini`. These two paths allow running of pipelines locally (for fast test datsets, and in dataproc (for the full datasets).
+
+The date in the output path of independent pieces of data files (written by `prepare_gene_models`, `prepare_datasets`, and `prepare_downloads`) is controlled by the `<DATASET>.output_last_updated` option in `pipeline_config.ini`, e.g. `BipEx2.output_last_updated` controls the output path of the BipEx2 dataset hail tables, and downloads.
+
+The output location of the combined hail table, created by `combine_datasets` is
+controlled by the `output.output_last_updated` option in `pipeline_config.ini`.
+
+e.g. local output files are written in to a path like: `./{local_output_root}/{output_last_updated}/<dataset_name>/...`
 
 ## Configuration
 
@@ -75,20 +83,31 @@ Configuration is divided into sections:
 
 - `output`
 
-  - `staging_path` - path of the directory where pipelines should write Hail Tables
+  - `gcs_output_root`, and `local_output_root` - when combined with `output_last_updated`, determine the path of the directory where pipelines should write Hail Tables
 
-    After running data pipelines, this directory will contain:
+    After running data pipelines, this directory will a structure like:
 
     ```
     dataset1/
-      gene_results.ht
-      variant_results.ht
+      YYYY-MM-DD_a/
+        gene_results.ht
+        variant_results.ht
+      YYYY-MM-DD_b/
+        gene_results.ht
+        variant_results.ht
     dataset2/
-      gene_results.ht
-      variant_results.ht
+      YYYY-MM-DD_c/
+        gene_results.ht
+        variant_results.ht
     ...
-    gene_models.ht
-    combined.ht
+    ... same for other datasets
+    ...
+    gene_models/
+      YYYY-MM-DD_d/
+        gene_models.ht
+    combined/
+      YYYY-MM-DD_e
+        combined.ht
     ```
 
 - `dataproc` - configuration for Dataproc cluster used by `start_dataproc_cluster.py`,
@@ -103,92 +122,169 @@ Configuration is divided into sections:
 
 ## Running pipelines
 
+The pipelines accept arguments for which environment to run the pipeline in (dataproc, or local), and for which step to run
+
 ### Local
 
-To run data pipelines locally, use:
+To run data pipelines locally, use the flags: `--environment local`, `--output-local`, and `--test-genes` to subset the input data for fast iteration on the real input data. The dataset files themselves are reponsible for determining which gene intervals to subset the input data to.
 
+#### Prepare gene models
+
+```bash
+./data_pipeline/run_pipeline.py \
+  --environment local \
+  prepare_gene_models \
+  --output-local
 ```
-./data_pipeline/run_pipeline.py pipeline_name pipeline_args
+
+#### Prepare datasets
+
+```bash
+./data_pipeline/run_pipeline.py \
+  --environment local \
+  prepare_datasets --datasets <DATASET1> <DATASET2> \
+  --output-local \
+  --test-genes
 ```
+
+e.g for GP2 + ClinVarGRCh38
+
+```bash
+./data_pipeline/run_pipeline.py \
+  --environment local \
+  prepare_datasets --datasets GP2 ClinVarGRCh38 \
+  --output-local \
+  --test-genes
+```
+
+#### Combine datasets
+
+```bash
+./data_pipeline/run_pipeline.py \
+  --environment local \
+  combine_datasets \
+  --datasets <DATASET1> <DATASET2> \
+  --output-local
+```
+
+e.g. for Epi25
+
+```bash
+./data_pipeline/run_pipeline.py \
+  --environment local \
+  combine_datasets \
+  --datasets Epi25 \
+  --output-local
+```
+
+#### Write results files
+
+Once the `combined.ht` is generated, use `write_results_files.py` with subset arguments to write the static file locally to disk.
+
+For production, **this step must be done on a VM**, as the data is too large to process locally, see [deployment/README.md](../deployment/README.md)
+
+```bash
+./data_pipeline/write_results_files.py \
+  ./data/output-data/combined/<YYYY-MM-DD_DATE>/combined.ht \
+  ./data/<OUTPUT_DIR_NAME> \
+  --genes <ENSG_a> <ENSG_b> <ENSG_c>
+```
+
+Consider using a descriptive name for the results files directory, and sync'ing the ENSG ids to subset to, with teh gene intervals the individual data pipeline subsets its data to.
+
+e.g. for BipEx2
+
+```bash
+./data_pipeline/write_results_files.py \
+  ./data/output-data/combined/2026-06-24/combined.ht \
+  ./data/2026-06-24_test-bipex2-pcsk9-akap11-shank1-fryl-magi2-cracdl \
+  --genes ENSG00000169174 ENSG00000023516 ENSG00000161681 ENSG00000075539 ENSG00000187391 ENSG00000196872
+```
+
+See [CONTRIBUTING.md](../CONTRIBUTING.md#running-the-app-locally) for documentation on how to use these files for local development
 
 ### Dataproc
 
-To run data pipelines on Dataproc, use:
+To run data pipelines on Dataproc, used when creating/updating demos, or updating production:
 
-```
-./data_pipeline/start_dataproc_cluster.py
-./data_pipeline/run_pipeline.py --environment dataproc pipeline_name pipeline_args
-./data_pipeline/stop_dataproc_cluster.py
-```
+#### Start a dataproc cluster:
 
 Configuration for the Dataproc cluster (GCP project, region, etc.) can be set in the `dataproc`
 section of `pipeline_config.ini`.
 
-## Data preparation
+```bash
+./data_pipeline/start_dataproc_cluster.py
+```
 
-- Start Dataproc cluster.
+#### Prepare gene models
 
-  ```
-  ./data_pipeline/start_dataproc_cluster.py
-  ```
+If any input to the gene models has updated, prepare the gene models. If you are unsure, you just run this step.
 
-  The project, region, and zone to use for the cluster can be configured in the `dataproc` section
-  of `data_pipeline/pipeline_config.ini`.
+```bash
+./data_pipeline/run_pipeline.py \
+  --environment dataproc \
+  prepare_gene_models
+```
 
-- Prepare gene models.
+#### Prepare datasets.
 
-  This takes a few minutes on a default 2 worker cluster.
+If only one dataset has updated since the last production update, you can prepare just that data, e.g.
 
-  ```
-  ./data_pipeline/run_pipeline.py --environment dataproc prepare_gene_models
-  ```
+```bash
+./data_pipeline/run_pipeline.py \
+  --environment dataproc \
+  prepare_datasets \
+  --datasets BipEx2
+```
 
-- Prepare datasets.
+If you are unsure, update all the datasets. All of the datasets are listed in the
 
-  This takes a few minutes per dataset on a default 2 worker cluster.
+```bash
+./data_pipeline/run_pipeline.py \
+  --environment dataproc \
+  prepare_datasets \
+  --datasets all
+```
 
-  ```
-  ./data_pipeline/run_pipeline.py --environment dataproc prepare_datasets
-  ```
+The datasets `all` argument uses the `datasets.datasets` option from `pipeline_config.ini`. The pipeline will output which datasets it is running for.
 
-- Prepare downloads.
+#### Combine datasets
 
-  This takes less than a minute per dataset on a default 2 worker cluster.
+For production, all the datasets should be combined, as the files that get written to a persistent disk based on this combined hail table will serve every dataset.
 
-  ```
-  ./data_pipeline/run_pipeline.py --environment dataproc prepare_downloads
-  ```
+```bash
+./data_pipeline/run_pipeline.py \
+  --environment dataproc \
+  combine_datasets \
+  --datasets all
+```
 
-- Combine all datasets into one Hail Table.
+#### Prepare downloads
 
-  This takes 5-10 minutes on a default 2 worker cluster.
+If only one dataset has been updated since the last production update, you can just update the downloads for that dataset, e.g.
 
-  ```
-  ./data_pipeline/run_pipeline.py --environment dataproc combine_datasets
-  ```
+```bash
+./data_pipeline/run_pipeline.py \
+    --environment dataproc \
+    prepare_downloads \
+    --datasets BipEx2
+```
 
-- Stop Dataproc cluster.
+The downloads written out here include the date from the respective `<DATASET>.output_last_updated` option in `pipeline_config.ini`. If you update a download, you must update the date in the frontend downloads page, to point to the new file.
 
-  ```
-  ./data_pipeline/stop_dataproc_cluster.py
-  ```
+If you are unsure, you can prepare all the downloads files with the `--datasets all` option
 
-## Results files
+#### Stop the dataproc cluster
+
+```bash
+./data_pipeline/stop_dataproc_cluster.py
+```
+
+#### Write results files
 
 The combined Hail Table must be exported to JSON files which are served by the API. This is done
 by the `write_results_files.py` script.
 
-```
-./write_results_files.py /path/to/combined.ht /path/to/output/directory
-```
+For production, a VM is used to do this. See [WRITE_RESULTS_FILES](./WRITE_RESULTS_FILES.md) for documentation on doing this
 
-**Note** `write_results_files.py` writes a few hundred thousand files: 2 per gene (GRCh37 and GRCh38
-versions of the gene) and 1 per dataset per gene with variant-level results. In development, it is
-likely preferable to use `--genes` argument with `write_results_files.py` to only write variant-level
-results files for a few specific genes.
-
-## Downloads files
-
-Some generated files are intended to be available for download. These are written to a "downloads"
-directory in the staging path set in `pipeline_config.ini`. This directory should be copied to a
-public location and links on the browser downloads page updated accordingly.
+Once the files are written to a persistent disk, see [deployment/README.md](../deployment/README.md#deployments) for docs on how to use the disk in a demo/production update.

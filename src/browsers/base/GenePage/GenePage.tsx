@@ -15,6 +15,7 @@ import GeneResults from './GeneResults'
 import { TrackPage, TrackPageSection } from './TrackPage'
 import TranscriptTrack from './TranscriptTrack'
 import VariantsInGene from './VariantsInGene'
+import ClinVarVariantsInGene from './ClinVarVariantsInGene'
 import {
   DatasetId,
   VariantColumnConfig,
@@ -161,6 +162,12 @@ const GenePage = ({
           exons={gene.canonical_transcript.exons}
           strand={gene.canonical_transcript.strand}
         />
+        <ClinVarVariantsInGene
+          datasetId={datasetId}
+          gene={gene}
+          variantConsequences={variantConsequences}
+          consequenceCategoryLabels={variantConsequenceCategoryLabels}
+        />
         <VariantsInGene
           datasetId={datasetId}
           defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
@@ -208,26 +215,26 @@ const GenePageContainer = ({
   return (
     <Fetch path={`/gene/${geneIdOrSymbol}`}>
       {({
-        data,
-        error,
-        loading,
+        data: geneData,
+        error: geneError,
+        loading: geneLoading,
       }: {
         data: { gene: IndividualGeneAPIResponse }
         error: Error | null
         loading: boolean
       }) => {
-        if (loading) {
+        if (geneLoading) {
           return <StatusMessage>Loading gene...</StatusMessage>
         }
 
-        if (error || !(data || {}).gene) {
-          return <StatusMessage>{error?.message || 'Unable to load gene'}</StatusMessage>
+        if (geneError || !(geneData || {}).gene) {
+          return <StatusMessage>{geneError?.message || 'Unable to load gene'}</StatusMessage>
         }
 
         return (
           <GenePage
             datasetId={datasetId}
-            gene={data.gene}
+            gene={geneData.gene}
             defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
             variantAnalysisGroupOptions={variantAnalysisGroupOptions}
             variantConsequences={variantConsequences}

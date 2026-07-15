@@ -1,51 +1,51 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { Badge, BaseTable, ExternalLink } from '@gnomad/ui'
+import { Badge, BaseTable, ExternalLink, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
+import { BipEx2AnalysisGroup } from './BipEx2Browser'
+import {
+  renderOddsRatio,
+  renderOddsRatioCI,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
-
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return '-'
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-
-  const floatValue = typeof value === 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-  return floatValue.toPrecision(3)
-}
-
 enum ResultEnum {
   n_cases,
   n_controls,
+  //
   ptv_case_carrier,
   ptv_ctrl_carrier,
   ptv_p_value,
   ptv_odds_ratio,
+  ptv_odds_ratio_95_ci_lower_bound,
+  ptv_odds_ratio_95_ci_upper_bound,
+  //
   mis_case_carrier,
   mis_ctrl_carrier,
   mis_p_value,
   mis_odds_ratio,
+  mis_odds_ratio_95_ci_lower_bound,
+  mis_odds_ratio_95_ci_upper_bound,
+  //
   ptv_mis_case_carrier,
   ptv_mis_ctrl_carrier,
   ptv_mis_p_value,
   ptv_mis_odds_ratio,
+  ptv_mis_odds_ratio_95_ci_lower_bound,
+  ptv_mis_odds_ratio_95_ci_upper_bound,
+  //
   syn_case_carrier,
   syn_ctrl_carrier,
   syn_p_value,
   syn_odds_ratio,
+  syn_odds_ratio_95_ci_lower_bound,
+  syn_odds_ratio_95_ci_upper_bound,
+  //
   flags,
 }
 
@@ -89,13 +89,31 @@ const createGeneTableRow = (
   category: string,
   categoryAbbreviation: CategoryAbbreviation
 ) => {
+  const oddsRatio = object[`${categoryAbbreviation}_odds_ratio`]
+  const oddsRatio95CILowerBound = renderOddsRatio({
+    value: object[`${categoryAbbreviation}_odds_ratio_95_ci_lower_bound`],
+  })
+  const oddsRatio95CIUpperBound = renderOddsRatio({
+    value: object[`${categoryAbbreviation}_odds_ratio_95_ci_upper_bound`],
+  })
+
   return (
     <tr>
       <th scope="row">{category}</th>
       <td>{safeReturnValue(object, `${categoryAbbreviation}_case_carrier`)}</td>
       <td>{safeReturnValue(object, `${categoryAbbreviation}_ctrl_carrier`)}</td>
-      <td>{safeReturnValue(object, `${categoryAbbreviation}_p_value`)}</td>
-      <td>{renderOddsRatio(object[`${categoryAbbreviation}_odds_ratio`])}</td>
+      <td>
+        {renderStringOrFloatPvalueAsScientific({
+          value: object[`${categoryAbbreviation}_p_value`],
+        })}
+      </td>
+      <td>{renderOddsRatio({ value: oddsRatio })}</td>
+      <td>
+        {renderOddsRatioCI({
+          oddsRatio,
+          confidenceInterval: `${oddsRatio95CILowerBound} - ${oddsRatio95CIUpperBound}`,
+        })}
+      </td>
     </tr>
   )
 }
@@ -116,6 +134,11 @@ const BipExGeneResult = ({ result }: { result: ResultObject }) => (
           <th scope="col">Control Count</th>
           <th scope="col">P-value</th>
           <th scope="col">Odds Ratio</th>
+          <th scope="col">
+            <TooltipAnchor tooltip="The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)">
+              <TooltipHint> Odds Ratio CI</TooltipHint>
+            </TooltipAnchor>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -136,9 +159,7 @@ const BipExGeneResult = ({ result }: { result: ResultObject }) => (
 )
 
 interface BipExGeneResultsProps {
-  results: {
-    meta: ResultObject
-  }
+  results: Record<BipEx2AnalysisGroup, ResultObject>
 }
 
 const BipExGeneResults = ({ results }: BipExGeneResultsProps) => (

@@ -8,6 +8,7 @@ import { BaseTable, ExternalLink, ListItem } from '@gnomad/ui'
 import { VariantAttribute, VariantAttributeList } from './VariantAttributes'
 import { renderExponentialIfSmall, VariantRow } from './variantTableColumns'
 import { ReferenceGenome, VariantColumnConfig } from '../Browser'
+import { FilterState } from './VariantFilterControls'
 
 const VariantContainer = styled.div`
   display: flex;
@@ -31,6 +32,16 @@ const Columns = styled.div`
     ${Column} {
       flex-basis: 100%;
     }
+  }
+`
+
+const TableWrapper = styled.div`
+  width: 100%;
+  overflow-x: auto;
+
+  th,
+  td {
+    white-space: nowrap;
   }
 `
 
@@ -345,6 +356,7 @@ interface VariantDetailsProps {
   additionalVariantDetailSummaryColumns: VariantColumnConfig[] | undefined
   variantDetailColumns: VariantColumnConfig[] | undefined
   renderVariantTranscriptConsequences: boolean
+  filter: FilterState
 }
 
 const VariantDetails = ({
@@ -358,6 +370,7 @@ const VariantDetails = ({
   additionalVariantDetailSummaryColumns,
   variantDetailColumns,
   renderVariantTranscriptConsequences,
+  filter,
 }: VariantDetailsProps) => {
   const { datasetId } = window.datasetConfig
 
@@ -390,22 +403,71 @@ const VariantDetails = ({
   ]
 
   const gp2Columns: VariantColumnConfig[] = [
+    // ---
     {
-      key: 'group_result.wgs_ac_case',
-      heading: 'WGS AC Case',
+      key: 'group_result.wgs_ac_pd',
+      heading: 'WGS AC PD',
       render: (value: number) => value,
     },
     {
-      key: 'group_result.wgs_an_case',
-      heading: 'WGS AN Case',
+      key: 'group_result.wgs_an_pd',
+      heading: 'WGS AN PD',
       render: (value: number) => value,
     },
     {
-      key: 'group_result.wgs_af_case',
-      heading: 'WGS AF Case',
+      key: 'group_result.wgs_af_pd',
+      heading: 'WGS AF PD',
       render: (value) => renderExponentialIfSmall(value),
     },
-
+    // ---
+    {
+      key: 'group_result.wgs_ac_psp',
+      heading: 'WGS AC PSP',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_an_psp',
+      heading: 'WGS AN PSP',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_af_psp',
+      heading: 'WGS AF PSP',
+      render: (value) => renderExponentialIfSmall(value),
+    },
+    // ---
+    {
+      key: 'group_result.wgs_ac_dlb',
+      heading: 'WGS AC DLB',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_an_dlb',
+      heading: 'WGS AN DLB',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_af_dlb',
+      heading: 'WGS AF DLB',
+      render: (value) => renderExponentialIfSmall(value),
+    },
+    // ---
+    {
+      key: 'group_result.wgs_ac_msa',
+      heading: 'WGS AC MSA',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_an_msa',
+      heading: 'WGS AN MSA',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.wgs_af_msa',
+      heading: 'WGS AF MSA',
+      render: (value) => renderExponentialIfSmall(value),
+    },
+    // ---
     {
       key: 'group_result.wgs_ac_ctrl',
       heading: 'WGS AC Control',
@@ -421,7 +483,7 @@ const VariantDetails = ({
       heading: 'WGS AF Control',
       render: renderExponentialIfSmall,
     },
-
+    // ---
     {
       key: 'group_result.wgs_ac_other',
       heading: 'WGS AC Other',
@@ -437,9 +499,40 @@ const VariantDetails = ({
       heading: 'WGS AF Other',
       render: renderExponentialIfSmall,
     },
+    // ---
+    {
+      key: 'group_result.ces_ac_pd',
+      heading: 'CES AC PD',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.ces_an_pd',
+      heading: 'CES AN PD',
+      render: (value: number) => value,
+    },
+    {
+      key: 'group_result.ces_af_pd',
+      heading: 'CES AF PD',
+      render: (value) => renderExponentialIfSmall(value),
+    },
+
   ]
 
-  const datasetColumns = datasetId === 'GP2' ? gp2Columns : standardColumns
+  const allGP2CaseColumnGroups = Object.keys(filter.gp2VariantColumnGroups!)
+  const activeGP2CaseColumnGroups = allGP2CaseColumnGroups.filter(
+    (g) => filter.gp2VariantColumnGroups![g]
+  )
+  const renderedGP2Columns = gp2Columns.filter((col) => {
+    const suffix = col.key.split('_').pop() as string
+
+    if (allGP2CaseColumnGroups.includes(suffix)) {
+      return activeGP2CaseColumnGroups.includes(suffix)
+    }
+
+    return true
+  })
+
+  const datasetColumns = datasetId === 'GP2' ? renderedGP2Columns : standardColumns
 
   const renderedVariantColumns = variantDetailColumns || [
     ...datasetColumns,
@@ -465,8 +558,8 @@ const VariantDetails = ({
           href={`https://gnomad.broadinstitute.org/variant/${variant.variant_id}?dataset=${gnomadDataset}`}
         >
           View in gnomAD
-        </ExternalLink>
-        {' '}for more information on variant consequences and population frequencies
+        </ExternalLink>{' '}
+        for more information on variant consequences and population frequencies
       </div>
       <Columns>
         {datasetId !== 'GP2' && defaultGroupResult && (
@@ -509,49 +602,53 @@ const VariantDetails = ({
       </Columns>
 
       <h2>Analysis Groups</h2>
-      <BaseTable>
-        <thead>
-          <tr>
-            <th scope="col">Group</th>
-            {renderedVariantColumns.map((c) => (
-              <th key={c.key} scope="col">
-                {c.heading}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {Object.keys(variant.group_results)
-            .sort((g1, g2) => {
-              if (g1 === defaultVariantAnalysisGroup) {
-                return -1
-              }
-              if (g2 === defaultVariantAnalysisGroup) {
-                return 1
-              }
-              return (variantAnalysisGroupLabels[g1] || g1).localeCompare(
-                variantAnalysisGroupLabels[g2] || g2
-              )
-            })
-            .map((analysisGroup) => {
-              const groupResult = variant.group_results[analysisGroup]
-              const rowVariant = { ...variant, group_result: groupResult }
+      <TableWrapper>
+        <BaseTable>
+          <thead>
+            <tr>
+              <th scope="col">Group</th>
+              {renderedVariantColumns.map((c) => (
+                <th key={c.key} scope="col">
+                  {c.heading}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {Object.keys(variant.group_results)
+              .sort((g1, g2) => {
+                if (g1 === defaultVariantAnalysisGroup) {
+                  return -1
+                }
+                if (g2 === defaultVariantAnalysisGroup) {
+                  return 1
+                }
+                return (variantAnalysisGroupLabels[g1] || g1).localeCompare(
+                  variantAnalysisGroupLabels[g2] || g2
+                )
+              })
+              .map((analysisGroup) => {
+                const groupResult = variant.group_results[analysisGroup]
+                const rowVariant = { ...variant, group_result: groupResult }
 
-              return (
-                <tr key={analysisGroup}>
-                  <th scope="row">{variantAnalysisGroupLabels[analysisGroup] || analysisGroup}</th>
-                  {renderedVariantColumns.map((c) => (
-                    <td key={c.key}>
-                      {get(rowVariant, c.key) === null
-                        ? ''
-                        : (c.render || renderNumber)(get(rowVariant, c.key))}
-                    </td>
-                  ))}
-                </tr>
-              )
-            })}
-        </tbody>
-      </BaseTable>
+                return (
+                  <tr key={analysisGroup}>
+                    <th scope="row">
+                      {variantAnalysisGroupLabels[analysisGroup] || analysisGroup}
+                    </th>
+                    {renderedVariantColumns.map((c) => (
+                      <td key={c.key}>
+                        {get(rowVariant, c.key) === null
+                          ? ''
+                          : (c.render || renderNumber)(get(rowVariant, c.key))}
+                      </td>
+                    ))}
+                  </tr>
+                )
+              })}
+          </tbody>
+        </BaseTable>
+      </TableWrapper>
 
       {renderVariantTranscriptConsequences && variant.info && variant.info.transcript_consequences && (
         <>

@@ -28,13 +28,20 @@ def prepare_dataset(dataset_id, test_genes, output_local):
     if dataset_id.lower() == "gp2":
         print("running for GP2")
 
-        compute_combine = False
-
         combined_variant_results_path = os.path.join(output_path, "combined_variant_results.ht")
         combined_variant_annotations_path = os.path.join(output_path, "combined_variant_annotations.ht")
 
+        if output_local:
+            compute_combine = not (
+                os.path.exists(combined_variant_results_path) and os.path.exists(combined_variant_annotations_path)
+            )
+        else:
+            compute_combine = not (
+                hl.hadoop_exists(combined_variant_results_path) and hl.hadoop_exists(combined_variant_annotations_path)
+            )
+
         if compute_combine:
-            print("Creating combined table...")
+            print("Combined GP2 tables do not exist, creating them ...")
             ces_variant_results_path = pipeline_config.get(dataset_id, "ces_variant_results_path")
             ces_variant_results_ht = hl.read_table(ces_variant_results_path)
 
@@ -52,18 +59,24 @@ def prepare_dataset(dataset_id, test_genes, output_local):
             )
 
             combined_variant_results_ht, combined_variant_annotations_ht = combine_data_module.combine_input_data(
-                ces_variant_results_ht, wgs_variant_results_ht, ces_variant_annotations_ht, wgs_variant_annotations_ht
+                ces_variant_results_ht,
+                wgs_variant_results_ht,
+                ces_variant_annotations_ht,
+                wgs_variant_annotations_ht,
+                test_genes,
             )
 
             combined_variant_results_ht.write(combined_variant_results_path, overwrite=True)
+            print("Wrote GP2 combined variant results table")
             combined_variant_annotations_ht.write(combined_variant_annotations_path, overwrite=True)
+            print("Wrote GP2 combined variant annotations table")
 
         # ---
 
         combined_variant_results_ht = hl.read_table(combined_variant_results_path)
         combined_variant_annotations_ht = hl.read_table(combined_variant_annotations_path)
 
-        print(f"Preparing {dataset_id} variants hail table")
+        print(f"\n\n === Preparing {dataset_id} variants hail table")
         variant_results_module = importlib.import_module(
             f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_variant_results"
         )
@@ -73,7 +86,7 @@ def prepare_dataset(dataset_id, test_genes, output_local):
         validate_variant_results_table(variant_results)
         variant_results.write(os.path.join(output_path, "variant_results.ht"), overwrite=True)
 
-        print(f"Preparing {dataset_id} genes hail table")
+        print(f"\n\n === Preparing {dataset_id} genes hail table")
         gene_results_module = importlib.import_module(
             f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_gene_results"
         )
@@ -81,8 +94,21 @@ def prepare_dataset(dataset_id, test_genes, output_local):
         validate_gene_results_table(gene_results)
         gene_results.write(os.path.join(output_path, "gene_results.ht"), overwrite=True)
 
+    elif dataset_id.lower() == "ClinVarGRCh38".lower():
+        print(f"\n\n === Preparing {dataset_id} variants hail table")
+        clinvar_grch38_module = importlib.import_module("data_pipeline.datasets.clinvar.clinvar_grch38")
+
+        ht_clinvar_variants = clinvar_grch38_module.prepare_clinvar_variants(test_genes)
+        ht_clinvar_variants.write(os.path.join(output_path, "variant_results.ht"), overwrite=True)
+
+        clinvar_grch38_dummy_genes_module = importlib.import_module(
+            "data_pipeline.datasets.clinvar.clinvar_grch38_dummy_genes"
+        )
+        ht_clinvar_genes = clinvar_grch38_dummy_genes_module.prepare_gene_results(test_genes, output_root)
+        ht_clinvar_genes.write(os.path.join(output_path, "gene_results.ht"), overwrite=True)
+
     else:
-        print(f"Preparing {dataset_id} variants hail table")
+        print(f"\n\n === Preparing {dataset_id} variants hail table")
         variant_results_module = importlib.import_module(
             f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_variant_results"
         )
@@ -90,7 +116,7 @@ def prepare_dataset(dataset_id, test_genes, output_local):
         validate_variant_results_table(variant_results)
         variant_results.write(os.path.join(output_path, "variant_results.ht"), overwrite=True)
 
-        print(f"Preparing {dataset_id} genes hail table")
+        print(f"\n\n === Preparing {dataset_id} genes hail table")
         gene_results_module = importlib.import_module(
             f"data_pipeline.datasets.{dataset_id.lower()}.{dataset_id.lower()}_gene_results"
         )
@@ -129,6 +155,8 @@ def main():
         datasets_to_prepare = args.datasets
     else:
         datasets_to_prepare = all_datasets
+
+    print(f"\nPreparing datasets: {list(datasets_to_prepare)} ...\n\n")
 
     # hl.init()
     hl.init(

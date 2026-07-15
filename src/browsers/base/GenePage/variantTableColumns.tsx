@@ -6,6 +6,7 @@ import styled from 'styled-components'
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { TextButton } from '@gnomad/ui'
 import { ConsequenceCategory, VariantColumnConfig } from '../Browser'
+import { FilterState } from './VariantFilterControls'
 
 const VariantIdButton = styled(TextButton)`
   overflow: hidden;
@@ -265,39 +266,143 @@ const statColumns: VariantTableColumn[] = [
 ]
 
 const gp2StatColumns: VariantTableColumn[] = [
+  // ---
   {
-    key: 'group_result.wgs_ac_case',
-    heading: 'WGS AC Case',
-    tooltip: 'Allele count in cases in whole genome sequencing',
+    key: 'group_result.wgs_ac_pd',
+    heading: 'WGS AC PD',
+    tooltip: 'Allele count in PD in whole genome sequencing',
     isSortable: true,
     sortFunction: (a, b) => a - b,
-    sortKey: 'group_result.wgs_ac_case',
+    sortKey: 'group_result.wgs_ac_pd',
     minWidth: 80,
     render: (row, key) => get(row, key),
     renderForCSV: (row, key) => get(row, key),
   },
   {
-    key: 'group_result.wgs_an_case',
-    heading: 'WGS AN Case',
-    tooltip: 'Allele number in cases in whole genome sequencing',
+    key: 'group_result.wgs_an_pd',
+    heading: 'WGS AN PD',
+    tooltip: 'Allele number in PD in whole genome sequencing',
     isSortable: true,
     sortFunction: (a, b) => a - b,
-    sortKey: 'group_result.wgs_an_case',
+    sortKey: 'group_result.wgs_an_pd',
     minWidth: 80,
     render: (row, key) => get(row, key),
     renderForCSV: (row, key) => get(row, key),
   },
   {
-    key: 'group_result.wgs_af_case',
-    heading: 'WGS AF Case',
-    tooltip: 'Allele frequency in cases in whole genome sequencing',
+    key: 'group_result.wgs_af_pd',
+    heading: 'WGS AF PD',
+    tooltip: 'Allele frequency in PD in whole genome sequencing',
     isSortable: true,
     sortFunction: (a, b) => a - b,
-    sortKey: 'group_result.wgs_af_case',
+    sortKey: 'group_result.wgs_af_pd',
     minWidth: 80,
     render: (row, key) => renderExponentialNumberCellIfSmall(row, key),
     renderForCSV: (row, key) => get(row, key),
   },
+  // ---
+  {
+    key: 'group_result.wgs_ac_psp',
+    heading: 'WGS AC PSP',
+    tooltip: 'Allele count in PSP in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_ac_psp',
+    minWidth: 80,
+    render: (row, key) => get(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
+  {
+    key: 'group_result.wgs_an_psp',
+    heading: 'WGS AN PSP',
+    tooltip: 'Allele number in PSP in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_an_psp',
+    minWidth: 80,
+    render: (row, key) => get(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
+  {
+    key: 'group_result.wgs_af_psp',
+    heading: 'WGS AF PSP',
+    tooltip: 'Allele frequency in PSP in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_af_psp',
+    minWidth: 80,
+    render: (row, key) => renderExponentialNumberCellIfSmall(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
+  // ---
+  {
+    key: 'group_result.wgs_ac_dlb',
+    heading: 'WGS AC DLB',
+    tooltip: 'Allele count in DLB in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_ac_dlb',
+    minWidth: 80,
+    render: (row, key) => get(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
+  {
+    key: 'group_result.wgs_an_dlb',
+    heading: 'WGS AN DLB',
+    tooltip: 'Allele number in DLB in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_an_dlb',
+    minWidth: 80,
+    render: (row, key) => get(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
+  {
+    key: 'group_result.wgs_af_dlb',
+    heading: 'WGS AF DLB',
+    tooltip: 'Allele frequency in DLB in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_af_dlb',
+    minWidth: 80,
+    render: (row, key) => renderExponentialNumberCellIfSmall(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
+  // ---
+  {
+    key: 'group_result.wgs_ac_msa',
+    heading: 'WGS AC MSA',
+    tooltip: 'Allele count in MSA in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_ac_msa',
+    minWidth: 80,
+    render: (row, key) => get(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
+  {
+    key: 'group_result.wgs_an_msa',
+    heading: 'WGS AN MSA',
+    tooltip: 'Allele number in MSA in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_an_msa',
+    minWidth: 80,
+    render: (row, key) => get(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
+  {
+    key: 'group_result.wgs_af_msa',
+    heading: 'WGS AF MSA',
+    tooltip: 'Allele frequency in MSA in whole genome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.wgs_af_msa',
+    minWidth: 80,
+    render: (row, key) => renderExponentialNumberCellIfSmall(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
+
   {
     key: 'group_result.wgs_ac_ctrl',
     heading: 'WGS AC Control',
@@ -309,6 +414,7 @@ const gp2StatColumns: VariantTableColumn[] = [
     render: (row, key) => get(row, key),
     renderForCSV: (row, key) => get(row, key),
   },
+  // ---
   {
     key: 'group_result.wgs_an_ctrl',
     heading: 'WGS AN Control',
@@ -331,6 +437,7 @@ const gp2StatColumns: VariantTableColumn[] = [
     render: (row, key) => renderExponentialNumberCellIfSmall(row, key),
     renderForCSV: (row, key) => get(row, key),
   },
+  // ---
   {
     key: 'group_result.wgs_ac_other',
     heading: 'WGS AC Other',
@@ -364,17 +471,73 @@ const gp2StatColumns: VariantTableColumn[] = [
     render: (row, key) => renderExponentialNumberCellIfSmall(row, key),
     renderForCSV: (row, key) => get(row, key),
   },
+  // ---
+  {
+    key: 'group_result.ces_ac_pd',
+    heading: 'CES AC PD',
+    tooltip: 'Allele count in PD in clinical exome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.ces_ac_pd',
+    minWidth: 80,
+    render: (row, key) => get(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
+  {
+    key: 'group_result.ces_an_pd',
+    heading: 'CES AN PD',
+    tooltip: 'Allele number in PD in clinical exome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.ces_an_pd',
+    minWidth: 80,
+    render: (row, key) => get(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
+  {
+    key: 'group_result.ces_af_pd',
+    heading: 'CES AF PD',
+    tooltip: 'Allele frequency in PD in clinical exome sequencing',
+    isSortable: true,
+    sortFunction: (a, b) => a - b,
+    sortKey: 'group_result.ces_af_pd',
+    minWidth: 80,
+    render: (row, key) => renderExponentialNumberCellIfSmall(row, key),
+    renderForCSV: (row, key) => get(row, key),
+  },
 ]
 
-const getVariantTableColumns = (
+type GetVariantTableColumnsProps = {
   variantResultColumns: VariantColumnConfig[]
-): VariantTableColumn[] => {
+  filter: FilterState
+}
+
+const getVariantTableColumns = ({
+  variantResultColumns,
+  filter,
+}: GetVariantTableColumnsProps): VariantTableColumn[] => {
   const { datasetId } = window.datasetConfig
 
   const datasetColumns = [...variantDescriptionColumns]
 
   if (datasetId === 'GP2') {
-    datasetColumns.push(...gp2StatColumns)
+    let renderedGP2Columns = gp2StatColumns
+
+    const allGP2CaseColumnGroups = Object.keys(filter.gp2VariantColumnGroups!)
+    const activeGP2CaseColumnGroups = allGP2CaseColumnGroups.filter(
+      (g) => filter.gp2VariantColumnGroups![g]
+    )
+    renderedGP2Columns = gp2StatColumns.filter((col) => {
+      const suffix = col.key.split('_').pop() as string
+
+      if (allGP2CaseColumnGroups.includes(suffix)) {
+        return activeGP2CaseColumnGroups.includes(suffix)
+      }
+
+      return true
+    })
+
+    datasetColumns.push(...renderedGP2Columns)
   } else {
     datasetColumns.push(...statColumns)
   }

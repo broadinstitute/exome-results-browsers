@@ -1,37 +1,13 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount, renderFloatAsScientific } from '../base/tableCells'
+import { renderCount, renderStringOrFloatPvalueAsScientific, renderOddsRatio } from '../base/tableCells'
 
 import BipExHomePage from './BipEx2HomePage'
 import BipExVariantFilter from './BipEx2VariantFilter'
 
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { TooltipAnchor, TooltipHint } from '@gnomad/ui'
-
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return ''
-  }
-
-  if (value === 'Infinity') {
-    return '∞'
-  }
-
-  if (value === 0) {
-    return '0'
-  }
-
-  if (value === 'NaN' || Number.isNaN(value)) {
-    return '-'
-  }
-
-  if (typeof value !== 'number') {
-    return `[FIXME: ${typeof value} | ${String(value)}]`
-  }
-
-  return value.toPrecision(3)
-}
 
 const renderBipexFlags = (value: string) => {
   const flagsArray = value.split(',')
@@ -57,7 +33,9 @@ const renderBipexFlags = (value: string) => {
   return ''
 }
 
-const pValueOfZeroPlaceholder = '0'
+export const bipex2AnalysisGroups = ['meta'] as const
+export type BipEx2AnalysisGroup = typeof bipex2AnalysisGroups[number]
+export const bipex2DefaultAnalysisGroup: BipEx2AnalysisGroup = 'meta'
 
 const BipExBrowser = () => (
   <Browser
@@ -65,8 +43,8 @@ const BipExBrowser = () => (
     navBarBackgroundColor="#a6694b"
     homePage={BipExHomePage}
     geneResultsPageHeading="Gene results"
-    geneResultAnalysisGroupOptions={['meta']}
-    defaultGeneResultAnalysisGroup="meta"
+    geneResultAnalysisGroupOptions={bipex2AnalysisGroups}
+    defaultGeneResultAnalysisGroup={bipex2DefaultAnalysisGroup}
     defaultGeneResultSortKey="ptv_mis_p_value"
     geneResultColumns={[
       {
@@ -105,13 +83,32 @@ const BipExBrowser = () => (
         key: 'ptv_mis_p_value',
         heading: 'PTV+MIS p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'ptv_mis_odds_ratio',
         heading: 'PTV+MIS Fisher odds ratio',
         minWidth: 85,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
+      },
+      {
+        key: 'ptv_mis_odds_ratio_ci',
+        heading: 'PTV+MIS Fisher odds ratio CI',
+        tooltip: 'The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)',
+        minWidth: 110,
+        render: (_value, row) => {
+          const oddsRatio = renderOddsRatio({ value: row.ptv_mis_odds_ratio })
+          const shouldRenderOddsRatioCI = !['-', '∞', '0'].includes(oddsRatio.toString())
+          if (!shouldRenderOddsRatioCI) {
+            return '-'
+          }
+
+          return (
+            <span>
+              {`(${renderOddsRatio({ value: row.ptv_mis_odds_ratio_95_ci_lower_bound })} - ${renderOddsRatio({ value: row.ptv_mis_odds_ratio_95_ci_upper_bound })})`}
+            </span>
+          )
+        },
       },
       // ---
       {
@@ -130,13 +127,32 @@ const BipExBrowser = () => (
         key: 'ptv_p_value',
         heading: 'PTV p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'ptv_odds_ratio',
         heading: 'PTV Fisher odds ratio',
         minWidth: 85,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
+      },
+      {
+        key: 'ptv_odds_ratio_ci',
+        heading: 'PTV Fisher odds ratio CI',
+        minWidth: 110,
+        tooltip: 'The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)',
+        render: (_value, row) => {
+          const oddsRatio = renderOddsRatio({ value: row.ptv_odds_ratio })
+          const shouldRenderOddsRatioCI = !['-', '∞', '0'].includes(oddsRatio.toString())
+          if (!shouldRenderOddsRatioCI) {
+            return '-'
+          }
+
+          return (
+            <span>
+              {`(${renderOddsRatio({ value: row.ptv_odds_ratio_95_ci_lower_bound })} - ${renderOddsRatio({ value: row.ptv_odds_ratio_95_ci_upper_bound })})`}
+            </span>
+          )
+        }
       },
       // ---
       {
@@ -155,13 +171,33 @@ const BipExBrowser = () => (
         key: 'mis_p_value',
         heading: 'MIS p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'mis_odds_ratio',
         heading: 'MIS Fisher odds ratio',
         minWidth: 85,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
+      },
+      {
+        key: 'mis_odds_ratio_ci',
+        heading: 'MIS Fisher odds ratio CI',
+        minWidth: 110,
+        tooltip: 'The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)',
+        render: (_value, row) => {
+          const oddsRatio = renderOddsRatio({ value: row.mis_odds_ratio })
+          const shouldRenderOddsRatioCI = !['-', '∞', '0'].includes(oddsRatio.toString())
+          if (!shouldRenderOddsRatioCI) {
+            return '-'
+          }
+
+          return (
+            <span>
+              {`(${renderOddsRatio({ value: row.mis_odds_ratio_95_ci_lower_bound })} - ${renderOddsRatio({ value: row.mis_odds_ratio_95_ci_upper_bound })})`}
+            </span>
+          )
+
+        }
       },
       // ---
       {
@@ -180,39 +216,59 @@ const BipExBrowser = () => (
         key: 'syn_p_value',
         heading: 'SYN p\u2011val',
         minWidth: 95,
-        render: (value) => renderFloatAsScientific(value, pValueOfZeroPlaceholder),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'syn_odds_ratio',
         heading: 'SYN Fisher odds ratio',
         minWidth: 85,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
+      },
+      {
+        key: 'syn_odds_ratio_ci',
+        heading: 'SYN Fisher odds ratio CI',
+        minWidth: 110,
+        tooltip: 'The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)',
+        render: (_value, row) => {
+          const oddsRatio = renderOddsRatio({ value: row.syn_odds_ratio })
+          const shouldRenderOddsRatioCI = !['-', '∞', '0'].includes(oddsRatio.toString())
+          if (!shouldRenderOddsRatioCI) {
+            return '-'
+          }
+
+          return (
+            <span>
+              {`(${renderOddsRatio({ value: row.syn_odds_ratio_95_ci_lower_bound })} - ${renderOddsRatio({ value: row.syn_odds_ratio_95_ci_upper_bound })})`}
+            </span>
+          )
+        },
       },
     ]}
-    defaultVariantAnalysisGroup="meta"
-    variantAnalysisGroupOptions={['meta']}
-    variantResultColumns={[
-      {
-        key: 'group_result.mac',
-        heading: 'MAC',
-        minWidth: 65,
-      },
-      {
-        key: 'group_result.missense_passing',
-        heading: 'Missense passing',
-        minWidth: 85,
-        render: (value) => (value ? 'yes' : ''),
-        renderForCSV: (value) => (value ? 'yes' : ''),
-      },
-      {
-        key: 'group_result.in_analysis',
-        heading: 'In analysis',
-        minWidth: 85,
-        render: (value) => (value ? 'yes' : ''),
-        renderForCSV: (value) => (value ? 'yes' : ''),
-        showOnDetails: false,
-      },
-    ]}
+    variantAnalysisGroupOptions={bipex2AnalysisGroups}
+    defaultVariantAnalysisGroup={bipex2DefaultAnalysisGroup}
+    variantResultColumns={
+      [
+        {
+          key: 'group_result.mac',
+          heading: 'MAC',
+          minWidth: 65,
+        },
+        {
+          key: 'group_result.missense_passing',
+          heading: 'Missense passing',
+          minWidth: 85,
+          render: (value) => (value ? 'yes' : ''),
+          renderForCSV: (value) => (value ? 'yes' : ''),
+        },
+        {
+          key: 'group_result.in_analysis',
+          heading: 'In analysis',
+          minWidth: 85,
+          render: (value) => (value ? 'yes' : ''),
+          renderForCSV: (value) => (value ? 'yes' : ''),
+          showOnDetails: false,
+        },
+      ]}
     variantCustomFilter={{
       component: BipExVariantFilter,
       defaultFilter: {

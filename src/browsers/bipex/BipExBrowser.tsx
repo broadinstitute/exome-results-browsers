@@ -1,34 +1,25 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderCount } from '../base/tableCells'
+import {
+  renderCount,
+  renderOddsRatio,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 
 import BipExHomePage from './BipExHomePage'
 import BipExVariantFilter from './BipExVariantFilter'
 
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return ''
-  }
-
-  if (value === 'Infinity') {
-    return '∞'
-  }
-
-  if (value === 0) {
-    return '0'
-  }
-
-  if (Number.isNaN(value)) {
-    return '-'
-  }
-
-  if (typeof value !== 'number') {
-    return `[FIXME: ${typeof value} | ${String(value)}]`
-  }
-
-  return value.toPrecision(3)
-}
+export const bipexAnalysisGroups = [
+  'Bipolar Disorder',
+  'Bipolar Disorder 1',
+  'Bipolar Disorder 2',
+  'Bipolar with Psychosis',
+  'Bipolar without Psychosis',
+  'Bipolar (including Schizoaffective)',
+] as const
+export type BipExAnalysisGroup = typeof bipexAnalysisGroups[number]
+export const bipexDefaultAnalysisGroup: BipExAnalysisGroup = 'Bipolar Disorder'
 
 const BipExBrowser = () => (
   <Browser
@@ -36,15 +27,8 @@ const BipExBrowser = () => (
     navBarBackgroundColor="#c24100"
     homePage={BipExHomePage}
     geneResultsPageHeading="Gene results"
-    geneResultAnalysisGroupOptions={[
-      'Bipolar Disorder',
-      'Bipolar Disorder 1',
-      'Bipolar Disorder 2',
-      'Bipolar Disorder with Psychosis',
-      'Bipolar Disorder without Psychosis',
-      'Bipolar Disorder (including Schizoaffective)',
-    ]}
-    defaultGeneResultAnalysisGroup="Bipolar Disorder"
+    geneResultAnalysisGroupOptions={bipexAnalysisGroups}
+    defaultGeneResultAnalysisGroup={bipexDefaultAnalysisGroup}
     defaultGeneResultSortKey="ptv_fisher_gnom_non_psych_pval"
     geneResultColumns={[
       {
@@ -75,12 +59,13 @@ const BipExBrowser = () => (
         key: 'ptv_fisher_gnom_non_psych_pval',
         heading: 'PTV Fisher p\u2011val',
         minWidth: 85,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'ptv_fisher_gnom_non_psych_OR',
         heading: 'PTV Fisher odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio({ value: value }),
       },
       {
         key: 'damaging_missense_case_count',
@@ -98,23 +83,17 @@ const BipExBrowser = () => (
         key: 'damaging_missense_fisher_gnom_non_psych_pval',
         heading: 'Damaging Missense Fisher p\u2011val',
         minWidth: 85,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'damaging_missense_fisher_gnom_non_psych_OR',
         heading: 'Damaging Missense Fisher odds ratio',
         minWidth: 85,
-        render: renderOddsRatio,
+        render: (value) => renderOddsRatio({ value: value }),
       },
     ]}
-    defaultVariantAnalysisGroup="Bipolar Disorder"
-    variantAnalysisGroupOptions={[
-      'Bipolar Disorder',
-      'Bipolar Disorder 1',
-      'Bipolar Disorder 2',
-      'Bipolar Disorder with Psychosis',
-      'Bipolar Disorder without Psychosis',
-      'Bipolar Disorder (including Schizoaffective)',
-    ]}
+    variantAnalysisGroupOptions={bipexAnalysisGroups}
+    defaultVariantAnalysisGroup={bipexDefaultAnalysisGroup}
     variantResultColumns={[
       {
         key: 'group_result.estimate',
@@ -130,6 +109,7 @@ const BipExBrowser = () => (
         key: 'group_result.p_value',
         heading: 'P\u2011Value',
         minWidth: 65,
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'group_result.in_analysis',

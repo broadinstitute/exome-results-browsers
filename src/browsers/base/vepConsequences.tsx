@@ -183,4 +183,33 @@ const vepConsequences: VariantConsequence[] = [
   },
 ]
 
+const categoryByTerm = Object.create(null)
+const labelByTerm = Object.create(null)
+
+export const VEP_CONSEQUENCE_CATEGORIES = ['lof', 'missense', 'synonymous', 'other']
+
+export const VEP_CONSEQUENCE_CATEGORY_LABELS = {
+  lof: 'pLoF',
+  missense: 'Missense / Inframe indel',
+  synonymous: 'Synonymous',
+  other: 'Other',
+}
+
+export const getCategoryFromConsequence = (consequenceTerm: any) => categoryByTerm[consequenceTerm]
+
+export const getLabelForConsequenceTerm = (consequenceTerm: any) =>
+  labelByTerm[consequenceTerm] || consequenceTerm
+
+export const getConsequenceRank = (consequenceTerm: any) =>
+  vepConsequences.findIndex((consequence: any) => consequence.term === consequenceTerm)
+
+export const registerConsequences = (consequences: any) => {
+  consequences.forEach((consequence: any) => {
+    categoryByTerm[consequence.term] = consequence.category
+    labelByTerm[consequence.term] = consequence.label
+  })
+}
+
+registerConsequences(vepConsequences)
+
 export default vepConsequences

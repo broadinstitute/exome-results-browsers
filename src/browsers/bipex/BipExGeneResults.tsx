@@ -4,28 +4,12 @@ import styled from 'styled-components'
 import { BaseTable, ExternalLink, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
+import { BipExAnalysisGroup, bipexAnalysisGroups } from './BipExBrowser'
+import { renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
-
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return '-'
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-
-  const floatValue = typeof value === 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-  return floatValue.toPrecision(3)
-}
 
 const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
   <div>
@@ -85,11 +69,11 @@ const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
               : result.ptv_fisher_gnom_non_psych_control_count}
           </td>
           <td>
-            {result.ptv_fisher_gnom_non_psych_pval === null
-              ? '-'
-              : result.ptv_fisher_gnom_non_psych_pval.toPrecision(3)}
+            {renderStringOrFloatPvalueAsScientific({
+              value: result.ptv_fisher_gnom_non_psych_pval,
+            })}
           </td>
-          <td>{renderOddsRatio(result.ptv_fisher_gnom_non_psych_OR)}</td>
+          <td>{renderOddsRatio({ value: result.ptv_fisher_gnom_non_psych_OR })}</td>
         </tr>
         <tr>
           <th scope="row">Damaging Missense</th>
@@ -104,11 +88,11 @@ const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
               : result.damaging_missense_fisher_gnom_non_psych_control_count}
           </td>
           <td>
-            {result.damaging_missense_fisher_gnom_non_psych_pval === null
-              ? '-'
-              : result.damaging_missense_fisher_gnom_non_psych_pval.toPrecision(3)}
+            {renderStringOrFloatPvalueAsScientific({
+              value: result.damaging_missense_fisher_gnom_non_psych_pval,
+            })}
           </td>
-          <td>{renderOddsRatio(result.damaging_missense_fisher_gnom_non_psych_OR)}</td>
+          <td>{renderOddsRatio({ value: result.damaging_missense_fisher_gnom_non_psych_OR })}</td>
         </tr>
       </tbody>
     </Table>
@@ -123,34 +107,23 @@ const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
 )
 
 interface BipExResultObject {
-  n_cases: number,
-  n_controls: number,
-  ptv_case_count: number,
-  ptv_control_count: number,
-  ptv_fisher_gnom_non_psych_case_count: number,
-  ptv_fisher_gnom_non_psych_control_count: number,
-  ptv_fisher_gnom_non_psych_pval: number,
+  n_cases: number
+  n_controls: number
+  ptv_case_count: number
+  ptv_control_count: number
+  ptv_fisher_gnom_non_psych_case_count: number
+  ptv_fisher_gnom_non_psych_control_count: number
+  ptv_fisher_gnom_non_psych_pval: number
   // Odds ratio values may be a string 'inf' or a number
-  ptv_fisher_gnom_non_psych_OR: number | string,
-  damaging_missense_case_count: number,
-  damaging_missense_control_count: number,
-  damaging_missense_fisher_gnom_non_psych_case_count: number,
-  damaging_missense_fisher_gnom_non_psych_control_count: number,
-  damaging_missense_fisher_gnom_non_psych_pval: number,
+  ptv_fisher_gnom_non_psych_OR: number | string
+  damaging_missense_case_count: number
+  damaging_missense_control_count: number
+  damaging_missense_fisher_gnom_non_psych_case_count: number
+  damaging_missense_fisher_gnom_non_psych_control_count: number
+  damaging_missense_fisher_gnom_non_psych_pval: number
   // Odds ratio values may be a string 'inf' or a number
-  damaging_missense_fisher_gnom_non_psych_OR: number | string,
+  damaging_missense_fisher_gnom_non_psych_OR: number | string
 }
-
-const groups = [
-  'Bipolar Disorder',
-  'Bipolar Disorder 1',
-  'Bipolar Disorder 2',
-  'Bipolar Disorder with Psychosis',
-  'Bipolar Disorder without Psychosis',
-  'Bipolar Disorder (including Schizoaffective)',
-] as const
-
-type BipExAnalysisGroup = typeof groups[number]
 
 interface BipExGeneResultsProps {
   results: Record<BipExAnalysisGroup, BipExResultObject>
@@ -202,7 +175,7 @@ const BipExGeneResults = ({ results }: BipExGeneResultsProps) => (
       />
     </h2>
     <Tabs
-      tabs={groups.map((group) => ({
+      tabs={bipexAnalysisGroups.map((group) => ({
         id: group,
         label: group,
         render: () =>

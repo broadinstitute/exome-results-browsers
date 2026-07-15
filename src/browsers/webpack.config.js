@@ -7,6 +7,15 @@ const tsConfig = require('../../tsconfig.json')
 
 const BROWSERS = ['ASC', 'BipEx', 'BipEx2', 'Epi25', 'SCHEMA', 'SCHEMA2', 'IBD', 'GP2']
 
+const GA_TRACKING_IDS = {
+  ASC: 'G-W7RRZ25H20',
+  BipEx: 'G-8KPV0Z1C7D',
+  Epi25: 'G-QG9GFX2FDZ',
+  SCHEMA: 'G-EEXQ7693E2',
+  IBD: 'G-TFR479CXWK',
+  GP2: 'G-W809GBJT86',
+}
+
 const isDev = process.env.NODE_ENV === 'development'
 
 let config = BROWSERS.map((browser) => {
@@ -83,7 +92,7 @@ let config = BROWSERS.map((browser) => {
       new HtmlPlugin({
         template: path.resolve(__dirname, './base/index.html'),
         templateParameters: {
-          gaTrackingId: process.env[`${browser}_BROWSER_GA_TRACKING_ID`],
+          gaTrackingId: GA_TRACKING_IDS[browser],
         },
       }),
     ],

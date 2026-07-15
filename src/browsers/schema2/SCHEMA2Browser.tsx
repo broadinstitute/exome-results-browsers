@@ -3,7 +3,7 @@ import React from 'react'
 import ExomeResultsBrowser from '../base/Browser'
 import GeneResultsManhattanPlot from '../base/GeneResultsPage/GeneResultsManhattanPlot'
 import GeneResultsQQPlot from '../base/GeneResultsPage/GeneResultsQQPlot'
-import { renderCount, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import { renderCount, renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 import vepConsequences from '../base/vepConsequences'
 
 import SCHEMAAboutPage from './SCHEMA2AboutPage'
@@ -62,22 +62,9 @@ variantConsequences.splice(
   }
 )
 
-const renderOddsRatio = (value: number | string | null | undefined) => {
-  if (value === null || value === undefined) {
-    return ''
-  }
-  if (value === 'Infinity') {
-    return '∞'
-  }
-  if (value === 0) {
-    return '0'
-  }
-  const floatValue = typeof value == 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-  return floatValue.toPrecision(3)
-}
+export const schema2AnalysisGroups = ['meta'] as const
+export type SCHEMA2AnalysisGroup = typeof schema2AnalysisGroups[number]
+export const schema2DefaultAnalysisGroup: SCHEMA2AnalysisGroup = 'meta'
 
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
@@ -97,8 +84,8 @@ const SCHEMABrowser = () => (
       },
     ]}
     geneResultsPageHeading="Exome meta-analysis results"
-    geneResultAnalysisGroupOptions={['meta']}
-    defaultGeneResultAnalysisGroup="meta"
+    geneResultAnalysisGroupOptions={schema2AnalysisGroups}
+    defaultGeneResultAnalysisGroup={schema2DefaultAnalysisGroup}
     defaultGeneResultSortKey="schema_case_control_p_value"
     geneResultColumns={[
       {
@@ -107,7 +94,7 @@ const SCHEMABrowser = () => (
         tooltip:
           'SCHEMA2 p-value of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
         minWidth: 100,
-        render: (value) => renderStringOrFloatPvalueAsScientific(value),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'ptv_case_carrier',
@@ -161,14 +148,14 @@ const SCHEMABrowser = () => (
         tooltip:
           'Weighted meta-analysis p-value combining the Case-Control SCHEMA2 p-value with the De Novo pvalue',
         minWidth: 100,
-        render: (value) => renderStringOrFloatPvalueAsScientific(value),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
       {
         key: 'ptv_odds_ratio',
         heading: 'OR PTV',
         tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
         minWidth: 110,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
       {
         key: 'ptv_mis_odds_ratio',
@@ -176,7 +163,7 @@ const SCHEMABrowser = () => (
         tooltip:
           'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs + missense variants predicted to be damaging.',
         minWidth: 110,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
       {
         key: 'mis_case_carrier',
@@ -215,14 +202,14 @@ const SCHEMABrowser = () => (
         heading: 'OR Missense',
         tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
         minWidth: 110,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
       {
         key: 'syn_odds_ratio',
         heading: 'OR Synonymous',
         tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
         minWidth: 110,
-        render: (value) => renderOddsRatio(value),
+        render: (value) => renderOddsRatio({ value: value }),
       },
     ]}
     geneResultTabs={[
@@ -267,8 +254,8 @@ const SCHEMABrowser = () => (
         ),
       },
     ]}
-    defaultVariantAnalysisGroup="meta"
-    variantAnalysisGroupOptions={['meta']}
+    variantAnalysisGroupOptions={schema2AnalysisGroups}
+    defaultVariantAnalysisGroup={schema2DefaultAnalysisGroup}
     variantResultColumns={[
       {
         key: 'group_result.n_de_novo',

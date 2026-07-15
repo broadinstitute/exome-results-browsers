@@ -28,7 +28,7 @@ const Epi25HomePage = () => (
       Epi25: a whole-exome sequencing case-control study of epilepsy
     </HomePageHeading>
 
-    <Searchbox width="100%" />
+    <Searchbox width="100%" id="epi25-searchbox" />
     <p style={{ marginTop: '0.25em' }}>
       Or <Link to="/results">view all results</Link>
     </p>
