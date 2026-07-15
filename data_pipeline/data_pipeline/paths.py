@@ -43,3 +43,15 @@ def gp2_combined_variant_annotations_path(output_root, dataset_id):
 
 def downloads_file_prefix(downloads_output_root, dataset_id):
     return os.path.join(dataset_output_dir(downloads_output_root, dataset_id, downloads=True), dataset_id)
+
+
+def dataset_gene_results_tsv_path(downloads_output_root, dataset_id):
+    return f"{downloads_file_prefix(downloads_output_root, dataset_id)}_gene_results.tsv.bgz"
+
+
+def dataset_variant_results_tsv_path(downloads_output_root, dataset_id):
+    return f"{downloads_file_prefix(downloads_output_root, dataset_id)}_variant_results.tsv.bgz"
+
+
+def dataset_variant_results_vcf_path(downloads_output_root, dataset_id):
+    return f"{downloads_file_prefix(downloads_output_root, dataset_id)}_variant_results.vcf.bgz"
