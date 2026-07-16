@@ -172,6 +172,16 @@ if (isDevelopment) {
     (dataset) => dataset.toLowerCase() === process.env.BROWSER!.toLowerCase()
   )
   getDatasetForRequest = () => devDataset
+} else if (process.env.DEMO_DATASET_SUBDOMAIN_OVERRIDE) {
+  // Allow forcing a single dataset regardless of subdomain, e.g. for demo deployments
+  // that aren't served from a subdomain.
+  const overrideDataset = Object.keys(metadata.datasets).find(
+    (dataset) => dataset.toLowerCase() === process.env.DEMO_DATASET_SUBDOMAIN_OVERRIDE!.toLowerCase()
+  )
+  if (!overrideDataset) {
+    throw Error(`DEMO_DATASET_SUBDOMAIN_OVERRIDE "${process.env.DEMO_DATASET_SUBDOMAIN_OVERRIDE}" does not match a known dataset`)
+  }
+  getDatasetForRequest = () => overrideDataset
 } else {
 
   const subdomainOverrides: Record<string, string> = {
