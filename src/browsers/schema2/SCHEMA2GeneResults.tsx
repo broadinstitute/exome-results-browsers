@@ -40,11 +40,13 @@ type SchemaGeneResult = {
 
   mis_case_carrier: number
   mis_control_carrier: number
+  mis_p_value: number
   mis_odds_ratio: string
   mis_odds_ratio_95_ci: string
 
   syn_case_carrier: number
   syn_control_carrier: number
+  syn_p_value: number
   syn_odds_ratio: string
   syn_odds_ratio_95_ci: string
 
@@ -172,7 +174,9 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
                 confidenceInterval: result.mis_odds_ratio_95_ci,
               })}
             </td>
-            <td style={{ paddingLeft: '10px' }}>-</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderStringOrFloatPvalueAsScientific({ value: result.mis_p_value })}
+            </td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
             <td style={{ paddingLeft: '10px' }}>-</td>
           </tr>
@@ -196,7 +200,9 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
                 confidenceInterval: result.syn_odds_ratio_95_ci,
               })}
             </td>
-            <td style={{ paddingLeft: '10px' }}>-</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderStringOrFloatPvalueAsScientific({ value: result.syn_p_value })}
+            </td>
             <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
             <td style={{ paddingLeft: '10px' }}>-</td>
           </tr>
