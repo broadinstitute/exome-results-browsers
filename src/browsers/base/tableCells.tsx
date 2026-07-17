@@ -45,6 +45,25 @@ export const renderOddsRatio = ({
   return floatValue.toFixed(precision)
 }
 
+export const renderOddsRatioCI = ({
+  oddsRatio,
+  confidenceInterval,
+}: {
+  oddsRatio: InputData
+  confidenceInterval: InputData
+}) => {
+  const renderedOddsRatio = renderOddsRatio({ value: oddsRatio })
+  if (renderedOddsRatio === '-') {
+    return '-'
+  }
+
+  if (confidenceInterval === null || confidenceInterval === undefined || confidenceInterval === '') {
+    return '-'
+  }
+
+  return `(${confidenceInterval})`
+}
+
 export const renderStringOrFloatPvalueAsScientific = ({
   value,
   zeroValue = '0',
