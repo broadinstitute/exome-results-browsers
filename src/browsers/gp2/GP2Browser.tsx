@@ -12,6 +12,7 @@ import {
 import GP2AboutPage from './GP2AboutPage'
 import GP2HomePage from './GP2HomePage'
 import GP2TermsPage from './GP2TermsPage'
+import { getGp2DroppedGeneMessage } from './gp2DroppedGenes'
 
 import vepConsequences from '../base/vepConsequences'
 
@@ -143,6 +144,7 @@ const GP2Browser = () => {
       defaultGeneResultAnalysisGroup={gp2DefaultAnalysisGroup}
       defaultGeneResultSortKey="ptv_pval"
       geneResultColumns={geneResultColumns}
+      getGeneNotFoundMessage={getGp2DroppedGeneMessage}
       variantAnalysisGroupOptions={gp2AnalysisGroups}
       defaultVariantAnalysisGroup={gp2DefaultAnalysisGroup}
       variantAnalysisGroupLabels={gp2AnalysisGroupLabels}

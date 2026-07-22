@@ -9,7 +9,6 @@ import express, { Response, NextFunction } from 'express'
 import morgan from 'morgan'
 
 import { PrefixTrie } from './search'
-import GP2_DROPPED_GENES from './gp2DroppedGenes'
 
 interface Request extends express.Request {
   dataset?: string
@@ -414,16 +413,7 @@ app.get('/api/gene/:geneIdOrName', fileSystemRateLimiter, (req: Request, res: Re
 
   return res.sendFile(genePath, { root: config.dataDirectory }, (err) => {
     if (err) {
-      if (req.dataset === 'GP2' && geneId in GP2_DROPPED_GENES) {
-        return res.status(404).json({
-          error:
-            `${GP2_DROPPED_GENES[geneId]} has an unusually large number of variants, ` +
-            'largely from GP2 whole-genome sequencing data in its introns, and could not ' +
-            'be processed for display in the browser. We are working on a fix for this.',
-        })
-      }
-
-      return res.status(404).json({ error: 'Gene not found' })
+      res.status(404).json({ error: 'Gene not found' })
     }
   })
 })

@@ -104,4 +104,27 @@ const GP2_DROPPED_GENES: Record<string, string> = {
   ENSG00000286481: 'ENSG00000286481',
 }
 
+const SYMBOL_TO_GENE_ID: Record<string, string> = Object.entries(GP2_DROPPED_GENES).reduce(
+  (acc, [geneId, symbol]) => ({ ...acc, [symbol.toUpperCase()]: geneId }),
+  {}
+)
+
+export const getGp2DroppedGeneMessage = (geneIdOrSymbol: string): string | undefined => {
+  const geneId = GP2_DROPPED_GENES[geneIdOrSymbol]
+    ? geneIdOrSymbol
+    : SYMBOL_TO_GENE_ID[geneIdOrSymbol.toUpperCase()]
+
+  if (!geneId) {
+    return undefined
+  }
+
+  const symbol = GP2_DROPPED_GENES[geneId]
+
+  return (
+    `${symbol} has an unusually large number of variants, largely from GP2 whole-genome ` +
+    'sequencing data in its introns, and could not be processed for display in the browser. ' +
+    'We are working on a fix for this.'
+  )
+}
+
 export default GP2_DROPPED_GENES
