@@ -198,6 +198,7 @@ interface GenePageContainerProps {
   variantAnalysisGroupOptions: string[]
   variantConsequences: VariantConsequence[]
   variantResultColumns: VariantColumnConfig[]
+  getGeneNotFoundMessage?: (geneIdOrSymbol: string) => string | undefined
   [key: string]: any
 }
 
@@ -210,6 +211,7 @@ const GenePageContainer = ({
   variantAnalysisGroupOptions,
   variantConsequences,
   variantResultColumns,
+  getGeneNotFoundMessage = undefined,
   ...otherProps
 }: GenePageContainerProps) => {
   return (
@@ -228,7 +230,12 @@ const GenePageContainer = ({
         }
 
         if (geneError || !(geneData || {}).gene) {
-          return <StatusMessage>{geneError?.message || 'Unable to load gene'}</StatusMessage>
+          const notFoundMessage = getGeneNotFoundMessage?.(geneIdOrSymbol)
+          return (
+            <StatusMessage>
+              {notFoundMessage || geneError?.message || 'Unable to load gene'}
+            </StatusMessage>
+          )
         }
 
         return (

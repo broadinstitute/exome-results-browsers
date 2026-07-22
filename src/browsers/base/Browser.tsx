@@ -204,6 +204,7 @@ type BrowserProps = {
   renderVariantAttributes?: (record: any) => void
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences?: boolean
+  getGeneNotFoundMessage?: (geneIdOrSymbol: string) => string | undefined
 }
 
 const Browser = ({
@@ -238,6 +239,7 @@ const Browser = ({
   additionalVariantDetailSummaryColumns = undefined,
   variantDetailColumns = undefined,
   renderVariantTranscriptConsequences = false,
+  getGeneNotFoundMessage = undefined,
 }: BrowserProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(true)
@@ -326,6 +328,7 @@ const Browser = ({
                 additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
                 variantDetailColumns={variantDetailColumns}
                 renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
+                getGeneNotFoundMessage={getGeneNotFoundMessage}
               />
             )}
           />
