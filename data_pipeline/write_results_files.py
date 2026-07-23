@@ -2,13 +2,13 @@
 
 import argparse
 import csv
+import glob
 import json
-from json.encoder import encode_basestring_ascii, _make_iterencode
 import multiprocessing
 import os
-import sys
-import glob
 import shutil
+import sys
+from json.encoder import _make_iterencode, encode_basestring_ascii
 
 import hail as hl
 from tqdm import tqdm
@@ -36,7 +36,7 @@ class ResultEncoder(json.JSONEncoder):
             elif o == -INFINITY:
                 return '"-Infinity"'
 
-            return "{:.5g}".format(o)
+            return f"{o:.5g}"
 
         _iterencode = _make_iterencode(
             {},
@@ -121,8 +121,7 @@ def write_json_files(output_directory, tsv_dirname, n_rows):
         for part_file in glob.glob(f"{directory}/part-*"):
             with open(part_file, encoding="utf-8") as data_file:
                 reader = csv.reader(data_file, delimiter="\t")
-                for row in reader:
-                    yield row
+                yield from reader
 
     with multiprocessing.get_context("spawn").Pool() as pool:
         row_generator = iter_part_files(f"{output_directory}/{tsv_dirname}")

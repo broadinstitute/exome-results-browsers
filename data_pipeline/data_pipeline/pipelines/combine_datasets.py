@@ -6,7 +6,6 @@ import hail as hl
 
 from data_pipeline.config import pipeline_config
 
-
 VARIANT_FIELDS = [
     "variant_id",
     "pos",

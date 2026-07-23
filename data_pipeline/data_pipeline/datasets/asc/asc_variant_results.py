@@ -2,7 +2,6 @@ import hail as hl
 
 from data_pipeline.config import pipeline_config
 
-
 CONSEQUENCE_TERMS = [
     "transcript_ablation",
     "splice_acceptor_variant",
@@ -67,7 +66,7 @@ def prepare_variant_results(test_genes, _output_root):
     annotations = None
     results = None
 
-    NUM_PARTITIONS = 10 if test_genes == True else 100
+    NUM_PARTITIONS = 10 if test_genes else 100
 
     for group in ("dn", "dbs", "swe"):
         group_annotations_path = pipeline_config.get("ASC", f"{group}_variant_annotations_path")

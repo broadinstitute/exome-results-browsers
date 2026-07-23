@@ -39,9 +39,9 @@ def prepare_downloads_for_dataset(dataset_id, output_local):
     gene_results_dsv = gene_results
     gene_results_dsv = gene_results_dsv.transmute(
         group_results=hl.array(gene_results_dsv.group_results).map(
-            lambda group_and_result: group_and_result[1]
-            .annotate(group=group_and_result[0])
-            .select("group", *gene_group_result_fields)
+            lambda group_and_result: (
+                group_and_result[1].annotate(group=group_and_result[0]).select("group", *gene_group_result_fields)
+            )
         )
     )
     gene_results_dsv = gene_results_dsv.explode(gene_results_dsv.group_results, name="group_result")
@@ -57,9 +57,9 @@ def prepare_downloads_for_dataset(dataset_id, output_local):
     variant_results_dsv = variant_results_dsv.transmute(**variant_results_dsv.info)
     variant_results_dsv = variant_results_dsv.transmute(
         group_results=hl.array(variant_results_dsv.group_results).map(
-            lambda group_and_result: group_and_result[1]
-            .annotate(group=group_and_result[0])
-            .select("group", *variant_group_result_fields)
+            lambda group_and_result: (
+                group_and_result[1].annotate(group=group_and_result[0]).select("group", *variant_group_result_fields)
+            )
         )
     )
     variant_results_dsv = variant_results_dsv.explode(variant_results_dsv.group_results, name="group_result")

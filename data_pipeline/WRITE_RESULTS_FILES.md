@@ -8,8 +8,6 @@ the browsers and so cannot be attached to another instance in read-write mode.
 
 1. Create a temporary GCE instance.
 
-   Debian 11 is used here to have Python 3.9
-
    ```
    gcloud --quiet compute instances create erb-temp-instance \
       --machine-type=n1-standard-32 \
@@ -69,23 +67,27 @@ mount -o discard,defaults /dev/disk/by-id/google-erb-data /mnt/disks/erb-data
 
 5. Install Hail.
 
-   Install Java 11
+   Install Java and uv
 
    ```
    apt-get update && \
    apt-get install -y \
      openjdk-11-jre-headless \
      g++ \
-     python3.9 \
-     python3-pip \
      libopenblas-base \
-     liblapack3
+     liblapack3 \
+     curl
+
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   source $HOME/.local/bin/env
    ```
 
-   Install Hail and tqdm. Versions should be kept in sync with requirements.txt
+   Install Hail and tqdm. Versions should be kept in sync with `data_pipeline/pyproject.toml`.
 
    ```
-   python3.9 -m pip install hail==0.2.126 tqdm==4.66.5
+   uv venv --python 3.12 /tmp/hail-env
+   source /tmp/hail-env/bin/activate
+   uv pip install "hail==0.2.138" tqdm
    ```
 
 6. Copy results data from GCS.

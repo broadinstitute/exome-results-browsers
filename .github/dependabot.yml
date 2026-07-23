@@ -11,7 +11,7 @@ updates:
     open-pull-requests-limit: 0
     reviewers:
       - "broadinstitute/gnomad-browser"
-  - package-ecosystem: "pip"
+  - package-ecosystem: "uv"
     directory: "/data_pipeline"
     schedule:
       interval: "weekly"

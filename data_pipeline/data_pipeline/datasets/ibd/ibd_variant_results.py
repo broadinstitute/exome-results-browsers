@@ -1,6 +1,7 @@
 import os
 
 import hail as hl
+import hailtop.fs as hfs
 
 from data_pipeline.config import pipeline_config
 
@@ -24,7 +25,7 @@ def add_vep_to_annotations(staging_output_path, variants_ht, annotations_ht, tes
 
     print(f"  Checking in {vepped_path} for VEP table")
 
-    output_exists = hl.hadoop_exists(vepped_path)
+    output_exists = hfs.exists(vepped_path)
 
     print(f"Path exists?: {output_exists}")
 
@@ -130,8 +131,8 @@ def annotate_variants_with_corrected_gene_id(staging_output_path, variants_ht, t
 
     corrected_gene_id_path = os.path.join(staging_output_path, "ibd", "gene_id_per_variant.ht")
 
-    vepped_table_exists = hl.hadoop_exists(vepped_path)
-    corrected_gene_id_table_exists = hl.hadoop_exists(corrected_gene_id_path)
+    vepped_table_exists = hfs.exists(vepped_path)
+    corrected_gene_id_table_exists = hfs.exists(corrected_gene_id_path)
 
     if not vepped_table_exists:
         print("No vepped table found, exiting ...")
@@ -157,7 +158,7 @@ def generate_most_significant_variant_per_gene_table(staging_output_path, varian
         staging_output_path, "ibd", "genes_most_significant_variants.ht"
     )
 
-    if not hl.hadoop_exists(most_significant_variant_per_gene_path):
+    if not hfs.exists(most_significant_variant_per_gene_path):
         exploded_ht = variants_ht.annotate(
             group_entries=hl.array(hl.zip(variants_ht.group_results.keys(), variants_ht.group_results.values()))
         ).explode("group_entries")
