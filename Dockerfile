@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:16.13.1-bullseye-slim AS build
+FROM --platform=linux/amd64 node:24.16-bookworm-slim AS build
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 WORKDIR /home/node/app
@@ -19,6 +19,8 @@ RUN yarn install --production false --frozen-lockfile && yarn cache clean
 COPY --chown=node:node babel.config.js .
 COPY --chown=node:node src/browsers ./src/browsers
 COPY --chown=node:node build.env .
+
+ENV NODE_OPTIONS="--openssl-legacy-provider"
 RUN set -a && . ./build.env && set +a && yarn run build
 
 # Copy server source, transpile TS to JS
@@ -26,7 +28,7 @@ COPY --chown=node:node src/server ./src/server
 RUN npx tsc
 
 ###############################################################################
-FROM --platform=linux/amd64 node:16.13.1-bullseye-slim
+FROM --platform=linux/amd64 node:24.16-bookworm-slim
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 WORKDIR /home/node/app
