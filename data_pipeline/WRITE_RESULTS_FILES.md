@@ -82,7 +82,7 @@ mount -o discard,defaults /dev/disk/by-id/google-erb-data /mnt/disks/erb-data
      liblapack3
    ```
 
-   Install Hail and tqdm. Versions should be kept in sync with requirements.txt
+   Install Hail and tqdm. Versions should be kept in sync with `pyproject.toml`.
 
    ```
    python3.9 -m pip install hail==0.2.126 tqdm==4.66.5
