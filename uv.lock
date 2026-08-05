@@ -536,7 +536,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "hail", specifier = "==0.2.126" },
-    { name = "setuptools", specifier = "<81" },
+    { name = "setuptools", specifier = "<82" },
     { name = "tqdm" },
 ]
 
