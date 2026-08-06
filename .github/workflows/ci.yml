@@ -41,23 +41,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: 3.9.17
-      - name: Use pip cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: pip-${{ hashFiles('**/requirements*.txt') }}
-          restore-keys: |
-            pip-
+          python-version: 3.9
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip wheel
-          pip install -r data_pipeline/requirements.txt
-          pip install -r data_pipeline/requirements-dev.txt
+        run: uv sync --group dev
       - name: Run Black
-        run: black --check data_pipeline
+        run: uv run black --check data_pipeline
       - name: Run Pylint
-        run: pylint data_pipeline/data_pipeline data_pipeline/*.py
+        run: uv run pylint data_pipeline/data_pipeline data_pipeline/*.py

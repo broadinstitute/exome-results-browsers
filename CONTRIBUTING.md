@@ -18,26 +18,21 @@
   pre-commit install
   ```
 
+- Install [uv](https://docs.astral.sh/uv/getting-started/installation/).
+
 - Install python dependencies and development tools.
 
-  - (First time) Create a virtual env
+  ```bash
+  uv sync --group dev
+  ```
 
-    ```bash
-    python -m venv
-    ```
+  This creates a `.venv` at the repository root with all dependencies. To activate it:
 
-  - Activate the virtual environment
+  ```bash
+  source .venv/bin/activate
+  ```
 
-    ```bash
-    source .venv/bin/activate
-    ```
-
-  - Install dependencies
-
-    ```bash
-    pip install -r data_pipeline/requirements.txt
-    pip install -r data_pipeline/requirements-dev.txt
-    ```
+  Alternatively, prefix pipeline commands with `uv run` instead of activating the venv.
 
 ## Organization
 

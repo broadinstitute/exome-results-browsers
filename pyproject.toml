@@ -1,3 +1,23 @@
+[project]
+name = "exome-results-browsers"
+version = "0.1.0"
+requires-python = "==3.9.*"
+dependencies = [
+  "hail==0.2.126",
+  # hail/__init__.py imports pkg_resources, but hail does not declare setuptools as a
+  # dependency. `python -m venv` on 3.9 seeded setuptools via ensurepip; `uv venv` does
+  # not, so it has to be explicit. setuptools 82 removed pkg_resources.
+  "setuptools<82",
+  "tqdm",
+]
+
+[dependency-groups]
+dev = [
+  "black==22.10.0",
+  "pylint",
+  "pytest",
+]
+
 [tool.black]
 line-length = 120
 
