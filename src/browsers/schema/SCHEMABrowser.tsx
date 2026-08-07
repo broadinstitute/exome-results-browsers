@@ -6,10 +6,10 @@ import GeneResultsQQPlot from '../base/GeneResultsPage/GeneResultsQQPlot'
 import { renderCount, renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 import vepConsequences from '../base/vepConsequences'
 
-import SCHEMAAboutPage from './SCHEMA2AboutPage'
-import SCHEMAHomePage from './SCHEMA2HomePage'
-import SCHEMATermsPage from './SCHEMA2TermsPage'
-import SCHEMAVariantFilter from './SCHEMA2VariantFilter'
+import SCHEMAAboutPage from './SCHEMAAboutPage'
+import SCHEMAHomePage from './SCHEMAHomePage'
+import SCHEMATermsPage from './SCHEMATermsPage'
+import SCHEMAVariantFilter from './SCHEMAVariantFilter'
 
 const variantConsequences = [...vepConsequences]
 variantConsequences.splice(
@@ -62,14 +62,14 @@ variantConsequences.splice(
   }
 )
 
-export const schema2AnalysisGroups = ['meta'] as const
-export type SCHEMA2AnalysisGroup = typeof schema2AnalysisGroups[number]
-export const schema2DefaultAnalysisGroup: SCHEMA2AnalysisGroup = 'meta'
+export const schemaAnalysisGroups = ['meta'] as const
+export type SCHEMAAnalysisGroup = typeof schemaAnalysisGroups[number]
+export const schemaDefaultAnalysisGroup: SCHEMAAnalysisGroup = 'meta'
 
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
-    browserTitle="SCHEMA2 demo"
-    navBarBackgroundColor="#ff9900"
+    browserTitle="SCHEMA Browser"
+    navBarBackgroundColor="#0a79bf"
     homePage={SCHEMAHomePage}
     extraPages={[
       {
@@ -84,15 +84,15 @@ const SCHEMABrowser = () => (
       },
     ]}
     geneResultsPageHeading="Exome meta-analysis results"
-    geneResultAnalysisGroupOptions={schema2AnalysisGroups}
-    defaultGeneResultAnalysisGroup={schema2DefaultAnalysisGroup}
+    geneResultAnalysisGroupOptions={schemaAnalysisGroups}
+    defaultGeneResultAnalysisGroup={schemaDefaultAnalysisGroup}
     defaultGeneResultSortKey="schema_case_control_p_value"
     geneResultColumns={[
       {
         key: 'schema_case_control_p_value',
-        heading: 'Case-Control SCHEMA2 P-value',
+        heading: 'Case-Control SCHEMA P-value',
         tooltip:
-          'SCHEMA2 p-value of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
+          'SCHEMA p-value of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
         minWidth: 100,
         render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
@@ -146,7 +146,7 @@ const SCHEMABrowser = () => (
         key: 'case_control_plus_de_novo_p_value',
         heading: 'Case-Control + de novo P-value',
         tooltip:
-          'Weighted meta-analysis p-value combining the Case-Control SCHEMA2 p-value with the De Novo pvalue',
+          'Weighted meta-analysis p-value combining the Case-Control SCHEMA p-value with the De Novo pvalue',
         minWidth: 100,
         render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
       },
@@ -254,8 +254,8 @@ const SCHEMABrowser = () => (
         ),
       },
     ]}
-    variantAnalysisGroupOptions={schema2AnalysisGroups}
-    defaultVariantAnalysisGroup={schema2DefaultAnalysisGroup}
+    variantAnalysisGroupOptions={schemaAnalysisGroups}
+    defaultVariantAnalysisGroup={schemaDefaultAnalysisGroup}
     variantResultColumns={[
       {
         key: 'group_result.n_de_novo',

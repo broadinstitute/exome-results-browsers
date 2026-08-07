@@ -11,7 +11,7 @@ import {
   renderOddsRatioCI,
   renderStringOrFloatPvalueAsScientific,
 } from '../base/tableCells'
-import { SCHEMA2AnalysisGroup } from './SCHEMA2Browser'
+import { SCHEMAAnalysisGroup } from './SCHEMABrowser'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -209,12 +209,12 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
         </tbody>
       </Table>
       <p style={{ marginTop: '2rem', fontWeight: 'bold' }}>
-        Case-Control SCHEMA2 <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
-        {renderStringOrFloatPvalueAsScientific(result.schema_case_control_p_value)}
+        Case-Control SCHEMA <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
+        {renderStringOrFloatPvalueAsScientific({ value: result.schema_case_control_p_value })}
       </p>
       <p style={{ fontWeight: 'bold' }}>
         Case-Control + de novo <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
-        {renderStringOrFloatPvalueAsScientific(result.case_control_plus_de_novo_p_value)}
+        {renderStringOrFloatPvalueAsScientific({ value: result.case_control_plus_de_novo_p_value })}
       </p>
       <p style={{ marginTop: '2em' }}>
         <strong>Total cases: {result.n_cases}</strong>
@@ -227,7 +227,7 @@ const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
 }
 
 interface SchemaGeneResultsProps {
-  results: Record<SCHEMA2AnalysisGroup, SchemaGeneResult>
+  results: Record<SCHEMAAnalysisGroup, SchemaGeneResult>
 }
 
 const SCHEMAGeneResults = ({ results }: SchemaGeneResultsProps) => (
