@@ -57,7 +57,7 @@ def map_gene_symbols_to_ensg_ids(results, primary_lookup_ht, secondary_lookup_ht
 
 
 def prepare_gene_results(test_genes, _output_root):
-    gene_results = hl.read_table(pipeline_config.get("SCHEMA2", "gene_results_path"))
+    gene_results = hl.read_table(pipeline_config.get("SCHEMA", "gene_results_path"))
 
     gene_results = gene_results.annotate(gene_symbol=gene_results["Gene"])
     gene_results = gene_results.key_by()
