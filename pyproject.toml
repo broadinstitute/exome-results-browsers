@@ -14,7 +14,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-python_files = ["test_*.py", "*_tests.py"]
+python_files = ["*_tests.py"]
 
 [tool.ruff]
 line-length = 120
