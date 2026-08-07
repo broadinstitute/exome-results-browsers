@@ -33,8 +33,8 @@ def filter_results_table_to_test_gene_intervals(variants):
 
 
 def prepare_variant_results(test_genes, _output_root):
-    variant_results_path = pipeline_config.get("SCHEMA2", "variant_results_path")
-    variant_annotations_path = pipeline_config.get("SCHEMA2", "variant_annotations_path")
+    variant_results_path = pipeline_config.get("SCHEMA", "variant_results_path")
+    variant_annotations_path = pipeline_config.get("SCHEMA", "variant_annotations_path")
 
     variant_results = hl.read_table(variant_results_path)
     variant_annotations = hl.read_table(variant_annotations_path)
