@@ -81,23 +81,27 @@ def prepare_gene_results(test_genes, _output_root):
         ptv_control_carrier=gene_results["PTV Control Carrier"],  # int32
         ptv_p_value=gene_results["PTV Pvalue"],  # float64
         ptv_odds_ratio=gene_results["PTV OR"],  # string
+        ptv_odds_ratio_95_ci=gene_results["PTV OR 95% CI"],  # string, e.g. "0.62 - 2.39"
         ptv_n_de_novo=gene_results["N de novo PTV"],  # int32
         #
         ptv_mis_case_carrier=gene_results["PTV + Missense Case Carrier"],  # int32
         ptv_mis_control_carrier=gene_results["PTV + Missense Control Carrier"],  # int32
         ptv_mis_p_value=gene_results["PTV + Missense Pvalue"],  # float64
         ptv_mis_odds_ratio=gene_results["PTV+ Missense OR"],  # string
+        ptv_mis_odds_ratio_95_ci=gene_results["PTV+ Missense OR 95% CI"],  # string, e.g. "0.62 - 2.39"
         ptv_mis_n_de_novo=gene_results["N de novo PTV + Missense"],  # int32
         #
         mis_case_carrier=gene_results["Missense Case Carrier"],  # int32
         mis_control_carrier=gene_results["Missense Control Carrier"],  # int32
         mis_p_value=gene_results["Missense Pvalue"],  # float64
         mis_odds_ratio=gene_results["Missense OR"],  # string
+        mis_odds_ratio_95_ci=gene_results["Missense OR 95% CI"],  # string, e.g. "0.62 - 2.39"
         #
         syn_case_carrier=gene_results["Synonymous Case Carrier"],  # int32
         syn_control_carrier=gene_results["Synonymous Control Carrier"],  # int32
         syn_p_value=gene_results["Synonymous Pvalue"],  # float64
         syn_odds_ratio=gene_results["Synonymous OR"],  # string
+        syn_odds_ratio_95_ci=gene_results["Synonymous OR 95% CI"],  # string, e.g. "0.62 - 2.39"
         #
         n_de_novo_p_value=gene_results["de novo Pvalue"],  # float64
         #
