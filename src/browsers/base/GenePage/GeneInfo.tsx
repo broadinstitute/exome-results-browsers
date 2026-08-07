@@ -19,8 +19,9 @@ const GeneReferences = ({ gene }: GeneReferencesProps) => {
   const gnomadDataset = gene.reference_genome === 'GRCh37' ? 'gnomad_r2_1' : 'gnomad_r4'
   const gnomadGeneUrl = `https://gnomad.broadinstitute.org/gene/${gene.gene_id}?dataset=${gnomadDataset}`
 
-  const ensemblGeneUrl = `https://${gene.reference_genome === 'GRCh37' ? 'grch37.' : ''
-    }ensembl.org/Homo_sapiens/Gene/Summary?g=${gene.gene_id}`
+  const ensemblGeneUrl = `https://${
+    gene.reference_genome === 'GRCh37' ? 'grch37.' : ''
+  }ensembl.org/Homo_sapiens/Gene/Summary?g=${gene.gene_id}`
 
   const ucscReferenceGenomeId = gene.reference_genome === 'GRCh37' ? 'hg19' : 'hg38'
   const ucscUrl = `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${ucscReferenceGenomeId}&position=chr${gene.chrom}%3A${gene.start}-${gene.stop}`
@@ -114,14 +115,19 @@ const DescriptionListItem = styled.div`
   margin-bottom: 0.5em;
 `
 
-const SymbolArrayAsDescriptionListItem = ({ label, symbolArray }: { label: string, symbolArray: string[] }) => {
+const SymbolArrayAsDescriptionListItem = ({
+  label,
+  symbolArray,
+}: {
+  label: string
+  symbolArray: string[]
+}) => {
   return (
     <DescriptionListItem>
       <dt>{label} symbols</dt>
       <dd>
-        {symbolArray.map((symbol) => (
-          <>{symbol}</>
-        ))
+        {symbolArray
+          .map((symbol) => <>{symbol}</>)
           .reduce((acc: React.ReactNode[], item) => [...acc, ', ', item], [])
           .slice(1)}
       </dd>
@@ -132,18 +138,12 @@ const SymbolArrayAsDescriptionListItem = ({ label, symbolArray }: { label: strin
 const AlternateGeneSymbolRows = ({ gene }: { gene: IndividualGeneAPIResponse }) => {
   return (
     <>
-      {gene.previous_symbols &&
-        <SymbolArrayAsDescriptionListItem
-          label={'Prior'}
-          symbolArray={gene.previous_symbols}
-        />
-      }
-      {gene.alias_symbols &&
-        <SymbolArrayAsDescriptionListItem
-          label={'Alias'}
-          symbolArray={gene.alias_symbols}
-        />
-      }
+      {gene.previous_symbols && (
+        <SymbolArrayAsDescriptionListItem label={'Prior'} symbolArray={gene.previous_symbols} />
+      )}
+      {gene.alias_symbols && (
+        <SymbolArrayAsDescriptionListItem label={'Alias'} symbolArray={gene.alias_symbols} />
+      )}
     </>
   )
 }
@@ -163,13 +163,13 @@ const GeneInfo = ({ gene }: GeneInfoProps) => {
     { id: 'SCHEMA' },
   ].filter(({ id }) => id !== datasetConfig.datasetId)
 
-  const datasetsToDisplayAliasSymbols: DatasetId[] = ['BipEx2', 'SCHEMA2']
+  const datasetsToDisplayAliasSymbols: DatasetId[] = ['BipEx2', 'SCHEMA']
 
   return (
     <DescriptionList>
-      {datasetsToDisplayAliasSymbols.indexOf(datasetConfig.datasetId) !== -1 &&
+      {datasetsToDisplayAliasSymbols.indexOf(datasetConfig.datasetId) !== -1 && (
         <AlternateGeneSymbolRows gene={gene} />
-      }
+      )}
 
       <DescriptionListItem>
         <dt>Genome build</dt>
@@ -181,14 +181,12 @@ const GeneInfo = ({ gene }: GeneInfoProps) => {
         <dt>Ensembl gene ID</dt>
         <dd>{gene.gene_id}</dd>
       </DescriptionListItem>
-      {
-        gene.canonical_transcript_id && (
-          <DescriptionListItem>
-            <dt>Ensembl transcript ID</dt>
-            <dd>{gene.canonical_transcript_id}</dd>
-          </DescriptionListItem>
-        )
-      }
+      {gene.canonical_transcript_id && (
+        <DescriptionListItem>
+          <dt>Ensembl transcript ID</dt>
+          <dd>{gene.canonical_transcript_id}</dd>
+        </DescriptionListItem>
+      )}
       <DescriptionListItem>
         <dt>Region</dt>
         <dd>{`Chr${gene.chrom}:${gene.start}-${gene.stop}`}</dd>
@@ -219,7 +217,7 @@ const GeneInfo = ({ gene }: GeneInfoProps) => {
             .slice(1)}
         </dd>
       </DescriptionListItem>
-    </DescriptionList >
+    </DescriptionList>
   )
 }
 

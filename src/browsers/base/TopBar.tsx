@@ -221,13 +221,13 @@ const TopBar = ({
           </Modal>
         )}
       </TopBarWrapper>
-      {datasetId === 'SCHEMA2' && (
+      {datasetId === 'SCHEMA' && (
         <Banner>
           <CenterHorizontal>
             <p>
               Have feedback? Fill out our{' '}
               <ExternalLink href="https://forms.gle/Ch6UfT4iirvZ6Lvi9">
-                SCHEMA2 Demo feedback form
+                SCHEMA feedback form
               </ExternalLink>
               .
             </p>

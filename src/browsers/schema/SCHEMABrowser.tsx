@@ -6,10 +6,10 @@ import GeneResultsQQPlot from '../base/GeneResultsPage/GeneResultsQQPlot'
 import { renderCount, renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 import vepConsequences from '../base/vepConsequences'
 
-import SCHEMAAboutPage from './SCHEMA2AboutPage'
-import SCHEMAHomePage from './SCHEMA2HomePage'
-import SCHEMATermsPage from './SCHEMA2TermsPage'
-import SCHEMAVariantFilter from './SCHEMA2VariantFilter'
+import SCHEMAAboutPage from './SCHEMAAboutPage'
+import SCHEMAHomePage from './SCHEMAHomePage'
+import SCHEMATermsPage from './SCHEMATermsPage'
+import SCHEMAVariantFilter from './SCHEMAVariantFilter'
 
 const variantConsequences = [...vepConsequences]
 variantConsequences.splice(
@@ -68,8 +68,8 @@ export const schema2DefaultAnalysisGroup: SCHEMA2AnalysisGroup = 'meta'
 
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
-    browserTitle="SCHEMA2 demo"
-    navBarBackgroundColor="#ff9900"
+    browserTitle="SCHEMA Browser"
+    navBarBackgroundColor="#0a79bf"
     homePage={SCHEMAHomePage}
     extraPages={[
       {

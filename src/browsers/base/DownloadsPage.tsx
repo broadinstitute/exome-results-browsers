@@ -17,7 +17,7 @@ const downloadUrl = (datasetId: DatasetId, file: string) => {
     return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2022-12-01/Epi25/Epi25_${file}`
   } else if (datasetId === 'BipEx2') {
     return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2026-04-24/BipEx2/BipEx2_${file}`
-  } else if (datasetId === 'SCHEMA2') {
+  } else if (datasetId === 'SCHEMA') {
     return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2026-05-26/SCHEMA2/SCHEMA2_${file}`
   } else if (datasetId === 'IBD') {
     return `https://storage.googleapis.com/exome-results-browsers-public/downloads/2026-05-11/IBD/IBD_${file}`
@@ -61,13 +61,15 @@ const DatasetDownloads = ({ datasetId, isMainDataset = false }: DatasetDownloads
   return (
     <>
       <DatasetDownloadLinkList datasetId={datasetId} />
-      {isMainDataset && datasetId === "SCHEMA2" &&
+      {isMainDataset && datasetId === 'SCHEMA2' && (
         <>
-          <h3 style={{ marginBottom: "0.5rem" }}>Previous SCHEMA release data downloads</h3>
-          <p style={{ marginTop: "0rem" }}>The prior SCHEMA analysis and dataset was released September 10th, 2020.</p>
-          <DatasetDownloadLinkList datasetId={"SCHEMA"} />
+          <h3 style={{ marginBottom: '0.5rem' }}>Previous SCHEMA release data downloads</h3>
+          <p style={{ marginTop: '0rem' }}>
+            The prior SCHEMA analysis and dataset was released September 10th, 2020.
+          </p>
+          <DatasetDownloadLinkList datasetId={'SCHEMA'} />
         </>
-      }
+      )}
     </>
   )
 }
@@ -76,10 +78,7 @@ export default () => {
   const datasetsWithoutDownloads: DatasetId[] = ['GP2', 'IBD']
   return (
     <InfoPage title="Downloads">
-      <DatasetDownloads
-        datasetId={datasetConfig.datasetId}
-        isMainDataset={true}
-      />
+      <DatasetDownloads datasetId={datasetConfig.datasetId} isMainDataset={true} />
 
       <h2>Other Studies</h2>
       {otherDatasets
@@ -88,10 +87,7 @@ export default () => {
           return (
             <React.Fragment key={otherDatasetId}>
               <h3>{otherDatasetId}</h3>
-              <DatasetDownloads
-                datasetId={datasetConfig.datasetId}
-                isMainDataset={false}
-              />
+              <DatasetDownloads datasetId={datasetConfig.datasetId} isMainDataset={false} />
             </React.Fragment>
           )
         })}
