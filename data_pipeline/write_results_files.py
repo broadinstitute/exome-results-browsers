@@ -181,7 +181,6 @@ def write_data_files(table_path, output_directory, genes=None):
             "ASC",
             "ASC2",
             "BipEx",
-            "BipEx2",
             "Epi25",
             "GP2",
             "IBD",
@@ -203,7 +202,6 @@ def write_data_files(table_path, output_directory, genes=None):
                 ds.variant_counts.ASC
                 + ds.variant_counts.ASC2
                 + ds.variant_counts.BipEx
-                + ds.variant_counts.BipEx2
                 + ds.variant_counts.Epi25
                 + ds.variant_counts.GP2
                 + ds.variant_counts.IBD
