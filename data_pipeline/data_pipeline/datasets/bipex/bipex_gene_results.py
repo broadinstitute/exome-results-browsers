@@ -98,7 +98,7 @@ def map_gene_symbols_to_ensg_ids(results, primary_lookup_ht, secondary_lookup_ht
 
 
 def prepare_gene_results(test_genes, _output_root):
-    results = hl.read_table(pipeline_config.get("BipEx2", "gene_results_path"))
+    results = hl.read_table(pipeline_config.get("BipEx", "gene_results_path"))
 
     results = annotate_false_discovery_rate_significant_genes(results)
 
