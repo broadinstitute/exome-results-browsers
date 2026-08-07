@@ -185,7 +185,6 @@ def write_data_files(table_path, output_directory, genes=None):
             "GP2",
             "IBD",
             "SCHEMA",
-            "SCHEMA2",
             "ClinVarGRCh38",
         ]
 
@@ -207,7 +206,6 @@ def write_data_files(table_path, output_directory, genes=None):
                 + ds.variant_counts.GP2
                 + ds.variant_counts.IBD
                 + ds.variant_counts.SCHEMA
-                + ds.variant_counts.SCHEMA2
                 + ds.variant_counts.ClinVarGRCh38
             )
         )
