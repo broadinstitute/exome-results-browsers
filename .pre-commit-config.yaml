@@ -10,9 +10,9 @@ repos:
     rev: v2.0.5 # This should be kept in sync with the version in package.json
     hooks:
       - id: prettier
-  - repo: https://github.com/psf/black
-    rev: 22.10.0 # This should be kept in sync with the version in data_pipeline/pyproject.toml
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.1 # This should be kept in sync with the version in uv.lock
     hooks:
-      - id: black
-        language_version: python3
-        types: [python]
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format

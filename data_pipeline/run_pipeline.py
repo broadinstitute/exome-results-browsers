@@ -8,7 +8,6 @@ import tempfile
 import time
 import zipfile
 
-
 PIPELINES = [
     "prepare_gene_models",
     "prepare_datasets",
