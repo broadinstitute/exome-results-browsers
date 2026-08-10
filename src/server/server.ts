@@ -173,10 +173,9 @@ if (isDevelopment) {
   )
   getDatasetForRequest = () => devDataset
 } else {
-
   const subdomainOverrides: Record<string, string> = {
     ibdseq: 'IBD',
-  };
+  }
 
   const datasetBySubdomain: Record<string, string> = Object.keys(metadata.datasets).reduce(
     (acc, dataset) => ({
@@ -184,7 +183,7 @@ if (isDevelopment) {
       [dataset.toLowerCase()]: dataset,
     }),
     { ...subdomainOverrides }
-  );
+  )
   getDatasetForRequest = (req: express.Request) => datasetBySubdomain[req.subdomains[0]]
 }
 
@@ -192,11 +191,11 @@ if (isDevelopment) {
 // Authentication Endpoints
 // ================================================================================================
 
-const PASSWORD_PROTECTED_DATASETS = ['BipEx2', 'SCHEMA2']
+const PASSWORD_PROTECTED_DATASETS: string[] = []
 
 const CORRECT_PASSWORD = process.env.DEMO_PASSWORD
   ? // Remove the ""s from development env var with a regex
-  process.env.DEMO_PASSWORD.replace(/^"|"$/g, '') || 'password'
+    process.env.DEMO_PASSWORD.replace(/^"|"$/g, '') || 'password'
   : 'password'
 
 const activeTokens = new Set()
@@ -207,7 +206,7 @@ app.post('/api/auth', (req: Request, res: Response) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) { } // eslint-disable-line no-empty
+  } catch (err) {} // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -245,7 +244,7 @@ app.post('/api/check-auth', (req: Request, res: Response) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) { } // eslint-disable-line no-empty
+  } catch (err) {} // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -266,22 +265,22 @@ app.post('/api/check-auth', (req: Request, res: Response) => {
 // Middleware
 // ================================================================================================
 
-const allowedQueryParamDatasets = ["ClinVarGRCh38"]
+const allowedQueryParamDatasets = ['ClinVarGRCh38']
 
 // Store dataset on request object so other route handlers can use it.
 app.use('/', (req: Request, res: Response, next: NextFunction) => {
   let dataset: any
   try {
     if (
-      req.query.dataset
-      && typeof req.query.dataset === 'string'
-      && allowedQueryParamDatasets.includes(req.query.dataset)
+      req.query.dataset &&
+      typeof req.query.dataset === 'string' &&
+      allowedQueryParamDatasets.includes(req.query.dataset)
     ) {
       dataset = req.query.dataset
     } else {
       dataset = getDatasetForRequest(req)
     }
-  } catch (err) { } // eslint-disable-line no-empty
+  } catch (err) {} // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -322,11 +321,10 @@ const datasetConfig: Record<string, any> = {}
 
 const getDatasetConfigJs = (dataset: string) => {
   if (!datasetConfig[dataset]) {
+    const datasetsWithClinvar = ['GP2']
+    const thisDatasetRequestsClinvar = datasetsWithClinvar.includes(dataset)
 
-    const datasetsWithClinvar = ["GP2"]
-    const thisDatasetRequestsClinvar = datasetsWithClinvar.includes(dataset);
-
-    const clinVarData = metadata.datasets?.["ClinVarGRCh38"];
+    const clinVarData = metadata.datasets?.['ClinVarGRCh38']
 
     const datasetMetadata = {
       datasetId: dataset,
@@ -335,7 +333,7 @@ const getDatasetConfigJs = (dataset: string) => {
           variant_fields: metadata.variant_fields,
           variant_info_field_names: clinVarData?.variant_info_field_names ?? [],
           variant_info_field_types: clinVarData?.variant_info_field_types ?? [],
-        }
+        },
       }),
       ...metadata,
       ...metadata.datasets?.[dataset],
