@@ -29,7 +29,7 @@ import {
   DEFAULT_VARIANT_CATEGORY_OPTIONS,
 } from './variantCategories'
 
-export type DatasetId = 'ASC' | 'ASC2' | 'BipEx' | 'BipEx2' | 'Epi25' | 'GP2' | 'IBD' | 'SCHEMA'
+export type DatasetId = 'ASC' | 'ASC2' | 'BipEx2' | 'Epi25' | 'GP2' | 'IBD' | 'SCHEMA'
 
 export type ReferenceGenome = 'GRCh37' | 'GRCh38'
 

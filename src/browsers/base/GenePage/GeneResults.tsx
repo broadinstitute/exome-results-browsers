@@ -16,7 +16,6 @@ const DatasetGeneResultComponent = geneResultComponents[datasetConfig.datasetId]
 const studyPhenotypes: Partial<Record<DatasetId, string>> = {
   ASC: 'Autism',
   ASC2: 'Autism',
-  BipEx: 'Bipolar disorder',
   BipEx2: 'Bipolar disorder',
   Epi25: 'Epilepsy',
   SCHEMA: 'Schizophrenia',
@@ -30,56 +29,55 @@ interface GeneResultsProps {
 
 const GeneResults = DatasetGeneResultComponent
   ? ({ gene, results }: GeneResultsProps) => {
-      const { [datasetConfig.datasetId]: rawDatasetResults, ...rawOtherResults } = results
+    const { [datasetConfig.datasetId]: rawDatasetResults, ...rawOtherResults } = results
 
-      const datasetResults = rawDatasetResults as ParsedDatasetResult | undefined
-      const otherResults = rawOtherResults as Partial<Record<DatasetId, ParsedDatasetResult>>
+    const datasetResults = rawDatasetResults as ParsedDatasetResult | undefined
+    const otherResults = rawOtherResults as Partial<Record<DatasetId, ParsedDatasetResult>>
 
-      const associatedOtherResults = (Object.keys(otherResults) as DatasetId[])
-        .map((dataset) => ({
-          dataset,
-          result: otherResults[dataset] as ParsedDatasetResult,
-        }))
-        .filter(({ dataset, result }) => {
-          // TK: TODO: fixme: make proper types for all of the different studies parsed results
-          //   you KNOW this from the pipeline. Can these be generated somehow?
-          if (dataset === 'SCHEMA' && (result.meta as any)['P meta'] <= 7.9e-5) {
-            return true
-          }
-          if (dataset === 'ASC' && (result.All as any).qval <= 0.1) {
-            return true
-          }
-          return false
-        })
+    const associatedOtherResults = (Object.keys(otherResults) as DatasetId[])
+      .map((dataset) => ({
+        dataset,
+        result: otherResults[dataset] as ParsedDatasetResult,
+      }))
+      .filter(({ dataset, result }) => {
+        // TK: TODO: fixme: make proper types for all of the different studies parsed results
+        //   you KNOW this from the pipeline. Can these be generated somehow?
+        if (dataset === 'SCHEMA' && (result.meta as any)['P meta'] <= 7.9e-5) {
+          return true
+        }
+        if (dataset === 'ASC' && (result.All as any).qval <= 0.1) {
+          return true
+        }
+        return false
+      })
 
-      return (
-        <>
-          <DatasetGeneResultComponent results={datasetResults || {}} />
-          {associatedOtherResults.length > 0 && (
-            <>
-              <p>
-                <Badge level="info">Note</Badge> Other studies have found this gene to be associated
-                with:
-              </p>
-              <List>
-                {associatedOtherResults.map(({ dataset }) => (
-                  <ListItem key={dataset}>
-                    {studyPhenotypes[dataset]} -{' '}
-                    <ExternalLink
-                      href={`https://${dataset.toLowerCase()}.broadinstitute.org/gene/${
-                        gene.gene_id
+    return (
+      <>
+        <DatasetGeneResultComponent results={datasetResults || {}} />
+        {associatedOtherResults.length > 0 && (
+          <>
+            <p>
+              <Badge level="info">Note</Badge> Other studies have found this gene to be associated
+              with:
+            </p>
+            <List>
+              {associatedOtherResults.map(({ dataset }) => (
+                <ListItem key={dataset}>
+                  {studyPhenotypes[dataset]} -{' '}
+                  <ExternalLink
+                    href={`https://${dataset.toLowerCase()}.broadinstitute.org/gene/${gene.gene_id
                       }`}
-                    >
-                      see details in {dataset} browser
-                    </ExternalLink>
-                  </ListItem>
-                ))}
-              </List>
-            </>
-          )}
-        </>
-      )
-    }
+                  >
+                    see details in {dataset} browser
+                  </ExternalLink>
+                </ListItem>
+              ))}
+            </List>
+          </>
+        )}
+      </>
+    )
+  }
   : () => null
 
 interface GeneResultsContainerProps {
