@@ -191,11 +191,11 @@ if (isDevelopment) {
 // Authentication Endpoints
 // ================================================================================================
 
-const PASSWORD_PROTECTED_DATASETS = ['BipEx2']
+const PASSWORD_PROTECTED_DATASETS: string[] = []
 
 const CORRECT_PASSWORD = process.env.DEMO_PASSWORD
   ? // Remove the ""s from development env var with a regex
-    process.env.DEMO_PASSWORD.replace(/^"|"$/g, '') || 'password'
+  process.env.DEMO_PASSWORD.replace(/^"|"$/g, '') || 'password'
   : 'password'
 
 const activeTokens = new Set()
@@ -206,7 +206,7 @@ app.post('/api/auth', (req: Request, res: Response) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) {} // eslint-disable-line no-empty
+  } catch (err) { } // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -244,7 +244,7 @@ app.post('/api/check-auth', (req: Request, res: Response) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) {} // eslint-disable-line no-empty
+  } catch (err) { } // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -280,7 +280,7 @@ app.use('/', (req: Request, res: Response, next: NextFunction) => {
     } else {
       dataset = getDatasetForRequest(req)
     }
-  } catch (err) {} // eslint-disable-line no-empty
+  } catch (err) { } // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
