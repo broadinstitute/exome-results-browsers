@@ -15,7 +15,7 @@ const DatasetGeneResultComponent = geneResultComponents[datasetConfig.datasetId]
 
 const studyPhenotypes: Partial<Record<DatasetId, string>> = {
   ASC: 'Autism',
-  BipEx2: 'Bipolar disorder',
+  BipEx: 'Bipolar disorder',
   Epi25: 'Epilepsy',
   SCHEMA: 'Schizophrenia',
   GP2: 'Parkinsons',

@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Badge, BaseTable, ExternalLink, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
-import { BipEx2AnalysisGroup } from './BipEx2Browser'
+import { BipExAnalysisGroup } from './BipExBrowser'
 import {
   renderOddsRatio,
   renderOddsRatioCI,
@@ -159,7 +159,7 @@ const BipExGeneResult = ({ result }: { result: ResultObject }) => (
 )
 
 interface BipExGeneResultsProps {
-  results: Record<BipEx2AnalysisGroup, ResultObject>
+  results: Record<BipExAnalysisGroup, ResultObject>
 }
 
 const BipExGeneResults = ({ results }: BipExGeneResultsProps) => (

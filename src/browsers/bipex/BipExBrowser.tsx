@@ -3,8 +3,8 @@ import React from 'react'
 import Browser from '../base/Browser'
 import { renderCount, renderStringOrFloatPvalueAsScientific, renderOddsRatio } from '../base/tableCells'
 
-import BipExHomePage from './BipEx2HomePage'
-import BipExVariantFilter from './BipEx2VariantFilter'
+import BipExHomePage from './BipExHomePage'
+import BipExVariantFilter from './BipExVariantFilter'
 
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { TooltipAnchor, TooltipHint } from '@gnomad/ui'
@@ -33,18 +33,18 @@ const renderBipexFlags = (value: string) => {
   return ''
 }
 
-export const bipex2AnalysisGroups = ['meta'] as const
-export type BipEx2AnalysisGroup = typeof bipex2AnalysisGroups[number]
-export const bipex2DefaultAnalysisGroup: BipEx2AnalysisGroup = 'meta'
+export const bipexAnalysisGroups = ['meta'] as const
+export type BipExAnalysisGroup = typeof bipexAnalysisGroups[number]
+export const bipexDefaultAnalysisGroup: BipExAnalysisGroup = 'meta'
 
 const BipExBrowser = () => (
   <Browser
-    browserTitle="DEMO - BipEx2"
-    navBarBackgroundColor="#a6694b"
+    browserTitle="BipEx: Bipolar Exomes Browser"
+    navBarBackgroundColor="#c24100"
     homePage={BipExHomePage}
     geneResultsPageHeading="Gene results"
-    geneResultAnalysisGroupOptions={bipex2AnalysisGroups}
-    defaultGeneResultAnalysisGroup={bipex2DefaultAnalysisGroup}
+    geneResultAnalysisGroupOptions={bipexAnalysisGroups}
+    defaultGeneResultAnalysisGroup={bipexDefaultAnalysisGroup}
     defaultGeneResultSortKey="ptv_mis_p_value"
     geneResultColumns={[
       {
@@ -244,8 +244,8 @@ const BipExBrowser = () => (
         },
       },
     ]}
-    variantAnalysisGroupOptions={bipex2AnalysisGroups}
-    defaultVariantAnalysisGroup={bipex2DefaultAnalysisGroup}
+    variantAnalysisGroupOptions={bipexAnalysisGroups}
+    defaultVariantAnalysisGroup={bipexDefaultAnalysisGroup}
     variantResultColumns={
       [
         {

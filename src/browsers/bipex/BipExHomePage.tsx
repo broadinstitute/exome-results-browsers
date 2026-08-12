@@ -36,7 +36,7 @@ export default () => (
 
     <StyledLogo src={BipExLogo} />
 
-    <Searchbox id="bipex2 search" width="100%" />
+    <Searchbox id="bipex search" width="100%" />
     <p style={{ marginTop: '0.25em' }}>
       Or <Link to="/results">view all results</Link>
     </p>
