@@ -15,7 +15,36 @@ def filter_results_table_to_test_gene_intervals(results):
         "chr13", 42272152, 42323261, reference_genome="GRCh38", includes_start=True, includes_end=True
     )
 
-    results = hl.filter_intervals(results, [pcsk9_interval, akap11_interval])
+    # ENSG00000161681
+    shank1_interval = hl.locus_interval(
+        "chr19", 50659255, 50719802, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+
+    # ENSG00000075539
+    fryl_interval = hl.locus_interval(
+        "chr4", 48497357, 48780322, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+    # ENSG00000187391
+    magi2_interval = hl.locus_interval(
+        "chr7", 78017055, 79453667, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+
+    # ENSG00000196872 - KIAA1211L, or CRACDL
+    cracdl_interval = hl.locus_interval(
+        "chr2", 98793846, 98936259, reference_genome="GRCh38", includes_start=True, includes_end=True
+    )
+
+    results = hl.filter_intervals(
+        results,
+        [
+            pcsk9_interval,
+            akap11_interval,
+            shank1_interval,
+            fryl_interval,
+            magi2_interval,
+            cracdl_interval,
+        ],
+    )
 
     return results.persist()
 
@@ -30,11 +59,40 @@ def prepare_variant_results(test_genes, _output_root):
     variants = results.group_by(results.locus, results.alleles).aggregate()
 
     # Select AC/AF numbers for the alternate allele
-    results = results.annotate(ac_case=results.ac_case[1], ac_ctrl=results.ac_ctrl[1])
+    results = results.annotate(
+        ac_case=results.AC_case,
+        an_case=results.AN_case,
+        ac_ctrl=results.AC_ctrl,
+        an_ctrl=results.AN_ctrl,
+        mac=results.MAC,
+        analysis_group="meta",
+    )
 
-    results = results.drop("af_case", "af_ctrl")
+    results = results.drop(
+        "AC_case",
+        "AN_case",
+        "AC_ctrl",
+        "AN_ctrl",
+        #
+        "MAC",
+        "consequence",
+        # "worst_csq_for_variant_canonical",
+        # "missense_passing",
+    )
 
     results = results.filter((results.ac_case > 0) | (results.ac_ctrl > 0))
+
+    results = results.select(
+        "analysis_group",
+        "ac_case",
+        "an_case",
+        "ac_ctrl",
+        "an_ctrl",
+        "mac",  # int
+        "worst_csq_for_variant_canonical",  # string
+        "missense_passing",  # bool
+        "in_analysis",  # bool
+    )
 
     # Annotate variants with a struct for each analysis group
     results = results.group_by("locus", "alleles").aggregate(group_results=hl.agg.collect(results.row_value))
@@ -50,14 +108,19 @@ def prepare_variant_results(test_genes, _output_root):
 
     # Merge variant annotations for canonical transcripts
     annotations = hl.read_table(pipeline_config.get("BipEx", "variant_annotations_path"))
-    annotations = annotations.filter(annotations.transcript_id == annotations.canonical_transcript_id)
 
     annotations = annotations.select(
         "gene_id",
-        consequence=annotations.csq_analysis,
-        hgvsc=annotations.hgvsc_canonical.split(":")[-1],
-        hgvsp=annotations.hgvsp_canonical.split(":")[-1],
-        info=hl.struct(cadd=annotations.cadd, mpc=annotations.mpc, polyphen=annotations.polyphen),
+        consequence=annotations.most_severe_consequence,
+        hgvsc=annotations.hgvsc.split(":")[-1],
+        hgvsp=annotations.hgvsp.split(":")[-1],
+        info=hl.struct(
+            mpc=annotations.MPC,
+            alpha_missense=annotations.AlphaMissense,
+            misfit_s=annotations.MisFit_S,
+            pop_eve=annotations.PopEVE,
+            misrank_percentile=annotations.MisRank_Percentile,
+        ),
     )
 
     variants = variants.annotate(**annotations[variants.locus, variants.alleles])

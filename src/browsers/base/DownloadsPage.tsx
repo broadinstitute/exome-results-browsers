@@ -11,7 +11,7 @@ import { DatasetId } from './Browser'
 const BASE_GCS_DOWNLOAD_PATH = 'https://storage.googleapis.com/exome-results-browsers-public/downloads'
 const BASE_AWS_DOWNLOAD_PATH = 'https://atgu-exome-browser-data.s3.amazonaws.com'
 
-type LegacyDatasetId = 'SCHEMA_v1'
+type LegacyDatasetId = 'BipEx_v1' | 'SCHEMA_v1'
 type DownloadDatasetId = DatasetId | LegacyDatasetId
 
 type DownloadConfig = {
@@ -22,10 +22,11 @@ type DownloadConfig = {
 
 const DOWNLOAD_URLS: Partial<Record<DownloadDatasetId, DownloadConfig>> = {
   ASC: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/ASC`, filePrefix: 'ASC' },
-  BipEx2: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-04-24/BipEx2`, filePrefix: 'BipEx2' },
+  BipEx: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-08-07/BipEx`, filePrefix: 'BipEx' },
   Epi25: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2022-12-01/Epi25`, filePrefix: 'Epi25' },
   SCHEMA: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-08-07/SCHEMA`, filePrefix: 'SCHEMA' },
   //
+  BipEx_v1: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/BipEx`, filePrefix: 'BipEx' },
   SCHEMA_v1: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/SCHEMA`, filePrefix: 'SCHEMA' },
 }
 
@@ -86,6 +87,16 @@ const DatasetDownloads = ({ datasetId, isMainDataset = false }: DatasetDownloads
             The prior SCHEMA analysis and dataset was released September 10th, 2020.
           </p>
           <DatasetDownloadLinkList datasetId={'SCHEMA_v1'} label="SCHEMA" />
+        </>
+      )}
+
+      {isMainDataset && datasetId === 'BipEx' && (
+        <>
+          <h3 style={{ marginBottom: '0.5rem' }}>Previous BipEx release data downloads</h3>
+          <p style={{ marginTop: '0rem' }}>
+            The prior BipEx analysis and dataset was released November 2022.
+          </p>
+          <DatasetDownloadLinkList datasetId={'BipEx_v1'} label="BipEx" />
         </>
       )}
     </>

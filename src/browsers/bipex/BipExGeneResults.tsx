@@ -1,99 +1,151 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { BaseTable, ExternalLink, Tabs } from '@gnomad/ui'
+import { Badge, BaseTable, ExternalLink, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'
-import { BipExAnalysisGroup, bipexAnalysisGroups } from './BipExBrowser'
-import { renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import { BipExAnalysisGroup } from './BipExBrowser'
+import {
+  renderOddsRatio,
+  renderOddsRatioCI,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
+enum ResultEnum {
+  n_cases,
+  n_controls,
+  //
+  ptv_case_carrier,
+  ptv_ctrl_carrier,
+  ptv_p_value,
+  ptv_odds_ratio,
+  ptv_odds_ratio_95_ci_lower_bound,
+  ptv_odds_ratio_95_ci_upper_bound,
+  //
+  mis_case_carrier,
+  mis_ctrl_carrier,
+  mis_p_value,
+  mis_odds_ratio,
+  mis_odds_ratio_95_ci_lower_bound,
+  mis_odds_ratio_95_ci_upper_bound,
+  //
+  ptv_mis_case_carrier,
+  ptv_mis_ctrl_carrier,
+  ptv_mis_p_value,
+  ptv_mis_odds_ratio,
+  ptv_mis_odds_ratio_95_ci_lower_bound,
+  ptv_mis_odds_ratio_95_ci_upper_bound,
+  //
+  syn_case_carrier,
+  syn_ctrl_carrier,
+  syn_p_value,
+  syn_odds_ratio,
+  syn_odds_ratio_95_ci_lower_bound,
+  syn_odds_ratio_95_ci_upper_bound,
+  //
+  flags,
+}
 
-const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
+type ResultKey = keyof typeof ResultEnum
+
+type ResultObject = Record<ResultKey, string>
+
+type CategoryAbbreviation = 'ptv' | 'mis' | 'ptv_mis' | 'syn'
+
+const safeReturnValue = (object: ResultObject, fieldName: ResultKey): string => {
+  return object[fieldName] === null ? '-' : object[fieldName]
+}
+
+const renderBipexGeneFlags = (flags: string) => {
+  const flagsArray = flags.split(',')
+  if (flagsArray.length === 0) {
+    return null
+  }
+
+  if (flagsArray.indexOf('bonferonni_significant') !== -1) {
+    return (
+      <>
+        <Badge level="info">Note</Badge> This gene's missense + protein truncating P-value fell into
+        a range making it Bonferroni significant
+      </>
+    )
+  } else if (flagsArray.indexOf('fdr_five_percent_significant') !== -1) {
+    return (
+      <>
+        <Badge level="info">Note</Badge> This gene's missense + protein truncating P-value fell into
+        a range making it FDR 5% significant
+      </>
+    )
+  }
+
+  return null
+}
+
+const createGeneTableRow = (
+  object: ResultObject,
+  category: string,
+  categoryAbbreviation: CategoryAbbreviation
+) => {
+  const oddsRatio = object[`${categoryAbbreviation}_odds_ratio`]
+  const oddsRatio95CILowerBound = renderOddsRatio({
+    value: object[`${categoryAbbreviation}_odds_ratio_95_ci_lower_bound`],
+  })
+  const oddsRatio95CIUpperBound = renderOddsRatio({
+    value: object[`${categoryAbbreviation}_odds_ratio_95_ci_upper_bound`],
+  })
+
+  return (
+    <tr>
+      <th scope="row">{category}</th>
+      <td>{safeReturnValue(object, `${categoryAbbreviation}_case_carrier`)}</td>
+      <td>{safeReturnValue(object, `${categoryAbbreviation}_ctrl_carrier`)}</td>
+      <td>
+        {renderStringOrFloatPvalueAsScientific({
+          value: object[`${categoryAbbreviation}_p_value`],
+        })}
+      </td>
+      <td>{renderOddsRatio({ value: oddsRatio })}</td>
+      <td>
+        {renderOddsRatioCI({
+          oddsRatio,
+          confidenceInterval: `${oddsRatio95CILowerBound} - ${oddsRatio95CIUpperBound}`,
+        })}
+      </td>
+    </tr>
+  )
+}
+
+const BipExGeneResult = ({ result }: { result: ResultObject }) => (
   <div>
-    <h3>Burden (MAC ≤ 5)</h3>
-    <Table>
-      <thead>
-        <tr>
-          <th scope="col">Category</th>
-          <th scope="col">Case Count</th>
-          <th scope="col">Control Count</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">Protein-truncating</th>
-          <td>{result.ptv_case_count === null ? '-' : result.ptv_case_count}</td>
-          <td>{result.ptv_control_count === null ? '-' : result.ptv_control_count}</td>
-        </tr>
-        <tr>
-          <th scope="row">Damaging Missense</th>
-          <td>
-            {result.damaging_missense_case_count === null
-              ? '-'
-              : result.damaging_missense_case_count}
-          </td>
-          <td>
-            {result.damaging_missense_control_count === null
-              ? '-'
-              : result.damaging_missense_control_count}
-          </td>
-        </tr>
-      </tbody>
-    </Table>
+    {result.flags !== '' && (
+      <div style={{ marginTop: '1em', marginBottom: '2em' }}>
+        {renderBipexGeneFlags(result.flags)}
+      </div>
+    )}
 
-    <h3>Presence/absence (MAC ≤ 5, not in gnomAD non-neuro)</h3>
     <Table>
       <thead>
         <tr>
           <th scope="col">Category</th>
           <th scope="col">Case Count</th>
           <th scope="col">Control Count</th>
-          <th scope="col">Fisher p-val</th>
-          <th scope="col">Fisher odds ratio</th>
+          <th scope="col">P-value</th>
+          <th scope="col">Odds Ratio</th>
+          <th scope="col">
+            <TooltipAnchor tooltip="The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)">
+              <TooltipHint> Odds Ratio CI</TooltipHint>
+            </TooltipAnchor>
+          </th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <th scope="row">Protein-truncating</th>
-          <td>
-            {result.ptv_fisher_gnom_non_psych_case_count === null
-              ? '-'
-              : result.ptv_fisher_gnom_non_psych_case_count}
-          </td>
-          <td>
-            {result.ptv_fisher_gnom_non_psych_control_count === null
-              ? '-'
-              : result.ptv_fisher_gnom_non_psych_control_count}
-          </td>
-          <td>
-            {renderStringOrFloatPvalueAsScientific({
-              value: result.ptv_fisher_gnom_non_psych_pval,
-            })}
-          </td>
-          <td>{renderOddsRatio({ value: result.ptv_fisher_gnom_non_psych_OR })}</td>
-        </tr>
-        <tr>
-          <th scope="row">Damaging Missense</th>
-          <td>
-            {result.damaging_missense_fisher_gnom_non_psych_case_count === null
-              ? '-'
-              : result.damaging_missense_fisher_gnom_non_psych_case_count}
-          </td>
-          <td>
-            {result.damaging_missense_fisher_gnom_non_psych_control_count === null
-              ? '-'
-              : result.damaging_missense_fisher_gnom_non_psych_control_count}
-          </td>
-          <td>
-            {renderStringOrFloatPvalueAsScientific({
-              value: result.damaging_missense_fisher_gnom_non_psych_pval,
-            })}
-          </td>
-          <td>{renderOddsRatio({ value: result.damaging_missense_fisher_gnom_non_psych_OR })}</td>
-        </tr>
+        {createGeneTableRow(result, 'Protein-truncating', 'ptv')}
+        {createGeneTableRow(result, 'Missense', 'mis')}
+        {createGeneTableRow(result, 'Missense + Protein-truncating', 'ptv_mis')}
+        {createGeneTableRow(result, 'Synonymous', 'syn')}
       </tbody>
     </Table>
 
@@ -106,27 +158,8 @@ const BipExGeneResult = ({ result }: { result: BipExResultObject }) => (
   </div>
 )
 
-interface BipExResultObject {
-  n_cases: number
-  n_controls: number
-  ptv_case_count: number
-  ptv_control_count: number
-  ptv_fisher_gnom_non_psych_case_count: number
-  ptv_fisher_gnom_non_psych_control_count: number
-  ptv_fisher_gnom_non_psych_pval: number
-  // Odds ratio values may be a string 'inf' or a number
-  ptv_fisher_gnom_non_psych_OR: number | string
-  damaging_missense_case_count: number
-  damaging_missense_control_count: number
-  damaging_missense_fisher_gnom_non_psych_case_count: number
-  damaging_missense_fisher_gnom_non_psych_control_count: number
-  damaging_missense_fisher_gnom_non_psych_pval: number
-  // Odds ratio values may be a string 'inf' or a number
-  damaging_missense_fisher_gnom_non_psych_OR: number | string
-}
-
 interface BipExGeneResultsProps {
-  results: Record<BipExAnalysisGroup, BipExResultObject>
+  results: Record<BipExAnalysisGroup, ResultObject>
 }
 
 const BipExGeneResults = ({ results }: BipExGeneResultsProps) => (
@@ -174,18 +207,8 @@ const BipExGeneResults = ({ results }: BipExGeneResultsProps) => (
         }
       />
     </h2>
-    <Tabs
-      tabs={bipexAnalysisGroups.map((group) => ({
-        id: group,
-        label: group,
-        render: () =>
-          results[group] ? (
-            <BipExGeneResult result={results[group]} />
-          ) : (
-            <p>No result for {group} in this gene.</p>
-          ),
-      }))}
-    />
+
+    {results.meta ? <BipExGeneResult result={results.meta} /> : <p>No result for this gene.</p>}
   </>
 )
 

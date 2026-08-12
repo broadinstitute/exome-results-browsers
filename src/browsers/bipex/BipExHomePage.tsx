@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { ExternalLink, Page, PageHeading } from '@gnomad/ui'
+import { Page, PageHeading } from '@gnomad/ui'
 
 import DocumentTitle from '../base/DocumentTitle'
 import Link from '../base/Link'
@@ -36,7 +36,7 @@ export default () => (
 
     <StyledLogo src={BipExLogo} />
 
-    <Searchbox width="100%" />
+    <Searchbox id="bipex search" width="100%" />
     <p style={{ marginTop: '0.25em' }}>
       Or <Link to="/results">view all results</Link>
     </p>
@@ -53,32 +53,15 @@ export default () => (
     </p>
 
     <p style={{ textAlign: 'justify' }}>
-      The BipEx dataset currently consists of 14,210 cases and 14,422 controls after quality
-      control. See our{' '}
-      <ExternalLink href="https://astheeggeggs.github.io/BipEx/qc.html">GitHub page</ExternalLink>{' '}
-      for full details of the curation process and breakdown of subtypes, geographies, and
-      collaborative partners.
+      The BipEx dataset currently consists of 65,018 cases and 169,631 controls after quality
+      control.
     </p>
 
-    <p style={{ textAlign: 'justify' }}>
-      In this browser, you can explore the results of our single variant and gene based analyses. On
-      each of the gene specific pages, you can examine the burden of putatively damaging rare
-      variants (minor allele count (MAC) &le; 5) across the gene in the ‘Gene Result’ table.
+    {/* TK: TODO: */}
+    <p style={{ marginLeft: '2rem' }}>
+      <b>Further information to be populated. TK: TODO: </b>
     </p>
 
-    <p style={{ textAlign: 'justify' }}>
-      Variant counts in cases and controls with associated test results (for variants with MAC &ge;
-      10 in the overall cohort) can be found in the table at the foot of the page. Click on a
-      variant to see the breakdown by bipolar analysis group.
-    </p>
-
-    <p style={{ textAlign: 'justify' }}>
-      By clicking through the dropdown and tabs, you can restrict case samples to bipolar analysis
-      groups for variant and gene level tests, respectively.
-    </p>
-
-    <p style={{ textAlign: 'justify' }}>
-      Note that the BipEx dataset has been joint-called and aligned to the GRCh38 reference genome.
-    </p>
+    <p>Analysis data last updated January 14, 2026.</p>
   </HomePageWrapper>
 )
