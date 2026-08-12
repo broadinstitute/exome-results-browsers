@@ -19,9 +19,8 @@ const GeneReferences = ({ gene }: GeneReferencesProps) => {
   const gnomadDataset = gene.reference_genome === 'GRCh37' ? 'gnomad_r2_1' : 'gnomad_r4'
   const gnomadGeneUrl = `https://gnomad.broadinstitute.org/gene/${gene.gene_id}?dataset=${gnomadDataset}`
 
-  const ensemblGeneUrl = `https://${
-    gene.reference_genome === 'GRCh37' ? 'grch37.' : ''
-  }ensembl.org/Homo_sapiens/Gene/Summary?g=${gene.gene_id}`
+  const ensemblGeneUrl = `https://${gene.reference_genome === 'GRCh37' ? 'grch37.' : ''
+    }ensembl.org/Homo_sapiens/Gene/Summary?g=${gene.gene_id}`
 
   const ucscReferenceGenomeId = gene.reference_genome === 'GRCh37' ? 'hg19' : 'hg38'
   const ucscUrl = `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${ucscReferenceGenomeId}&position=chr${gene.chrom}%3A${gene.start}-${gene.stop}`
@@ -164,7 +163,7 @@ const GeneInfo = ({ gene }: GeneInfoProps) => {
   ]
   const otherStudies = allOtherStudies.filter(({ id }) => id !== datasetConfig.datasetId)
 
-  const datasetsToDisplayAliasSymbols: DatasetId[] = ['BipEx2', 'SCHEMA']
+  const datasetsToDisplayAliasSymbols: DatasetId[] = ['BipEx', 'SCHEMA']
 
   return (
     <DescriptionList>
