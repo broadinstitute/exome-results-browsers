@@ -19,7 +19,6 @@ const studyPhenotypes: Partial<Record<DatasetId, string>> = {
   BipEx2: 'Bipolar disorder',
   Epi25: 'Epilepsy',
   SCHEMA: 'Schizophrenia',
-  SCHEMA2: 'Schizophrenia',
   GP2: 'Parkinsons',
 }
 
