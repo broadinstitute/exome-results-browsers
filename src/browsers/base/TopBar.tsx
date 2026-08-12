@@ -221,19 +221,6 @@ const TopBar = ({
           </Modal>
         )}
       </TopBarWrapper>
-      {datasetId === 'SCHEMA' && (
-        <Banner>
-          <CenterHorizontal>
-            <p>
-              Have feedback? Fill out our{' '}
-              <ExternalLink href="https://forms.gle/Ch6UfT4iirvZ6Lvi9">
-                SCHEMA feedback form
-              </ExternalLink>
-              .
-            </p>
-          </CenterHorizontal>
-        </Banner>
-      )}
       {datasetId === 'IBD' && (
         <Banner>
           <CenterHorizontal>
