@@ -1,23 +1,18 @@
+import ast
+
 import hail as hl
 
 from data_pipeline.config import pipeline_config
 
+test_genes_string = pipeline_config["SCHEMA"]["test_genes"]
+test_genes = ast.literal_eval(test_genes_string)
+
 
 def filter_results_table_to_test_gene(results):
-    test_gene_symbols = [
-        "PCSK9",
-        "SETD1A",
-        "SAMD11",
-        # gnomAD's gencode version calls 'WDR78', 'DNAI4',
-        #   should be WDR78 in gene table, DNAI4 on single gene page
-        "WDR78",
-    ]
-
-    test_gene_symbols = [gene.upper() for gene in test_gene_symbols]
+    test_gene_symbols = [gene[0].upper() for gene in test_genes]
     test_gene_set = hl.literal(test_gene_symbols)
 
-    results = results.filter(test_gene_set.contains(results["gene_symbol"].upper()))
-    return results.persist()
+    return results.filter(test_gene_set.contains(results["gene_symbol"].upper())).persist()
 
 
 def build_gene_lookup_ht(gene_models_ht):
