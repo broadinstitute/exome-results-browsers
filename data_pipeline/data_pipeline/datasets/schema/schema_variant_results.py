@@ -1,35 +1,27 @@
+import ast
+
 import hail as hl
 
 from data_pipeline.config import pipeline_config
 
+test_genes_string = pipeline_config["SCHEMA"]["test_genes"]
+test_genes = ast.literal_eval(test_genes_string)
+
 
 def filter_results_table_to_test_gene_intervals(variants):
+    test_gene_intervals = [
+        hl.locus_interval(
+            contig,
+            start,
+            end,
+            reference_genome="GRCh38",
+            includes_start=True,
+            includes_end=True,
+        )
+        for _, _, contig, start, end in test_genes
+    ]
 
-    # ENSG00000169174
-    pcsk9_interval_grch38 = hl.locus_interval(
-        "chr1", 55039447, 55064852, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    # ENSG00000099381
-    setd1a_interval_grch38 = hl.locus_interval(
-        "chr16", 30957754, 30984664, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    # ENSG00000187634
-    samd11_interval_grch38 = hl.locus_interval(
-        "chr1", 923923, 944575, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    # ENSG00000152763
-    dnai4_interval_grch38 = hl.locus_interval(
-        "chr1", 66812885, 66924856, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    variants = hl.filter_intervals(
-        variants, [pcsk9_interval_grch38, setd1a_interval_grch38, samd11_interval_grch38, dnai4_interval_grch38]
-    )
-
-    return variants.persist()
+    return hl.filter_intervals(variants, test_gene_intervals).persist()
 
 
 def prepare_variant_results(test_genes, _output_root):
