@@ -56,6 +56,40 @@ def map_gene_symbols_to_ensg_ids(results, primary_lookup_ht, secondary_lookup_ht
     return results
 
 
+fields_to_select = {
+    "ptv_case_carrier": "PTV Case Carrier",  # int32
+    "ptv_control_carrier": "PTV Control Carrier",  # int32
+    "ptv_p_value": "PTV Pvalue",  # float64
+    "ptv_odds_ratio": "PTV OR",  # string
+    "ptv_odds_ratio_95_ci": "PTV OR 95% CI",  # string, e.g. "0.62 - 2.39"
+    "ptv_n_de_novo": "N de novo PTV",  # int32
+    #
+    "ptv_mis_case_carrier": "PTV + Missense Case Carrier",  # int32
+    "ptv_mis_control_carrier": "PTV + Missense Control Carrier",  # int32
+    "ptv_mis_p_value": "PTV + Missense Pvalue",  # float64
+    "ptv_mis_odds_ratio": "PTV+ Missense OR",  # string
+    "ptv_mis_odds_ratio_95_ci": "PTV+ Missense OR 95% CI",  # string, e.g. "0.62 - 2.39"
+    "ptv_mis_n_de_novo": "N de novo PTV + Missense",  # int32
+    #
+    "mis_case_carrier": "Missense Case Carrier",  # int32
+    "mis_control_carrier": "Missense Control Carrier",  # int32
+    "mis_p_value": "Missense Pvalue",  # float64
+    "mis_odds_ratio": "Missense OR",  # string
+    "mis_odds_ratio_95_ci": "Missense OR 95% CI",  # string, e.g. "0.62 - 2.39"
+    #
+    "syn_case_carrier": "Synonymous Case Carrier",  # int32
+    "syn_control_carrier": "Synonymous Control Carrier",  # int32
+    "syn_p_value": "Synonymous Pvalue",  # float64
+    "syn_odds_ratio": "Synonymous OR",  # string
+    "syn_odds_ratio_95_ci": "Synonymous OR 95% CI",  # string, e.g. "0.62 - 2.39"
+    #
+    "n_de_novo_p_value": "de novo Pvalue",  # float64
+    #
+    "schema_case_control_p_value": "SCHEMA2 Case-Control Pvalue",  # float64h
+    "case_control_plus_de_novo_p_value": "Case-Control + de novo Pvalue",  # float64
+}
+
+
 def prepare_gene_results(test_genes, _output_root):
     gene_results = hl.read_table(pipeline_config.get("SCHEMA", "gene_results_path"))
 
@@ -75,38 +109,7 @@ def prepare_gene_results(test_genes, _output_root):
     gene_results = gene_results.annotate(analysis_group="meta")
 
     gene_results = gene_results.select(
-        analysis_group="meta",
-        #
-        ptv_case_carrier=gene_results["PTV Case Carrier"],  # int32
-        ptv_control_carrier=gene_results["PTV Control Carrier"],  # int32
-        ptv_p_value=gene_results["PTV Pvalue"],  # float64
-        ptv_odds_ratio=gene_results["PTV OR"],  # string
-        ptv_odds_ratio_95_ci=gene_results["PTV OR 95% CI"],  # string, e.g. "0.62 - 2.39"
-        ptv_n_de_novo=gene_results["N de novo PTV"],  # int32
-        #
-        ptv_mis_case_carrier=gene_results["PTV + Missense Case Carrier"],  # int32
-        ptv_mis_control_carrier=gene_results["PTV + Missense Control Carrier"],  # int32
-        ptv_mis_p_value=gene_results["PTV + Missense Pvalue"],  # float64
-        ptv_mis_odds_ratio=gene_results["PTV+ Missense OR"],  # string
-        ptv_mis_odds_ratio_95_ci=gene_results["PTV+ Missense OR 95% CI"],  # string, e.g. "0.62 - 2.39"
-        ptv_mis_n_de_novo=gene_results["N de novo PTV + Missense"],  # int32
-        #
-        mis_case_carrier=gene_results["Missense Case Carrier"],  # int32
-        mis_control_carrier=gene_results["Missense Control Carrier"],  # int32
-        mis_p_value=gene_results["Missense Pvalue"],  # float64
-        mis_odds_ratio=gene_results["Missense OR"],  # string
-        mis_odds_ratio_95_ci=gene_results["Missense OR 95% CI"],  # string, e.g. "0.62 - 2.39"
-        #
-        syn_case_carrier=gene_results["Synonymous Case Carrier"],  # int32
-        syn_control_carrier=gene_results["Synonymous Control Carrier"],  # int32
-        syn_p_value=gene_results["Synonymous Pvalue"],  # float64
-        syn_odds_ratio=gene_results["Synonymous OR"],  # string
-        syn_odds_ratio_95_ci=gene_results["Synonymous OR 95% CI"],  # string, e.g. "0.62 - 2.39"
-        #
-        n_de_novo_p_value=gene_results["de novo Pvalue"],  # float64
-        #
-        schema_case_control_p_value=gene_results["SCHEMA2 Case-Control Pvalue"],  # float64
-        case_control_plus_de_novo_p_value=gene_results["Case-Control + de novo Pvalue"],  # float64
+        analysis_group="meta", **{name: gene_results[source] for name, source in fields_to_select.items()}
     )
 
     gene_models_path = "gs://gnomad-v4-data-pipeline/output/genes/gnomad.browser.GRCh38.GENCODEv39.pext.ht"
