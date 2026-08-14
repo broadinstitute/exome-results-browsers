@@ -83,9 +83,9 @@ const DatasetDownloads = ({ datasetId, isMainDataset = false }: DatasetDownloads
         <>
           <h3 style={{ marginBottom: '0.5rem' }}>Previous SCHEMA release data downloads</h3>
           <p style={{ marginTop: '0rem' }}>
-            The prior SCHEMA analysis and dataset was released September 10th, 2020.
+            The prior SCHEMA (SCHEMA 1.0) analysis and dataset was released September 10th, 2020.
           </p>
-          <DatasetDownloadLinkList datasetId={'SCHEMA_v1'} label="SCHEMA" />
+          <DatasetDownloadLinkList datasetId={'SCHEMA_v1'} label="SCHEMA 1.0" />
         </>
       )}
     </>
@@ -105,7 +105,7 @@ export default () => {
           return (
             <React.Fragment key={otherDatasetId}>
               <h3>{otherDatasetId}</h3>
-              <DatasetDownloads datasetId={datasetConfig.datasetId} isMainDataset={false} />
+              <DatasetDownloads datasetId={otherDatasetId} isMainDataset={false} />
             </React.Fragment>
           )
         })}
