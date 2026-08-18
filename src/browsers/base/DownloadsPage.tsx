@@ -93,7 +93,7 @@ const DatasetDownloads = ({ datasetId, isMainDataset = false }: DatasetDownloads
 }
 
 export default () => {
-  const datasetsWithoutDownloads: DatasetId[] = ['GP2', 'IBD']
+  const datasetsWithoutDownloads: DatasetId[] = ['GP2', 'IBD', 'ClinVarGRCh38']
   return (
     <InfoPage title="Downloads">
       <DatasetDownloads datasetId={datasetConfig.datasetId} isMainDataset={true} />
