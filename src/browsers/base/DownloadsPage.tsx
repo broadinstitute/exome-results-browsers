@@ -12,7 +12,10 @@ const BASE_GCS_DOWNLOAD_PATH = 'https://storage.googleapis.com/exome-results-bro
 const BASE_AWS_DOWNLOAD_PATH = 'https://atgu-exome-browser-data.s3.amazonaws.com'
 
 type LegacyDatasetId = 'SCHEMA_v1'
-type DownloadDatasetId = DatasetId | LegacyDatasetId
+
+type ClinVarAnnotationDatasetId = 'ClinVarGRCh38'
+
+type DownloadDatasetId = DatasetId | LegacyDatasetId | ClinVarAnnotationDatasetId
 
 type DownloadConfig = {
   baseUrl: string;
@@ -93,7 +96,7 @@ const DatasetDownloads = ({ datasetId, isMainDataset = false }: DatasetDownloads
 }
 
 export default () => {
-  const datasetsWithoutDownloads: DatasetId[] = ['GP2', 'IBD']
+  const datasetsWithoutDownloads: DownloadDatasetId[] = ['GP2', 'IBD', 'ClinVarGRCh38']
   return (
     <InfoPage title="Downloads">
       <DatasetDownloads datasetId={datasetConfig.datasetId} isMainDataset={true} />
