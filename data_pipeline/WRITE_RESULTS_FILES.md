@@ -99,6 +99,12 @@ mount -o discard,defaults /dev/disk/by-id/google-erb-data /mnt/disks/erb-data
    gsutil -m cp -r gs://exome-results-browsers/output-data/combined/<YYYY-MM-DD_DATE>/combined.ht /tmp
    ```
 
+   or use `rsync`
+
+   ```
+   gsutil -m rsync -r gs://exome-results-browsers/output-data/combined/<YYYY-MM-DD_DATE>/combined.ht /tmp/combined.ht
+   ```
+
 7. Write results files to persistent disk (note this may take > 1 hour)
 
    The interpreter is named explicitly because hail lives in the venv from step 5, not
@@ -111,6 +117,12 @@ mount -o discard,defaults /dev/disk/by-id/google-erb-data /mnt/disks/erb-data
     /mnt/disks/erb-data/results \
     --environment gce \
     > write_results.log 2>&1 &
+   ```
+
+   Visualize progress with:
+
+   ```
+   tail -f write_results.log
    ```
 
 8. Unmount disk.
