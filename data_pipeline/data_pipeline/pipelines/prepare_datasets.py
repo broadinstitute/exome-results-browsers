@@ -4,7 +4,6 @@ import os
 import sys
 
 import hail as hl
-import hailtop.fs as hfs
 
 from data_pipeline.config import pipeline_config
 from data_pipeline.validation import validate_gene_results_table, validate_variant_results_table
@@ -38,7 +37,7 @@ def prepare_dataset(dataset_id, test_genes, output_local):
             )
         else:
             compute_combine = not (
-                hfs.exists(combined_variant_results_path) and hfs.exists(combined_variant_annotations_path)
+                hl.hadoop_exists(combined_variant_results_path) and hl.hadoop_exists(combined_variant_annotations_path)
             )
 
         if compute_combine:

@@ -8,8 +8,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
 
 1. Create a temporary GCE instance.
 
-   Debian 11 is used here to have Java 11, the only version hail 0.2.138 supports.
-   Debian 12 ships only openjdk-17.
+   Debian 11 is used here to have Java 11
 
    ```
    gcloud --quiet compute instances create erb-temp-instance \
@@ -90,7 +89,7 @@ mount -o discard,defaults /dev/disk/by-id/google-erb-data /mnt/disks/erb-data
    ```
    uv venv --python 3.12.9 /tmp/hail-env
    source /tmp/hail-env/bin/activate
-   uv pip install "hail==0.2.138" tqdm
+   uv pip install "hail==0.2.126" "setuptools<82" tqdm
    ```
 
 6. Copy results data from GCS.
