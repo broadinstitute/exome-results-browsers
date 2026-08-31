@@ -518,7 +518,7 @@ const VariantDetails = ({
 
   ]
 
-  const allGP2CaseColumnGroups = Object.keys(filter.gp2VariantColumnGroups!)
+  const allGP2CaseColumnGroups = Object.keys(filter.gp2VariantColumnGroups || [])
   const activeGP2CaseColumnGroups = allGP2CaseColumnGroups.filter(
     (g) => filter.gp2VariantColumnGroups![g]
   )
