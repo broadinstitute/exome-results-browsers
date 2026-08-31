@@ -8,7 +8,7 @@ the browsers and so cannot be attached to another instance in read-write mode.
 
 1. Create a temporary GCE instance.
 
-   Debian 11 is used here to have Python 3.9
+   Debian 11 is used here to have Java 11
 
    ```
    gcloud --quiet compute instances create erb-temp-instance \
@@ -69,23 +69,27 @@ mount -o discard,defaults /dev/disk/by-id/google-erb-data /mnt/disks/erb-data
 
 5. Install Hail.
 
-   Install Java 11
+   Install Java 11 and uv
 
    ```
    apt-get update && \
    apt-get install -y \
      openjdk-11-jre-headless \
      g++ \
-     python3.9 \
-     python3-pip \
      libopenblas-base \
-     liblapack3
+     liblapack3 \
+     curl
+
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   source $HOME/.local/bin/env
    ```
 
    Install Hail and tqdm. Versions should be kept in sync with `pyproject.toml`.
 
    ```
-   python3.9 -m pip install hail==0.2.126 tqdm==4.66.5
+   uv venv --python 3.12.9 /tmp/hail-env
+   source /tmp/hail-env/bin/activate
+   uv pip install "hail==0.2.126" "setuptools<82" tqdm
    ```
 
 6. Copy results data from GCS.
@@ -96,8 +100,12 @@ mount -o discard,defaults /dev/disk/by-id/google-erb-data /mnt/disks/erb-data
 
 7. Write results files to persistent disk (note this may take > 1 hour)
 
+   The interpreter is named explicitly because hail lives in the venv from step 5, not
+   system-wide, so the script's `#!/usr/bin/env python3` shebang only resolves correctly
+   while that venv is activated.
+
    ```
-   nohup /tmp/write_results_files.py \
+   nohup /tmp/hail-env/bin/python3 /tmp/write_results_files.py \
     /tmp/combined.ht \
     /mnt/disks/erb-data/results \
     --environment gce \
