@@ -2,13 +2,13 @@
 
 import argparse
 import csv
+import glob
 import json
-from json.encoder import encode_basestring_ascii, _make_iterencode
 import multiprocessing
 import os
-import sys
-import glob
 import shutil
+import sys
+from json.encoder import _make_iterencode, encode_basestring_ascii
 
 import hail as hl
 from tqdm import tqdm
@@ -185,7 +185,6 @@ def write_data_files(table_path, output_directory, genes=None):
             "GP2",
             "IBD",
             "SCHEMA",
-            "SCHEMA2",
             "ClinVarGRCh38",
         ]
 
@@ -207,7 +206,6 @@ def write_data_files(table_path, output_directory, genes=None):
                 + ds.variant_counts.GP2
                 + ds.variant_counts.IBD
                 + ds.variant_counts.SCHEMA
-                + ds.variant_counts.SCHEMA2
                 + ds.variant_counts.ClinVarGRCh38
             )
         )

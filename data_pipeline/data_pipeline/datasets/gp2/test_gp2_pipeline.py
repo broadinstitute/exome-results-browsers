@@ -1,10 +1,9 @@
 # pylint: disable=redefined-outer-name
 
+import hail as hl
 import pytest
 
-import hail as hl
-
-from .gp2_combine_input_datasets import combine_variant_results, combine_variant_annotations, combine_input_data
+from .gp2_combine_input_datasets import combine_input_data, combine_variant_annotations, combine_variant_results
 from .gp2_variant_results import prepare_variant_results
 
 

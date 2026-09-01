@@ -22,7 +22,7 @@ import LoginPage from './LoginPage'
 import { userHasBearerCookie } from './auth'
 import { GeneRow } from './GeneResultsPage/geneResultTableColumns'
 
-export type DatasetId = 'ASC' | 'BipEx' | 'BipEx2' | 'Epi25' | 'GP2' | 'IBD' | 'SCHEMA' | 'SCHEMA2'
+export type DatasetId = 'ASC' | 'BipEx' | 'BipEx2' | 'Epi25' | 'GP2' | 'IBD' | 'SCHEMA'
 
 export type ReferenceGenome = 'GRCh37' | 'GRCh38'
 
@@ -64,7 +64,7 @@ declare global {
   }
 }
 
-const PASSWORD_PROTECTED_DATASETS: DatasetId[] = ['BipEx2', 'SCHEMA2']
+const PASSWORD_PROTECTED_DATASETS: DatasetId[] = ['BipEx2']
 
 interface ProtectedRouteExtraProps {
   datasetId: DatasetId

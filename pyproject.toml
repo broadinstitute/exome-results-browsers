@@ -1,21 +1,24 @@
-[tool.black]
+[project]
+name = "exome-results-browsers"
+version = "0.1.0"
+requires-python = "==3.12.9"
+dependencies = [
+  "hail==0.2.138",
+  "tqdm",
+]
+
+[dependency-groups]
+dev = [
+  "pytest",
+  "ruff",
+]
+
+[tool.ruff]
 line-length = 120
 
-[tool.pylint.basic]
-# ds: frequently used name for a variable containing a Hail table
-good-names = [
-  "ds",
-]
+[tool.ruff.lint]
+# E/W: pycodestyle, F: pyflakes, I: isort
+select = ["E", "F", "W", "I"]
 
-[tool.pylint.messages_control]
-disable = [
-  # Ignore refactor and convention categories
-  "R",
-  "C",
-]
-
-[tool.pylint.miscellaneous]
-notes = [
-  "FIXME",
-  "TODO",
-]
+[tool.ruff.lint.isort]
+known-first-party = ["data_pipeline"]
