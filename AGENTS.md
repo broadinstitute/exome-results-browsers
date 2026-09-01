@@ -38,9 +38,6 @@ All instructions are applicable to working on a given feature/topic branch. We N
 
 For commits when working on a feature branch:
 
-- A commit should be the smallest change that is independently complete, including any added tests. For a given commit, the code should build and pass CI (e.g. the `validate-____` `make` targets. It should not be the smallest diff.
-  - Tests added to confirm behavior of something new, or something changed, should be included in the same commit as the code covered. Never create a standalone commit that just adds tests.
-- Don't fragment one feature, e.g. a mechanism and its only consumer, or a UI element and additional labeling or styling, those belong together in a single commit. Group by logical change, not file type.
-- Prefer fewer complete commits over many partial ones. Most topic branches on scoped changes will be 1-3 commits, as a rule of thumb.
-- Before splitting a commit into two, consider if a reviewer could review these two individual commits alone, and would they both pass CI. If not, they belong together.
-- If it is unclear whether to split a commit or not, e.g. in the case of creating a well factored reusable component, and the inclusion of the component in one place, one could decide to have that be a single commit or two. In the case of such ambiguity, ask the user what they would prefer before committing.
+- Keep builds green. Ideally, each commit leaves the codebase in a state that builds and passes CI, where appropriate
+- Bundle features with tests. Commits that add or change functionality should be accompanied by tests that cover the new behavior, if such a test is straightfoward to make
+- Isolate test-only changes. Standalone testing commits can be used to add coverage to existing behavior, or to reproduce a bug before fixing it in the next commit
