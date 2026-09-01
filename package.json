@@ -13,7 +13,10 @@
     "lint:js": "eslint .",
     "lint:css": "stylelint 'src/**/*.js'",
     "typecheck": "yarn tsc --noEmit",
-    "typecheck:watch": "yarn tsc -w --noEmit"
+    "typecheck:watch": "yarn tsc -w --noEmit",
+    "smoketest:complete": "./scripts/smoke.sh",
+    "smoketest:pipeline": "./scripts/smoke-pipeline.sh",
+    "smoketest:frontend": "playwright test"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
