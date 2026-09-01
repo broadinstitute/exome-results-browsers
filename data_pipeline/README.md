@@ -120,6 +120,11 @@ Configuration is divided into sections:
 - Other sections contain paths to files for individual datasets and are used by those
   datasets' data preparation pipelines.
 
+  - `test_genes` and `test_gene_intervals` define the subset each dataset is cut down to
+    when a pipeline runs with `--test-genes`. The reference genome of an interval is
+    inferred from its contig: a `chr` prefix means GRCh38, its absence GRCh37. The comment
+    above each `test_gene_intervals` option lists the genes those intervals cover, in order.
+
 ## Running pipelines
 
 The pipelines accept arguments for which environment to run the pipeline in (dataproc, or local), and for which step to run
