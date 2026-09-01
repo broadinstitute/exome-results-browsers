@@ -3,7 +3,7 @@
 import hail as hl
 import pytest
 
-from .gene_filter_utils import (
+from data_pipeline.gene_filter_utils import (
     filter_gene_results_to_test_genes,
     filter_variant_results_to_test_gene_intervals,
     parse_test_gene_intervals,
@@ -52,7 +52,6 @@ def variant_results_ht():
 )
 def test_parse_test_gene_intervals(intervals_str, expected):
     intervals = hl.eval(parse_test_gene_intervals(intervals_str))
-
     assert [
         (i.start.contig, i.start.position, i.end.position, i.start.reference_genome.name) for i in intervals
     ] == expected
@@ -70,7 +69,6 @@ def test_parse_test_gene_intervals(intervals_str, expected):
 )
 def test_filter_gene_results_to_test_genes(gene_results_ht, field, test_gene_symbols, expected):
     filtered = filter_gene_results_to_test_genes(gene_results_ht, field, test_gene_symbols)
-
     assert sorted(filtered.gene_symbol.collect()) == expected
 
 
@@ -85,7 +83,5 @@ def test_filter_gene_results_to_test_genes(gene_results_ht, field, test_gene_sym
 )
 def test_filter_variant_results_to_test_gene_intervals(variant_results_ht, intervals_str, expected_positions):
     intervals = parse_test_gene_intervals(intervals_str)
-
     filtered = filter_variant_results_to_test_gene_intervals(variant_results_ht, intervals)
-
     assert [locus.position for locus in filtered.locus.collect()] == expected_positions
