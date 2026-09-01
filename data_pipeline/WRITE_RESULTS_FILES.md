@@ -88,7 +88,7 @@ mount -o discard,defaults /dev/disk/by-id/google-erb-data /mnt/disks/erb-data
    Install Hail and tqdm. Versions should be kept in sync with `pyproject.toml`.
 
    ```
-   uv venv --python 3.12 /tmp/hail-env
+   uv venv --python 3.12.9 /tmp/hail-env
    source /tmp/hail-env/bin/activate
    uv pip install "hail==0.2.138" tqdm
    ```
