@@ -4,11 +4,11 @@ import hail as hl
 import hailtop.fs as hfs
 
 from data_pipeline.config import pipeline_config
-from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, get_test_gene_intervals
 
 
 def _ibd_test_intervals():
-    return parse_test_gene_intervals(pipeline_config.get("IBD", "test_gene_intervals"))
+    return get_test_gene_intervals("IBD", pipeline_config.get("IBD", "test_genes"))
 
 
 def add_vep_to_annotations(staging_output_path, variants_ht, annotations_ht, test_genes):

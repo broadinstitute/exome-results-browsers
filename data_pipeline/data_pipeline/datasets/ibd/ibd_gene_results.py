@@ -3,7 +3,7 @@ import os
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes
+from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes, parse_test_genes
 
 
 def prepare_gene_results(test_genes, output_root):
@@ -15,7 +15,7 @@ def prepare_gene_results(test_genes, output_root):
 
     if test_genes:
         results = filter_gene_results_to_test_genes(
-            results, "gene_symbol", pipeline_config.get("IBD", "test_genes").split(",")
+            results, "gene_symbol", parse_test_genes(pipeline_config.get("IBD", "test_genes"))
         )
 
     results = results.select_globals()

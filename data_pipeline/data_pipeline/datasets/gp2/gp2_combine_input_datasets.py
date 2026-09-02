@@ -1,5 +1,5 @@
 from data_pipeline.config import pipeline_config
-from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, get_test_gene_intervals
 
 
 def combine_variant_results(ces_variants_ht, wgs_variants_ht):
@@ -32,7 +32,7 @@ def combine_variant_annotations(ces_annotations_ht, wgs_annotations_ht):
 def combine_input_data(ces_variants_ht, wgs_variants_ht, ces_annotations_ht, wgs_annotations_ht, test_genes):
     if test_genes:
         print("Received test_genes arg, subsetting input data")
-        test_intervals = parse_test_gene_intervals(pipeline_config.get("GP2", "test_gene_intervals"))
+        test_intervals = get_test_gene_intervals("GP2", pipeline_config.get("GP2", "test_genes"))
         ces_variants_ht = filter_variant_results_to_test_gene_intervals(ces_variants_ht, test_intervals)
         ces_annotations_ht = filter_variant_results_to_test_gene_intervals(ces_annotations_ht, test_intervals)
 

@@ -1,13 +1,13 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, get_test_gene_intervals
 
 
 def prepare_variant_results(results, annotations, test_genes, _output_root):
     if test_genes:
         results = filter_variant_results_to_test_gene_intervals(
-            results, parse_test_gene_intervals(pipeline_config.get("GP2", "test_gene_intervals"))
+            results, get_test_gene_intervals("GP2", pipeline_config.get("GP2", "test_genes"))
         )
 
     results = results.annotate(

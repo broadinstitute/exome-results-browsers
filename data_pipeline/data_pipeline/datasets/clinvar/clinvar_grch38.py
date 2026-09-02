@@ -1,7 +1,7 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, get_test_gene_intervals
 
 
 def prepare_clinvar_variants(test_genes):
@@ -10,7 +10,7 @@ def prepare_clinvar_variants(test_genes):
 
     if test_genes:
         ht_clinvar = filter_variant_results_to_test_gene_intervals(
-            ht_clinvar, parse_test_gene_intervals(pipeline_config.get("ClinVarGRCh38", "test_gene_intervals"))
+            ht_clinvar, get_test_gene_intervals("ClinVarGRCh38", pipeline_config.get("ClinVarGRCh38", "test_genes"))
         )
 
     def get_best_consequence(csq_array):

@@ -1,7 +1,7 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, get_test_gene_intervals
 
 CONSEQUENCE_TERMS = [
     "transcript_ablation",
@@ -56,7 +56,9 @@ def prepare_variant_results(test_genes, _output_root):
     NUM_PARTITIONS = 10 if test_genes else 100
 
     if test_genes:
-        test_intervals = parse_test_gene_intervals(pipeline_config.get("ASC", "test_gene_intervals"))
+        test_intervals = get_test_gene_intervals(
+            "ASC", pipeline_config.get("ASC", "test_genes"), reference_genome="GRCh37"
+        )
 
     for group in ("dn", "dbs", "swe"):
         group_annotations_path = pipeline_config.get("ASC", f"{group}_variant_annotations_path")

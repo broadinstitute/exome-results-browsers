@@ -1,7 +1,7 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, get_test_gene_intervals
 
 
 def prepare_variant_results(test_genes, _output_root):
@@ -12,7 +12,7 @@ def prepare_variant_results(test_genes, _output_root):
     variant_annotations = hl.read_table(variant_annotations_path)
 
     if test_genes:
-        test_gene_intervals = parse_test_gene_intervals(pipeline_config.get("SCHEMA", "test_gene_intervals"))
+        test_gene_intervals = get_test_gene_intervals("SCHEMA", pipeline_config.get("SCHEMA", "test_genes"))
         variant_results = filter_variant_results_to_test_gene_intervals(variant_results, test_gene_intervals)
         variant_annotations = filter_variant_results_to_test_gene_intervals(variant_annotations, test_gene_intervals)
 

@@ -120,10 +120,10 @@ Configuration is divided into sections:
 - Other sections contain paths to files for individual datasets and are used by those
   datasets' data preparation pipelines.
 
-  - `test_genes` and `test_gene_intervals` define the subset each dataset is cut down to
-    when a pipeline runs with `--test-genes`. The reference genome of an interval is
-    inferred from its contig: a `chr` prefix means GRCh38, its absence GRCh37. The comment
-    above each `test_gene_intervals` option lists the genes those intervals cover, in order.
+  - `test_genes` defines the subset each dataset is cut down to when a pipeline runs with
+    `--test-genes`. The interval used to filter variant results for each gene is looked up
+    in `TEST_GENE_INTERVALS` in `data_pipeline/gene_filter_utils.py`, which also records
+    per-dataset exceptions where a dataset's gene and variant filters intentionally differ.
 
 ## Running pipelines
 

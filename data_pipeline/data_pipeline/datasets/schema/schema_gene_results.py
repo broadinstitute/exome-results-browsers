@@ -1,7 +1,7 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes
+from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes, parse_test_genes
 
 
 def build_gene_lookup_ht(gene_models_ht):
@@ -84,7 +84,7 @@ def prepare_gene_results(test_genes, _output_root):
 
     if test_genes:
         gene_results = filter_gene_results_to_test_genes(
-            gene_results, "gene_symbol", pipeline_config.get("SCHEMA", "test_genes").split(",")
+            gene_results, "gene_symbol", parse_test_genes(pipeline_config.get("SCHEMA", "test_genes"))
         )
 
     # TK: suggest analyst include this in input file, then pull this number from there
