@@ -61,8 +61,19 @@ if [ ! -d "$combined_ht" ]; then
   exit 1
 fi
 
+cleanup_partial_smoke_dir() {
+  local exit_code=$?
+  if [ "$exit_code" -ne 0 ]; then
+    echo "==> write_results_files interrupted; removing partial $SMOKE_DIR" >&2
+    rm -rf "$SMOKE_DIR"
+  fi
+}
+trap cleanup_partial_smoke_dir EXIT
+
 echo "==> write_results_files -> $SMOKE_DIR"
 rm -rf "$SMOKE_DIR"
 "${UV_RUN[@]}" ./data_pipeline/write_results_files.py "$combined_ht" "$SMOKE_DIR" --genes "${SMOKE_GENES[@]}"
+
+trap - EXIT
 
 echo "Wrote smoke test data to $SMOKE_DIR"

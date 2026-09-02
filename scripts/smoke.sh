@@ -22,6 +22,15 @@ for arg in "$@"; do
 done
 
 if [ "$clean_install" = true ]; then
+  cleanup_partial_install() {
+    local exit_code=$?
+    if [ "$exit_code" -ne 0 ]; then
+      echo "==> Clean install interrupted; removing partial node_modules/.venv" >&2
+      rm -rf node_modules .venv
+    fi
+  }
+  trap cleanup_partial_install EXIT
+
   echo "==> Clean install: node_modules"
   rm -rf node_modules
   yarn install --frozen-lockfile --non-interactive --no-progress
@@ -30,6 +39,8 @@ if [ "$clean_install" = true ]; then
   rm -rf .venv
   uv sync --locked --group dev
   echo "Re-run .llm_nb/install-gcs-connector.py now if the pipeline fails to read gs:// paths."
+
+  trap - EXIT
 fi
 
 if [ "${#pipeline_args[@]}" -eq 0 ]; then
