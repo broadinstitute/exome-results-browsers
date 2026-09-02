@@ -1,27 +1,7 @@
-import ast
-
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-
-test_genes_string = pipeline_config["SCHEMA"]["test_genes"]
-test_genes = ast.literal_eval(test_genes_string)
-
-
-def filter_results_table_to_test_gene_intervals(variants):
-    test_gene_intervals = [
-        hl.locus_interval(
-            contig,
-            start,
-            end,
-            reference_genome="GRCh38",
-            includes_start=True,
-            includes_end=True,
-        )
-        for _, _, contig, start, end in test_genes
-    ]
-
-    return hl.filter_intervals(variants, test_gene_intervals).persist()
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, get_test_gene_intervals
 
 
 def prepare_variant_results(test_genes, _output_root):
@@ -32,8 +12,9 @@ def prepare_variant_results(test_genes, _output_root):
     variant_annotations = hl.read_table(variant_annotations_path)
 
     if test_genes:
-        variant_results = filter_results_table_to_test_gene_intervals(variant_results)
-        variant_annotations = filter_results_table_to_test_gene_intervals(variant_annotations)
+        test_gene_intervals = get_test_gene_intervals("SCHEMA", pipeline_config.get("SCHEMA", "test_genes"))
+        variant_results = filter_variant_results_to_test_gene_intervals(variant_results, test_gene_intervals)
+        variant_annotations = filter_variant_results_to_test_gene_intervals(variant_annotations, test_gene_intervals)
 
     variant_results = variant_results.select(
         ac_case=variant_results.AC_case,
