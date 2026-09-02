@@ -595,6 +595,7 @@ interface VariantsInGeneContainerProps {
   variantAnalysisGroupOptions?: readonly string[]
   defaultVariantAnalysisGroup?: string
   variantResultColumns: VariantColumnConfig[]
+  variantAlleleFrequencyOverride?: number
   [key: string]: any
 }
 
@@ -605,6 +606,7 @@ const VariantsInGeneContainer = ({
   variantAnalysisGroupOptions = undefined,
   defaultVariantAnalysisGroup = undefined,
   variantResultColumns,
+  variantAlleleFrequencyOverride = undefined,
   ...otherProps
 }: VariantsInGeneContainerProps) => {
   return (
@@ -653,7 +655,11 @@ const VariantsInGeneContainer = ({
                     }
                   )
 
-                  if (datasetId !== 'GP2') {
+                  if (variantAlleleFrequencyOverride !== undefined) {
+                    groupResult.af = variantAlleleFrequencyOverride
+                    groupResult.af_case = variantAlleleFrequencyOverride
+                    groupResult.af_ctrl = variantAlleleFrequencyOverride
+                  } else if (datasetId !== 'GP2') {
                     addSingleAF({ groupResult, prefix: '', suffix: 'case' })
                     addSingleAF({ groupResult, prefix: '', suffix: 'ctrl' })
                     addOverallAF({ groupResult })
