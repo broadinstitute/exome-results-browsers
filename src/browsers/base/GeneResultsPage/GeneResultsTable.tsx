@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react'
 // @ts-expect-error: no types in this @gnomad/ui version
 import { Grid } from '@gnomad/ui'
 import { GeneResultTableColumn, GeneRow } from './geneResultTableColumns'
+import { parseNumericValue } from '../tableCells'
 
 interface GeneResultsTableProps {
   defaultSortKey: string
@@ -46,7 +47,7 @@ class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsT
     const comparator =
       sortKey === 'gene_id' || sortKey === 'gene_name' || sortKey === 'flags'
         ? (a: any, b: any) => a.localeCompare(b)
-        : (a: any, b: any) => a - b
+        : (a: any, b: any) => parseNumericValue(a) - parseNumericValue(b)
 
     const orderedComparator = sortAscending ? comparator : (a: any, b: any) => comparator(b, a)
 

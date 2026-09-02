@@ -22,6 +22,27 @@ const NumberCell = styled.span`
 `
 export type InputData = number | string | null | undefined
 
+const POSITIVE_INFINITY_STRINGS = new Set(['inf', 'infinity', '+inf', '+infinity'])
+const NEGATIVE_INFINITY_STRINGS = new Set(['-inf', '-infinity'])
+
+// normalize infinity strings to allow numeric sorting, some upstream datasets call it "Infinity" and some "Inf"
+export const parseNumericValue = (value: InputData): number => {
+  if (value === null || value === undefined || value === '') {
+    return NaN
+  }
+  if (typeof value === 'number') {
+    return value
+  }
+  const normalized = value.trim().toLowerCase()
+  if (POSITIVE_INFINITY_STRINGS.has(normalized)) {
+    return Infinity
+  }
+  if (NEGATIVE_INFINITY_STRINGS.has(normalized)) {
+    return -Infinity
+  }
+  return parseFloat(value)
+}
+
 export const renderOddsRatio = ({
   value,
   precision = 2,
@@ -32,13 +53,16 @@ export const renderOddsRatio = ({
   if (value === null || value === undefined) {
     return '-'
   }
-  if (value === 'Infinity') {
-    return '∞'
-  }
   if (value === 0) {
     return '0'
   }
-  const floatValue = typeof value === 'string' ? parseFloat(value) : value
+  const floatValue = parseNumericValue(value)
+  if (floatValue === Infinity) {
+    return '∞'
+  }
+  if (floatValue === -Infinity) {
+    return '-∞'
+  }
   if (Number.isNaN(floatValue)) {
     return value
   }
@@ -57,7 +81,11 @@ export const renderOddsRatioCI = ({
     return '-'
   }
 
-  if (confidenceInterval === null || confidenceInterval === undefined || confidenceInterval === '') {
+  if (
+    confidenceInterval === null ||
+    confidenceInterval === undefined ||
+    confidenceInterval === ''
+  ) {
     return '-'
   }
 
