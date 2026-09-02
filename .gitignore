@@ -23,3 +23,8 @@ hail-*.log
 
 # dev data
 /data
+
+# Playwright
+/test-results
+/playwright-report
+/blob-report

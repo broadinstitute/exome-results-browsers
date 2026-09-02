@@ -13,7 +13,10 @@
     "lint:js": "eslint .",
     "lint:css": "stylelint 'src/**/*.js'",
     "typecheck": "yarn tsc --noEmit",
-    "typecheck:watch": "yarn tsc -w --noEmit"
+    "typecheck:watch": "yarn tsc -w --noEmit",
+    "smoketest:complete": "./scripts/smoke.sh",
+    "smoketest:pipeline": "./scripts/smoke-pipeline.sh",
+    "smoketest:frontend": "playwright test"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
@@ -23,6 +26,7 @@
     "@babel/preset-react": "^7.9.4",
     "@gnomad/markdown-loader": "^1.0.0",
     "@hot-loader/react-dom": "^16.11.0",
+    "@playwright/test": "1.44.0",
     "@types/compression": "^1.8.1",
     "@types/express": "^5.0.6",
     "@types/gtag.js": "^0.0.20",
