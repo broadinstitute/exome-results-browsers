@@ -50,9 +50,7 @@ def parse_test_genes(test_genes_str: str) -> list[str]:
     return [gene.strip() for gene in test_genes_str.split(",")]
 
 
-def get_test_gene_intervals(
-    dataset: str, test_genes_str: str, reference_genome: str = "GRCh38"
-) -> list[hl.Interval]:
+def get_test_gene_intervals(dataset: str, test_genes_str: str, reference_genome: str = "GRCh38") -> list[hl.Interval]:
     genes = [
         gene
         for gene in parse_test_genes(test_genes_str)
