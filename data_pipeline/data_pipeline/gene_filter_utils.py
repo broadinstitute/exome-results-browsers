@@ -1,8 +1,10 @@
-import hail as hl
+from typing import Iterable
+
+import hail as hl  # type: ignore[import-untyped]
 
 # Interval covering each test gene, keyed by reference genome. GRCh38 contigs use the
 # chr prefix; GRCh37 contigs do not.
-TEST_GENE_INTERVALS = {
+TEST_GENE_INTERVALS: dict[str, dict[str, str]] = {
     "GRCh37": {
         "PCSK9": "1:55505221-55530525",  # ENSG00000169174
         "CHD8": "14:21853353-21924285",
@@ -30,7 +32,7 @@ TEST_GENE_INTERVALS = {
 # results. Both match pre-existing behavior.
 #
 # Genes filtered from a dataset's gene results but not from its variant results.
-GENES_EXCLUDED_FROM_VARIANT_FILTERING = {
+GENES_EXCLUDED_FROM_VARIANT_FILTERING: dict[str, tuple[str, ...]] = {
     "BipEx2": ("C1orf61",),  # ENSG00000125462
     "IBD": ("PCSK9",),
 }
@@ -38,17 +40,19 @@ GENES_EXCLUDED_FROM_VARIANT_FILTERING = {
 # Genes whose variants are kept even though the gene is not in the dataset's
 # test_genes. ClinVar's gene results are placeholder Epi25 data, so its test_genes
 # lists only PCSK9.
-GENES_ADDED_TO_VARIANT_FILTERING = {
+GENES_ADDED_TO_VARIANT_FILTERING: dict[str, tuple[str, ...]] = {
     "ClinVarGRCh38": ("GBA1", "IL17RA"),
     "GP2": ("IL17RA",),
 }
 
 
-def parse_test_genes(test_genes_str):
+def parse_test_genes(test_genes_str: str) -> list[str]:
     return [gene.strip() for gene in test_genes_str.split(",")]
 
 
-def get_test_gene_intervals(dataset, test_genes_str, reference_genome="GRCh38"):
+def get_test_gene_intervals(
+    dataset: str, test_genes_str: str, reference_genome: str = "GRCh38"
+) -> list[hl.Interval]:
     genes = [
         gene
         for gene in parse_test_genes(test_genes_str)
@@ -68,8 +72,8 @@ def get_test_gene_intervals(dataset, test_genes_str, reference_genome="GRCh38"):
     return parse_test_gene_intervals(",".join(interval_map[gene] for gene in genes))
 
 
-def parse_test_gene_intervals(intervals_str):
-    intervals = []
+def parse_test_gene_intervals(intervals_str: str) -> list[hl.Interval]:
+    intervals: list[hl.Interval] = []
     for part in intervals_str.split(","):
         chrom, rest = part.strip().split(":")
         start, end = rest.split("-")
@@ -80,12 +84,12 @@ def parse_test_gene_intervals(intervals_str):
     return intervals
 
 
-def filter_gene_results_to_test_genes(results, field, test_gene_symbols):
+def filter_gene_results_to_test_genes(results: hl.Table, field: str, test_gene_symbols: Iterable[str]) -> hl.Table:
     test_gene_set = hl.literal([s.upper() for s in test_gene_symbols])
     results = results.filter(test_gene_set.contains(results[field].upper()))
     return results.persist()
 
 
-def filter_variant_results_to_test_gene_intervals(results, intervals):
+def filter_variant_results_to_test_gene_intervals(results: hl.Table, intervals: list[hl.Interval]) -> hl.Table:
     results = hl.filter_intervals(results, intervals)
     return results.persist()
