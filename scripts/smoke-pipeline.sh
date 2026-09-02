@@ -2,6 +2,8 @@
 #
 # Usage:
 #   ./scripts/smoke-pipeline.sh
+#   ./scripts/smoke-pipeline.sh --genes=ENSG00000169174,ENSG00000167207
+#   ./scripts/smoke-pipeline.sh --output-dir=data/smoke
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -16,8 +18,24 @@ UV_RUN=(uv run --no-sync)
 PCSK9_GENE_ID=ENSG00000169174
 IBD_GENE_ID=ENSG00000167207
 SMOKE_GENES=("$PCSK9_GENE_ID" "$IBD_GENE_ID")
-DATASETS=(ASC BipEx BipEx2 Epi25 SCHEMA IBD GP2 ClinVarGRCh38)
 SMOKE_DIR=data/smoke
+
+for arg in "$@"; do
+  case "$arg" in
+    --genes=*)
+      IFS=',' read -r -a SMOKE_GENES <<< "${arg#--genes=}"
+      ;;
+    --output-dir=*)
+      SMOKE_DIR="${arg#--output-dir=}"
+      ;;
+    *)
+      echo "error: unrecognized argument: $arg" >&2
+      exit 1
+      ;;
+  esac
+done
+
+DATASETS=(ASC BipEx BipEx2 Epi25 SCHEMA IBD GP2 ClinVarGRCh38)
 
 echo "==> prepare_gene_models"
 "${UV_RUN[@]}" ./data_pipeline/run_pipeline.py --environment local prepare_gene_models --output-local

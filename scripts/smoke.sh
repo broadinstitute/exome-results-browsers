@@ -2,17 +2,21 @@
 #
 # Usage:
 #   ./scripts/smoke.sh
-#   ./scripts/smoke.sh --clean-install     # clear and re-sync dependencies
-#   ./scripts/smoke.sh --project=SCHEMA    # only playwright test a certain dataset
+#   ./scripts/smoke.sh --clean-install                        # clear and re-sync dependencies
+#   ./scripts/smoke.sh --genes=ENSG00000169174,ENSG00000167207 # only write results for these genes
+#   ./scripts/smoke.sh --output-dir=data/smoke                 # write smoke test data elsewhere
+#   ./scripts/smoke.sh --project=SCHEMA                        # only playwright test a certain dataset
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
 clean_install=false
+pipeline_args=()
 args=()
 for arg in "$@"; do
   case "$arg" in
     --clean-install) clean_install=true ;;
+    --genes=*|--output-dir=*) pipeline_args+=("$arg") ;;
     *) args+=("$arg") ;;
   esac
 done
@@ -28,7 +32,11 @@ if [ "$clean_install" = true ]; then
   echo "Re-run .llm_nb/install-gcs-connector.py now if the pipeline fails to read gs:// paths."
 fi
 
-./scripts/smoke-pipeline.sh
+if [ "${#pipeline_args[@]}" -eq 0 ]; then
+  ./scripts/smoke-pipeline.sh
+else
+  ./scripts/smoke-pipeline.sh "${pipeline_args[@]}"
+fi
 
 echo "==> Building browsers"
 yarn run build
