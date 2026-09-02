@@ -34,7 +34,7 @@ echo "==> Building browsers"
 yarn run build
 
 if [ "${#args[@]}" -eq 0 ]; then
-  yarn run smoke:frontend
+  yarn run smoketest:frontend
 else
-  yarn run smoke:frontend "${args[@]}"
+  yarn run smoketest:frontend "${args[@]}"
 fi
