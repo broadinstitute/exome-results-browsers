@@ -14,6 +14,7 @@ if [ ! -d .venv ]; then
 fi
 
 UV_RUN=(uv run --no-sync)
+PIPELINE_CONFIG=data_pipeline/pipeline_config.ini
 
 PCSK9_GENE_ID=ENSG00000169174
 IBD_GENE_ID=ENSG00000167207
@@ -51,7 +52,7 @@ echo "==> combine_datasets (${DATASETS[*]})"
 combined_date=$("${UV_RUN[@]}" python3 -c "
 import configparser
 config = configparser.ConfigParser()
-config.read('data_pipeline/pipeline_config.ini')
+config.read('$PIPELINE_CONFIG')
 print(config.get('output', 'output_last_updated'))
 ")
 combined_ht="data/output-data/combined/${combined_date}/combined.ht"
