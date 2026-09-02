@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
 # Usage:
-#   ./scripts/smoke-pipeline.sh
-#   ./scripts/smoke-pipeline.sh --genes=ENSG00000169174,ENSG00000167207
-#   ./scripts/smoke-pipeline.sh --output-dir=data/smoke
+#   ./scripts/smoketest-pipeline.sh
+#   ./scripts/smoketest-pipeline.sh --genes=ENSG00000169174,ENSG00000167207
+#   ./scripts/smoketest-pipeline.sh --output-dir=data/smoke
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

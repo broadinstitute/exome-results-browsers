@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
 # Usage:
-#   ./scripts/smoke.sh
-#   ./scripts/smoke.sh --clean-install                        # clear and re-sync dependencies
-#   ./scripts/smoke.sh --genes=ENSG00000169174,ENSG00000167207 # only write results for these genes
-#   ./scripts/smoke.sh --output-dir=data/smoke                 # write smoke test data elsewhere
-#   ./scripts/smoke.sh --project=SCHEMA                        # only playwright test a certain dataset
+#   ./scripts/smoketest.sh
+#   ./scripts/smoketest.sh --clean-install                        # clear and re-sync dependencies
+#   ./scripts/smoketest.sh --genes=ENSG00000169174,ENSG00000167207 # only write results for these genes
+#   ./scripts/smoketest.sh --output-dir=data/smoke                 # write smoke test data elsewhere
+#   ./scripts/smoketest.sh --project=SCHEMA                        # only playwright test a certain dataset
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -44,9 +44,9 @@ if [ "$clean_install" = true ]; then
 fi
 
 if [ "${#pipeline_args[@]}" -eq 0 ]; then
-  ./scripts/smoke-pipeline.sh
+  ./scripts/smoketest-pipeline.sh
 else
-  ./scripts/smoke-pipeline.sh "${pipeline_args[@]}"
+  ./scripts/smoketest-pipeline.sh "${pipeline_args[@]}"
 fi
 
 echo "==> Building browsers"
