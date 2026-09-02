@@ -13,6 +13,9 @@ import {
   ASC2VariantInfo,
 } from './ascTypes'
 
+// sizing of overridden bubbles on frequency lollipop chart
+const ASC2_VARIANT_DOT_ALLELE_FREQ = 0.0003
+
 const renderMissing = (value: unknown) => (value === null || value === undefined ? '\u2013' : value)
 
 const renderBoolean = (value: boolean | null) =>
@@ -196,6 +199,7 @@ const ASC2Browser = () => (
       variantCountColumn('ac_ctrl', 'Case/control AC (control)', 'Allele count in controls (case/control burden)'),
     ]}
     variantConsequences={asc2VariantConsequences}
+    variantAlleleFrequencyOverride={ASC2_VARIANT_DOT_ALLELE_FREQ}
   />
 )
 
