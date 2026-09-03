@@ -8,19 +8,19 @@ import datasetConfig from '../datasetConfig'
 import InfoPage from './InfoPage'
 import { DatasetId } from './Browser'
 
-const BASE_GCS_DOWNLOAD_PATH = 'https://storage.googleapis.com/exome-results-browsers-public/downloads'
+const BASE_GCS_DOWNLOAD_PATH =
+  'https://storage.googleapis.com/exome-results-browsers-public/downloads'
 const BASE_AWS_DOWNLOAD_PATH = 'https://atgu-exome-browser-data.s3.amazonaws.com'
 
 type LegacyDatasetId = 'SCHEMA_v1'
 type DownloadDatasetId = DatasetId | LegacyDatasetId
 
 type DownloadConfig = {
-  baseUrl: string;
+  baseUrl: string
   filePrefix: string
 }
 
-
-const DOWNLOAD_URLS: Partial<Record<DownloadDatasetId, DownloadConfig>> = {
+export const DOWNLOAD_URLS: Partial<Record<DownloadDatasetId, DownloadConfig>> = {
   ASC: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/ASC`, filePrefix: 'ASC' },
   BipEx2: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-06-24/BipEx2`, filePrefix: 'BipEx2' },
   Epi25: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2022-12-01/Epi25`, filePrefix: 'Epi25' },
@@ -29,11 +29,11 @@ const DOWNLOAD_URLS: Partial<Record<DownloadDatasetId, DownloadConfig>> = {
   SCHEMA_v1: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/SCHEMA`, filePrefix: 'SCHEMA' },
 }
 
-const otherDatasets = (Object.keys(datasetConfig.datasets) as DatasetId[])
+export const otherDatasets = (Object.keys(datasetConfig.datasets) as DatasetId[])
   .filter((d) => d !== datasetConfig.datasetId)
   .sort()
 
-const downloadUrl = (datasetId: DownloadDatasetId, file: string) => {
+export const downloadUrl = (datasetId: DownloadDatasetId, file: string) => {
   if (DOWNLOAD_URLS[datasetId]) {
     const { baseUrl, filePrefix } = DOWNLOAD_URLS[datasetId]
     return `${baseUrl}/${filePrefix}_${file}`
