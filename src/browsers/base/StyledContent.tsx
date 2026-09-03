@@ -34,6 +34,33 @@ const StyledContent = styled.div`
     max-width: 100%;
   }
 
+  figure {
+    max-width: 100%;
+    margin: 1.5em auto;
+    text-align: center;
+  }
+
+  figure img {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  figcaption {
+    margin-top: 0.75em;
+    font-size: 14px;
+    line-height: 150%;
+    text-align: center;
+  }
+
+  figcaption p {
+    margin: 0;
+  }
+
+  figcaption p + p {
+    margin-top: 0.5em;
+  }
+
   blockquote {
     margin: 0 0 0 10px;
     font-size: 14px;
