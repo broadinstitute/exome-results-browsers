@@ -1,7 +1,11 @@
 [project]
 name = "exome-results-browsers"
 version = "0.1.0"
+<<<<<<< HEAD
 requires-python = "==3.12.*"
+=======
+requires-python = "==3.12.9"
+>>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
 dependencies = [
   "hail==0.2.138",
   "tqdm",
@@ -14,7 +18,11 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
+<<<<<<< HEAD
 python_files = ["*_tests.py"]
+=======
+python_files = ["test_*.py"]
+>>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
 
 [tool.ruff]
 line-length = 120

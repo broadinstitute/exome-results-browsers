@@ -1,7 +1,11 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
+<<<<<<< HEAD
 from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes
+=======
+from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes, parse_test_genes
+>>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
 
 
 def prepare_gene_results(test_genes, _output_root):
@@ -9,7 +13,11 @@ def prepare_gene_results(test_genes, _output_root):
 
     if test_genes:
         results = filter_gene_results_to_test_genes(
+<<<<<<< HEAD
             results, "gene_symbol", pipeline_config.get("Epi25", "test_genes").split(",")
+=======
+            results, "gene_symbol", parse_test_genes(pipeline_config.get("Epi25", "test_genes"))
+>>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
         )
 
     results = results.select_globals()

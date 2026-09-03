@@ -6,149 +6,225 @@ import { BaseTable, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 import HelpButton from '../base/HelpButton'
 import StyledContent from '../base/StyledContent'
 import geneResultsDescription from './content/generesults.md'
+import {
+  renderOddsRatio,
+  renderOddsRatioCI,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 import { SCHEMAAnalysisGroup } from './SCHEMABrowser'
-import { renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
 `
 
+const safeRenderCount = (value: number | null | undefined) => {
+  if (value === null || value === undefined) {
+    return '-'
+  }
+
+  return value
+}
+
 type SchemaGeneResult = {
-  'Case PTV': number
-  'Ctrl PTV': number
-  'Case mis3': number
-  'Ctrl mis3': number
-  'Case mis2': number
-  'Ctrl mis2': number
-  'P ca/co (Class 1)': number
-  'P ca/co (Class 2)': number
-  'P ca/co (comb)': number
-  'De novo PTV': number
-  'De novo mis3': number
-  'De novo mis2': number
-  'P de novo': number
-  'P meta': number
-  'Q meta': number
-  'OR (PTV)': number
-  'OR (Class I)': number
-  'OR (Class II)': number
-  'OR (PTV) lower bound': number
-  'OR (PTV) upper bound': number
-  'OR (Class I) lower bound': number
-  'OR (Class I) upper bound': number
-  'OR (Class II) lower bound': number
-  'OR (Class II) upper bound': number
+  ptv_case_carrier: number
+  ptv_control_carrier: number
+  ptv_p_value: number
+  ptv_odds_ratio: string
+  ptv_odds_ratio_95_ci: string
+
+  ptv_mis_case_carrier: number
+  ptv_mis_control_carrier: number
+  ptv_mis_p_value: number
+  ptv_mis_odds_ratio: string
+  ptv_mis_odds_ratio_95_ci: string
+
+  mis_case_carrier: number
+  mis_control_carrier: number
+  mis_p_value: number
+  mis_odds_ratio: string
+  mis_odds_ratio_95_ci: string
+
+  syn_case_carrier: number
+  syn_control_carrier: number
+  syn_p_value: number
+  syn_odds_ratio: string
+  syn_odds_ratio_95_ci: string
+
+  ptv_n_de_novo: number
+  ptv_mis_n_de_novo: number
+
+  n_de_novo_p_value: number
+  case_control_plus_de_novo_p_value: number
+  schema_case_control_p_value: number
+
+  n_cases: number
+  n_controls: number
 }
 
 interface SchemaGeneResultProps {
   result: SchemaGeneResult
 }
 
-const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => (
-  <div>
-    <Table>
-      <thead>
-        <tr>
-          <th scope="col" style={{ width: '50px' }}>
-            Class
-          </th>
-          <th scope="col">Consequence</th>
-          <th scope="col" style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-            Cases
-          </th>
-          <th scope="col">Controls</th>
-          <th scope="col" style={{ paddingLeft: '10px' }}>
-            Odds Ratio
-          </th>
-          <th scope="col" style={{ paddingLeft: '10px' }}>
-            Case/Control <span style={{ fontStyle: 'italic' }}>P</span>-value
-          </th>
-          <th scope="col" style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-            <span style={{ fontStyle: 'italic' }}>De Novos</span>
-          </th>
-          <th scope="col">
-            <span style={{ fontStyle: 'italic' }}>De Novo</span>{' '}
-            <span style={{ fontStyle: 'italic' }}>P</span>-value
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td rowSpan={2}>{'\u2160'}</td>
-          <th scope="row">
-            <TooltipAnchor tooltip="Protein truncating variant (PTVs) or putatively loss-of-function variants: stop-gained, frameshift, and essential splice donor or acceptor variants.">
-              <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>PTV</TooltipHint>
-            </TooltipAnchor>
-          </th>
-          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-            {result['Case PTV'] === null ? '—' : result['Case PTV']}
-          </td>
-          <td>{result['Ctrl PTV'] === null ? '—' : result['Ctrl PTV']}</td>
-          <td rowSpan={2} style={{ paddingLeft: '10px' }}>
-            {renderOddsRatio({ value: result['OR (Class I)'] })}
-          </td>
-          <td rowSpan={2} style={{ paddingLeft: '10px' }}>
-            {renderStringOrFloatPvalueAsScientific({ value: result['P ca/co (Class 1)'] })}
-          </td>
-          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-            {result['De novo PTV'] === null ? '—' : result['De novo PTV']}
-          </td>
-          <td rowSpan={3} style={{ paddingLeft: '10px' }}>
-            {renderStringOrFloatPvalueAsScientific({ value: result['P de novo'] })}
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">
-            <TooltipAnchor tooltip="MPC-prioritized missense variants: missense variants with an MPC score above the described threshold.">
-              <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>
-                Missense (MPC&nbsp;&ge;&nbsp;3)
-              </TooltipHint>
-            </TooltipAnchor>
-          </th>
-          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-            {result['Case mis3'] === null ? '—' : result['Case mis3']}
-          </td>
-          <td>{result['Ctrl mis3'] === null ? '—' : result['Ctrl mis3']}</td>
-          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-            {result['De novo mis3'] === null ? '—' : result['De novo mis3']}
-          </td>
-        </tr>
-        <tr>
-          <td>{'\u2161'}</td>
-          <th scope="row">
-            <TooltipAnchor tooltip="MPC-prioritized missense variants: missense variants with an MPC score in the described range.">
-              <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>
-                Missense (3&nbsp;&gt;&nbsp;MPC&nbsp;&ge;&nbsp;2)
-              </TooltipHint>
-            </TooltipAnchor>
-          </th>
-          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-            {result['Case mis2'] === null ? '—' : result['Case mis2']}
-          </td>
-          <td>{result['Ctrl mis2'] === null ? '—' : result['Ctrl mis2']}</td>
+const SCHEMAGeneResult = ({ result }: SchemaGeneResultProps) => {
+  return (
+    <div>
+      <Table>
+        <thead>
+          <tr>
+            <th scope="col">Consequence</th>
+            <th scope="col" style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+              Cases
+            </th>
+            <th scope="col">Controls</th>
+            <th scope="col" style={{ paddingLeft: '10px' }}>
+              Odds Ratio
+            </th>
+            <th scope="col" style={{ paddingLeft: '10px' }}>
+              <TooltipAnchor tooltip="The odds ratio 95% confidence interval lower and upper bounds in the format: (lower bound - upper bound)">
+                <TooltipHint>Odds Ratio CI</TooltipHint>
+              </TooltipAnchor>
+            </th>
+            <th scope="col" style={{ paddingLeft: '10px' }}>
+              Case/Control <span style={{ fontStyle: 'italic' }}>P</span>-value
+            </th>
+            <th scope="col" style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+              <span style={{ fontStyle: 'italic' }}>De Novos</span>
+            </th>
+            <th scope="col">
+              <span style={{ fontStyle: 'italic' }}>De Novo</span>{' '}
+              <span style={{ fontStyle: 'italic' }}>P</span>-value
+            </th>
+          </tr>
+        </thead>
 
-          <td style={{ paddingLeft: '10px' }}>
-            {renderOddsRatio({ value: result['OR (Class II)'] })}
-          </td>
-          <td style={{ paddingLeft: '10px' }}>
-            {renderStringOrFloatPvalueAsScientific({ value: result['P ca/co (Class 2)'] })}
-          </td>
-          <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
-            {result['De novo mis2'] === null ? '—' : result['De novo mis2']}
-          </td>
-        </tr>
-      </tbody>
-    </Table>
-    <p style={{ fontWeight: 'bold' }}>
-      Meta-analysis <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
-      {renderStringOrFloatPvalueAsScientific({ value: result['P meta'] })}
-    </p>
-    <p style={{ fontWeight: 'bold' }}>
-      Meta-analysis <span style={{ fontStyle: 'italic' }}>Q</span>-value:{' '}
-      {renderStringOrFloatPvalueAsScientific({ value: result['Q meta'] })}
-    </p>
-  </div>
-)
+        <tbody>
+          <tr>
+            <th scope="row">
+              <TooltipAnchor tooltip="Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites.">
+                <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>PTV</TooltipHint>
+              </TooltipAnchor>
+            </th>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+              {safeRenderCount(result.ptv_case_carrier)}
+            </td>
+            <td>{safeRenderCount(result.ptv_control_carrier)}</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatio({ value: result.ptv_odds_ratio })}
+            </td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatioCI({
+                oddsRatio: result.ptv_odds_ratio,
+                confidenceInterval: result.ptv_odds_ratio_95_ci,
+              })}
+            </td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderStringOrFloatPvalueAsScientific({ value: result.ptv_p_value })}
+            </td>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+              {safeRenderCount(result.ptv_n_de_novo)}
+            </td>
+            <td rowSpan={2} style={{ paddingLeft: '10px' }}>
+              {renderStringOrFloatPvalueAsScientific({ value: result.n_de_novo_p_value })}
+            </td>
+          </tr>
+
+          <tr>
+            <th scope="row">
+              <TooltipAnchor tooltip="Protein-truncating variants (PTVs) classified as high-confidence by LOFTEE: stop-gained, frameshift, and essential splice acceptor and donor sites, and missense variants predicted to be damaging (mean missense rank percentile >= 93%).">
+                <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>PTV + Missense</TooltipHint>
+              </TooltipAnchor>
+            </th>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+              {safeRenderCount(result.ptv_mis_case_carrier)}
+            </td>
+            <td>{safeRenderCount(result.ptv_mis_control_carrier)}</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatio({ value: result.ptv_mis_odds_ratio })}
+            </td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatioCI({
+                oddsRatio: result.ptv_mis_odds_ratio,
+                confidenceInterval: result.ptv_mis_odds_ratio_95_ci,
+              })}
+            </td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderStringOrFloatPvalueAsScientific({ value: result.ptv_mis_p_value })}
+            </td>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+              {safeRenderCount(result.ptv_mis_n_de_novo)}
+            </td>
+          </tr>
+
+          <tr>
+            <th scope="row">
+              <TooltipAnchor tooltip="Missense variants.">
+                <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>Missense</TooltipHint>
+              </TooltipAnchor>
+            </th>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+              {safeRenderCount(result.mis_case_carrier)}
+            </td>
+            <td>{safeRenderCount(result.mis_control_carrier)}</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatio({ value: result.mis_odds_ratio })}
+            </td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatioCI({
+                oddsRatio: result.mis_odds_ratio,
+                confidenceInterval: result.mis_odds_ratio_95_ci,
+              })}
+            </td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderStringOrFloatPvalueAsScientific({ value: result.mis_p_value })}
+            </td>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
+            <td style={{ paddingLeft: '10px' }}>-</td>
+          </tr>
+
+          <tr>
+            <th scope="row">
+              <TooltipAnchor tooltip="Synonymous variants.">
+                <TooltipHint style={{ backgroundPosition: '0 1.11em' }}>Synonymous</TooltipHint>
+              </TooltipAnchor>
+            </th>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>
+              {safeRenderCount(result.syn_case_carrier)}
+            </td>
+            <td>{safeRenderCount(result.syn_control_carrier)}</td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatio({ value: result.syn_odds_ratio })}
+            </td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderOddsRatioCI({
+                oddsRatio: result.syn_odds_ratio,
+                confidenceInterval: result.syn_odds_ratio_95_ci,
+              })}
+            </td>
+            <td style={{ paddingLeft: '10px' }}>
+              {renderStringOrFloatPvalueAsScientific({ value: result.syn_p_value })}
+            </td>
+            <td style={{ paddingLeft: '10px', borderLeft: '1px solid #ccc' }}>-</td>
+            <td style={{ paddingLeft: '10px' }}>-</td>
+          </tr>
+        </tbody>
+      </Table>
+      <p style={{ marginTop: '2rem', fontWeight: 'bold' }}>
+        Case-Control SCHEMA <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
+        {renderStringOrFloatPvalueAsScientific({ value: result.schema_case_control_p_value })}
+      </p>
+      <p style={{ fontWeight: 'bold' }}>
+        Case-Control + de novo <span style={{ fontStyle: 'italic' }}>P</span>-value:{' '}
+        {renderStringOrFloatPvalueAsScientific({ value: result.case_control_plus_de_novo_p_value })}
+      </p>
+      <p style={{ marginTop: '2em' }}>
+        <strong>Total cases: {result.n_cases}</strong>
+      </p>
+      <p>
+        <strong>Total controls: {result.n_controls}</strong>
+      </p>
+    </div>
+  )
+}
 
 interface SchemaGeneResultsProps {
   results: Record<SCHEMAAnalysisGroup, SchemaGeneResult>
