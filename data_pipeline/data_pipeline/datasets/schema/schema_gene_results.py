@@ -1,9 +1,6 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-<<<<<<< HEAD
-from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes
-=======
 from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes, parse_test_genes
 
 
@@ -75,7 +72,6 @@ fields_to_select = {
     "schema_case_control_p_value": "SCHEMA2 Case-Control Pvalue",  # float64h
     "case_control_plus_de_novo_p_value": "Case-Control + de novo Pvalue",  # float64
 }
->>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
 
 
 def prepare_gene_results(test_genes, _output_root):
@@ -87,30 +83,8 @@ def prepare_gene_results(test_genes, _output_root):
     gene_results = gene_results.drop("Gene")
 
     if test_genes:
-<<<<<<< HEAD
-        ds = filter_gene_results_to_test_genes(
-            ds, "Gene Symbol", pipeline_config.get("SCHEMA", "test_genes").split(",")
-        )
-
-    # Parse upper and lower bounds out of odds ratio columns
-    def _parse_odds_ratio(field_name):
-        return hl.rbind(
-            ds[field_name].split(" ", n=2),
-            lambda parts: hl.rbind(
-                parts[0],
-                parts[1][1:-1].split("-", 2),
-                lambda value, bounds: hl.struct(
-                    **{
-                        field_name: hl.float(value),
-                        field_name + " lower bound": hl.float(bounds[0]),
-                        field_name + " upper bound": hl.float(bounds[1]),
-                    }
-                ),
-            ),
-=======
         gene_results = filter_gene_results_to_test_genes(
             gene_results, "gene_symbol", parse_test_genes(pipeline_config.get("SCHEMA", "test_genes"))
->>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
         )
 
     # TK: suggest analyst include this in input file, then pull this number from there

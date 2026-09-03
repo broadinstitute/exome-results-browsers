@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-import hail as hl
-
-
-def parse_test_gene_intervals(intervals_str):
-    intervals = []
-=======
 from typing import Iterable
 
 import hail as hl  # type: ignore[import-untyped]
@@ -79,7 +72,6 @@ def get_test_gene_intervals(dataset: str, test_genes_str: str, reference_genome:
 
 def parse_test_gene_intervals(intervals_str: str) -> list[hl.Interval]:
     intervals: list[hl.Interval] = []
->>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
     for part in intervals_str.split(","):
         chrom, rest = part.strip().split(":")
         start, end = rest.split("-")
@@ -90,20 +82,12 @@ def parse_test_gene_intervals(intervals_str: str) -> list[hl.Interval]:
     return intervals
 
 
-<<<<<<< HEAD
-def filter_gene_results_to_test_genes(results, field, test_gene_symbols):
-=======
 def filter_gene_results_to_test_genes(results: hl.Table, field: str, test_gene_symbols: Iterable[str]) -> hl.Table:
->>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
     test_gene_set = hl.literal([s.upper() for s in test_gene_symbols])
     results = results.filter(test_gene_set.contains(results[field].upper()))
     return results.persist()
 
 
-<<<<<<< HEAD
-def filter_variant_results_to_test_gene_intervals(results, intervals):
-=======
 def filter_variant_results_to_test_gene_intervals(results: hl.Table, intervals: list[hl.Interval]) -> hl.Table:
->>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
     results = hl.filter_intervals(results, intervals)
     return results.persist()

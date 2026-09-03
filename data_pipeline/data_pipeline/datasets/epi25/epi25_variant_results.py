@@ -1,11 +1,7 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-<<<<<<< HEAD
-from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, parse_test_gene_intervals
-=======
 from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, get_test_gene_intervals
->>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
 
 
 def prepare_variant_results(test_genes, _output_root):
@@ -13,11 +9,7 @@ def prepare_variant_results(test_genes, _output_root):
 
     if test_genes:
         results = filter_variant_results_to_test_gene_intervals(
-<<<<<<< HEAD
-            results, parse_test_gene_intervals(pipeline_config.get("Epi25", "test_gene_intervals"))
-=======
             results, get_test_gene_intervals("Epi25", pipeline_config.get("Epi25", "test_genes"))
->>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
         )
 
     # Get unique variants from results table

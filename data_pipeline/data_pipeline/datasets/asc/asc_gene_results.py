@@ -1,11 +1,7 @@
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-<<<<<<< HEAD
-from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes
-=======
 from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes, parse_test_genes
->>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
 
 
 def prepare_gene_results(test_genes, _output_root):
@@ -34,13 +30,9 @@ def prepare_gene_results(test_genes, _output_root):
     )
 
     if test_genes:
-<<<<<<< HEAD
-        ds = filter_gene_results_to_test_genes(ds, "gene_name", pipeline_config.get("ASC", "test_genes").split(","))
-=======
         ds = filter_gene_results_to_test_genes(
             ds, "gene_name", parse_test_genes(pipeline_config.get("ASC", "test_genes"))
         )
->>>>>>> 27039f863e5e213f1eb717a7b662cf3b3ab33268
 
     ds = ds.drop("gene_name", "description")
 
