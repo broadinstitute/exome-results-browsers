@@ -87,7 +87,7 @@ def write_gene_summary_file(output_directory, ds):
 
     os.makedirs(f"{output_directory}/results", exist_ok=True)
     for dataset in ds.globals.meta.datasets.dtype.fields:
-        reference_genome = "GRCh38" if dataset in ["bipex", "ibd"] else "GRCh37"
+        reference_genome = "GRCh38" if dataset in ["bipex", "ibd", "ASC2"] else "GRCh37"
         gene_results = ds.filter(hl.is_defined(ds.gene_results[dataset]))
         gene_results = gene_results.select(
             result=hl.tuple(
@@ -179,6 +179,7 @@ def write_data_files(table_path, output_directory, genes=None):
 
         expected_datasets = [
             "ASC",
+            "ASC2",
             "BipEx",
             "BipEx2",
             "Epi25",
@@ -200,6 +201,7 @@ def write_data_files(table_path, output_directory, genes=None):
         ds = ds.annotate(
             total_variants=(
                 ds.variant_counts.ASC
+                + ds.variant_counts.ASC2
                 + ds.variant_counts.BipEx
                 + ds.variant_counts.BipEx2
                 + ds.variant_counts.Epi25

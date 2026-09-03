@@ -112,7 +112,8 @@ export interface FilterState {
   includeCategories: Record<ConsequenceCategory, boolean>
   searchText: string
   custom: any // TK: TODO: fixme: any!!,
-  gp2VariantColumnGroups?: Record<string, boolean>;
+  gp2VariantColumnGroups?: Record<string, boolean>
+  asc2VariantColumnGroups?: Record<string, boolean>
 }
 
 interface VariantFilterControlProps {
@@ -146,13 +147,18 @@ const VariantFilterControls = ({
   variantAnalysisGroupOptions,
   variantTableColumns,
 }: VariantFilterControlProps) => {
-
   const gp2Checkboxes = [
     { key: 'pd', label: 'PD' },
     { key: 'psp', label: 'PSP' },
     { key: 'dlb', label: 'DLB' },
     { key: 'msa', label: 'MSA' },
-  ];
+  ]
+
+  const asc2Checkboxes = [
+    { key: 'deNovo', label: 'De novo' },
+    { key: 'transmittedUntransmitted', label: 'Transmitted / Untransmitted' },
+    { key: 'caseControl', label: 'Case / Control' },
+  ]
 
   return (
     <SettingsWrapper>
@@ -195,7 +201,9 @@ const VariantFilterControls = ({
                 <Select
                   id="analysis-group"
                   value={selectedAnalysisGroup}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChangeAnalysisGroup(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    onChangeAnalysisGroup(e.target.value)
+                  }
                   style={{ paddingRight: '10em' }}
                 >
                   {variantAnalysisGroupOptions.map((group) => (
@@ -218,7 +226,6 @@ const VariantFilterControls = ({
         </FiltersFirstColumn>
 
         <FiltersSecondColumn>
-
           {CustomFilterComponent && (
             <CustomFilterComponent
               value={filter.custom}
@@ -245,6 +252,33 @@ const VariantFilterControls = ({
                         ...filter,
                         gp2VariantColumnGroups: {
                           ...filter.gp2VariantColumnGroups,
+                          [key]: isChecked,
+                        },
+                      })
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {datasetId === 'ASC2' && filter.asc2VariantColumnGroups && (
+            <div style={{ marginTop: CustomFilterComponent ? '1em' : '0' }}>
+              <span style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5em' }}>
+                AC columns included in table
+              </span>
+              <div style={{ display: 'flex', gap: '1em' }}>
+                {asc2Checkboxes.map(({ key, label }) => (
+                  <Checkbox
+                    key={key}
+                    id={`asc2-group-checkbox-${key}`}
+                    label={label}
+                    checked={filter.asc2VariantColumnGroups![key]}
+                    onChange={(isChecked: boolean) => {
+                      onChangeFilter({
+                        ...filter,
+                        asc2VariantColumnGroups: {
+                          ...filter.asc2VariantColumnGroups,
                           [key]: isChecked,
                         },
                       })

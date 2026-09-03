@@ -63,6 +63,7 @@ interface GenePageProps {
   additionalVariantDetailSummaryColumns?: VariantTableColumn[]
   variantDetailColumns?: VariantTableColumn[]
   renderVariantTranscriptConsequences?: boolean
+  variantAlleleFrequencyOverride?: number
 }
 
 const GenePage = ({
@@ -82,6 +83,7 @@ const GenePage = ({
   renderVariantAttributes = undefined,
   variantDetailColumns = undefined,
   renderVariantTranscriptConsequences = false,
+  variantAlleleFrequencyOverride = undefined,
 }: GenePageProps) => {
   return (
     <TrackPage>
@@ -184,6 +186,7 @@ const GenePage = ({
           variantConsequenceCategoryLabels={variantConsequenceCategoryLabels}
           variantCustomFilter={variantCustomFilter}
           variantResultColumns={variantResultColumns}
+          variantAlleleFrequencyOverride={variantAlleleFrequencyOverride}
         />
       </RegionViewer>
     </TrackPage>

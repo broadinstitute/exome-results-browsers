@@ -538,11 +538,18 @@ const getVariantTableColumns = ({
     })
 
     datasetColumns.push(...renderedGP2Columns)
-  } else {
+  } else if (datasetId !== 'ASC2') {
     datasetColumns.push(...statColumns)
   }
 
-  const resultColumns: VariantTableColumn[] = variantResultColumns.map((column) => {
+  const filteredVariantResultColumns =
+    datasetId === 'ASC2' && filter.asc2VariantColumnGroups
+      ? variantResultColumns.filter(
+          (column) => !column.group || filter.asc2VariantColumnGroups![column.group]
+        )
+      : variantResultColumns
+
+  const resultColumns: VariantTableColumn[] = filteredVariantResultColumns.map((column) => {
     return {
       key: column.key,
       heading: column.heading || column.key,
