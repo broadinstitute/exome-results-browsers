@@ -124,8 +124,7 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
 
     variants = results.key_by("locus", "alleles")
 
-    # keep this in sync with clinvar_grch38_path in config.ini
-    clinvar_grch38_path = "gs://exome-results-browsers/reference/clinvar_grch38_variants.ht"
+    clinvar_grch38_path = pipeline_config.get("reference_data", "clinvar_grch38_path")
     clinvar = hl.read_table(clinvar_grch38_path)
     clinvar = clinvar.select(
         "clinvar_variation_id",
@@ -134,8 +133,7 @@ def prepare_variant_results(results, annotations, test_genes, _output_root):
     )
     annotations = annotations.annotate(**clinvar[annotations.locus, annotations.alleles])
 
-    # keep this in sync with dbSNP_grch38_rsids_path in config.ini
-    dbSNP_grch38_path = "gs://exome-results-browsers/reference/dbSNP_grch38_rsids.ht"
+    dbSNP_grch38_path = pipeline_config.get("reference_data", "dbSNP_grch38_rsids_path")
     dbSNP_rsids = hl.read_table(dbSNP_grch38_path)
     dbSNP_rsids = dbSNP_rsids.select_globals()
     dbSNP_rsids = dbSNP_rsids.select(

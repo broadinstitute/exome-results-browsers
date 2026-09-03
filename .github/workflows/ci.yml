@@ -53,3 +53,7 @@ jobs:
         run: uv run ruff check data_pipeline
       - name: Run Ruff (format check)
         run: uv run ruff format --check data_pipeline
+      # Run from data_pipeline, which is where config.py expects to find pipeline_config.ini
+      - name: Run pytest
+        run: uv run pytest
+        working-directory: data_pipeline
