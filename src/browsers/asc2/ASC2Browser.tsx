@@ -3,7 +3,9 @@ import React from 'react'
 import Browser, { GeneResultColumnConfig, VariantConsequence } from '../base/Browser'
 import { renderCount, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
+import ASC2AboutPage from './ASC2AboutPage'
 import ASC2HomePage from './ASC2HomePage'
+import ASC2TermsPage from './ASC2TermsPage'
 import {
   ASC2_VARIANT_CLASS_CATEGORIES,
   ASC2GeneResult,
@@ -128,6 +130,18 @@ const ASC2Browser = () => (
     browserTitle="ASC exome analysis"
     navBarBackgroundColor="#23509c"
     homePage={ASC2HomePage}
+    extraPages={[
+      {
+        path: '/about',
+        label: 'About',
+        component: ASC2AboutPage,
+      },
+      {
+        path: '/terms',
+        label: 'Terms',
+        component: ASC2TermsPage,
+      },
+    ]}
     geneResultsPageHeading="Results"
     geneResultAnalysisGroupOptions={ascAnalysisGroups}
     defaultGeneResultAnalysisGroup={ascDefaultAnalysisGroup}
