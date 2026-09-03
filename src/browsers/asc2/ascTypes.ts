@@ -40,14 +40,15 @@ export interface ASC2GeneResult {
 export interface ASC2VariantClassCategory {
   suffix: 'ptv' | 'mis2' | 'mis1' | 'del' | 'dup'
   label: string
+  details: string
 }
 
 export const ASC2_VARIANT_CLASS_CATEGORIES: ASC2VariantClassCategory[] = [
-  { suffix: 'ptv', label: 'PTV' },
-  { suffix: 'mis2', label: 'Mis2 (MPC \u2265 2)' },
-  { suffix: 'mis1', label: 'Mis1 (MPC 1-2)' },
-  { suffix: 'del', label: 'DEL' },
-  { suffix: 'dup', label: 'DUP' },
+  { suffix: 'ptv', label: 'PTV', details: '' },
+  { suffix: 'mis2', label: 'Mis2', details: '(MPC \u2265 2)' },
+  { suffix: 'mis1', label: 'Mis1', details: '(MPC 1-2)' },
+  { suffix: 'del', label: 'DEL', details: '' },
+  { suffix: 'dup', label: 'DUP', details: '' },
 ]
 
 export interface ASC2VariantInfo {
