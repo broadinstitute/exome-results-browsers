@@ -515,7 +515,6 @@ const VariantDetails = ({
       heading: 'CES AF PD',
       render: (value) => renderExponentialIfSmall(value),
     },
-
   ]
 
   const allGP2CaseColumnGroups = Object.keys(filter.gp2VariantColumnGroups || [])
@@ -532,7 +531,8 @@ const VariantDetails = ({
     return true
   })
 
-  const datasetColumns = datasetId === 'GP2' ? renderedGP2Columns : standardColumns
+  const datasetColumns =
+    datasetId === 'GP2' ? renderedGP2Columns : datasetId === 'ASC2' ? [] : standardColumns
 
   const renderedVariantColumns = variantDetailColumns || [
     ...datasetColumns,
@@ -565,14 +565,18 @@ const VariantDetails = ({
         {datasetId !== 'GP2' && defaultGroupResult && (
           <Column>
             <VariantAttributeList label={`Analysis (${defaultVariantAnalysisGroup})`}>
-              <VariantAttribute label="Cases">
-                {defaultGroupResult.ac_case} / {defaultGroupResult.an_case} (
-                {renderExponential(defaultGroupResult.af_case, 4)})
-              </VariantAttribute>
-              <VariantAttribute label="Controls">
-                {defaultGroupResult.ac_ctrl} / {defaultGroupResult.an_ctrl} (
-                {renderExponential(defaultGroupResult.af_ctrl, 4)})
-              </VariantAttribute>
+              {datasetId !== 'ASC2' && (
+                <>
+                  <VariantAttribute label="Cases">
+                    {defaultGroupResult.ac_case} / {defaultGroupResult.an_case} (
+                    {renderExponential(defaultGroupResult.af_case, 4)})
+                  </VariantAttribute>
+                  <VariantAttribute label="Controls">
+                    {defaultGroupResult.ac_ctrl} / {defaultGroupResult.an_ctrl} (
+                    {renderExponential(defaultGroupResult.af_ctrl, 4)})
+                  </VariantAttribute>
+                </>
+              )}
               {renderedVariantSummaryRows.map((c) => (
                 <VariantAttribute key={c.key} label={c.heading || ''}>
                   {get(variant, c.key) === null

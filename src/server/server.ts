@@ -191,7 +191,7 @@ if (isDevelopment) {
 // Authentication Endpoints
 // ================================================================================================
 
-const PASSWORD_PROTECTED_DATASETS = ['BipEx2']
+const PASSWORD_PROTECTED_DATASETS = ['ASC2', 'BipEx2']
 
 const CORRECT_PASSWORD = process.env.DEMO_PASSWORD
   ? // Remove the ""s from development env var with a regex
