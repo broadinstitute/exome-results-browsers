@@ -1,13 +1,19 @@
 import { get } from 'lodash'
 import React from 'react'
 import Highlighter from 'react-highlight-words'
+import styled from 'styled-components'
 
 // @ts-expect-error: no types in this @gnomad/ui version
 import { TooltipAnchor } from '@gnomad/ui'
 
 import Link from '../Link'
 import { InputData, renderFloatAsScientific } from '../tableCells'
-import { DatasetId, GeneResultColumnConfig, ReferenceGenome } from '../Browser'
+import {
+  DatasetId,
+  GeneResultColumnConfig,
+  GeneResultColumnGroup,
+  ReferenceGenome,
+} from '../Browser'
 import { Constraint } from '../GenePage/Constraint'
 import { Strand } from '../GenePage/TranscriptTrack'
 
@@ -83,7 +89,8 @@ interface RenderContext {
 
 export interface GeneResultTableColumn {
   key: string
-  heading: string
+  heading: React.ReactNode
+  csvHeading: string
   isSortable?: boolean
   minWidth?: number
   grow?: number
@@ -96,6 +103,7 @@ const baseColumns: GeneResultTableColumn[] = [
   {
     key: 'gene_id',
     heading: 'Gene',
+    csvHeading: 'Gene',
     isSortable: true,
     minWidth: 100,
     render: (row, _key, { highlightWords = [] }) => (
@@ -111,6 +119,7 @@ const baseColumns: GeneResultTableColumn[] = [
   {
     key: 'gene_name',
     heading: 'Description',
+    csvHeading: 'Description',
     isSortable: true,
     minWidth: 200,
     grow: 4,
@@ -128,21 +137,87 @@ const baseColumns: GeneResultTableColumn[] = [
   },
 ]
 
+export const DEFAULT_COLUMN_GROUP_COLOR = '#eef1f7'
+
+const ColumnGroupBanner = styled.div<{ $color: string; $hasLabel: boolean }>`
+  position: relative;
+  z-index: ${({ $hasLabel }) => ($hasLabel ? 1 : 0)};
+  margin: -0.25em -20px 0.35em -0.5em;
+  padding: 0.4em 20px 0.25em 0.5em;
+  height: 1.5em;
+  background: ${({ $color }) => $color};
+`
+
+const ColumnGroupBannerLabel = styled.span`
+  position: absolute;
+  left: 0.5em;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-weight: bold;
+`
+
+export const applyColumnGroupHeadings = (
+  columns: GeneResultColumnConfig[]
+): GeneResultColumnConfig[] =>
+  columns.map((column, index) => {
+    if (!column.group) {
+      return column
+    }
+
+    const previousColumn = columns[index - 1]
+    const isFirstInGroupRun = previousColumn?.group?.key !== column.group.key
+    const color = column.group.color || DEFAULT_COLUMN_GROUP_COLOR
+
+    return {
+      ...column,
+      heading: (
+        <React.Fragment>
+          <ColumnGroupBanner $color={color} $hasLabel={isFirstInGroupRun}>
+            {isFirstInGroupRun ? (
+              <ColumnGroupBannerLabel>{column.group.label}</ColumnGroupBannerLabel>
+            ) : null}
+          </ColumnGroupBanner>
+          <div>{column.heading || column.key}</div>
+        </React.Fragment>
+      ),
+    }
+  })
+
+export const getColumnGroups = (columns: GeneResultColumnConfig[]): GeneResultColumnGroup[] => {
+  const groups: GeneResultColumnGroup[] = []
+  columns.forEach((column) => {
+    if (column.group && !groups.some((group) => group.key === column.group!.key)) {
+      groups.push(column.group)
+    }
+  })
+  return groups
+}
+
 const getTableColumns = (geneResultColumns: GeneResultColumnConfig[]): GeneResultTableColumn[] => {
-  const resultColumns: GeneResultTableColumn[] = geneResultColumns.map((column) => ({
-    key: column.key,
-    heading: column.heading || column.key,
-    tooltip: column.tooltip,
-    isSortable: true,
-    minWidth: column.minWidth || 65,
-    grow: 0,
-    render: column.render
-      ? (row, key) => column.render!(get(row, key), row)
-      : (row, key) => renderFloatAsScientific({ value: (get(row, key) as InputData), zeroValue: '0' }),
-    renderForCSV: column.renderForCSV
-      ? (row, key) => column.renderForCSV!(get(row, key), row)
-      : (row, key) => get(row, key),
-  }))
+  const resultColumns: GeneResultTableColumn[] = applyColumnGroupHeadings(geneResultColumns).map(
+    (column, index) => {
+      const originalHeading = geneResultColumns[index].heading
+      const csvHeading = typeof originalHeading === 'string' ? originalHeading : column.key
+
+      return {
+        key: column.key,
+        heading: column.heading || column.key,
+        csvHeading,
+        tooltip: column.tooltip,
+        isSortable: true,
+        minWidth: column.minWidth || 65,
+        grow: 0,
+        render: column.render
+          ? (row, key) => column.render!(get(row, key), row)
+          : (row, key) =>
+              renderFloatAsScientific({ value: get(row, key) as InputData, zeroValue: '0' }),
+        renderForCSV: column.renderForCSV
+          ? (row, key) => column.renderForCSV!(get(row, key), row)
+          : (row, key) => get(row, key),
+      }
+    }
+  )
 
   return [...baseColumns, ...resultColumns]
 }
