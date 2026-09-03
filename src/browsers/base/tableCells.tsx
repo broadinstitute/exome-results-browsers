@@ -78,7 +78,7 @@ export const renderStringOrFloatPvalueAsScientific = ({
   }
 
   if (value === 0) {
-    return '0'
+    decimalPlaces = 0
   }
 
   const floatValue = typeof value == 'string' ? parseFloat(value) : value
