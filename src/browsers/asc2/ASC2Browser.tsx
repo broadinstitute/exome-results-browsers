@@ -18,6 +18,7 @@ const renderMissing = (value: unknown) => (value === null || value === undefined
 const renderBoolean = (value: boolean | null) =>
   value === null || value === undefined ? '\u2013' : value ? 'yes' : 'no'
 
+import ASC2WaterfallPlot from './ASC2WaterfallPlot'
 
 const geneCountColumn = (
   key: keyof ASC2GeneResult,
@@ -165,6 +166,9 @@ const ASC2Browser = () => (
     ]}
     geneResultTabs={[
       {
+        id: 'waterfall-plot',
+        label: 'Waterfall Plot',
+        render: () => <ASC2WaterfallPlot />,
       },
     ]}
     renderVariantAttributes={(info: ASC2VariantInfo) => [
