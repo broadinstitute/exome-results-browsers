@@ -534,9 +534,16 @@ const VariantDetails = ({
   const datasetColumns =
     datasetId === 'GP2' ? renderedGP2Columns : datasetId === 'ASC2' ? [] : standardColumns
 
+  const filteredVariantResultColumns =
+    datasetId === 'ASC2' && filter.asc2VariantColumnGroups
+      ? variantResultColumns.filter(
+          (column) => !column.group || filter.asc2VariantColumnGroups![column.group]
+        )
+      : variantResultColumns
+
   const renderedVariantColumns = variantDetailColumns || [
     ...datasetColumns,
-    ...variantResultColumns,
+    ...filteredVariantResultColumns,
   ]
 
   if (datasetId === 'GP2') {

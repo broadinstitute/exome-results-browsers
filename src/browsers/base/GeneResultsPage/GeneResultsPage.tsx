@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 // @ts-expect-error: no types in this @gnomad/ui version
-import { Page as BasePage, PageHeading, SearchInput, Select, Tabs } from '@gnomad/ui'
+import { Checkbox, Page as BasePage, PageHeading, SearchInput, Select, Tabs } from '@gnomad/ui'
 
 import datasetConfig from '../../datasetConfig'
 import DocumentTitle from '../DocumentTitle'
@@ -11,7 +11,7 @@ import CSVExportButton from '../CSVExportButton'
 import Fetch from '../Fetch'
 import StatusMessage from '../StatusMessage'
 import GeneResultsTable from './GeneResultsTable'
-import getTableColumns, { GeneRow } from './geneResultTableColumns'
+import getTableColumns, { getColumnGroups, GeneRow } from './geneResultTableColumns'
 import { GeneResultColumnConfig, GeneResultTabConfig } from '../Browser'
 
 const Page = styled(BasePage)`
@@ -27,6 +27,17 @@ const ControlSection = styled.div`
 
 const AnalysisGroupMenuWrapper = styled.div`
   margin-bottom: 1em;
+`
+
+const ColumnGroupControls = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  margin-bottom: 1em;
+
+  span {
+    font-weight: bold;
+  }
 `
 
 interface GeneResultsPageProps {
@@ -50,7 +61,24 @@ const GeneResultsPage = ({
   geneResults,
   tabs = [],
 }: GeneResultsPageProps) => {
-  const tableColumns = useMemo(() => getTableColumns(geneResultColumns), [geneResultColumns])
+  const [includedColumnGroups, setIncludedColumnGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(getColumnGroups(geneResultColumns).map((group) => [group.key, true]))
+  )
+  const columnGroups = useMemo(() => getColumnGroups(geneResultColumns), [geneResultColumns])
+  const filteredGeneResultColumns = useMemo(
+    () =>
+      geneResultColumns.filter(
+        (column) => !column.group || includedColumnGroups[column.group.key] !== false
+      ),
+    [geneResultColumns, includedColumnGroups]
+  )
+  const tableColumns = useMemo(() => getTableColumns(filteredGeneResultColumns), [
+    filteredGeneResultColumns,
+  ])
+  const csvColumns = useMemo(
+    () => tableColumns.map((column) => ({ ...column, heading: column.csvHeading })),
+    [tableColumns]
+  )
   const [searchText, setSearchText] = useState('')
   const [selectedAnalysisGroup, setSelectedAnalysisGroup] = useState(defaultAnalysisGroup)
 
@@ -67,7 +95,9 @@ const GeneResultsPage = ({
         (result.gene_id || '').includes(searchText) ||
         (result.gene_symbol || '').includes(searchText) ||
         (result.gene_name || '').toUpperCase().includes(searchText) ||
-        (result.group_results[selectedAnalysisGroup].gene_symbol || '').toUpperCase().includes(searchText)
+        (result.group_results[selectedAnalysisGroup].gene_symbol || '')
+          .toUpperCase()
+          .includes(searchText)
     )
     .map((result) => ({
       ...result,
@@ -104,7 +134,7 @@ const GeneResultsPage = ({
 
             <CSVExportButton
               data={results}
-              columns={tableColumns}
+              columns={csvColumns}
               filename={`${selectedAnalysisGroup}_results`}
             >
               Export results to CSV
@@ -118,6 +148,25 @@ const GeneResultsPage = ({
             }}
           />
         </ControlSection>
+        {columnGroups.length > 0 && (
+          <ColumnGroupControls>
+            <span>Column groups shown</span>
+            {columnGroups.map((group) => (
+              <Checkbox
+                key={group.key}
+                id={`gene-result-column-group-${group.key}`}
+                label={group.label}
+                checked={includedColumnGroups[group.key] !== false}
+                onChange={(isChecked: boolean) =>
+                  setIncludedColumnGroups((previous) => ({
+                    ...previous,
+                    [group.key]: isChecked,
+                  }))
+                }
+              />
+            ))}
+          </ColumnGroupControls>
+        )}
         {tabs && tabs.length > 0 ? (
           <Tabs
             activeTabId={selectedTabId}

@@ -132,11 +132,18 @@ type ExtraPage = {
   component: React.ComponentType<any>
 }
 
+export type GeneResultColumnGroup = {
+  key: string
+  label: string
+  color?: string
+}
+
 export type GeneResultColumnConfig = {
   key: string
-  heading?: string
+  heading?: React.ReactNode
   minWidth?: number
   tooltip?: string
+  group?: GeneResultColumnGroup
   render?: (record: any, row?: any) => React.ReactNode
   renderForCSV?: (record: any, row?: any) => string | number
 }
@@ -157,6 +164,7 @@ export type VariantColumnConfig = {
   showOnGenePage?: boolean
   showOnDetails?: boolean
   isSortable?: boolean
+  group?: string
   sortFunction?: (a: any, b: any) => number
   sortKey?: string
   type?: string

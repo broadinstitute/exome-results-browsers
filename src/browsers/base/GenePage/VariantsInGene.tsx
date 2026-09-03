@@ -100,6 +100,12 @@ const defaultGP2IncludedColumns = {
   msa: true,
 }
 
+const defaultASC2IncludedColumns = {
+  deNovo: true,
+  transmittedUntransmitted: true,
+  caseControl: true,
+}
+
 class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState> {
   static defaultProps = {
     variantAnalysisGroupLabels: {},
@@ -124,6 +130,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
       searchText: '',
       custom: (props.variantCustomFilter || {}).defaultFilter,
       gp2VariantColumnGroups: props.datasetId === 'GP2' ? defaultGP2IncludedColumns : undefined,
+      asc2VariantColumnGroups: props.datasetId === 'ASC2' ? defaultASC2IncludedColumns : undefined,
     }
 
     const renderedVariants = this.sortVariants(
