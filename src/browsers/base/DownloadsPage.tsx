@@ -22,7 +22,7 @@ type DownloadConfig = {
 
 const DOWNLOAD_URLS: Partial<Record<DownloadDatasetId, DownloadConfig>> = {
   ASC: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/ASC`, filePrefix: 'ASC' },
-  BipEx2: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-04-24/BipEx2`, filePrefix: 'BipEx2' },
+  BipEx2: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-06-24/BipEx2`, filePrefix: 'BipEx2' },
   Epi25: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2022-12-01/Epi25`, filePrefix: 'Epi25' },
   SCHEMA: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-08-07/SCHEMA`, filePrefix: 'SCHEMA' },
   //
@@ -83,9 +83,9 @@ const DatasetDownloads = ({ datasetId, isMainDataset = false }: DatasetDownloads
         <>
           <h3 style={{ marginBottom: '0.5rem' }}>Previous SCHEMA release data downloads</h3>
           <p style={{ marginTop: '0rem' }}>
-            The prior SCHEMA analysis and dataset was released September 10th, 2020.
+            The prior SCHEMA (SCHEMA 1.0) analysis and dataset was released September 10th, 2020.
           </p>
-          <DatasetDownloadLinkList datasetId={'SCHEMA_v1'} label="SCHEMA" />
+          <DatasetDownloadLinkList datasetId={'SCHEMA_v1'} label="SCHEMA 1.0" />
         </>
       )}
     </>
@@ -93,7 +93,7 @@ const DatasetDownloads = ({ datasetId, isMainDataset = false }: DatasetDownloads
 }
 
 export default () => {
-  const datasetsWithoutDownloads: DatasetId[] = ['GP2', 'IBD']
+  const datasetsWithoutDownloads: DatasetId[] = ['GP2', 'IBD', 'ClinVarGRCh38']
   return (
     <InfoPage title="Downloads">
       <DatasetDownloads datasetId={datasetConfig.datasetId} isMainDataset={true} />
@@ -105,7 +105,7 @@ export default () => {
           return (
             <React.Fragment key={otherDatasetId}>
               <h3>{otherDatasetId}</h3>
-              <DatasetDownloads datasetId={datasetConfig.datasetId} isMainDataset={false} />
+              <DatasetDownloads datasetId={otherDatasetId} isMainDataset={false} />
             </React.Fragment>
           )
         })}
