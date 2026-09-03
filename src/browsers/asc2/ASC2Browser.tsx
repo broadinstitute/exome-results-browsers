@@ -18,6 +18,7 @@ const renderMissing = (value: any) => (value === null || value === undefined ? '
 const renderBoolean = (value: boolean | null) =>
   value === null || value === undefined ? '\u2013' : value ? 'yes' : 'no'
 
+import ASC2WaterfallPlot from './ASC2WaterfallPlot'
 
 const geneCountColumn = (
   key: keyof ASC2GeneResult,
@@ -169,6 +170,13 @@ const ASC2Browser = () => (
         tooltip: 'Gene flagged in analysis',
         minWidth: 90,
         render: (value) => `${value === true ? 'Yes' : ''}`,
+      },
+    ]}
+    geneResultTabs={[
+      {
+        id: 'waterfall-plot',
+        label: 'Waterfall Plot',
+        render: () => <ASC2WaterfallPlot />,
       },
     ]}
     renderVariantAttributes={(info: ASC2VariantInfo) => [
