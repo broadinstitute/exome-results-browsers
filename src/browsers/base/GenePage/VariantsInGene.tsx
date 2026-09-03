@@ -97,6 +97,12 @@ const defaultGP2IncludedColumns = {
   msa: true,
 }
 
+const defaultASC2IncludedColumns = {
+  deNovo: true,
+  transmittedUntransmitted: true,
+  caseControl: true,
+}
+
 class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState> {
   static defaultProps = {
     variantAnalysisGroupLabels: {},
@@ -121,6 +127,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
       searchText: '',
       custom: (props.variantCustomFilter || {}).defaultFilter,
       gp2VariantColumnGroups: props.datasetId === 'GP2' ? defaultGP2IncludedColumns : undefined,
+      asc2VariantColumnGroups: props.datasetId === 'ASC2' ? defaultASC2IncludedColumns : undefined,
     }
 
     const renderedVariants = this.sortVariants(
@@ -648,7 +655,7 @@ const VariantsInGeneContainer = ({
                 const groupResultValues = variantValues[fieldIndex][groupIndex]
 
                 if (groupResultValues) {
-                  const groupResult: { [key: string]: string } = {}
+                  const groupResult: { [key: string]: string | number } = {}
                   datasetConfig.variant_group_result_field_names.forEach(
                     (groupResultField, groupResultFieldIndex) => {
                       groupResult[groupResultField] = groupResultValues[groupResultFieldIndex]
