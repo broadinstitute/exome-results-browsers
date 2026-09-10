@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
+// @ts-expect-error: no types in this @gnomad/ui version
 import { BaseTable } from '@gnomad/ui'
 import { renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 import { GP2AnalysisGroup, gp2PValueOfZeroPlaceholder } from './GP2Browser'
