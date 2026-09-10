@@ -120,6 +120,11 @@ Configuration is divided into sections:
 - Other sections contain paths to files for individual datasets and are used by those
   datasets' data preparation pipelines.
 
+  - `test_genes` defines the subset each dataset is cut down to when a pipeline runs with
+    `--test-genes`. The interval used to filter variant results for each gene is looked up
+    in `TEST_GENE_INTERVALS` in `data_pipeline/gene_filter_utils.py`, which also records
+    per-dataset exceptions where a dataset's gene and variant filters intentionally differ.
+
 ## Running pipelines
 
 The pipelines accept arguments for which environment to run the pipeline in (dataproc, or local), and for which step to run
