@@ -1,20 +1,14 @@
 import os
 
 import hail as hl
+import hailtop.fs as hfs
 
 from data_pipeline.config import pipeline_config
+from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, get_test_gene_intervals
 
 
-def filter_results_table_to_test_gene_interval(results):
-    nod2_interval = hl.locus_interval(
-        "chr16", 50693588, 50734041, reference_genome="GRCh38", includes_start=True, includes_end=True
-    )
-
-    results = hl.filter_intervals(results, [nod2_interval])
-
-    results = results.repartition(1)
-
-    return results.persist()
+def _ibd_test_intervals():
+    return get_test_gene_intervals("IBD", pipeline_config.get("IBD", "test_genes"))
 
 
 def add_vep_to_annotations(staging_output_path, variants_ht, annotations_ht, test_genes):
@@ -24,7 +18,7 @@ def add_vep_to_annotations(staging_output_path, variants_ht, annotations_ht, tes
 
     print(f"  Checking in {vepped_path} for VEP table")
 
-    output_exists = hl.hadoop_exists(vepped_path)
+    output_exists = hfs.exists(vepped_path)
 
     print(f"Path exists?: {output_exists}")
 
@@ -37,7 +31,7 @@ def add_vep_to_annotations(staging_output_path, variants_ht, annotations_ht, tes
     vepped_variants_ht = hl.read_table(vepped_path)
 
     if test_genes is not None:
-        vepped_variants_ht = filter_results_table_to_test_gene_interval(vepped_variants_ht)
+        vepped_variants_ht = filter_variant_results_to_test_gene_intervals(vepped_variants_ht, _ibd_test_intervals())
 
     annotations_ht = annotations_ht.annotate(vep=vepped_variants_ht[annotations_ht.locus, annotations_ht.alleles].vep)
 
@@ -75,8 +69,7 @@ def generate_gene_id_per_variant_table(vepped_path, test_genes):
 
     if test_genes:
         print("Subsetting vepped table in gen. gene ID to only those in variants")
-        vepped_variants_ht = filter_results_table_to_test_gene_interval(vepped_variants_ht)
-        vepped_variants_ht = vepped_variants_ht.persist()
+        vepped_variants_ht = filter_variant_results_to_test_gene_intervals(vepped_variants_ht, _ibd_test_intervals())
 
     transcript_consequences_ht = vepped_variants_ht.select(csqs=vepped_variants_ht.vep.transcript_consequences)
     exploded_csqs_ht = transcript_consequences_ht.explode("csqs")
@@ -130,8 +123,8 @@ def annotate_variants_with_corrected_gene_id(staging_output_path, variants_ht, t
 
     corrected_gene_id_path = os.path.join(staging_output_path, "ibd", "gene_id_per_variant.ht")
 
-    vepped_table_exists = hl.hadoop_exists(vepped_path)
-    corrected_gene_id_table_exists = hl.hadoop_exists(corrected_gene_id_path)
+    vepped_table_exists = hfs.exists(vepped_path)
+    corrected_gene_id_table_exists = hfs.exists(corrected_gene_id_path)
 
     if not vepped_table_exists:
         print("No vepped table found, exiting ...")
@@ -157,7 +150,7 @@ def generate_most_significant_variant_per_gene_table(staging_output_path, varian
         staging_output_path, "ibd", "genes_most_significant_variants.ht"
     )
 
-    if not hl.hadoop_exists(most_significant_variant_per_gene_path):
+    if not hfs.exists(most_significant_variant_per_gene_path):
         exploded_ht = variants_ht.annotate(
             group_entries=hl.array(hl.zip(variants_ht.group_results.keys(), variants_ht.group_results.values()))
         ).explode("group_entries")
@@ -226,7 +219,7 @@ def prepare_variant_results(test_genes, output_root):
     results = hl.read_table(pipeline_config.get("IBD", "variant_results_path")).drop("filter")
 
     if test_genes:
-        results = filter_results_table_to_test_gene_interval(results)
+        results = filter_variant_results_to_test_gene_intervals(results, _ibd_test_intervals())
 
     # Get unique variants from results table
     variants = results.group_by(results.locus, results.alleles).aggregate()

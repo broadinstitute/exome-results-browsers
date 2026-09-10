@@ -1,18 +1,7 @@
-import ast
-
 import hail as hl
 
 from data_pipeline.config import pipeline_config
-
-test_genes_string = pipeline_config["SCHEMA"]["test_genes"]
-test_genes = ast.literal_eval(test_genes_string)
-
-
-def filter_results_table_to_test_gene(results):
-    test_gene_symbols = [gene[0].upper() for gene in test_genes]
-    test_gene_set = hl.literal(test_gene_symbols)
-
-    return results.filter(test_gene_set.contains(results["gene_symbol"].upper())).persist()
+from data_pipeline.gene_filter_utils import filter_gene_results_to_test_genes, parse_test_genes
 
 
 def build_gene_lookup_ht(gene_models_ht):
@@ -94,7 +83,9 @@ def prepare_gene_results(test_genes, _output_root):
     gene_results = gene_results.drop("Gene")
 
     if test_genes:
-        gene_results = filter_results_table_to_test_gene(gene_results)
+        gene_results = filter_gene_results_to_test_genes(
+            gene_results, "gene_symbol", parse_test_genes(pipeline_config.get("SCHEMA", "test_genes"))
+        )
 
     # TK: suggest analyst include this in input file, then pull this number from there
     n_cases = 87_959

@@ -3,8 +3,80 @@
 import hail as hl
 import pytest
 
+from data_pipeline.config import pipeline_config
+
 from .gp2_combine_input_datasets import combine_input_data, combine_variant_annotations, combine_variant_results
 from .gp2_variant_results import prepare_variant_results
+
+
+@pytest.fixture(scope="module")
+def local_reference_data(tmp_path_factory):
+    """Point the ClinVar and dbSNP reference paths at local stand-ins.
+
+    prepare_variant_results left joins both reference tables onto the variants, so the
+    test needs tables it can read without access to the GCS bucket the real ones live
+    in. These hold a single row each, keyed to the chr1:10000 variant below, so that
+    the joins are exercised with a match rather than only with misses.
+
+    The schemas mirror the real tables, which declare them in the metadata.json.gz at
+    the root of each .ht directory. Nothing checks that these stay in sync with the
+    real tables, so they need updating if the reference data changes shape.
+    """
+    reference_root = tmp_path_factory.mktemp("reference_data")
+
+    clinvar_path = str(reference_root / "clinvar_grch38_variants.ht")
+    clinvar_ht = hl.Table.parallelize(
+        [
+            {
+                "locus": hl.locus("chr1", 10000, reference_genome="GRCh38"),
+                "alleles": ["C", "T"],
+                "clinvar_variation_id": "12345",
+                "clinical_significance": ["Pathogenic", "Likely_pathogenic"],
+                "clinical_significance_category": "pathogenic",
+                "conflicting_clinical_significance_categories": [],
+                "gold_stars": 2,
+            }
+        ],
+        schema=hl.tstruct(
+            locus=hl.tlocus(reference_genome="GRCh38"),
+            alleles=hl.tarray(hl.tstr),
+            clinvar_variation_id=hl.tstr,
+            clinical_significance=hl.tarray(hl.tstr),
+            clinical_significance_category=hl.tstr,
+            conflicting_clinical_significance_categories=hl.tarray(hl.tstr),
+            gold_stars=hl.tint32,
+        ),
+        key=["locus", "alleles"],
+    )
+    clinvar_ht.write(clinvar_path)
+
+    dbsnp_path = str(reference_root / "dbSNP_grch38_rsids.ht")
+    dbsnp_ht = hl.Table.parallelize(
+        [
+            {
+                "locus": hl.locus("chr1", 10000, reference_genome="GRCh38"),
+                "alleles": ["C", "T"],
+                "rsid": "rs1234567",
+            }
+        ],
+        schema=hl.tstruct(
+            locus=hl.tlocus(reference_genome="GRCh38"),
+            alleles=hl.tarray(hl.tstr),
+            rsid=hl.tstr,
+        ),
+        key=["locus", "alleles"],
+    )
+    dbsnp_ht.write(dbsnp_path)
+
+    original_clinvar_path = pipeline_config.get("reference_data", "clinvar_grch38_path")
+    original_dbsnp_path = pipeline_config.get("reference_data", "dbSNP_grch38_rsids_path")
+    pipeline_config.set("reference_data", "clinvar_grch38_path", clinvar_path)
+    pipeline_config.set("reference_data", "dbSNP_grch38_rsids_path", dbsnp_path)
+
+    yield
+
+    pipeline_config.set("reference_data", "clinvar_grch38_path", original_clinvar_path)
+    pipeline_config.set("reference_data", "dbSNP_grch38_rsids_path", original_dbsnp_path)
 
 
 @pytest.fixture(scope="module")
@@ -258,7 +330,7 @@ def test_combine_gp2_variant_annotations(annotation_hts):
     assert filtered_test.count() == 2
 
 
-def test_gp2_prepare_variants(variant_hts, annotation_hts):
+def test_gp2_prepare_variants(variant_hts, annotation_hts, local_reference_data):
     ces_variant_ht = variant_hts["ces_variant_ht"]
     wgs_variant_ht = variant_hts["wgs_variant_ht"]
     ces_annotation_ht = annotation_hts["ces_annotation_ht"]
@@ -288,3 +360,11 @@ def test_gp2_prepare_variants(variant_hts, annotation_hts):
     assert group_results_eur.wgs_ac_msa == 23
     assert group_results_eur.wgs_ac_ctrl == 24
     assert group_results_eur.wgs_ac_other == 25
+
+    # The reference data joins, against the stand-in tables in local_reference_data
+    info = filtered_test.info.collect()[0]
+    assert info.clinvar_variation_id == "12345"
+    # clinical_significance is an array in ClinVar, and is flattened to its first element
+    assert info.clinical_significance == "Pathogenic"
+    assert info.clinical_significance_category == "pathogenic"
+    assert info.rsid == "rs1234567"
