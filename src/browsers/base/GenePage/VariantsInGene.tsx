@@ -17,10 +17,7 @@ import { TrackPageSection } from './TrackPage'
 import VariantDetails from './VariantDetails'
 import VariantFilterControls, { FilterState } from './VariantFilterControls'
 import VariantTable, { SortOrder } from './VariantTable'
-import getVariantTableColumns, {
-  VariantRow,
-  getVariantModalColumnConfig,
-} from './variantTableColumns'
+import getVariantTableColumns, { VariantRow } from './variantTableColumns'
 import {
   ConsequenceCategory,
   DatasetId,
@@ -64,7 +61,7 @@ interface VariantCustomFilter {
 
 interface VariantsInGeneProps {
   datasetId: string
-  variantAnalysisGroupOptions: string[]
+  variantAnalysisGroupOptions: readonly string[]
   defaultVariantAnalysisGroup: string
   variantAnalysisGroupLabels: { [key: string]: string }
   variantSortKey?: string
@@ -595,7 +592,7 @@ interface VariantsInGeneContainerProps {
   datasetId: string
   gene: Gene
   variantConsequences: VariantConsequence[]
-  variantAnalysisGroupOptions?: string[]
+  variantAnalysisGroupOptions?: readonly string[]
   defaultVariantAnalysisGroup?: string
   variantResultColumns: VariantColumnConfig[]
   [key: string]: any

@@ -6,7 +6,7 @@ import StyledContent from '../base/StyledContent'
 import aboutPageContent from './content/about.md'
 
 const AboutPage = () => (
-  <InfoPage title={aboutPageContent.title}>
+  <InfoPage title={aboutPageContent.title || ''}>
     <StyledContent dangerouslySetInnerHTML={{ __html: aboutPageContent.html }} />
   </InfoPage>
 )

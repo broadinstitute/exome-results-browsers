@@ -126,7 +126,7 @@ interface VariantFilterControlProps {
   renderedVariants: VariantRow[]
   selectedAnalysisGroup: string
   variantAnalysisGroupLabels: Record<string, string>
-  variantAnalysisGroupOptions: string[]
+  variantAnalysisGroupOptions: readonly string[]
   variantTableColumns: VariantTableColumn[]
 }
 

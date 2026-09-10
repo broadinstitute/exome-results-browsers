@@ -9,7 +9,7 @@ import Fetch from './Fetch'
 import { DatasetId } from './Browser'
 
 // TK: put this in a more central place, if it's needed elsewhere
-export const datasetToSubdomainOverrideMap = {
+export const datasetToSubdomainOverrideMap: Partial<Record<DatasetId, string>> = {
   IBD: 'ibdseq',
 }
 
