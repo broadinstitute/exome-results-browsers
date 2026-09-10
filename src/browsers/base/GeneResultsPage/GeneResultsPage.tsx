@@ -31,7 +31,7 @@ const AnalysisGroupMenuWrapper = styled.div`
 
 interface GeneResultsPageProps {
   browserTitle: string
-  analysisGroupOptions: string[]
+  analysisGroupOptions: readonly string[]
   defaultAnalysisGroup: string
   defaultSortKey?: string
   geneResultColumns: GeneResultColumnConfig[]
@@ -95,7 +95,7 @@ const GeneResultsPage = ({
                 >
                   {analysisGroupOptions.map((group) => (
                     <option key={group} value={group}>
-                      {analysisGroupOptions[group] || group}
+                      {group}
                     </option>
                   ))}
                 </Select>
@@ -161,7 +161,7 @@ const GeneResultsPage = ({
 
 interface GeneResultsPageContainerProps {
   browserTitle: string
-  analysisGroupOptions?: string[]
+  analysisGroupOptions?: readonly string[]
   defaultAnalysisGroup?: string
   defaultSortKey: string
   geneResultColumns: GeneResultColumnConfig[]

@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
+// @ts-expect-error: no types in this @gnomad/ui version
 import { BaseTable, ExternalLink, Tabs } from '@gnomad/ui'
 
 import HelpButton from '../base/HelpButton'

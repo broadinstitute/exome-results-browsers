@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
+// @ts-expect-error: no types in this @gnomad/ui version
 import { ExternalLink, Page, PageHeading } from '@gnomad/ui'
 
 import DocumentTitle from '../base/DocumentTitle'
@@ -36,7 +37,7 @@ export default () => (
 
     <StyledLogo src={BipExLogo} />
 
-    <Searchbox width="100%" />
+    <Searchbox id="bipex-search" width="100%" />
     <p style={{ marginTop: '0.25em' }}>
       Or <Link to="/results">view all results</Link>
     </p>
