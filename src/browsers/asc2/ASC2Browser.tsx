@@ -261,7 +261,7 @@ const ASC2Browser = () => (
         heading: 'gnomAD AF',
         minWidth: 110,
         render: (value) => renderFloatAsScientific({ value: value }),
-        tooltip: 'Allele Frequency (AF) of this variant in gnomAD',
+        tooltip: 'Allele Frequency (AF) of this variant in the "non-neuro" subset gnomAD',
       },
       {
         key: 'info.transcript_id',
@@ -280,15 +280,15 @@ const ASC2Browser = () => (
       },
       {
         key: 'info.alpha_missense',
-        heading: 'AlphaMissense',
+        heading: 'AM',
         tooltip: 'AlphaMissense pathogenicity score',
         minWidth: 110,
         render: (value) => renderMissing(value),
       },
       {
         key: 'info.is_other_splice',
-        heading: 'is other splice',
-        tooltip: 'LOFTEE other splice (OS) annotation (meaning not yet confirmed by analysts)',
+        heading: 'is OS',
+        tooltip: 'LOFTEE other splice (OS) annotation',
         minWidth: 70,
         render: (value) => renderBoolean(value),
       },
