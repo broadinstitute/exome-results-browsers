@@ -336,13 +336,12 @@ def test_gp2_prepare_variants(variant_hts, annotation_hts, local_reference_data)
     ces_annotation_ht = annotation_hts["ces_annotation_ht"]
     wgs_annotation_ht = annotation_hts["wgs_annotation_ht"]
 
-    output_local = False
     combined_variant_ht, combined_annotation_ht = combine_input_data(
         ces_variant_ht,
         wgs_variant_ht,
         ces_annotation_ht,
         wgs_annotation_ht,
-        output_local,
+        test_genes=None,
     )
 
     variants_ht = prepare_variant_results(combined_variant_ht, combined_annotation_ht, None, None)
