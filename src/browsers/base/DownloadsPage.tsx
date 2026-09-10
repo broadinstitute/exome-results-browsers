@@ -20,7 +20,7 @@ type DownloadConfig = {
   filePrefix: string
 }
 
-export const DOWNLOAD_URLS: Partial<Record<DownloadDatasetId, DownloadConfig>> = {
+const DOWNLOAD_URLS: Partial<Record<DownloadDatasetId, DownloadConfig>> = {
   ASC: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/ASC`, filePrefix: 'ASC' },
   BipEx2: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-06-24/BipEx2`, filePrefix: 'BipEx2' },
   Epi25: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2022-12-01/Epi25`, filePrefix: 'Epi25' },
@@ -29,11 +29,11 @@ export const DOWNLOAD_URLS: Partial<Record<DownloadDatasetId, DownloadConfig>> =
   SCHEMA_v1: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/SCHEMA`, filePrefix: 'SCHEMA' },
 }
 
-export const otherDatasets = (Object.keys(datasetConfig.datasets) as DatasetId[])
+const otherDatasets = (Object.keys(datasetConfig.datasets) as DatasetId[])
   .filter((d) => d !== datasetConfig.datasetId)
   .sort()
 
-export const downloadUrl = (datasetId: DownloadDatasetId, file: string) => {
+const downloadUrl = (datasetId: DownloadDatasetId, file: string) => {
   if (DOWNLOAD_URLS[datasetId]) {
     const { baseUrl, filePrefix } = DOWNLOAD_URLS[datasetId]
     return `${baseUrl}/${filePrefix}_${file}`
