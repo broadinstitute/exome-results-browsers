@@ -1,5 +1,6 @@
 import configparser
 import os
+from enum import StrEnum
 
 # This configuration file will be read in three places:
 # 1. By run.py when starting a pipeline
@@ -32,12 +33,22 @@ except (configparser.NoOptionError, AssertionError) as exc:
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
-def get_output_root(output_local, is_downloads=False):
-    output_location = "local" if output_local else "gcs"
+class OutputLocation(StrEnum):
+    """Where a pipeline writes its output.
+
+    The values double as the prefix of the corresponding `output` options in
+    pipeline_config.ini, e.g. `local_output_root`, `gcs_downloads_output_root`.
+    """
+
+    LOCAL = "local"
+    GCS = "gcs"
+
+
+def get_output_root(output_location: OutputLocation, is_downloads: bool = False) -> str:
     downloads_string = "_downloads" if is_downloads else ""
     output_root = pipeline_config.get("output", f"{output_location}{downloads_string}_output_root")
 
-    if output_local:
+    if output_location is OutputLocation.LOCAL:
         output_root = os.path.abspath(os.path.join(REPO_ROOT, output_root))
 
     return output_root

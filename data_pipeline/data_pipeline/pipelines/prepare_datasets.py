@@ -6,7 +6,7 @@ import sys
 import hail as hl
 import hailtop.fs as hfs
 
-from data_pipeline.config import get_output_root, pipeline_config
+from data_pipeline.config import OutputLocation, get_output_root, pipeline_config
 from data_pipeline.validation import validate_gene_results_table, validate_variant_results_table
 
 
@@ -120,7 +120,14 @@ def main():
         help=f"Datasets to process. Either 'all', or a space separated list of {', '.join(all_datasets)}",
     )
 
-    parser.add_argument("--output-local", action="store_true", help="Output files locally instead of to cloud storage")
+    parser.add_argument(
+        "--output-local",
+        dest="output_location",
+        action="store_const",
+        const=OutputLocation.LOCAL,
+        default=OutputLocation.GCS,
+        help="Output files locally instead of to cloud storage",
+    )
 
     parser.add_argument(
         "--test-genes",
@@ -150,7 +157,7 @@ def main():
         },
     )
 
-    output_root = get_output_root(args.output_local)
+    output_root = get_output_root(args.output_location)
     for dataset in datasets_to_prepare:
         prepare_dataset(dataset, args.test_genes, output_root)
 

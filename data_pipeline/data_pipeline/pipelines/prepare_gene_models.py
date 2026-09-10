@@ -4,7 +4,7 @@ import sys
 
 import hail as hl
 
-from data_pipeline.config import get_output_root, pipeline_config
+from data_pipeline.config import OutputLocation, get_output_root, pipeline_config
 
 
 def get_exons(gencode):
@@ -247,9 +247,9 @@ def prepare_gnomad_v4_constraint(gnomad_v4_constraint_path):
     return ds
 
 
-def get_output_path(output_local):
+def get_output_path(output_location: OutputLocation) -> str:
     output_date = pipeline_config.get("reference_data", "output_last_updated")
-    output_root = get_output_root(output_local)
+    output_root = get_output_root(output_location)
 
     return os.path.join(output_root, "gene_models", output_date, "gene_models.ht")
 
@@ -302,11 +302,18 @@ def prepare_gene_models(output_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output-local", action="store_true", help="Output files locally instead of to cloud storage")
+    parser.add_argument(
+        "--output-local",
+        dest="output_location",
+        action="store_const",
+        const=OutputLocation.LOCAL,
+        default=OutputLocation.GCS,
+        help="Output files locally instead of to cloud storage",
+    )
     args = parser.parse_args()
 
     hl.init()
-    output_path = get_output_path(args.output_local)
+    output_path = get_output_path(args.output_location)
     prepare_gene_models(output_path)
 
 

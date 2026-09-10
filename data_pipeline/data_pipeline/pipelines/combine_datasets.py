@@ -4,7 +4,7 @@ import sys
 
 import hail as hl
 
-from data_pipeline.config import get_output_root, pipeline_config
+from data_pipeline.config import OutputLocation, get_output_root, pipeline_config
 
 VARIANT_FIELDS = [
     "variant_id",
@@ -147,7 +147,14 @@ def main():
         help=f"Datasets to combine. Either 'all', or a space separated list of {', '.join(all_datasets)}",
     )
 
-    parser.add_argument("--output-local", action="store_true", help="Output files locally instead of to cloud storage")
+    parser.add_argument(
+        "--output-local",
+        dest="output_location",
+        action="store_const",
+        const=OutputLocation.LOCAL,
+        default=OutputLocation.GCS,
+        help="Output files locally instead of to cloud storage",
+    )
 
     args = parser.parse_args()
 
@@ -171,7 +178,7 @@ def main():
         },
     )
 
-    output_root = get_output_root(args.output_local)
+    output_root = get_output_root(args.output_location)
     combined_output_date = pipeline_config.get("output", "output_last_updated")
     output_path = os.path.join(output_root, "combined", combined_output_date, "combined.ht")
     combined_ht = combine_datasets(datasets_to_combine, output_root)
