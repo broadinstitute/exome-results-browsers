@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 
 import Browser, {
   GeneResultColumnConfig,
   GeneResultColumnGroup,
   VariantConsequence,
 } from '../base/Browser'
-import { renderCount, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import { renderCount, renderFloatAsScientific, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
 
 import ASC2AboutPage from './ASC2AboutPage'
 import ASC2HomePage from './ASC2HomePage'
@@ -14,7 +14,6 @@ import {
   ASC2_VARIANT_CLASS_CATEGORIES,
   ASC2GeneResult,
   ASC2VariantClassCategory,
-  ASC2VariantGroupResult,
   ASC2VariantInfo,
 } from './ascTypes'
 
@@ -43,34 +42,6 @@ const geneCountColumn = (
   minWidth,
   group,
   render: renderCount,
-})
-
-const variantCountColumn = (
-  field: keyof ASC2VariantGroupResult,
-  heading: string,
-  tooltip: string,
-  minWidth = 110,
-  group?: ASC2VariantColumnGroup
-) => ({
-  key: `group_result.${field}`,
-  heading,
-  tooltip,
-  minWidth,
-  group,
-})
-
-const variantInfoColumn = (
-  field: keyof ASC2VariantInfo,
-  heading: string,
-  tooltip: string,
-  minWidth = 80,
-  render: (value: any) => React.ReactNode = renderMissing
-) => ({
-  key: `info.${field}`,
-  heading,
-  tooltip,
-  minWidth,
-  render,
 })
 
 export const ascAnalysisGroups = ['meta'] as const
@@ -236,70 +207,93 @@ const ASC2Browser = () => (
     defaultVariantAnalysisGroup={ascDefaultAnalysisGroup}
     variantResultColumns={[
       // TK: see if analyst wants this column, keep it commented here for now
-      // variantInfoColumn('variant_class', 'Class', 'PTV/Mis2/Mis1/Mis0/synonymous, by MPC/AlphaMissense pathogenicity for missense variants', 90),
+      // {
+      //   key: 'info.variant_class',
+      //   heading: 'Class',
+      //   tooltip: 'PTV/Mis2/Mis1/Mis0/synonymous, by MPC/AlphaMissense pathogenicity for missense variants',
+      //   minWidth: 90,
+      // },
 
-      variantCountColumn(
-        'de_novo_ac_proband',
-        'De\u00a0novo AC (proband)',
-        'De\u00a0novo allele count in probands',
-        110,
-        'deNovo'
-      ),
-      variantCountColumn(
-        'de_novo_ac_sibling',
-        'De\u00a0novo AC (sibling)',
-        'De\u00a0novo allele count in siblings',
-        110,
-        'deNovo'
-      ),
+      {
+        key: 'group_result.de_novo_ac_proband',
+        heading: 'De\u00a0novo AC (proband)',
+        tooltip: 'De\u00a0novo allele count in probands',
+        minWidth: 110,
+        group: 'deNovo',
+      },
+      {
+        key: 'group_result.de_novo_ac_sibling',
+        heading: 'De\u00a0novo AC (sibling)',
+        tooltip: 'De\u00a0novo allele count in siblings',
+        minWidth: 110,
+        group: 'deNovo',
+      },
 
-      variantCountColumn(
-        'transmitted_ac_proband',
-        'Transmitted AC',
-        'Allele count transmitted to probands',
-        110,
-        'transmittedUntransmitted'
-      ),
-      variantCountColumn(
-        'untransmitted_ac_proband',
-        'Untransmitted AC',
-        'Allele count not transmitted to probands',
-        110,
-        'transmittedUntransmitted'
-      ),
+      {
+        key: 'group_result.transmitted_ac_proband',
+        heading: 'Transmitted AC',
+        tooltip: 'Allele count transmitted to probands',
+        minWidth: 110,
+        group: 'transmittedUntransmitted',
+      },
+      {
+        key: 'group_result.untransmitted_ac_proband',
+        heading: 'Untransmitted AC',
+        tooltip: 'Allele count not transmitted to probands',
+        minWidth: 110,
+        group: 'transmittedUntransmitted',
+      },
 
-      variantCountColumn(
-        'ac_case',
-        'Case/control AC (case)',
-        'Allele count in cases (case/control burden)',
-        110,
-        'caseControl'
-      ),
-      variantCountColumn(
-        'ac_ctrl',
-        'Case/control AC (control)',
-        'Allele count in controls (case/control burden)',
-        110,
-        'caseControl'
-      ),
+      {
+        key: 'group_result.ac_case',
+        heading: 'Case/control AC (case)',
+        tooltip: 'Allele count in cases (case/control burden)',
+        minWidth: 110,
+        group: 'caseControl',
+      },
+      {
+        key: 'group_result.ac_ctrl',
+        heading: 'Case/control AC (control)',
+        tooltip: 'Allele count in controls (case/control burden)',
+        minWidth: 110,
+        group: 'caseControl',
+      },
+      {
+        key: 'info.gnomad_af',
+        heading: 'gnomAD AF',
+        minWidth: 110,
+        render: (value) => renderFloatAsScientific({ value: value }),
+        tooltip: 'Allele Frequency (AF) of this variant in gnomAD',
+      },
+      {
+        key: 'info.transcript_id',
+        heading: 'Transcript ID',
+        minWidth: 140,
+        tooltip: 'Ensembl transcript ID',
+        render: (value) => renderMissing(value),
+      },
 
-      variantInfoColumn('gnomad_af', 'gnomAD AF', 'Allele frequency in gnomAD', 90),
-      variantInfoColumn('transcript_id', 'Transcript ID', 'Ensembl transcript ID', 140),
-
-      variantInfoColumn('mpc', 'MPC', 'Missense deleteriousness Prediction by Constraint', 70),
-      variantInfoColumn(
-        'alpha_missense',
-        'AlphaMissense',
-        'AlphaMissense pathogenicity score',
-        110
-      ),
-      variantInfoColumn(
-        'is_other_splice',
-        'is other splice',
-        'LOFTEE other splice (OS) annotation (meaning not yet confirmed by analysts)',
-        70,
-        renderBoolean
-      ),
+      {
+        key: 'info.mpc',
+        heading: 'MPC',
+        tooltip: 'Missense deleteriousness Prediction by Constraint',
+        minWidth: 70,
+        render: (value) => renderMissing(value),
+      },
+      {
+        key: 'info.alpha_missense',
+        heading: 'AlphaMissense',
+        tooltip: 'AlphaMissense pathogenicity score',
+        minWidth: 110,
+        render: (value) => renderMissing(value),
+      },
+      {
+        key: 'info.is_other_splice',
+        heading: 'is other splice',
+        tooltip: 'LOFTEE other splice (OS) annotation (meaning not yet confirmed by analysts)',
+        minWidth: 70,
+        render: (value) => renderBoolean(value),
+      },
     ]}
     variantConsequences={asc2VariantConsequences}
     variantAlleleFrequencyOverride={ASC2_VARIANT_DOT_ALLELE_FREQ}
