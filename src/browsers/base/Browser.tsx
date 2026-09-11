@@ -202,6 +202,10 @@ export type VariantLollipopTrackGroup = {
   color?: string
   tracks: [VariantLollipopTrack, VariantLollipopTrack]
 }
+// Receives a variant's `info` object, not the full variant row.
+export type RenderVariantAttributes<InfoType = any> = (
+  info: InfoType
+) => { label: React.ReactNode; content: React.ReactNode }[]
 
 type BrowserProps = {
   browserTitle?: string
@@ -230,7 +234,7 @@ type BrowserProps = {
   getVariantCategory?: (variant: any) => string
   variantCustomFilter?: VariantCustomFilter
   variantDetailColumns?: VariantColumnConfig[]
-  renderVariantAttributes?: (record: any) => void
+  renderVariantAttributes?: RenderVariantAttributes
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences?: boolean
   getGeneNotFoundMessage?: (geneIdOrSymbol: string) => string | undefined
