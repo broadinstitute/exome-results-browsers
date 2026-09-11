@@ -5,29 +5,14 @@ from tempfile import NamedTemporaryFile
 
 import hail as hl
 
-from data_pipeline.config import pipeline_config
+from data_pipeline.config import OutputLocation, get_output_root, pipeline_config
 from data_pipeline.validation import validate_gene_results_table, validate_variant_results_table
 
 
-def get_output_root(output_local=False, is_downloads=False):
-    output_location = "local" if output_local else "gcs"
-    downloads_string = "_downloads" if is_downloads else ""
-    output_root = pipeline_config.get("output", f"{output_location}{downloads_string}_output_root")
-
-    if output_local:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        output_root = os.path.abspath(os.path.join(script_dir, "..", "..", "..", output_root))
-
-    return output_root
-
-
-def prepare_downloads_for_dataset(dataset_id, output_local):
+def prepare_downloads_for_dataset(dataset_id, prepared_output_root, downloads_output_root):
     update_date = pipeline_config.get(dataset_id, "output_last_updated")
 
-    prepared_output_root = get_output_root(output_local, is_downloads=False)
     prepared_output_path = f"{prepared_output_root}/{dataset_id.lower()}/{update_date}"
-
-    downloads_output_root = get_output_root(output_local, is_downloads=True)
     downloads_output_path = f"{downloads_output_root}/{update_date}"
     downloads_output_prefix = os.path.join(downloads_output_path, dataset_id)
 
@@ -130,7 +115,14 @@ def main():
         help=f"Datasets to process. Either 'all', or a space separated list of {', '.join(all_datasets)}",
     )
 
-    parser.add_argument("--output-local", action="store_true", help="Output files locally instead of to cloud storage")
+    parser.add_argument(
+        "--output-local",
+        dest="output_location",
+        action="store_const",
+        const=OutputLocation.LOCAL,
+        default=OutputLocation.GCS,
+        help="Output files locally instead of to cloud storage",
+    )
 
     args = parser.parse_args()
 
@@ -146,8 +138,11 @@ def main():
 
     hl.init()
 
+    prepared_output_root = get_output_root(args.output_location, is_downloads=False)
+    downloads_output_root = get_output_root(args.output_location, is_downloads=True)
+
     for dataset in datasets_to_prepare:
-        prepare_downloads_for_dataset(dataset, args.output_local)
+        prepare_downloads_for_dataset(dataset, prepared_output_root, downloads_output_root)
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ import sys
 
 import hail as hl
 
-from data_pipeline.config import pipeline_config
+from data_pipeline.config import OutputLocation, get_output_root, pipeline_config
 
 
 def get_exons(gencode):
@@ -247,19 +247,14 @@ def prepare_gnomad_v4_constraint(gnomad_v4_constraint_path):
     return ds
 
 
-def get_output_path(output_local):
-    output_location = "local" if output_local else "gcs"
+def get_output_path(output_location: OutputLocation) -> str:
     output_date = pipeline_config.get("reference_data", "output_last_updated")
-    output_root = pipeline_config.get("output", f"{output_location}_output_root")
-
-    if output_local:
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        output_root = os.path.abspath(os.path.join(script_dir, "..", "..", "..", output_root))
+    output_root = get_output_root(output_location)
 
     return os.path.join(output_root, "gene_models", output_date, "gene_models.ht")
 
 
-def prepare_gene_models(output_local):
+def prepare_gene_models(output_path):
     genes_grch37 = prepare_gene_models_helper("GRCh37")
     genes_grch38 = prepare_gene_models_helper("GRCh38")
 
@@ -302,17 +297,24 @@ def prepare_gene_models(output_local):
     gnomad_v4_constraint = prepare_gnomad_v4_constraint(gnomad_v4_constraint_path)
     genes = genes.annotate(gnomad_v4_constraint=gnomad_v4_constraint[genes.GRCh38.canonical_transcript_id])
 
-    output_path = get_output_path(output_local)
     genes.write(output_path, overwrite=True)
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output-local", action="store_true", help="Output files locally instead of to cloud storage")
+    parser.add_argument(
+        "--output-local",
+        dest="output_location",
+        action="store_const",
+        const=OutputLocation.LOCAL,
+        default=OutputLocation.GCS,
+        help="Output files locally instead of to cloud storage",
+    )
     args = parser.parse_args()
 
     hl.init()
-    prepare_gene_models(args.output_local)
+    output_path = get_output_path(args.output_location)
+    prepare_gene_models(output_path)
 
 
 if __name__ == "__main__":
