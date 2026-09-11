@@ -8,13 +8,13 @@ the browsers and so cannot be attached to another instance in read-write mode.
 
 1. Create a temporary GCE instance.
 
-   Debian 11 is used here to have Java 11, the only version hail 0.2.138 supports.
-   Debian 12 ships only openjdk-17.
+   Debian 12 is used, alongside Java 11 from Temurin. Hail 02.138 requires Java 11, and Debian 12 ships only openjdk-17.
 
    ```
    gcloud --quiet compute instances create erb-temp-instance \
       --machine-type=n1-standard-32 \
-      --image-family projects/debian-cloud/global/images/family/debian-11 \
+      --image-family=debian-12 \
+      --image-project=debian-cloud \
       --boot-disk-size=200GB \
       --service-account=erb-data-pipeline@exac-gnomad.iam.gserviceaccount.com
    ```
@@ -74,14 +74,23 @@ mount -o discard,defaults /dev/disk/by-id/google-erb-data /mnt/disks/erb-data
 
    ```
    apt-get update && \
-   apt-get install -y \
-     openjdk-11-jre-headless \
-     g++ \
-     libopenblas-base \
-     liblapack3 \
-     curl
+   apt-get install -y wget gpg g++ \
+     libopenblas-dev liblapack3 curl && \
 
-   curl -LsSf https://astral.sh/uv/install.sh | sh
+   wget -qO /usr/share/keyrings/adoptium.asc \
+     https://packages.adoptium.net/artifactory/api/gpg/key/public && \
+
+   gpg --dearmor -o /usr/share/keyrings/adoptium.gpg \
+     /usr/share/keyrings/adoptium.asc && \
+
+   echo "deb [signed-by=/usr/share/keyrings/adoptium.gpg] \
+   https://packages.adoptium.net/artifactory/deb \
+   bookworm main" > /etc/apt/sources.list.d/adoptium.list && \
+
+   apt-get update && \
+   apt-get install -y temurin-11-jre && \
+
+   curl -LsSf https://astral.sh/uv/install.sh | sh && \
    source $HOME/.local/bin/env
    ```
 
