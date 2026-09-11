@@ -115,7 +115,6 @@ interface TopBarOwnProps {
   }[]
   backgroundColor?: string
   textColor?: string
-  passwordProtectedDatasets?: string[]
 }
 
 type TopBarProps = TopBarOwnProps & RouteComponentProps
@@ -125,11 +124,12 @@ const TopBar = ({
   links = [],
   backgroundColor = '#000',
   textColor = '#fff',
-  passwordProtectedDatasets = [],
 }: TopBarProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(true)
-  const { datasetId } = window.datasetConfig
+  // A pinned deployment is a demo, and a demo is behind a password, so there is nothing to show
+  // until the visitor has logged in.
+  const { datasetId, pinnedDataset } = window.datasetConfig
 
   useEffect(() => {
     setIsAuthenticated(userHasBearerCookie())
@@ -143,7 +143,7 @@ const TopBar = ({
 
   const [showOtherStudiesModal, setShowOtherStudiesModal] = useState(false)
 
-  if (isAuthLoading || (passwordProtectedDatasets.includes(datasetId) && !isAuthenticated)) {
+  if (isAuthLoading || (pinnedDataset && !isAuthenticated)) {
     return <></>
   }
 

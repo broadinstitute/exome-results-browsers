@@ -58,13 +58,12 @@ declare global {
         variant_info_field_names: string[]
         variant_info_field_types: string[]
       }
+      pinnedDataset: string | null
     }
     gaTrackingId: string
     gtag: Gtag.Gtag
   }
 }
-
-const PASSWORD_PROTECTED_DATASETS: DatasetId[] = ['BipEx2']
 
 interface ProtectedRouteExtraProps {
   datasetId: DatasetId
@@ -89,7 +88,9 @@ const ProtectedRoute = ({
     <Route
       {...rest}
       render={(routeProps: RouteComponentProps) => {
-        if (PASSWORD_PROTECTED_DATASETS.includes(datasetId) && !isAuthenticated) {
+        // The server turns away an unauthenticated page load, but a client side route change is
+        // not a page load, so a demo checks here too.
+        if (window.datasetConfig.pinnedDataset && !isAuthenticated) {
           return (
             <Redirect
               to={{
@@ -260,7 +261,6 @@ const Browser = ({
         title={browserTitle}
         links={extraPages.map(({ path, label }) => ({ path, label }))}
         backgroundColor={navBarBackgroundColor}
-        passwordProtectedDatasets={PASSWORD_PROTECTED_DATASETS}
       />
 
       {window.gtag && (

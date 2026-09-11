@@ -55,7 +55,9 @@ Deployments are primarily updated by updating the docker image for any change in
 
 Set on the container in `gnomad-deployments`, and read by the server when it starts.
 
-- `DATASET` - pins a deployment to a single dataset, e.g. `BipEx2`. Demo deployments use this because they are not served from a per-dataset subdomain. Leave it unset in production, where the subdomain determines the dataset. The server refuses to start if it names a dataset that is not in the deployment's results data.
+- `DATASET` - pins a deployment to a single dataset, e.g. `BipEx2`. Demo deployments use this because they are not served from a per-dataset subdomain. Leave it unset in production, where the subdomain determines the dataset. The name is case sensitive, and the server refuses to start if it is not one of the datasets in the deployment's results data.
+
+- `DATASET_PASSWORDS` - JSON object of dataset name to demo password, e.g. `{"BipEx2":"somepassword"}`, supplied by a kubernetes secret. A pinned deployment is always password protected, so the server refuses to start if the object has no entry for its `DATASET`. A deployment routing by subdomain is never password protected, and does not need an entry.
 
 ### Updating/Creating a demo deployment
 
