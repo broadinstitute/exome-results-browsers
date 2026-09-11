@@ -1,0 +1,47 @@
+name: Build image
+
+# Images are built for main only, after CI passes on the same commit. Cloud Build does the build,
+# see cloudbuild.yaml, this only submits it.
+on:
+  workflow_run:
+    workflows: ['CI']
+    types:
+      - completed
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-image:
+    name: Build and push image
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.CLOUD_BUILD_SA_EMAIL }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Submit build
+        env:
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          gcloud builds submit --quiet \
+            --project=exome-results-browsers \
+            --config cloudbuild.yaml \
+            --substitutions="BRANCH_NAME=main,SHORT_SHA=${HEAD_SHA::7}" \
+            --gcs-source-staging-dir=gs://erb-github-actions/source \
+            --gcs-log-dir=gs://erb-github-actions/logs \
+            .
