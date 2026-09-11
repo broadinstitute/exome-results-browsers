@@ -163,21 +163,32 @@ const metadata = JSON.parse(
   fs.readFileSync(path.join(config.dataDirectory, 'metadata.json'), { encoding: 'utf8' })
 )
 
-// In development, serve the browser specified by the BROWSER environment variable.
-// In production, determine the browser/dataset to show based on the subdomain.
-let getDatasetForRequest: any
+const datasetNames: string[] = Object.keys(metadata.datasets)
 
-if (isDevelopment) {
-  const devDataset = Object.keys(metadata.datasets).find(
-    (dataset) => dataset.toLowerCase() === process.env.BROWSER!.toLowerCase()
+// A deployment can pin itself to a single dataset with the DATASET environment variable. Demo
+// deployments use this, since they are not served from the per-dataset subdomains that production
+// relies on. In development, BROWSER already names the dataset to serve, so it does the same job.
+// Without either, the dataset is determined by the subdomain.
+const configuredDataset = process.env.DATASET || (isDevelopment ? process.env.BROWSER : undefined)
+
+let getDatasetForRequest: (req: express.Request) => string | undefined
+
+if (configuredDataset) {
+  const pinnedDataset = datasetNames.find(
+    (dataset) => dataset.toLowerCase() === configuredDataset.trim().toLowerCase()
   )
-  getDatasetForRequest = () => devDataset
+
+  if (!pinnedDataset) {
+    throw Error(`Unknown dataset "${configuredDataset}". Choose one of ${datasetNames.join(', ')}`)
+  }
+
+  getDatasetForRequest = () => pinnedDataset
 } else {
   const subdomainOverrides: Record<string, string> = {
     ibdseq: 'IBD',
   }
 
-  const datasetBySubdomain: Record<string, string> = Object.keys(metadata.datasets).reduce(
+  const datasetBySubdomain: Record<string, string> = datasetNames.reduce(
     (acc, dataset) => ({
       ...acc,
       [dataset.toLowerCase()]: dataset,

@@ -51,11 +51,17 @@ To manage deployments, run the following commands from the `gnomad-deployments` 
 
 Deployments are primarily updated by updating the docker image for any change in the app running in deployment, or by updating the persistent disk to update the data that serves the deployent.
 
+### Runtime environment variables
+
+Set on the container in `gnomad-deployments`, and read by the server when it starts.
+
+- `DATASET` - pins a deployment to a single dataset, e.g. `BipEx2`. Demo deployments use this because they are not served from a per-dataset subdomain. Leave it unset in production, where the subdomain determines the dataset. The server refuses to start if it names a dataset that is not in the deployment's results data.
+
 ### Updating/Creating a demo deployment
 
 Demo deployments for exome results browsers are workload on the `exac-gnomad` kubernetes cluster that gnomAD exists on. Creating new demo deployments, or updating existing ones is done by creating or updating kustomization files with new resources, and applying the updates.
 
-If creating a new demo, create a new directory in the `exome-results-browsers` dir. Use the existing `demo` directory as a template. Since production manages API responses by dataset using subdomains, demos currently require manually setting this dataset in the API, and creating a seperate demo deployment per running demo.
+If creating a new demo, create a new directory in the `exome-results-browsers` dir. Use the existing `demo` directory as a template. Since production manages API responses by dataset using subdomains, and demos are not served from those subdomains, each demo pins itself to one dataset with the `DATASET` environment variable, and a separate demo deployment is needed per running demo. The dataset being configuration rather than code, a demo can run the same image Cloud Build pushes from `main`.
 
 See: https://github.com/broadinstitute/exome-results-browsers/pull/155 for sample app changes
 See: https://github.com/broadinstitute/gnomad-deployments/pull/32 for the corresponding deployment PR
