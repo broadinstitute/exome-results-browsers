@@ -172,10 +172,10 @@ export interface VariantConsequence {
 
 export type VariantConsequenceCategoryLabels = Record<ConsequenceCategory, string>
 
-export type VariantCustomFilter = {
+export type VariantCustomFilter<RowType = any> = {
   component: React.ElementType
   defaultFilter: any
-  applyFilter: (variants: any[], filterState: any) => any[]
+  applyFilter: (variants: RowType[], filterState: any) => RowType[]
 }
 
 // Receives a variant's `info` object, not the full variant row.
