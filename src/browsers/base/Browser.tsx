@@ -175,7 +175,7 @@ export type VariantConsequenceCategoryLabels = Record<ConsequenceCategory, strin
 export type VariantCustomFilter = {
   component: React.ElementType
   defaultFilter: any
-  applyFilter: (record: any) => void
+  applyFilter: (variants: any[], filterState: any) => any[]
 }
 
 type BrowserProps = {
@@ -185,8 +185,8 @@ type BrowserProps = {
   extraPages?: ExtraPage[]
 
   geneResultsPageHeading?: string
-  geneResultAnalysisGroupOptions: readonly string[]
-  defaultGeneResultAnalysisGroup: string
+  geneResultAnalysisGroupOptions?: readonly string[]
+  defaultGeneResultAnalysisGroup?: string
   defaultGeneResultSortKey?: string
   geneResultColumns?: GeneResultColumnConfig[]
   geneResultTabs?: GeneResultTabConfig[]

@@ -16,6 +16,6 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src/server/**/*"],
+  "include": ["src/server/**/*", "src/browsers/**/*", "src/globals.d.ts"],
   "exclude": ["src/server/public/**/*"]
 }

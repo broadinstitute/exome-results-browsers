@@ -349,7 +349,7 @@ interface VariantDetailsProps {
   defaultVariantAnalysisGroup: string
   referenceGenome: ReferenceGenome
   variant: VariantRow
-  variantAnalysisGroupOptions: string[]
+  variantAnalysisGroupOptions: readonly string[]
   variantAnalysisGroupLabels: { [key: string]: string }
   variantResultColumns: VariantColumnConfig[]
   renderVariantAttributes: (record: any) => any // TK: TODO: fixme: type better elsewhere and import

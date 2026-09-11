@@ -154,14 +154,15 @@ interface GeneInfoProps {
 const GeneInfo = ({ gene }: GeneInfoProps) => {
   const ucscReferenceGenomeId = gene.reference_genome === 'GRCh38' ? 'hg38' : 'hg19'
 
-  const otherStudies = [
+  const allOtherStudies: { id: DatasetId }[] = [
     { id: 'ASC' },
     { id: 'BipEx' },
     { id: 'Epi25' },
     { id: 'GP2' },
     { id: 'IBD' },
     { id: 'SCHEMA' },
-  ].filter(({ id }) => id !== datasetConfig.datasetId)
+  ]
+  const otherStudies = allOtherStudies.filter(({ id }) => id !== datasetConfig.datasetId)
 
   const datasetsToDisplayAliasSymbols: DatasetId[] = ['BipEx2', 'SCHEMA']
 
