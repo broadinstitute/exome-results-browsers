@@ -43,6 +43,9 @@ export const parseNumericValue = (value: InputData): number => {
   return parseFloat(value)
 }
 
+// generic type for a float that could be non-finite
+export type EncodedFloat = number | 'NaN' | 'Infinity' | '-Infinity' | null
+
 export const renderOddsRatio = ({
   value,
   precision = 2,
