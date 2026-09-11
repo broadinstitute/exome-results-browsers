@@ -18,6 +18,7 @@ import VariantsInGene from './VariantsInGene'
 import ClinVarVariantsInGene from './ClinVarVariantsInGene'
 import {
   DatasetId,
+  RenderVariantAttributes,
   VariantColumnConfig,
   VariantConsequence,
   VariantConsequenceCategoryLabels,
@@ -62,8 +63,7 @@ interface GenePageProps {
   getVariantCategory?: (variant: any) => string
   variantResultColumns: VariantColumnConfig[]
   variantCustomFilter?: VariantCustomFilter
-  // TK: TODO: fixme: type this better in Browser.tsx, import here
-  renderVariantAttributes?: (result: any) => void
+  renderVariantAttributes?: RenderVariantAttributes
   additionalVariantDetailSummaryColumns?: VariantTableColumn[]
   variantDetailColumns?: VariantTableColumn[]
   renderVariantTranscriptConsequences?: boolean

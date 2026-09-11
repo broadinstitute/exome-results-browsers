@@ -22,6 +22,7 @@ import getVariantTableColumns, { VariantRow } from './variantTableColumns'
 import {
   DatasetId,
   ReferenceGenome,
+  RenderVariantAttributes,
   VariantColumnConfig,
   VariantLollipopTrack,
   VariantLollipopTrackGroup,
@@ -136,7 +137,7 @@ interface VariantsInGeneProps {
   getVariantCategory?: (variant: any) => string
   variantCustomFilter: VariantCustomFilter
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
-  renderVariantAttributes: (record: any) => any
+  renderVariantAttributes: RenderVariantAttributes
   variantDetailColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences: boolean
   variantExportNote?: string
