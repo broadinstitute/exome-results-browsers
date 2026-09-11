@@ -145,14 +145,16 @@ export type GeneResultColumnGroup = {
   color?: string
 }
 
-export type GeneResultColumnConfig = {
+export type GeneResultColumnConfig<RowType = any, ValueType = any> = {
+  // `key` is both for labeling the CSV export column, and for use in a lodash get call when not using the optional `accessor` prop to get data
   key: string
   heading?: React.ReactNode
   minWidth?: number
   tooltip?: string
   group?: GeneResultColumnGroup
-  render?: (record: any, row?: any) => React.ReactNode
-  renderForCSV?: (record: any, row?: any) => string | number
+  accessor?: (row: RowType) => ValueType
+  render?: (value: ValueType, row?: RowType) => React.ReactNode
+  renderForCSV?: (value: ValueType, row?: RowType) => string | number
 }
 
 export type GeneResultTabConfig = {
