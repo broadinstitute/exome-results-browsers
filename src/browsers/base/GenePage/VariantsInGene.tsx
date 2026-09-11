@@ -22,6 +22,7 @@ import {
   ConsequenceCategory,
   DatasetId,
   ReferenceGenome,
+  RenderVariantAttributes,
   VariantColumnConfig,
   VariantConsequenceCategoryLabels,
 } from '../Browser'
@@ -70,7 +71,7 @@ interface VariantsInGeneProps {
   variantConsequenceCategoryLabels: VariantConsequenceCategoryLabels
   variantCustomFilter: VariantCustomFilter
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
-  renderVariantAttributes: (record: any) => any
+  renderVariantAttributes: RenderVariantAttributes
   variantDetailColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences: boolean
   gene: Gene

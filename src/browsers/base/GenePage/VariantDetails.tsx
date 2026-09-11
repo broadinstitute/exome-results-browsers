@@ -7,7 +7,7 @@ import { BaseTable, ExternalLink, ListItem } from '@gnomad/ui'
 
 import { VariantAttribute, VariantAttributeList } from './VariantAttributes'
 import { renderExponentialIfSmall, VariantRow } from './variantTableColumns'
-import { ReferenceGenome, VariantColumnConfig } from '../Browser'
+import { ReferenceGenome, RenderVariantAttributes, VariantColumnConfig } from '../Browser'
 import { FilterState } from './VariantFilterControls'
 
 const VariantContainer = styled.div`
@@ -352,7 +352,7 @@ interface VariantDetailsProps {
   variantAnalysisGroupOptions: readonly string[]
   variantAnalysisGroupLabels: { [key: string]: string }
   variantResultColumns: VariantColumnConfig[]
-  renderVariantAttributes: (record: any) => any // TK: TODO: fixme: type better elsewhere and import
+  renderVariantAttributes: RenderVariantAttributes
   additionalVariantDetailSummaryColumns: VariantColumnConfig[] | undefined
   variantDetailColumns: VariantColumnConfig[] | undefined
   renderVariantTranscriptConsequences: boolean
@@ -515,7 +515,6 @@ const VariantDetails = ({
       heading: 'CES AF PD',
       render: (value) => renderExponentialIfSmall(value),
     },
-
   ]
 
   const allGP2CaseColumnGroups = Object.keys(filter.gp2VariantColumnGroups || [])
@@ -591,8 +590,11 @@ const VariantDetails = ({
             <VariantAttribute label="Consequence">{variant.consequence}</VariantAttribute>
             {renderVariantAttributes &&
               renderVariantAttributes(variant.info).map(
-                ({ label, content }: { label: string; content: any }) => (
-                  <VariantAttribute key={label} label={label}>
+                (
+                  { label, content }: { label: React.ReactNode; content: React.ReactNode },
+                  index
+                ) => (
+                  <VariantAttribute key={index} label={label}>
                     {content}
                   </VariantAttribute>
                 )

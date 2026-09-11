@@ -178,6 +178,11 @@ export type VariantCustomFilter = {
   applyFilter: (variants: any[], filterState: any) => any[]
 }
 
+// Receives a variant's `info` object, not the full variant row.
+export type RenderVariantAttributes<InfoType = any> = (
+  info: InfoType
+) => { label: React.ReactNode; content: React.ReactNode }[]
+
 type BrowserProps = {
   browserTitle?: string
   navBarBackgroundColor?: string
@@ -201,7 +206,7 @@ type BrowserProps = {
   variantConsequenceCategoryLabels?: VariantConsequenceCategoryLabels
   variantCustomFilter?: VariantCustomFilter
   variantDetailColumns?: VariantColumnConfig[]
-  renderVariantAttributes?: (record: any) => void
+  renderVariantAttributes?: RenderVariantAttributes
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences?: boolean
   getGeneNotFoundMessage?: (geneIdOrSymbol: string) => string | undefined
