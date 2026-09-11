@@ -33,6 +33,8 @@ jobs:
         run: yarn run lint:css
       - name: Typecheck
         run: yarn run typecheck
+      - name: Run tests
+        run: yarn run test
       - name: Build browsers
         run: yarn run build
   data-pipeline-checks:
