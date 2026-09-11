@@ -2,7 +2,6 @@
 !src
 src/server/public
 !babel.config.js
-!build.env
 !package.json
 !yarn.lock
 !tsconfig.json

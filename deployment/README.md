@@ -10,18 +10,8 @@ See [data_pipeline/WRITE_RESULTS_FILES.md](../data_pipeline/WRITE_RESULTS_FILES.
 
 ## Frontend/Backend Docker image
 
-The Docker build copies a `build.env` file and reads environment variables from it. Create the `build.env`
-file and fill in values for variables.
-
-```
-cat <<EOF > build.env
-DEMO_PASSWORD=
-EOF
-```
-
-Note that the `DEMO_PASSWORD` should be a string with no `""`s, if quotes are included, the password will include the quotes. e.g. `DEMO_PASSWORD="password"` would require a user to type `"password"` into the box, as opposed to just `password`.
-
-GA tracking IDs are hardcoded in `src/browsers/webpack.config.js` and do not need to be set in `build.env`.
+GA tracking IDs are hardcoded in `src/browsers/webpack.config.js`, and demo passwords are read at
+runtime from a kubernetes secret, see [Runtime environment variables](#runtime-environment-variables).
 
 **Build the Docker image. The build script tags the image with the current git revision.**
 

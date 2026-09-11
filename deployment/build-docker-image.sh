@@ -55,11 +55,6 @@ FULL_IMAGE_NAME="${IMAGE_REPO}:${FINAL_TAG}"
 DEPLOYMENT_DIR=$(dirname "$0")
 cd "${DEPLOYMENT_DIR}/.."
 
-if [ ! -f build.env ]; then
-  echo "'build.env' not found. Create it to build image." 1>&2
-  exit 1
-fi
-
 docker build . \
   --tag "${FULL_IMAGE_NAME}" \
   --tag "${IMAGE_REPO}:latest"

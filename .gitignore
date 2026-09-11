@@ -1,9 +1,6 @@
 # Dependencies
 node_modules
 
-# Build variables
-build.env
-
 # Build output
 src/server/public
 
