@@ -139,6 +139,7 @@ const getTableColumns = (geneResultColumns: GeneResultColumnConfig[]): GeneResul
     (column, index) => {
       const originalHeading = geneResultColumns[index].heading
       const csvHeading = typeof originalHeading === 'string' ? originalHeading : column.key
+      const getValue = column.accessor ?? ((row: any) => get(row, column.key))
 
       return {
         key: column.key,
@@ -149,12 +150,11 @@ const getTableColumns = (geneResultColumns: GeneResultColumnConfig[]): GeneResul
         minWidth: column.minWidth || 65,
         grow: 0,
         render: column.render
-          ? (row, key) => column.render!(get(row, key), row)
-          : (row, key) =>
-              renderFloatAsScientific({ value: get(row, key) as InputData, zeroValue: '0' }),
+          ? (row) => column.render!(getValue(row), row)
+          : (row) => renderFloatAsScientific({ value: getValue(row) as InputData, zeroValue: '0' }),
         renderForCSV: column.renderForCSV
-          ? (row, key) => column.renderForCSV!(get(row, key), row)
-          : (row, key) => get(row, key),
+          ? (row) => column.renderForCSV!(getValue(row), row)
+          : (row) => getValue(row),
       }
     }
   )
