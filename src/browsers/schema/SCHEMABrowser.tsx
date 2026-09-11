@@ -1,6 +1,10 @@
 import React from 'react'
 
-import ExomeResultsBrowser, { RenderVariantAttributes, VariantCustomFilter } from '../base/Browser'
+import ExomeResultsBrowser, {
+  RenderVariantAttributes,
+  VariantColumnConfig,
+  VariantCustomFilter,
+} from '../base/Browser'
 import GeneResultsManhattanPlot from '../base/GeneResultsPage/GeneResultsManhattanPlot'
 import GeneResultsQQPlot from '../base/GeneResultsPage/GeneResultsQQPlot'
 import { renderCount, renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
@@ -66,6 +70,34 @@ variantConsequences.splice(
 export const schemaAnalysisGroups = ['meta'] as const
 export type SCHEMAAnalysisGroup = typeof schemaAnalysisGroups[number]
 export const schemaDefaultAnalysisGroup: SCHEMAAnalysisGroup = 'meta'
+
+const schemaVariantNDeNovoColumn: VariantColumnConfig<SchemaVariantRow, number> = {
+  key: 'group_result.n_de_novo',
+  heading: 'No. de novos',
+  minWidth: 80,
+  type: 'int',
+  tooltip: 'Out of AC case, the number of genotypes determined to de novo in origin.',
+  accessor: (row) => row.group_result.n_de_novo,
+}
+
+const schemaVariantInAnalysisColumn: VariantColumnConfig<SchemaVariantRow, boolean> = {
+  key: 'group_result.in_analysis',
+  heading: 'In Analysis',
+  minWidth: 85,
+  tooltip:
+    'Was this variant included in the analysis. Must have MAC ≤ 5 and is either a PTV or MPC > 2 missense variant.',
+  type: 'boolean',
+  accessor: (row) => row.group_result.in_analysis,
+  render: (value) => (value ? 'yes' : ''),
+  renderForCSV: (value) => (value ? 'yes' : ''),
+  showOnDetails: false,
+  showOnGenePage: true,
+}
+
+const schemaVariantResultColumns: VariantColumnConfig<SchemaVariantRow>[] = [
+  schemaVariantNDeNovoColumn,
+  schemaVariantInAnalysisColumn,
+]
 
 const schemaVariantCustomFilter: VariantCustomFilter<SchemaVariantRow> = {
   component: SCHEMAVariantFilter,
@@ -289,27 +321,7 @@ const SCHEMABrowser = () => (
     ]}
     variantAnalysisGroupOptions={schemaAnalysisGroups}
     defaultVariantAnalysisGroup={schemaDefaultAnalysisGroup}
-    variantResultColumns={[
-      {
-        key: 'group_result.n_de_novo',
-        heading: 'No. de novos',
-        minWidth: 80,
-        type: 'int',
-        tooltip: 'Out of AC case, the number of genotypes determined to de novo in origin.',
-      },
-      {
-        key: 'group_result.in_analysis',
-        heading: 'In Analysis',
-        minWidth: 85,
-        tooltip:
-          'Was this variant included in the analysis. Must have MAC ≤ 5 and is either a PTV or MPC > 2 missense variant.',
-        type: 'boolean',
-        render: (value) => (value ? 'yes' : ''),
-        renderForCSV: (value) => (value ? 'yes' : ''),
-        showOnDetails: false,
-        showOnGenePage: true,
-      },
-    ]}
+    variantResultColumns={schemaVariantResultColumns}
     variantConsequences={variantConsequences}
     variantConsequenceCategoryLabels={{
       lof: 'PTV',
