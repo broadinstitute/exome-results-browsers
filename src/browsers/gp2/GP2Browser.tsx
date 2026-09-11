@@ -1,5 +1,6 @@
 import React from 'react'
 
+// @ts-expect-error: no types in this @gnomad/ui version
 import { ExternalLink, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 
 import Browser, { GeneResultColumnConfig } from '../base/Browser'

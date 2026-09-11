@@ -51,7 +51,7 @@ interface GenePageProps {
   gene: IndividualGeneAPIResponse
   defaultVariantAnalysisGroup: string
   variantAnalysisGroupLabels?: Record<string, string>
-  variantAnalysisGroupOptions: string[]
+  variantAnalysisGroupOptions: readonly string[]
   variantSortKey?: string
   variantSortOrder?: SortOrder
   variantConsequences: VariantConsequence[]
@@ -195,7 +195,7 @@ interface GenePageContainerProps {
   geneIdOrSymbol: string
   browserTitle: string
   defaultVariantAnalysisGroup: string
-  variantAnalysisGroupOptions: string[]
+  variantAnalysisGroupOptions: readonly string[]
   variantConsequences: VariantConsequence[]
   variantResultColumns: VariantColumnConfig[]
   getGeneNotFoundMessage?: (geneIdOrSymbol: string) => string | undefined

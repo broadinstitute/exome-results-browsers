@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
+// @ts-expect-error: no types in this @gnomad/ui version
 import { BaseTable } from '@gnomad/ui'
 import { ASCGeneAnalysisGroup } from './ASCBrowser'
 import { renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
