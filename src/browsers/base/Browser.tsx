@@ -182,10 +182,10 @@ export type VariantColumnConfig = {
 // to pull in this whole module's import graph, which has dataset-config side effects).
 export * from './variantCategories'
 
-export type VariantCustomFilter = {
+export type VariantCustomFilter<RowType = any> = {
   component: React.ElementType
   defaultFilter: any
-  applyFilter: (variants: any[], filterState: any) => any[]
+  applyFilter: (variants: RowType[], filterState: any) => RowType[]
 }
 
 export type VariantLollipopTrack = {
