@@ -25,6 +25,7 @@ type DownloadConfig = {
 
 const DOWNLOAD_URLS: Partial<Record<DownloadDatasetId, DownloadConfig>> = {
   ASC: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/ASC`, filePrefix: 'ASC' },
+  BipEx: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/BipEx`, filePrefix: 'BipEx' },
   BipEx2: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-06-24/BipEx2`, filePrefix: 'BipEx2' },
   Epi25: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2022-12-01/Epi25`, filePrefix: 'Epi25' },
   SCHEMA: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-08-07/SCHEMA`, filePrefix: 'SCHEMA' },
@@ -95,15 +96,16 @@ const DatasetDownloads = ({ datasetId, isMainDataset = false }: DatasetDownloads
   )
 }
 
+const datasetsWithDownloadsById = new Set(Object.keys(DOWNLOAD_URLS))
+
 export default () => {
-  const datasetsWithoutDownloads: DownloadDatasetId[] = ['GP2', 'IBD', 'ClinVarGRCh38']
   return (
     <InfoPage title="Downloads">
       <DatasetDownloads datasetId={datasetConfig.datasetId} isMainDataset={true} />
 
       <h2>Other Studies</h2>
       {otherDatasets
-        .filter((otherDatasetId) => !datasetsWithoutDownloads.includes(otherDatasetId))
+        .filter((otherDatasetId) => datasetsWithDownloadsById.has(otherDatasetId))
         .map((otherDatasetId) => {
           return (
             <React.Fragment key={otherDatasetId}>
