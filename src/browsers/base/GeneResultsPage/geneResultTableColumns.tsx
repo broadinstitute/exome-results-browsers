@@ -129,20 +129,23 @@ const baseColumns: GeneResultTableColumn[] = [
 ]
 
 const getTableColumns = (geneResultColumns: GeneResultColumnConfig[]): GeneResultTableColumn[] => {
-  const resultColumns: GeneResultTableColumn[] = geneResultColumns.map((column) => ({
-    key: column.key,
-    heading: column.heading || column.key,
-    tooltip: column.tooltip,
-    isSortable: true,
-    minWidth: column.minWidth || 65,
-    grow: 0,
-    render: column.render
-      ? (row, key) => column.render!(get(row, key), row)
-      : (row, key) => renderFloatAsScientific({ value: (get(row, key) as InputData), zeroValue: '0' }),
-    renderForCSV: column.renderForCSV
-      ? (row, key) => column.renderForCSV!(get(row, key), row)
-      : (row, key) => get(row, key),
-  }))
+  const resultColumns: GeneResultTableColumn[] = geneResultColumns.map((column) => {
+    const getValue = column.accessor ?? ((row: any) => get(row, column.key))
+    return {
+      key: column.key,
+      heading: column.heading || column.key,
+      tooltip: column.tooltip,
+      isSortable: true,
+      minWidth: column.minWidth || 65,
+      grow: 0,
+      render: column.render
+        ? (row) => column.render!(getValue(row), row)
+        : (row) => renderFloatAsScientific({ value: getValue(row) as InputData, zeroValue: '0' }),
+      renderForCSV: column.renderForCSV
+        ? (row) => column.renderForCSV!(getValue(row), row)
+        : (row) => getValue(row),
+    }
+  })
 
   return [...baseColumns, ...resultColumns]
 }
