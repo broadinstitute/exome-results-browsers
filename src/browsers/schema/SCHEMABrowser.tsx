@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ExomeResultsBrowser from '../base/Browser'
+import ExomeResultsBrowser, { RenderVariantAttributes, VariantCustomFilter } from '../base/Browser'
 import GeneResultsManhattanPlot from '../base/GeneResultsPage/GeneResultsManhattanPlot'
 import GeneResultsQQPlot from '../base/GeneResultsPage/GeneResultsQQPlot'
 import { renderCount, renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
@@ -10,6 +10,7 @@ import SCHEMAAboutPage from './SCHEMAAboutPage'
 import SCHEMAHomePage from './SCHEMAHomePage'
 import SCHEMATermsPage from './SCHEMATermsPage'
 import SCHEMAVariantFilter from './SCHEMAVariantFilter'
+import { SchemaVariantInfo, SchemaVariantRow } from './schemaVariantTypes'
 
 const variantConsequences = [...vepConsequences]
 variantConsequences.splice(
@@ -65,6 +66,38 @@ variantConsequences.splice(
 export const schemaAnalysisGroups = ['meta'] as const
 export type SCHEMAAnalysisGroup = typeof schemaAnalysisGroups[number]
 export const schemaDefaultAnalysisGroup: SCHEMAAnalysisGroup = 'meta'
+
+const schemaVariantCustomFilter: VariantCustomFilter<SchemaVariantRow> = {
+  component: SCHEMAVariantFilter,
+  defaultFilter: {
+    onlyInAnalysis: false,
+    onlyDeNovo: false,
+  },
+  applyFilter: (variants, { onlyDeNovo, onlyInAnalysis }) => {
+    let filteredVariants = variants
+    if (onlyDeNovo) {
+      filteredVariants = filteredVariants.filter((v) => v.group_result.n_de_novo > 0)
+    }
+    if (onlyInAnalysis) {
+      filteredVariants = filteredVariants.filter((v) => v.group_result.in_analysis)
+    }
+    return filteredVariants
+  },
+}
+
+const renderSchemaVariantAttributes: RenderVariantAttributes<SchemaVariantInfo> = ({
+  misrank_percentile: misrankPercentile,
+  mpc,
+  alpha_missense: alphaMissense,
+  misfit_s: misfitS,
+  pop_eve: popEve,
+}) => [
+  { label: 'MisRank Percentile', content: misrankPercentile === null ? '–' : misrankPercentile },
+  { label: 'MPC', content: mpc === null ? '–' : mpc },
+  { label: 'AlphaMissense', content: alphaMissense === null ? '–' : alphaMissense },
+  { label: 'MisFit S', content: misfitS === null ? '–' : misfitS },
+  { label: 'PopEVE', content: popEve === null ? '–' : popEve },
+]
 
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
@@ -284,39 +317,8 @@ const SCHEMABrowser = () => (
       synonymous: 'Synonymous',
       other: 'Other',
     }}
-    variantCustomFilter={{
-      component: SCHEMAVariantFilter,
-      defaultFilter: {
-        onlyInAnalysis: false,
-        onlyDeNovo: false,
-      },
-      applyFilter: (variants, { onlyDeNovo, onlyInAnalysis }) => {
-        let filteredVariants = variants
-        if (onlyDeNovo) {
-          filteredVariants = filteredVariants.filter((v) => v.group_result.n_de_novo > 0)
-        }
-        if (onlyInAnalysis) {
-          filteredVariants = filteredVariants.filter((v) => v.group_result.in_analysis)
-        }
-        return filteredVariants
-      },
-    }}
-    renderVariantAttributes={({
-      misrank_percentile: misrankPercentile,
-      mpc,
-      alpha_missense: alphaMissense,
-      misfit_s: misfitS,
-      pop_eve: popEve,
-    }) => [
-        {
-          label: 'MisRank Percentile',
-          content: misrankPercentile === null ? '–' : misrankPercentile,
-        },
-        { label: 'MPC', content: mpc === null ? '–' : mpc },
-        { label: 'AlphaMissense', content: alphaMissense === null ? '–' : alphaMissense },
-        { label: 'MisFit S', content: misfitS === null ? '–' : misfitS },
-        { label: 'PopEVE', content: popEve === null ? '–' : popEve },
-      ]}
+    variantCustomFilter={schemaVariantCustomFilter}
+    renderVariantAttributes={renderSchemaVariantAttributes}
   />
 )
 
