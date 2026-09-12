@@ -13,6 +13,7 @@ import {
   renderStringOrFloatPvalueAsScientific,
 } from '../base/tableCells'
 import { SCHEMAAnalysisGroup } from './SCHEMABrowser'
+import { SchemaGeneResult } from './schemaGeneTypes'
 
 const Table = styled(BaseTable)`
   min-width: 325px;
@@ -24,42 +25,6 @@ const safeRenderCount = (value: number | null | undefined) => {
   }
 
   return value
-}
-
-type SchemaGeneResult = {
-  ptv_case_carrier: number
-  ptv_control_carrier: number
-  ptv_p_value: number
-  ptv_odds_ratio: string
-  ptv_odds_ratio_95_ci: string
-
-  ptv_mis_case_carrier: number
-  ptv_mis_control_carrier: number
-  ptv_mis_p_value: number
-  ptv_mis_odds_ratio: string
-  ptv_mis_odds_ratio_95_ci: string
-
-  mis_case_carrier: number
-  mis_control_carrier: number
-  mis_p_value: number
-  mis_odds_ratio: string
-  mis_odds_ratio_95_ci: string
-
-  syn_case_carrier: number
-  syn_control_carrier: number
-  syn_p_value: number
-  syn_odds_ratio: string
-  syn_odds_ratio_95_ci: string
-
-  ptv_n_de_novo: number
-  ptv_mis_n_de_novo: number
-
-  n_de_novo_p_value: number
-  case_control_plus_de_novo_p_value: number
-  schema_case_control_p_value: number
-
-  n_cases: number
-  n_controls: number
 }
 
 interface SchemaGeneResultProps {
