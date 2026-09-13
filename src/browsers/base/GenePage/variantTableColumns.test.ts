@@ -25,6 +25,7 @@ const buildTableColumn = (variantResultColumns: VariantColumnConfig[]) => {
   }
 
   const [column] = getVariantTableColumns({
+    datasetId: 'SCHEMA',
     variantResultColumns,
     filter: DEFAULT_FILTER,
   }).filter((c) => variantResultColumns.some((r) => r.key === c.key))

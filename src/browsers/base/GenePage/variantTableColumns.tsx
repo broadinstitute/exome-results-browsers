@@ -507,18 +507,18 @@ const gp2StatColumns: VariantTableColumn[] = [
 ]
 
 type GetVariantTableColumnsProps = {
+  datasetId: string
   variantResultColumns: VariantColumnConfig[]
   filter: FilterState
   variantCategoryOptions?: VariantCategoryOption[]
 }
 
 const getVariantTableColumns = ({
+  datasetId,
   variantResultColumns,
   filter,
   variantCategoryOptions = DEFAULT_VARIANT_CATEGORY_OPTIONS,
 }: GetVariantTableColumnsProps): VariantTableColumn[] => {
-  const { datasetId } = window.datasetConfig
-
   const categoryColors = Object.fromEntries(
     variantCategoryOptions.map((option) => [option.id, option.color])
   )
