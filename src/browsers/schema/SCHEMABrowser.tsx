@@ -230,7 +230,7 @@ const synOddsRatioColumn: GeneResultColumnConfig<SchemaGeneRow, string> = {
   render: (value) => renderOddsRatio({ value: value }),
 }
 
-const schemaGeneResultColumns: GeneResultColumnConfig<SchemaGeneRow, any>[] = [
+export const schemaGeneResultColumns: GeneResultColumnConfig<SchemaGeneRow, any>[] = [
   schemaCaseControlPValueColumn,
   ptvCaseCarrierColumn,
   ptvControlCarrierColumn,

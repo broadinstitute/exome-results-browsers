@@ -53,7 +53,7 @@ interface GeneResultsPageProps {
   tabs?: GeneResultTabConfig[]
 }
 
-const GeneResultsPage = ({
+export const GeneResultsPage = ({
   browserTitle,
   analysisGroupOptions,
   defaultAnalysisGroup,
