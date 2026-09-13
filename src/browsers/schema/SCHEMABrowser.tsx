@@ -8,7 +8,11 @@ import ExomeResultsBrowser, {
 } from '../base/Browser'
 import GeneResultsManhattanPlot from '../base/GeneResultsPage/GeneResultsManhattanPlot'
 import GeneResultsQQPlot from '../base/GeneResultsPage/GeneResultsQQPlot'
-import { renderCount, renderOddsRatio, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import {
+  renderCount,
+  renderOddsRatio,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 import vepConsequences from '../base/vepConsequences'
 
 import SCHEMAAboutPage from './SCHEMAAboutPage'
@@ -268,7 +272,7 @@ const schemaVariantInAnalysisColumn: VariantColumnConfig<SchemaVariantRow, boole
   showOnGenePage: true,
 }
 
-const schemaVariantResultColumns: VariantColumnConfig<SchemaVariantRow>[] = [
+export const schemaVariantResultColumns: VariantColumnConfig<SchemaVariantRow>[] = [
   schemaVariantNDeNovoColumn,
   schemaVariantInAnalysisColumn,
 ]
@@ -291,19 +295,19 @@ const schemaVariantCustomFilter: VariantCustomFilter<SchemaVariantRow> = {
   },
 }
 
-const renderSchemaVariantAttributes: RenderVariantAttributes<SchemaVariantInfo> = ({
+export const renderSchemaVariantAttributes: RenderVariantAttributes<SchemaVariantInfo> = ({
   misrank_percentile: misrankPercentile,
   mpc,
   alpha_missense: alphaMissense,
   misfit_s: misfitS,
   pop_eve: popEve,
 }) => [
-    { label: 'MisRank Percentile', content: misrankPercentile === null ? '–' : misrankPercentile },
-    { label: 'MPC', content: mpc === null ? '–' : mpc },
-    { label: 'AlphaMissense', content: alphaMissense === null ? '–' : alphaMissense },
-    { label: 'MisFit S', content: misfitS === null ? '–' : misfitS },
-    { label: 'PopEVE', content: popEve === null ? '–' : popEve },
-  ]
+  { label: 'MisRank Percentile', content: misrankPercentile === null ? '–' : misrankPercentile },
+  { label: 'MPC', content: mpc === null ? '–' : mpc },
+  { label: 'AlphaMissense', content: alphaMissense === null ? '–' : alphaMissense },
+  { label: 'MisFit S', content: misfitS === null ? '–' : misfitS },
+  { label: 'PopEVE', content: popEve === null ? '–' : popEve },
+]
 
 const SCHEMABrowser = () => (
   <ExomeResultsBrowser
