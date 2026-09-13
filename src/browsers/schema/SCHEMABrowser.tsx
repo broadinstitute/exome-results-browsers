@@ -277,7 +277,7 @@ export const schemaVariantResultColumns: VariantColumnConfig<SchemaVariantRow>[]
   schemaVariantInAnalysisColumn,
 ]
 
-const schemaVariantCustomFilter: VariantCustomFilter<SchemaVariantRow> = {
+export const schemaVariantCustomFilter: VariantCustomFilter<SchemaVariantRow> = {
   component: SCHEMAVariantFilter,
   defaultFilter: {
     onlyInAnalysis: false,

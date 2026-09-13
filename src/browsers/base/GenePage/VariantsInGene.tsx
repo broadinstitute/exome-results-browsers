@@ -98,7 +98,7 @@ const defaultGP2IncludedColumns = {
   msa: true,
 }
 
-class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState> {
+export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState> {
   static defaultProps = {
     variantAnalysisGroupLabels: {},
     variantConsequenceCategoryLabels: undefined,
