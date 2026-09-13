@@ -172,7 +172,7 @@ const defaultASC2IncludedColumns = {
   caseControl: true,
 }
 
-class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState> {
+export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState> {
   static defaultProps = {
     variantAnalysisGroupLabels: {},
     variantCategoryOptions: DEFAULT_VARIANT_CATEGORY_OPTIONS,
