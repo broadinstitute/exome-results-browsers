@@ -408,6 +408,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
     currentFilter: FilterState
   ): VariantRow[] => {
     const tableColumns = getVariantTableColumns({
+      datasetId: this.props.datasetId,
       variantResultColumns: variantResultColumns,
       filter: currentFilter,
       variantCategoryOptions: this.props.variantCategoryOptions,
@@ -484,6 +485,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
           .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
 
     const currentTableColumns = getVariantTableColumns({
+      datasetId,
       variantResultColumns,
       filter,
       variantCategoryOptions,
@@ -587,6 +589,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
             }}
           >
             <VariantDetails
+              datasetId={datasetId}
               defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
               referenceGenome={gene.reference_genome}
               variant={selectedVariant}
