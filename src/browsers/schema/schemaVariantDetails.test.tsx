@@ -10,11 +10,6 @@ import {
   schemaVariantResultColumns,
 } from './SCHEMABrowser'
 import { schemaVariantInfoFactory, schemaVariantRowFactory } from './schemaVariantTypes.factory'
-import { buildWindowDatasetConfig } from '../testUtils/buildWindowDatasetConfig'
-
-beforeEach(() => {
-  window.datasetConfig = buildWindowDatasetConfig('SCHEMA')
-})
 
 describe('SCHEMA variant modal (VariantDetails)', () => {
   it('renders the SCHEMA-specific variant attributes from renderSchemaVariantAttributes', () => {
@@ -24,6 +19,7 @@ describe('SCHEMA variant modal (VariantDetails)', () => {
 
     render(
       <VariantDetails
+        datasetId="SCHEMA"
         defaultVariantAnalysisGroup={schemaDefaultAnalysisGroup}
         referenceGenome="GRCh37"
         variant={(variant as unknown) as VariantRow}
