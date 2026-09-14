@@ -18,8 +18,7 @@ RUN yarn install --production false --frozen-lockfile && yarn cache clean
 # Copy frontend source, build it
 COPY --chown=node:node babel.config.js .
 COPY --chown=node:node src/browsers ./src/browsers
-COPY --chown=node:node build.env .
-RUN set -a && . ./build.env && set +a && yarn run build
+RUN yarn run build
 
 # Copy server source, transpile TS to JS
 COPY --chown=node:node src/server ./src/server
@@ -47,8 +46,5 @@ COPY --chown=node:node --from=build /home/node/app/src/server/public ./public
 # Copy the JS backend from build stage
 COPY --chown=node:node --from=build /home/node/app/dist/server ./
 
-# Copy build environment variables
-COPY --chown=node:node build.env .
-
 # Run
-CMD ["/bin/sh", "-c", "export $(grep -v '^#' build.env | xargs) && exec node server.js"]
+CMD ["node", "server.js"]

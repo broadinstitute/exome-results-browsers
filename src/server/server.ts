@@ -163,21 +163,38 @@ const metadata = JSON.parse(
   fs.readFileSync(path.join(config.dataDirectory, 'metadata.json'), { encoding: 'utf8' })
 )
 
-// In development, serve the browser specified by the BROWSER environment variable.
-// In production, determine the browser/dataset to show based on the subdomain.
-let getDatasetForRequest: any
+const datasetNames: string[] = Object.keys(metadata.datasets)
 
-if (isDevelopment) {
-  const devDataset = Object.keys(metadata.datasets).find(
-    (dataset) => dataset.toLowerCase() === process.env.BROWSER!.toLowerCase()
-  )
-  getDatasetForRequest = () => devDataset
+// A deployment can pin itself to a single dataset with the DATASET environment variable. Demo
+// deployments use this, since they are not served from the per-dataset subdomains that production
+// relies on. In development, BROWSER already names the dataset to serve, so it does the same job.
+// Without either, the dataset is determined by the subdomain.
+const pinnedDataset = process.env.DATASET || (isDevelopment ? process.env.BROWSER : undefined)
+
+if (pinnedDataset && !datasetNames.includes(pinnedDataset)) {
+  throw Error(`Unknown dataset "${pinnedDataset}". Choose one of ${datasetNames.join(', ')}`)
+}
+
+let getDatasetForRequest: (req: express.Request) => string | undefined
+
+// A pinned deployment is a demo, and a demo is always behind a password. It comes from
+// DATASET_PASSWORDS, a JSON object of dataset name to password supplied by a kubernetes secret.
+let demoPassword: string | undefined
+
+if (pinnedDataset) {
+  demoPassword = JSON.parse(process.env.DATASET_PASSWORDS || '{}')[pinnedDataset]
+
+  if (!demoPassword && !isDevelopment) {
+    throw Error(`DATASET_PASSWORDS has no password for the pinned dataset "${pinnedDataset}"`)
+  }
+
+  getDatasetForRequest = () => pinnedDataset
 } else {
   const subdomainOverrides: Record<string, string> = {
     ibdseq: 'IBD',
   }
 
-  const datasetBySubdomain: Record<string, string> = Object.keys(metadata.datasets).reduce(
+  const datasetBySubdomain: Record<string, string> = datasetNames.reduce(
     (acc, dataset) => ({
       ...acc,
       [dataset.toLowerCase()]: dataset,
@@ -191,42 +208,26 @@ if (isDevelopment) {
 // Authentication Endpoints
 // ================================================================================================
 
-const PASSWORD_PROTECTED_DATASETS = ['BipEx2']
-
-const CORRECT_PASSWORD = process.env.DEMO_PASSWORD
-  ? // Remove the ""s from development env var with a regex
-    process.env.DEMO_PASSWORD.replace(/^"|"$/g, '') || 'password'
-  : 'password'
-
 const activeTokens = new Set()
 
 app.post('/api/auth', (req: Request, res: Response) => {
   const { password } = req.body
 
-  let dataset: any
-  try {
-    dataset = getDatasetForRequest(req)
-  } catch (err) {} // eslint-disable-line no-empty
-
-  if (!dataset) {
-    res.status(500).json({ message: 'Unknown dataset' })
+  if (!demoPassword) {
+    return res.json({ success: true, token: 'not-required' })
   }
 
-  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset!)) {
-    res.json({ success: true, token: 'not-required' })
-  }
-
-  if (password === CORRECT_PASSWORD) {
+  if (password === demoPassword) {
     const token = Math.random().toString(36).substring(2, 15)
     activeTokens.add(token)
     res.setHeader(
       'Set-Cookie',
       `authToken=${token}; Path=/; Max-Age=${60 * 60 * 24}; SameSite=Strict`
     )
-    res.json({ success: true })
-  } else {
-    res.status(401).json({ success: false, message: 'Invalid password' })
+    return res.json({ success: true })
   }
+
+  return res.status(401).json({ success: false, message: 'Invalid password' })
 })
 
 app.post('/api/logout', (req: Request, res: Response) => {
@@ -241,24 +242,11 @@ app.post('/api/logout', (req: Request, res: Response) => {
 app.post('/api/check-auth', (req: Request, res: Response) => {
   const { token } = req.body
 
-  let dataset: any
-  try {
-    dataset = getDatasetForRequest(req)
-  } catch (err) {} // eslint-disable-line no-empty
-
-  if (!dataset) {
-    res.status(500).json({ message: 'Unknown dataset' })
+  if (!demoPassword) {
+    return res.json({ authenticated: true })
   }
 
-  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset!)) {
-    res.json({ authenticated: true })
-  }
-
-  if (token && activeTokens.has(token)) {
-    res.json({ authenticated: true })
-  } else {
-    res.json({ authenticated: false })
-  }
+  return res.json({ authenticated: Boolean(token && activeTokens.has(token)) })
 })
 
 // ================================================================================================
@@ -269,7 +257,7 @@ const allowedQueryParamDatasets = ['ClinVarGRCh38']
 
 // Store dataset on request object so other route handlers can use it.
 app.use('/', (req: Request, res: Response, next: NextFunction) => {
-  let dataset: any
+  let dataset: string | undefined
   try {
     if (
       req.query.dataset &&
@@ -283,12 +271,12 @@ app.use('/', (req: Request, res: Response, next: NextFunction) => {
   } catch (err) {} // eslint-disable-line no-empty
 
   if (!dataset) {
-    res.status(500).json({ message: 'Unknown dataset' })
+    return res.status(500).json({ message: 'Unknown dataset' })
   }
 
   req.dataset = dataset
 
-  if (!PASSWORD_PROTECTED_DATASETS.includes(dataset!)) {
+  if (!demoPassword) {
     return next()
   }
 
@@ -337,6 +325,7 @@ const getDatasetConfigJs = (dataset: string) => {
       }),
       ...metadata,
       ...metadata.datasets?.[dataset],
+      pinnedDataset: pinnedDataset ?? null,
     }
 
     datasetConfig[dataset] = `window.datasetConfig = ${JSON.stringify(datasetMetadata)}`

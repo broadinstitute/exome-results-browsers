@@ -10,18 +10,8 @@ See [data_pipeline/WRITE_RESULTS_FILES.md](../data_pipeline/WRITE_RESULTS_FILES.
 
 ## Frontend/Backend Docker image
 
-The Docker build copies a `build.env` file and reads environment variables from it. Create the `build.env`
-file and fill in values for variables.
-
-```
-cat <<EOF > build.env
-DEMO_PASSWORD=
-EOF
-```
-
-Note that the `DEMO_PASSWORD` should be a string with no `""`s, if quotes are included, the password will include the quotes. e.g. `DEMO_PASSWORD="password"` would require a user to type `"password"` into the box, as opposed to just `password`.
-
-GA tracking IDs are hardcoded in `src/browsers/webpack.config.js` and do not need to be set in `build.env`.
+GA tracking IDs are hardcoded in `src/browsers/webpack.config.js`, and demo passwords are read at
+runtime from a kubernetes secret, see [Runtime environment variables](#runtime-environment-variables).
 
 **Build the Docker image. The build script tags the image with the current git revision.**
 
@@ -51,11 +41,19 @@ To manage deployments, run the following commands from the `gnomad-deployments` 
 
 Deployments are primarily updated by updating the docker image for any change in the app running in deployment, or by updating the persistent disk to update the data that serves the deployent.
 
+### Runtime environment variables
+
+Set on the container in `gnomad-deployments`, and read by the server when it starts.
+
+- `DATASET` - pins a deployment to a single dataset, e.g. `BipEx2`. Demo deployments use this because they are not served from a per-dataset subdomain. Leave it unset in production, where the subdomain determines the dataset. The name is case sensitive, and the server refuses to start if it is not one of the datasets in the deployment's results data.
+
+- `DATASET_PASSWORDS` - JSON object of dataset name to demo password, e.g. `{"BipEx2":"somepassword"}`, supplied by a kubernetes secret. A pinned deployment is always password protected, so the server refuses to start if the object has no entry for its `DATASET`. A deployment routing by subdomain is never password protected, and does not need an entry.
+
 ### Updating/Creating a demo deployment
 
 Demo deployments for exome results browsers are workload on the `exac-gnomad` kubernetes cluster that gnomAD exists on. Creating new demo deployments, or updating existing ones is done by creating or updating kustomization files with new resources, and applying the updates.
 
-If creating a new demo, create a new directory in the `exome-results-browsers` dir. Use the existing `demo` directory as a template. Since production manages API responses by dataset using subdomains, demos currently require manually setting this dataset in the API, and creating a seperate demo deployment per running demo.
+If creating a new demo, create a new directory in the `exome-results-browsers` dir. Use the existing `demo` directory as a template. Since production manages API responses by dataset using subdomains, and demos are not served from those subdomains, each demo pins itself to one dataset with the `DATASET` environment variable, and a separate demo deployment is needed per running demo. The dataset being configuration rather than code, a demo can run the same image Cloud Build pushes from `main`.
 
 See: https://github.com/broadinstitute/exome-results-browsers/pull/155 for sample app changes
 See: https://github.com/broadinstitute/gnomad-deployments/pull/32 for the corresponding deployment PR
