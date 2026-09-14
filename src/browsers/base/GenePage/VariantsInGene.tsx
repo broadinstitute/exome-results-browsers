@@ -98,7 +98,7 @@ const defaultGP2IncludedColumns = {
   msa: true,
 }
 
-class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState> {
+export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState> {
   static defaultProps = {
     variantAnalysisGroupLabels: {},
     variantConsequenceCategoryLabels: undefined,
@@ -337,6 +337,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
     currentFilter: FilterState
   ): VariantRow[] => {
     const tableColumns = getVariantTableColumns({
+      datasetId: this.props.datasetId,
       variantResultColumns: variantResultColumns,
       filter: currentFilter,
     })
@@ -410,6 +411,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
             .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
 
     const currentTableColumns = getVariantTableColumns({
+      datasetId,
       variantResultColumns,
       filter,
     })
@@ -481,6 +483,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
             }}
           >
             <VariantDetails
+              datasetId={datasetId}
               defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
               referenceGenome={gene.reference_genome}
               variant={selectedVariant}

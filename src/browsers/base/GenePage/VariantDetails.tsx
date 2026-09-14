@@ -346,6 +346,7 @@ const renderExponential = (num: number | null | undefined, precision = 3): strin
 }
 
 interface VariantDetailsProps {
+  datasetId: string
   defaultVariantAnalysisGroup: string
   referenceGenome: ReferenceGenome
   variant: VariantRow
@@ -360,6 +361,7 @@ interface VariantDetailsProps {
 }
 
 const VariantDetails = ({
+  datasetId,
   defaultVariantAnalysisGroup,
   referenceGenome,
   variant: inputVariant,
@@ -372,8 +374,6 @@ const VariantDetails = ({
   renderVariantTranscriptConsequences,
   filter,
 }: VariantDetailsProps) => {
-  const { datasetId } = window.datasetConfig
-
   const defaultGroupResult = inputVariant.group_results[defaultVariantAnalysisGroup]
   // Select default analysis group so that column render methods work correctly
   const variant = { ...inputVariant, group_result: defaultGroupResult }

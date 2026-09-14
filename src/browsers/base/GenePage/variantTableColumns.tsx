@@ -509,16 +509,16 @@ const gp2StatColumns: VariantTableColumn[] = [
 ]
 
 type GetVariantTableColumnsProps = {
+  datasetId: string
   variantResultColumns: VariantColumnConfig[]
   filter: FilterState
 }
 
 const getVariantTableColumns = ({
+  datasetId,
   variantResultColumns,
   filter,
 }: GetVariantTableColumnsProps): VariantTableColumn[] => {
-  const { datasetId } = window.datasetConfig
-
   const datasetColumns = [...variantDescriptionColumns]
 
   if (datasetId === 'GP2') {
