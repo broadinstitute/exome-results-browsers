@@ -23,7 +23,7 @@ const NumberCell = styled.span`
 export type InputData = number | string | null | undefined
 
 // generic type for a float that could be non-finite
-export type EncodedFloat = number | 'NaN' | 'Infinity' | '-Infinity' | null | undefined
+export type EncodedFloat = number | 'NaN' | 'Infinity' | '-Infinity' | null
 
 export const renderOddsRatio = ({
   value,
