@@ -147,17 +147,19 @@ export type GeneResultTabConfig = {
   render: (record: GeneRow[]) => React.ReactNode
 }
 
-export type VariantColumnConfig = {
+export type VariantColumnConfig<RowType = any, ValueType = any> = {
+  // `key` is both for labeling the CSV export column, and for use in a lodash get call when not using the optional `accessor` prop to get data
   key: string
   heading?: string
   minWidth?: number
   tooltip?: string
-  render?: (record: any) => React.ReactNode
-  renderForCSV?: (record: any) => string | number
+  accessor?: (row: RowType) => ValueType
+  render?: (value: ValueType) => React.ReactNode
+  renderForCSV?: (value: ValueType) => string | number
   showOnGenePage?: boolean
   showOnDetails?: boolean
   isSortable?: boolean
-  sortFunction?: (a: any, b: any) => number
+  sortFunction?: (a: ValueType, b: ValueType) => number
   sortKey?: string
   type?: string
 }
@@ -172,11 +174,16 @@ export interface VariantConsequence {
 
 export type VariantConsequenceCategoryLabels = Record<ConsequenceCategory, string>
 
-export type VariantCustomFilter = {
+export type VariantCustomFilter<RowType = any> = {
   component: React.ElementType
   defaultFilter: any
-  applyFilter: (variants: any[], filterState: any) => any[]
+  applyFilter: (variants: RowType[], filterState: any) => RowType[]
 }
+
+// Receives a variant's `info` object, not the full variant row.
+export type RenderVariantAttributes<InfoType = any> = (
+  info: InfoType
+) => { label: React.ReactNode; content: React.ReactNode }[]
 
 type BrowserProps = {
   browserTitle?: string
@@ -201,7 +208,7 @@ type BrowserProps = {
   variantConsequenceCategoryLabels?: VariantConsequenceCategoryLabels
   variantCustomFilter?: VariantCustomFilter
   variantDetailColumns?: VariantColumnConfig[]
-  renderVariantAttributes?: (record: any) => void
+  renderVariantAttributes?: RenderVariantAttributes
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences?: boolean
   getGeneNotFoundMessage?: (geneIdOrSymbol: string) => string | undefined

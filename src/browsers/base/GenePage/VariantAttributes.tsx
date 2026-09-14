@@ -16,8 +16,8 @@ const VariantAttributeListItem = styled.div`
 `
 
 interface VariantAttributeProps {
-  children?: React.ReactNode | null,
-  label: string,
+  children?: React.ReactNode | null
+  label: React.ReactNode
 }
 
 export const VariantAttribute = ({ children = null, label }: VariantAttributeProps) => {
@@ -30,8 +30,8 @@ export const VariantAttribute = ({ children = null, label }: VariantAttributePro
 }
 
 interface VariantAttributeListProps {
-  children: React.ReactNode,
-  label: string,
+  children: React.ReactNode
+  label: string
 }
 
 export const VariantAttributeList = ({ children, label }: VariantAttributeListProps) => {

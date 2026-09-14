@@ -76,8 +76,7 @@ interface Variant {
   variant_id: string
 }
 
-const renderNumberCell = (row: VariantRow, key: string): string => {
-  const number = get(row, key)
+const formatNumberCell = (number: any): string => {
   if (number === null || number === undefined) {
     return ''
   }
@@ -87,6 +86,8 @@ const renderNumberCell = (row: VariantRow, key: string): string => {
   }
   return truncated.toString()
 }
+
+const renderNumberCell = (row: VariantRow, key: string): string => formatNumberCell(get(row, key))
 
 const renderExponentialNumberCell = (row: VariantRow, key: string): string => {
   const number = get(row, key)
@@ -543,6 +544,8 @@ const getVariantTableColumns = ({
   }
 
   const resultColumns: VariantTableColumn[] = variantResultColumns.map((column) => {
+    const getValue = column.accessor ?? ((row: any) => get(row, column.key))
+
     return {
       key: column.key,
       heading: column.heading || column.key,
@@ -552,11 +555,11 @@ const getVariantTableColumns = ({
       sortKey: column.key,
       minWidth: column.minWidth || 65,
       render: column.render
-        ? (row, key) => column.render!(get(row, key))
-        : (row, key) => renderNumberCell(row, key),
+        ? (row) => column.render!(getValue(row))
+        : (row) => formatNumberCell(getValue(row)),
       renderForCSV: column.renderForCSV
-        ? (row, key) => column.renderForCSV!(get(row, key))
-        : (row, key) => get(row, key),
+        ? (row) => column.renderForCSV!(getValue(row))
+        : (row) => getValue(row),
     }
   })
 
