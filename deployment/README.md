@@ -33,8 +33,14 @@ build infrastructure in `exome-results-browsers/github_actions.tf`, added in
 [gnomad-terraform#230](https://github.com/broadinstitute/gnomad-terraform/pull/230): the workload
 identity pool the workflow authenticates against, the `erb-github-actions` service account it
 impersonates, the `erb-cloud-build` service account the build runs as, and the bucket holding the
-build's source and logs. The image still goes to the shared gnomad registry in `exac-gnomad`, which
-grants `erb-cloud-build` write access to it, so deployments are unaffected.
+build's source and logs. The image goes to that project's own registry, `erb`, added alongside it in
+`exome-results-browsers/artifact_registry.tf`, which grants `erb-cloud-build` write access, and the
+`gnomad-v4` GKE node account in `exac-gnomad` read access, since the browsers run there and so the
+pull crosses projects.
+
+Deployments still point at the shared gnomad registry in `exac-gnomad`. Moving the three `newName`
+lines in gnomad-deployments over to `erb` is a follow-up, and needs a build to land there first,
+since prod's current tag exists only in the old registry.
 
 This repository needs two secrets, which are the outputs of that terraform:
 

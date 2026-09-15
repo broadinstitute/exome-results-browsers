@@ -1,6 +1,6 @@
 # Builds and pushes the exome-results-browsers image. Submitted by the Build image workflow once CI
 # passes on main, see deployment/README.md. The build runs in the exome-results-browsers project and
-# pushes to the shared gnomad registry in exac-gnomad. To run it by hand:
+# pushes to that project's erb registry. To run it by hand:
 #
 #   gcloud builds submit --config cloudbuild.yaml --project=exome-results-browsers \
 #     --substitutions=BRANCH_NAME="my-branch",SHORT_SHA="$(git rev-parse --short HEAD)" .
@@ -12,7 +12,7 @@ steps:
       - |
         set -euo pipefail
 
-        image="us-docker.pkg.dev/exac-gnomad/gnomad/exome-results-browsers"
+        image="us-docker.pkg.dev/exome-results-browsers/erb/exome-results-browsers"
         # Slashes are legal in a branch name but not in an image tag.
         branch=$$(echo "$BRANCH_NAME" | tr '/' '-')
         dated_tag="$${branch:-manual}-$$(date -u +%Y-%m-%d)-$SHORT_SHA"
