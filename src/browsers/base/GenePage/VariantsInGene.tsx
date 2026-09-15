@@ -655,7 +655,7 @@ const VariantsInGeneContainer = ({
                 const groupResultValues = variantValues[fieldIndex][groupIndex]
 
                 if (groupResultValues) {
-                  const groupResult: { [key: string]: string } = {}
+                  const groupResult: { [key: string]: string | number } = {}
                   datasetConfig.variant_group_result_field_names.forEach(
                     (groupResultField, groupResultFieldIndex) => {
                       groupResult[groupResultField] = groupResultValues[groupResultFieldIndex]
