@@ -22,7 +22,7 @@ import LoginPage from './LoginPage'
 import { userHasBearerCookie } from './auth'
 import { GeneRow } from './GeneResultsPage/geneResultTableColumns'
 
-export type DatasetId = 'ASC' | 'BipEx' | 'BipEx2' | 'Epi25' | 'GP2' | 'IBD' | 'SCHEMA'
+export type DatasetId = 'ASC' | 'ASC2' | 'BipEx' | 'BipEx2' | 'Epi25' | 'GP2' | 'IBD' | 'SCHEMA'
 
 export type ReferenceGenome = 'GRCh37' | 'GRCh38'
 
@@ -64,7 +64,7 @@ declare global {
   }
 }
 
-const PASSWORD_PROTECTED_DATASETS: DatasetId[] = ['BipEx2']
+const PASSWORD_PROTECTED_DATASETS: DatasetId[] = ['ASC2', 'BipEx2']
 
 interface ProtectedRouteExtraProps {
   datasetId: DatasetId
@@ -205,6 +205,7 @@ type BrowserProps = {
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences?: boolean
   getGeneNotFoundMessage?: (geneIdOrSymbol: string) => string | undefined
+  variantAlleleFrequencyOverride?: number
 }
 
 const Browser = ({
@@ -240,6 +241,7 @@ const Browser = ({
   variantDetailColumns = undefined,
   renderVariantTranscriptConsequences = false,
   getGeneNotFoundMessage = undefined,
+  variantAlleleFrequencyOverride = undefined,
 }: BrowserProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(true)
@@ -329,6 +331,7 @@ const Browser = ({
                 variantDetailColumns={variantDetailColumns}
                 renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
                 getGeneNotFoundMessage={getGeneNotFoundMessage}
+                variantAlleleFrequencyOverride={variantAlleleFrequencyOverride}
               />
             )}
           />

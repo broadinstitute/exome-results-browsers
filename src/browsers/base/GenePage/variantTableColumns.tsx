@@ -538,7 +538,7 @@ const getVariantTableColumns = ({
     })
 
     datasetColumns.push(...renderedGP2Columns)
-  } else {
+  } else if (datasetId !== 'ASC2') {
     datasetColumns.push(...statColumns)
   }
 
