@@ -13,6 +13,44 @@ See [data_pipeline/WRITE_RESULTS_FILES.md](../data_pipeline/WRITE_RESULTS_FILES.
 GA tracking IDs are hardcoded in `src/browsers/webpack.config.js`, and demo passwords are read at
 runtime from a kubernetes secret, see [Runtime environment variables](#runtime-environment-variables).
 
+### Images built by Cloud Build
+
+Merging to `main` builds and pushes an image, tagged twice:
+
+- `<short sha>`, which names the exact commit and never moves
+- `main-<YYYY-MM-DD>-<short sha>`, the same image under a tag that is readable in a `kustomization.yaml`
+
+Nothing is deployed automatically. Deployments pick one of those tags, as described under
+[Deployments](#deployments).
+
+The build is submitted by the `Build image` GitHub Actions workflow once CI passes on `main`,
+following the same pattern as seqr, whose Cloud Build trigger is disabled for this reason. Cloud
+Build still runs the build, see `cloudbuild.yaml`; the workflow only calls `gcloud builds submit`.
+
+The build runs in the `exome-results-browsers` project, not in `exac-gnomad` where the deployments
+are. [gnomad-terraform](https://github.com/broadinstitute/gnomad-terraform) holds that project's
+build infrastructure in `exome-results-browsers/github_actions.tf`, added in
+[gnomad-terraform#230](https://github.com/broadinstitute/gnomad-terraform/pull/230): the workload
+identity pool the workflow authenticates against, the `erb-github-actions` service account it
+impersonates, the `erb-cloud-build` service account the build runs as, and the bucket holding the
+build's source and logs. The image goes to that project's own registry, `erb`, added alongside it in
+`exome-results-browsers/artifact_registry.tf`, which grants `erb-cloud-build` write access, and the
+`gnomad-v4` GKE node account in `exac-gnomad` read access, since the browsers run there and so the
+pull crosses projects.
+
+Deployments still point at the shared gnomad registry in `exac-gnomad`. Moving the three `newName`
+lines in gnomad-deployments over to `erb` is a follow-up, and needs a build to land there first,
+since prod's current tag exists only in the old registry.
+
+This repository needs two secrets, which are the outputs of that terraform:
+
+- `WORKLOAD_IDENTITY_PROVIDER`, the full provider resource name
+- `CLOUD_BUILD_SA_EMAIL`, `erb-github-actions@exome-results-browsers.iam.gserviceaccount.com`
+
+### Building an image by hand
+
+Needed to demo unmerged work, since only `main` is built for you.
+
 **Build the Docker image. The build script tags the image with the current git revision.**
 
 Build the docker image with a default tag of the git revision
