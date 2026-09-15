@@ -13,36 +13,34 @@ CLASS_SEVERITY_RANK = hl.dict(
     }
 )
 
+VARIANT_RESULTS_FIELDS = {
+    "Variant": ("variant", hl.tstr),
+    "Gene": ("gene_name", hl.tstr),
+    "Gene ID": ("gene_id", hl.tstr),
+    "HGVSp": ("hgvsp", hl.tstr),
+    # consequence terms here are different than 'standard' VEP terms
+    "Consequence": ("consequence", hl.tstr),
+    "Class": ("variant_class", hl.tstr),
+    "MPC": ("mpc", hl.tfloat),
+    "AM": ("alpha_missense", hl.tfloat),
+    "isOS": ("is_other_splice", hl.tbool),
+    "gnomAD AF": ("gnomad_af", hl.tfloat),
+    "Transcript ID": ("transcript_id", hl.tstr),
+    "de novo AC proband": ("de_novo_ac_proband", hl.tint),
+    "de novo AC sibling": ("de_novo_ac_sibling", hl.tint),
+    "transmitted AC proband": ("transmitted_ac_proband", hl.tint),
+    "untransmitted AC proband": ("untransmitted_ac_proband", hl.tint),
+    "AC case": ("ac_case", hl.tint),
+    "AC control": ("ac_ctrl", hl.tint),
+}
+
 
 def prepare_variant_results(test_genes, _output_root):
     ds = hl.import_table(
         pipeline_config.get("ASC2", "variant_results_path"),
         force=True,
         missing="",
-        types={
-            "Variant": hl.tstr,
-            "Gene": hl.tstr,
-            "Gene ID": hl.tstr,
-            "HGVSp": hl.tstr,
-            # Raw term vocabulary differs from the VEP terms used elsewhere in this
-            # pipeline (e.g. "missense" here vs. "missense_variant" in
-            # CONSEQUENCE_TERM_RANKS) -- front end code that expects VEP terms will
-            # need a mapping, or the analysts will need to confirm this is meant to
-            # replace VEP terms outright.
-            "Consequence": hl.tstr,
-            "Class": hl.tstr,
-            "MPC": hl.tfloat,
-            "AM": hl.tfloat,
-            "isOS": hl.tbool,
-            "gnomAD AF": hl.tfloat,
-            "Transcript ID": hl.tstr,
-            "de novo AC proband": hl.tint,
-            "de novo AC sibling": hl.tint,
-            "transmitted AC proband": hl.tint,
-            "untransmitted AC proband": hl.tint,
-            "AC case": hl.tint,
-            "AC control": hl.tint,
-        },
+        types={raw_name: field_type for raw_name, (_, field_type) in VARIANT_RESULTS_FIELDS.items()},
     )
 
     def locus_from_variant_parts(variant_parts):
@@ -64,26 +62,7 @@ def prepare_variant_results(test_genes, _output_root):
             ds, get_test_gene_intervals("ASC2", pipeline_config.get("ASC2", "test_genes"))
         )
 
-    ds = ds.rename(
-        {
-            "Gene": "gene_name",
-            "Gene ID": "gene_id",
-            "HGVSp": "hgvsp",
-            "Consequence": "consequence",
-            "Class": "variant_class",
-            "MPC": "mpc",
-            "AM": "alpha_missense",
-            "isOS": "is_other_splice",
-            "gnomAD AF": "gnomad_af",
-            "Transcript ID": "transcript_id",
-            "de novo AC proband": "de_novo_ac_proband",
-            "de novo AC sibling": "de_novo_ac_sibling",
-            "transmitted AC proband": "transmitted_ac_proband",
-            "untransmitted AC proband": "untransmitted_ac_proband",
-            "AC case": "ac_case",
-            "AC control": "ac_ctrl",
-        }
-    )
+    ds = ds.rename({raw_name: new_name for raw_name, (new_name, _) in VARIANT_RESULTS_FIELDS.items()})
 
     # NOTE: ~20 variants are duplicated by locus/allele, differing in
     # id and vep consequence, keep only most severe row for now and ask analyst
