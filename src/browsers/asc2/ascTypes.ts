@@ -9,6 +9,10 @@ export interface ASC2GeneResult {
   de_novo_mis2_sibling: number
   de_novo_mis1_proband: number
   de_novo_mis1_sibling: number
+  de_novo_mis0_proband: number
+  de_novo_mis0_sibling: number
+  de_novo_syn_proband: number
+  de_novo_syn_sibling: number
   de_novo_del_proband: number
   de_novo_del_sibling: number
   de_novo_dup_proband: number
@@ -20,6 +24,10 @@ export interface ASC2GeneResult {
   untransmitted_mis2_proband: number
   transmitted_mis1_proband: number
   untransmitted_mis1_proband: number
+  transmitted_mis0_proband: number
+  untransmitted_mis0_proband: number
+  transmitted_syn_proband: number
+  untransmitted_syn_proband: number
   transmitted_del_proband: number
   untransmitted_del_proband: number
   transmitted_dup_proband: number
@@ -31,6 +39,10 @@ export interface ASC2GeneResult {
   mis2_control: number
   mis1_case: number
   mis1_control: number
+  mis0_case: number
+  mis0_control: number
+  syn_case: number
+  syn_control: number
   del_case: number
   del_control: number
   dup_case: number
@@ -38,17 +50,54 @@ export interface ASC2GeneResult {
 }
 
 export interface ASC2VariantClassCategory {
-  suffix: 'ptv' | 'mis2' | 'mis1' | 'del' | 'dup'
+  suffix: 'ptv' | 'mis2' | 'mis1' | 'mis0' | 'syn' | 'del' | 'dup'
   label: string
   details: string
+  tooltip: string
+  // Categories reviewed but excluded from the ASC2 analysis, shown de-emphasized in the gene result table.
+  isExcludedFromAnalysis?: boolean
 }
 
 export const ASC2_VARIANT_CLASS_CATEGORIES: ASC2VariantClassCategory[] = [
-  { suffix: 'ptv', label: 'PTV', details: '' },
-  { suffix: 'mis2', label: 'Mis2', details: '(MPC \u2265 2)' },
-  { suffix: 'mis1', label: 'Mis1', details: '(MPC 1-2)' },
-  { suffix: 'del', label: 'DEL', details: '' },
-  { suffix: 'dup', label: 'DUP', details: '' },
+  { suffix: 'ptv', label: 'PTV', details: '', tooltip: 'Protein-truncating variants.' },
+  {
+    suffix: 'mis2',
+    label: 'Mis2',
+    details: '(MPC \u2265 2)',
+    tooltip: 'Mis2 variants (MPC \u2265 2 and AM \u2265 0.97).',
+  },
+  {
+    suffix: 'mis1',
+    label: 'Mis1',
+    details: '(MPC 1-2)',
+    tooltip: 'Mis1 variants (MPC \u2265 2 or AM \u2265 0.97).',
+  },
+  {
+    suffix: 'mis0',
+    label: 'Mis0',
+    details: '(MPC < 1)',
+    tooltip: 'Mis0 variants (MPC < 2 and AM < 0.97). Not used for gene discovery.',
+    isExcludedFromAnalysis: true,
+  },
+  {
+    suffix: 'syn',
+    label: 'SYN',
+    details: '',
+    tooltip: 'Synonymous variants. Not used for gene discovery.',
+    isExcludedFromAnalysis: true,
+  },
+  {
+    suffix: 'del',
+    label: 'DEL',
+    details: '',
+    tooltip: 'Qualifying deletions (affecting 1-3 constrained genes).',
+  },
+  {
+    suffix: 'dup',
+    label: 'DUP',
+    details: '',
+    tooltip: 'Qualifying duplications (affecting 1-3 constrained genes).',
+  },
 ]
 
 export interface ASC2VariantInfo {
