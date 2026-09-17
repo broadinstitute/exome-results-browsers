@@ -5,7 +5,11 @@ import Browser, {
   GeneResultColumnGroup,
   VariantConsequence,
 } from '../base/Browser'
-import { renderCount, renderFloatAsScientific, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import {
+  renderCount,
+  renderFloatAsScientific,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 
 import ASC2AboutPage from './ASC2AboutPage'
 import ASC2HomePage from './ASC2HomePage'
@@ -297,6 +301,7 @@ const ASC2Browser = () => (
     ]}
     variantConsequences={asc2VariantConsequences}
     variantAlleleFrequencyOverride={ASC2_VARIANT_DOT_ALLELE_FREQ}
+    variantExportNote="Only SNVs, and not CNVs, are displayed below. All variants, except for Mis1 and synonymous variants were included in our gene discovery framework."
   />
 )
 

@@ -1,8 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
 
-// @ts-expect-error: no types in this version of @gnomad/ui
-import { CategoryFilterControl, Checkbox, KeyboardShortcut, SearchInput, Select } from '@gnomad/ui'
+import {
+  Badge,
+  CategoryFilterControl,
+  Checkbox,
+  KeyboardShortcut,
+  SearchInput,
+  Select,
+  // @ts-expect-error: no types in this version of @gnomad/ui
+} from '@gnomad/ui'
 
 import CSVExportButton from '../CSVExportButton'
 import { ConsequenceCategory, DatasetId, VariantConsequenceCategoryLabels } from '../Browser'
@@ -91,6 +98,11 @@ const FiltersSecondColumn = styled.div`
   }
 `
 
+const ExportNote = styled.div`
+  margin-top: 0.5em;
+  max-width: 30em;
+`
+
 const SearchWrapper = styled.div`
   display: flex;
   flex-grow: 1;
@@ -120,6 +132,7 @@ interface VariantFilterControlProps {
   datasetId: DatasetId
   consequenceCategoryLabels: VariantConsequenceCategoryLabels
   customFilterComponent: any
+  exportNote?: string
   filter: FilterState
   geneId: string
   onChangeAnalysisGroup: (analysisGroup: string) => void
@@ -137,6 +150,7 @@ const VariantFilterControls = ({
   datasetId,
   consequenceCategoryLabels,
   customFilterComponent: CustomFilterComponent,
+  exportNote,
   filter,
   geneId,
   onChangeAnalysisGroup,
@@ -223,6 +237,12 @@ const VariantFilterControls = ({
               Export variants to CSV
             </CSVExportButton>
           </AnalysisGroupMenuWrapper>
+
+          {exportNote && (
+            <ExportNote>
+              <Badge level="info">Note</Badge> {exportNote}
+            </ExportNote>
+          )}
         </FiltersFirstColumn>
 
         <FiltersSecondColumn>

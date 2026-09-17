@@ -214,6 +214,7 @@ type BrowserProps = {
   renderVariantTranscriptConsequences?: boolean
   getGeneNotFoundMessage?: (geneIdOrSymbol: string) => string | undefined
   variantAlleleFrequencyOverride?: number
+  variantExportNote?: string
 }
 
 const Browser = ({
@@ -250,6 +251,7 @@ const Browser = ({
   renderVariantTranscriptConsequences = false,
   getGeneNotFoundMessage = undefined,
   variantAlleleFrequencyOverride = undefined,
+  variantExportNote = undefined,
 }: BrowserProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(true)
@@ -340,6 +342,7 @@ const Browser = ({
                 renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
                 getGeneNotFoundMessage={getGeneNotFoundMessage}
                 variantAlleleFrequencyOverride={variantAlleleFrequencyOverride}
+                variantExportNote={variantExportNote}
               />
             )}
           />
