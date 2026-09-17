@@ -28,20 +28,20 @@
       "TestA": {
         "group_results": [
           [
-            0,
-            0,
-            1,
-            0,
-            "",
-            false
-          ],
-          [
             null,
             null,
             null,
             null,
             null,
             null
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            "",
+            false
           ]
         ]
       },

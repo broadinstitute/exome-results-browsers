@@ -310,14 +310,6 @@ def test_metadata_records_each_dataset_reference_genome(pipeline_output):
     assert metadata["datasets"]["TestClinVar"]["reference_genome"] == "GRCh38"
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "combine_datasets.py builds *_analysis_groups from list(hl.agg.collect_as_set(...)), "
-        "and Python's randomized string hashing makes set iteration order unstable across "
-        "processes. Fixed by sorting the keys before this test is un-xfailed."
-    ),
-)
 def test_analysis_groups_are_ordered_deterministically(pipeline_output):
     """The frontend indexes into these arrays, so their order is the contract."""
     metadata = _read_json(pipeline_output, "metadata.json")

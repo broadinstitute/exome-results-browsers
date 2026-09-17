@@ -18,8 +18,8 @@
         "bool"
       ],
       "gene_result_analysis_groups": [
-        "meta",
-        "case_control"
+        "case_control",
+        "meta"
       ],
       "reference_genome": "GRCh38",
       "variant_group_result_field_names": [
@@ -53,8 +53,8 @@
         "str"
       ],
       "variant_result_analysis_groups": [
-        "meta",
-        "case_control"
+        "case_control",
+        "meta"
       ]
     },
     "TestB": {

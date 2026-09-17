@@ -42,18 +42,18 @@
       "TestA": {
         "group_results": [
           [
-            15,
-            30,
-            0.25,
-            1.1,
-            "missense",
-            false
-          ],
-          [
             10,
             20,
             0.5,
             1,
+            "missense",
+            false
+          ],
+          [
+            15,
+            30,
+            0.25,
+            1.1,
             "missense",
             false
           ]

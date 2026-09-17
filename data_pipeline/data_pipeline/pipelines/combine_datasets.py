@@ -35,7 +35,10 @@ def combine_datasets(dataset_ids, output_root):
         gene_group_result_field_types = [
             str(typ).rstrip("3264") for typ in gene_results.group_results.dtype.value_type.types
         ]
-        gene_result_analysis_groups = list(
+        # sorted, not just listed: Python's string hashing is randomized per process, so
+        # iterating a set of strings has no stable order across runs, and this order is the
+        # positional order of group_results tuples and *_analysis_groups in metadata.json.
+        gene_result_analysis_groups = sorted(
             gene_results.aggregate(hl.agg.explode(hl.agg.collect_as_set, gene_results.group_results.keys()))
         )
 
@@ -59,7 +62,7 @@ def combine_datasets(dataset_ids, output_root):
         variant_group_result_field_types = [
             str(typ).rstrip("3264") for typ in variant_results.group_results.dtype.value_type.types
         ]
-        variant_result_analysis_groups = list(
+        variant_result_analysis_groups = sorted(
             variant_results.aggregate(hl.agg.explode(hl.agg.collect_as_set, variant_results.group_results.keys()))
         )
 

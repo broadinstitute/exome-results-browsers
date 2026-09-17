@@ -16,17 +16,17 @@
       [
         [
           0,
-          1000,
-          "-Infinity",
+          500,
           "NaN",
+          "Infinity",
           "FAIL",
           false
         ],
         [
           0,
-          500,
+          1000,
+          "-Infinity",
           "NaN",
-          "Infinity",
           "FAIL",
           false
         ]
