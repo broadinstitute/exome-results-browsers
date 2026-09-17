@@ -103,6 +103,16 @@ const ExportNote = styled.div`
   max-width: 30em;
 `
 
+const VariantColumnGroupCheckboxes = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em 1em;
+
+  label {
+    white-space: nowrap;
+  }
+`
+
 const SearchWrapper = styled.div`
   display: flex;
   flex-grow: 1;
@@ -260,7 +270,7 @@ const VariantFilterControls = ({
               <span style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5em' }}>
                 GP2 Case groups included in table columns
               </span>
-              <div style={{ display: 'flex', gap: '1em' }}>
+              <VariantColumnGroupCheckboxes>
                 {gp2Checkboxes.map(({ key, label }) => (
                   <Checkbox
                     key={key}
@@ -278,7 +288,7 @@ const VariantFilterControls = ({
                     }}
                   />
                 ))}
-              </div>
+              </VariantColumnGroupCheckboxes>
             </div>
           )}
 
@@ -287,7 +297,7 @@ const VariantFilterControls = ({
               <span style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5em' }}>
                 AC columns included in table
               </span>
-              <div style={{ display: 'flex', gap: '1em' }}>
+              <VariantColumnGroupCheckboxes>
                 {asc2Checkboxes.map(({ key, label }) => (
                   <Checkbox
                     key={key}
@@ -305,7 +315,7 @@ const VariantFilterControls = ({
                     }}
                   />
                 ))}
-              </div>
+              </VariantColumnGroupCheckboxes>
             </div>
           )}
         </FiltersSecondColumn>
