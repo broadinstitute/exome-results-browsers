@@ -15,6 +15,7 @@ dev = [
 
 [tool.pytest.ini_options]
 python_files = ["test_*.py"]
+testpaths = ["data_pipeline"]
 
 [tool.ruff]
 line-length = 120
