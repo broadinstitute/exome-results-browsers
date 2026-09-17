@@ -210,14 +210,13 @@ const ASC2Browser = () => (
     variantAnalysisGroupOptions={ascAnalysisGroups}
     defaultVariantAnalysisGroup={ascDefaultAnalysisGroup}
     variantResultColumns={[
-      // TK: see if analyst wants this column, keep it commented here for now
-      // {
-      //   key: 'info.variant_class',
-      //   heading: 'Class',
-      //   tooltip: 'PTV/Mis2/Mis1/Mis0/synonymous, by MPC/AlphaMissense pathogenicity for missense variants',
-      //   minWidth: 90,
-      // },
-
+      {
+        key: 'info.variant_class',
+        heading: 'Class',
+        tooltip: 'PTV/Mis2/Mis1/Mis0/synonymous, by MPC/AlphaMissense pathogenicity for missense variants',
+        minWidth: 90,
+        render: (value) => renderMissing(value),
+      },
       {
         key: 'group_result.de_novo_ac_proband',
         heading: 'De\u00a0novo AC (proband)',
@@ -266,8 +265,8 @@ const ASC2Browser = () => (
         key: 'info.gnomad_af',
         heading: 'gnomAD AF',
         minWidth: 110,
-        render: (value) => renderFloatAsScientific({ value: value }),
-        tooltip: 'Allele Frequency (AF) of this variant in the "non-neuro" subset gnomAD',
+        render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 2 }),
+        tooltip: 'Allele Frequency (AF) of this variant in the "non-neuro" subset of gnomAD v2.1.1',
       },
       {
         key: 'info.transcript_id',
@@ -281,15 +280,15 @@ const ASC2Browser = () => (
         key: 'info.mpc',
         heading: 'MPC',
         tooltip: 'Missense deleteriousness Prediction by Constraint',
-        minWidth: 70,
-        render: (value) => renderMissing(value),
+        minWidth: 110,
+        render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 3 }),
       },
       {
         key: 'info.alpha_missense',
         heading: 'AM',
         tooltip: 'AlphaMissense pathogenicity score',
         minWidth: 110,
-        render: (value) => renderMissing(value),
+        render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 3 }),
       },
       {
         key: 'info.is_other_splice',
