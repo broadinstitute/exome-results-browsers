@@ -55,7 +55,6 @@ def prepare_variant_results(test_genes, _output_root):
     )
 
     ds = ds.key_by("locus", "alleles")
-    ds = ds.drop("Variant")
 
     if test_genes:
         ds = filter_variant_results_to_test_gene_intervals(
@@ -63,6 +62,8 @@ def prepare_variant_results(test_genes, _output_root):
         )
 
     ds = ds.rename({raw_name: new_name for raw_name, (new_name, _) in VARIANT_RESULTS_FIELDS.items()})
+
+    ds = ds.drop("variant")
 
     # NOTE: ~20 variants are duplicated by locus/allele, differing in
     # id and vep consequence, keep only most severe row for now and ask analyst
