@@ -1,0 +1,136 @@
+{
+  "datasets": {
+    "TestA": {
+      "gene_group_result_field_names": [
+        "n_cases",
+        "n_controls",
+        "p_value",
+        "odds_ratio",
+        "category",
+        "is_significant"
+      ],
+      "gene_group_result_field_types": [
+        "int",
+        "int",
+        "float",
+        "float",
+        "str",
+        "bool"
+      ],
+      "gene_result_analysis_groups": [
+        "meta",
+        "case_control"
+      ],
+      "reference_genome": "GRCh38",
+      "variant_group_result_field_names": [
+        "ac_case",
+        "an_case",
+        "af_case",
+        "p_value",
+        "quality_flag",
+        "is_pass"
+      ],
+      "variant_group_result_field_types": [
+        "int",
+        "int",
+        "float",
+        "float",
+        "str",
+        "bool"
+      ],
+      "variant_info_field_names": [
+        "cadd",
+        "revel",
+        "n_carriers",
+        "in_analysis",
+        "flags"
+      ],
+      "variant_info_field_types": [
+        "float",
+        "float",
+        "int",
+        "bool",
+        "str"
+      ],
+      "variant_result_analysis_groups": [
+        "meta",
+        "case_control"
+      ]
+    },
+    "TestB": {
+      "gene_group_result_field_names": [
+        "qval",
+        "n_denovo",
+        "cohort"
+      ],
+      "gene_group_result_field_types": [
+        "float",
+        "int",
+        "str"
+      ],
+      "gene_result_analysis_groups": [
+        "All"
+      ],
+      "reference_genome": "GRCh37",
+      "variant_group_result_field_names": [
+        "qval",
+        "n_denovo",
+        "cohort"
+      ],
+      "variant_group_result_field_types": [
+        "float",
+        "int",
+        "str"
+      ],
+      "variant_info_field_names": [
+        "consequence_score",
+        "in_gnomad"
+      ],
+      "variant_info_field_types": [
+        "float",
+        "bool"
+      ],
+      "variant_result_analysis_groups": [
+        "All"
+      ]
+    },
+    "TestClinVar": {
+      "gene_group_result_field_names": [
+        "dummy_value"
+      ],
+      "gene_group_result_field_types": [
+        "int"
+      ],
+      "gene_result_analysis_groups": [
+        "dummy"
+      ],
+      "reference_genome": "GRCh38",
+      "variant_group_result_field_names": [
+        "clinical_significance",
+        "gold_stars"
+      ],
+      "variant_group_result_field_types": [
+        "str",
+        "int"
+      ],
+      "variant_info_field_names": [
+        "review_status"
+      ],
+      "variant_info_field_types": [
+        "str"
+      ],
+      "variant_result_analysis_groups": [
+        "All"
+      ]
+    }
+  },
+  "variant_fields": [
+    "variant_id",
+    "pos",
+    "consequence",
+    "hgvsc",
+    "hgvsp",
+    "info",
+    "group_results"
+  ]
+}

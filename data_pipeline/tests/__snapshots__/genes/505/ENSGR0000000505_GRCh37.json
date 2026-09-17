@@ -1,0 +1,116 @@
+{
+  "gene": {
+    "alias_symbols": [],
+    "canonical_transcript": {
+      "exons": [
+        {
+          "feature_type": "CDS",
+          "start": 600000,
+          "stop": 600100
+        },
+        {
+          "feature_type": "CDS",
+          "start": 600400,
+          "stop": 600500
+        }
+      ],
+      "start": 600000,
+      "stop": 600500,
+      "strand": "+",
+      "transcript_id": "ENST00000000505"
+    },
+    "canonical_transcript_id": "ENST00000000505",
+    "chrom": "X",
+    "exac_constraint": {
+      "exp_lof": 1.75,
+      "exp_mis": 20.25,
+      "exp_syn": 10.5,
+      "lof_z": 2.5,
+      "mis_z": 1.5,
+      "mu_lof": 3e-07,
+      "mu_mis": 2e-06,
+      "mu_syn": 1e-06,
+      "obs_lof": 0,
+      "obs_mis": 19,
+      "obs_syn": 11,
+      "pLI": 0.99,
+      "syn_z": 0.5
+    },
+    "gencode_gene_symbol": "PARGENE",
+    "gene_id": "ENSGR0000000505",
+    "gene_results": {
+      "TestA": {
+        "group_results": [
+          [
+            7,
+            14,
+            0.05,
+            1.5,
+            "synonymous",
+            false
+          ],
+          [
+            7,
+            14,
+            0.05,
+            1.5,
+            "synonymous",
+            false
+          ]
+        ]
+      },
+      "TestB": {
+        "group_results": [
+          [
+            0.75,
+            1,
+            "trios"
+          ]
+        ]
+      },
+      "TestClinVar": null
+    },
+    "gnomad_v2_constraint": {
+      "exp_lof": 3.5,
+      "exp_mis": 30.5,
+      "exp_syn": 15.5,
+      "lof_z": 1.1,
+      "mis_z": 0.2,
+      "obs_lof": 1,
+      "obs_mis": 28,
+      "obs_syn": 16,
+      "oe_lof": 0.2857,
+      "oe_mis": 0.918,
+      "oe_syn": 1.032,
+      "pLI": 0.85,
+      "syn_z": -0.1
+    },
+    "gnomad_v4_constraint": {
+      "exp_lof": 3.5,
+      "exp_mis": 30.5,
+      "exp_syn": 15.5,
+      "lof_z": 1.1,
+      "mis_z": 0.2,
+      "obs_lof": 1,
+      "obs_mis": 28,
+      "obs_syn": 16,
+      "oe_lof": 0.2857,
+      "oe_mis": 0.918,
+      "oe_syn": 1.032,
+      "pLI": 0.85,
+      "syn_z": -0.1
+    },
+    "hgnc_id": "HGNC:505",
+    "name": "pseudoautosomal gene",
+    "omim_id": null,
+    "previous_symbols": [],
+    "reference_genome": "GRCh37",
+    "search_terms": [
+      "PARGENE"
+    ],
+    "start": 600000,
+    "stop": 600500,
+    "strand": "+",
+    "symbol": "PARGENE"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "gene": {
+    "alias_symbols": [],
+    "canonical_transcript": {
+      "exons": [
+        {
+          "feature_type": "CDS",
+          "start": 400000,
+          "stop": 400100
+        },
+        {
+          "feature_type": "CDS",
+          "start": 400400,
+          "stop": 400500
+        }
+      ],
+      "start": 400000,
+      "stop": 400500,
+      "strand": "+",
+      "transcript_id": "ENST00000000303"
+    },
+    "canonical_transcript_id": "ENST00000000303",
+    "chrom": "3",
+    "exac_constraint": null,
+    "gencode_gene_symbol": "G38ONLY",
+    "gene_id": "ENSG00000000303",
+    "gene_results": {
+      "TestA": {
+        "group_results": [
+          [
+            2,
+            4,
+            1,
+            1,
+            "ptv",
+            false
+          ],
+          [
+            1,
+            2,
+            1.2346e-13,
+            9.5,
+            "ptv",
+            true
+          ]
+        ]
+      },
+      "TestB": {
+        "group_results": [
+          [
+            null,
+            null,
+            null
+          ]
+        ]
+      },
+      "TestClinVar": null
+    },
+    "gnomad_v2_constraint": null,
+    "gnomad_v4_constraint": {
+      "exp_lof": 3.5,
+      "exp_mis": 30.5,
+      "exp_syn": 15.5,
+      "lof_z": 1.1,
+      "mis_z": 0.2,
+      "obs_lof": 1,
+      "obs_mis": 28,
+      "obs_syn": 16,
+      "oe_lof": 0.2857,
+      "oe_mis": 0.918,
+      "oe_syn": 1.032,
+      "pLI": 0.85,
+      "syn_z": -0.1
+    },
+    "hgnc_id": "HGNC:303",
+    "name": "GRCh38 only gene",
+    "omim_id": null,
+    "previous_symbols": [],
+    "reference_genome": "GRCh38",
+    "search_terms": [
+      "G38ONLY"
+    ],
+    "start": 400000,
+    "stop": 400500,
+    "strand": "+",
+    "symbol": "G38ONLY"
+  }
+}

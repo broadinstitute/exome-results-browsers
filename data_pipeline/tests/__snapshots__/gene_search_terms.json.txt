@@ -1,0 +1,33 @@
+[
+  "ENSG00000000101",
+  [
+    "ALIASBOTH",
+    "BOTH2",
+    "BOTHGENE",
+    "OLDBOTH"
+  ]
+]
+[
+  "ENSG00000000202",
+  [
+    "G37ONLY"
+  ]
+]
+[
+  "ENSG00000000303",
+  [
+    "G38ONLY"
+  ]
+]
+[
+  "ENSG00000000404",
+  [
+    "SPARSEGENE"
+  ]
+]
+[
+  "ENSGR0000000505",
+  [
+    "PARGENE"
+  ]
+]

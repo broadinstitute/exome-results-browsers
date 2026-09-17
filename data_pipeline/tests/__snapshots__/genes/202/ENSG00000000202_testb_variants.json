@@ -1,0 +1,22 @@
+{
+  "variants": [
+    [
+      "2-300200-T-TA",
+      300200,
+      "inframe_insertion",
+      "c.50_51insA",
+      "p.Ile17dup",
+      [
+        0.1,
+        true
+      ],
+      [
+        [
+          0.9,
+          0,
+          "trios"
+        ]
+      ]
+    ]
+  ]
+}

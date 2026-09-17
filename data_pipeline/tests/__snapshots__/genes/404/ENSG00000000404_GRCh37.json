@@ -1,0 +1,66 @@
+{
+  "gene": {
+    "alias_symbols": [],
+    "canonical_transcript": {
+      "exons": [
+        {
+          "feature_type": "CDS",
+          "start": 500000,
+          "stop": 500100
+        },
+        {
+          "feature_type": "CDS",
+          "start": 500400,
+          "stop": 500500
+        }
+      ],
+      "start": 500000,
+      "stop": 500500,
+      "strand": "+",
+      "transcript_id": "ENST00000000404"
+    },
+    "canonical_transcript_id": "ENST00000000404",
+    "chrom": "1",
+    "exac_constraint": null,
+    "gencode_gene_symbol": "SPARSEGENE",
+    "gene_id": "ENSG00000000404",
+    "gene_results": {
+      "TestA": {
+        "group_results": [
+          [
+            0,
+            0,
+            1,
+            0,
+            "",
+            false
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        ]
+      },
+      "TestB": null,
+      "TestClinVar": null
+    },
+    "gnomad_v2_constraint": null,
+    "gnomad_v4_constraint": null,
+    "hgnc_id": "HGNC:404",
+    "name": "sparse gene",
+    "omim_id": null,
+    "previous_symbols": [],
+    "reference_genome": "GRCh37",
+    "search_terms": [
+      "SPARSEGENE"
+    ],
+    "start": 500000,
+    "stop": 500500,
+    "strand": "+",
+    "symbol": "SPARSEGENE"
+  }
+}

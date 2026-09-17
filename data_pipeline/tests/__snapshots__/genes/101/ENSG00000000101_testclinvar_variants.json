@@ -1,0 +1,36 @@
+{
+  "variants": [
+    [
+      "1-200500-A-G",
+      200500,
+      "missense_variant",
+      "c.100A>G",
+      "p.Lys34Arg",
+      [
+        "reviewed by expert panel"
+      ],
+      [
+        [
+          "Pathogenic",
+          3
+        ]
+      ]
+    ],
+    [
+      "1-200600-C-G",
+      200600,
+      "stop_gained",
+      "c.200C>G",
+      "p.Ser67Ter",
+      [
+        null
+      ],
+      [
+        [
+          "Uncertain significance",
+          null
+        ]
+      ]
+    ]
+  ]
+}

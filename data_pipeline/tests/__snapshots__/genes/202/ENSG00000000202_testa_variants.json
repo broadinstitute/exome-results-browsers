@@ -1,0 +1,36 @@
+{
+  "variants": [
+    [
+      "2-300100-C-T",
+      300100,
+      "synonymous_variant",
+      "c.30C>T",
+      "p.=",
+      [
+        "NaN",
+        "Infinity",
+        0,
+        false,
+        "monoallelic"
+      ],
+      [
+        [
+          0,
+          1000,
+          "-Infinity",
+          "NaN",
+          "FAIL",
+          false
+        ],
+        [
+          0,
+          500,
+          "NaN",
+          "Infinity",
+          "FAIL",
+          false
+        ]
+      ]
+    ]
+  ]
+}

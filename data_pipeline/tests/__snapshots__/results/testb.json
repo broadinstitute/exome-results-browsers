@@ -1,0 +1,60 @@
+{
+  "results": [
+    [
+      "ENSG00000000101",
+      "BOTHGENE",
+      "both assemblies gene",
+      "1",
+      100500,
+      [
+        [
+          0.001,
+          4,
+          "combined"
+        ]
+      ]
+    ],
+    [
+      "ENSG00000000202",
+      "G37ONLY",
+      "GRCh37 only gene",
+      "2",
+      300250,
+      [
+        [
+          0.2,
+          0,
+          "combined"
+        ]
+      ]
+    ],
+    [
+      "ENSG00000000303",
+      "G38ONLY",
+      "GRCh38 only gene",
+      null,
+      null,
+      [
+        [
+          null,
+          null,
+          null
+        ]
+      ]
+    ],
+    [
+      "ENSGR0000000505",
+      "PARGENE",
+      "pseudoautosomal gene",
+      "X",
+      600250,
+      [
+        [
+          0.75,
+          1,
+          "trios"
+        ]
+      ]
+    ]
+  ]
+}

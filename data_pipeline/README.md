@@ -15,6 +15,36 @@ The data pipeline for the results browsers has 4 main steps.
 
 Configuration of the paths these steps write to is handled in `pipeline_config.ini`.
 
+## Tests
+
+```shell
+uv run pytest -m "not requires_gcs"
+```
+
+Run from the repository root. `requires_gcs` marks tests that read private GCS
+inputs and therefore cannot run without credentials; CI deselects them.
+
+`data_pipeline/tests/` holds an end-to-end snapshot test of `combine_datasets` +
+`write_results_files`. It synthesises the intermediate Hail tables that
+`prepare_gene_models` and `prepare_datasets` would have written (those two steps
+read private GCS inputs with no injection seam), runs the two offline steps over
+them, and compares the resulting JSON tree against the canonical goldens in
+`data_pipeline/tests/__snapshots__/`.
+
+`__snapshots__/MANIFEST.txt` pins the _set_ of files produced, so a file that
+stops being written is a failure rather than a silent omission.
+
+To accept intentional output changes:
+
+```shell
+uv run pytest data_pipeline/tests --snapshot-update   # writes the goldens
+uv run pytest data_pipeline/tests                     # verifies them
+```
+
+Two runs are needed because the per-file test cases are parametrized from the
+committed goldens at collection time. Review the resulting diff: the goldens are
+canonical JSON precisely so that a change is readable in a pull request.
+
 The output paths the steps above write to are combined by the `output.gcs_output_root` and `output.local_output_root` options in `pipeline_config.ini`. These two paths allow running of pipelines locally (for fast test datsets, and in dataproc (for the full datasets).
 
 The date in the output path of independent pieces of data files (written by `prepare_gene_models`, `prepare_datasets`, and `prepare_downloads`) is controlled by the `<DATASET>.output_last_updated` option in `pipeline_config.ini`, e.g. `BipEx2.output_last_updated` controls the output path of the BipEx2 dataset hail tables, and downloads.

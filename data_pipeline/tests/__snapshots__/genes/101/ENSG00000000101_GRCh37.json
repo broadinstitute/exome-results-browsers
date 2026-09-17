@@ -1,0 +1,130 @@
+{
+  "gene": {
+    "alias_symbols": [
+      "ALIASBOTH",
+      "both2"
+    ],
+    "canonical_transcript": {
+      "exons": [
+        {
+          "feature_type": "CDS",
+          "start": 100000,
+          "stop": 100100
+        },
+        {
+          "feature_type": "CDS",
+          "start": 100900,
+          "stop": 101000
+        }
+      ],
+      "start": 100000,
+      "stop": 101000,
+      "strand": "+",
+      "transcript_id": "ENST00000000101"
+    },
+    "canonical_transcript_id": "ENST00000000101",
+    "chrom": "1",
+    "exac_constraint": {
+      "exp_lof": 1.75,
+      "exp_mis": 20.25,
+      "exp_syn": 10.5,
+      "lof_z": 2.5,
+      "mis_z": 1.5,
+      "mu_lof": 3e-07,
+      "mu_mis": 2e-06,
+      "mu_syn": 1e-06,
+      "obs_lof": 0,
+      "obs_mis": 19,
+      "obs_syn": 11,
+      "pLI": 0.99,
+      "syn_z": 0.5
+    },
+    "gencode_gene_symbol": "BOTHGENE",
+    "gene_id": "ENSG00000000101",
+    "gene_results": {
+      "TestA": {
+        "group_results": [
+          [
+            150,
+            300,
+            3.25e-06,
+            1.75,
+            "ptv",
+            true
+          ],
+          [
+            100,
+            200,
+            1.5e-08,
+            2.5,
+            "ptv",
+            true
+          ]
+        ]
+      },
+      "TestB": {
+        "group_results": [
+          [
+            0.001,
+            4,
+            "combined"
+          ]
+        ]
+      },
+      "TestClinVar": {
+        "group_results": [
+          [
+            0
+          ]
+        ]
+      }
+    },
+    "gnomad_v2_constraint": {
+      "exp_lof": 3.5,
+      "exp_mis": 30.5,
+      "exp_syn": 15.5,
+      "lof_z": 1.1,
+      "mis_z": 0.2,
+      "obs_lof": 1,
+      "obs_mis": 28,
+      "obs_syn": 16,
+      "oe_lof": 0.2857,
+      "oe_mis": 0.918,
+      "oe_syn": 1.032,
+      "pLI": 0.85,
+      "syn_z": -0.1
+    },
+    "gnomad_v4_constraint": {
+      "exp_lof": 3.5,
+      "exp_mis": 30.5,
+      "exp_syn": 15.5,
+      "lof_z": 1.1,
+      "mis_z": 0.2,
+      "obs_lof": 1,
+      "obs_mis": 28,
+      "obs_syn": 16,
+      "oe_lof": 0.2857,
+      "oe_mis": 0.918,
+      "oe_syn": 1.032,
+      "pLI": 0.85,
+      "syn_z": -0.1
+    },
+    "hgnc_id": "HGNC:101",
+    "name": "both assemblies gene",
+    "omim_id": "600101",
+    "previous_symbols": [
+      "OLDBOTH"
+    ],
+    "reference_genome": "GRCh37",
+    "search_terms": [
+      "ALIASBOTH",
+      "BOTH2",
+      "BOTHGENE",
+      "OLDBOTH"
+    ],
+    "start": 100000,
+    "stop": 101000,
+    "strand": "+",
+    "symbol": "BOTHGENE"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "variants": [
+    [
+      "1-100100-AT-A",
+      100100,
+      "frameshift_variant",
+      null,
+      null,
+      [
+        null,
+        false
+      ],
+      [
+        [
+          null,
+          1,
+          null
+        ]
+      ]
+    ],
+    [
+      "1-100200-G-C",
+      100200,
+      "missense_variant",
+      "c.200G>C",
+      "p.Gly67Ala",
+      [
+        0.8,
+        true
+      ],
+      [
+        [
+          0.02,
+          2,
+          "trios"
+        ]
+      ]
+    ]
+  ]
+}

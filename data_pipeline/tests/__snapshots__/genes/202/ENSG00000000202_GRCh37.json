@@ -1,0 +1,102 @@
+{
+  "gene": {
+    "alias_symbols": [],
+    "canonical_transcript": {
+      "exons": [
+        {
+          "feature_type": "CDS",
+          "start": 300000,
+          "stop": 300100
+        },
+        {
+          "feature_type": "CDS",
+          "start": 300400,
+          "stop": 300500
+        }
+      ],
+      "start": 300000,
+      "stop": 300500,
+      "strand": "+",
+      "transcript_id": "ENST00000000202"
+    },
+    "canonical_transcript_id": "ENST00000000202",
+    "chrom": "2",
+    "exac_constraint": {
+      "exp_lof": 1.75,
+      "exp_mis": 20.25,
+      "exp_syn": 10.5,
+      "lof_z": 2.5,
+      "mis_z": 1.5,
+      "mu_lof": 3e-07,
+      "mu_mis": 2e-06,
+      "mu_syn": 1e-06,
+      "obs_lof": 0,
+      "obs_mis": 19,
+      "obs_syn": 11,
+      "pLI": 0.99,
+      "syn_z": 0.5
+    },
+    "gencode_gene_symbol": "G37ONLY",
+    "gene_id": "ENSG00000000202",
+    "gene_results": {
+      "TestA": {
+        "group_results": [
+          [
+            15,
+            30,
+            0.25,
+            1.1,
+            "missense",
+            false
+          ],
+          [
+            10,
+            20,
+            0.5,
+            1,
+            "missense",
+            false
+          ]
+        ]
+      },
+      "TestB": {
+        "group_results": [
+          [
+            0.2,
+            0,
+            "combined"
+          ]
+        ]
+      },
+      "TestClinVar": null
+    },
+    "gnomad_v2_constraint": {
+      "exp_lof": 3.5,
+      "exp_mis": 30.5,
+      "exp_syn": 15.5,
+      "lof_z": 1.1,
+      "mis_z": 0.2,
+      "obs_lof": 1,
+      "obs_mis": 28,
+      "obs_syn": 16,
+      "oe_lof": 0.2857,
+      "oe_mis": 0.918,
+      "oe_syn": 1.032,
+      "pLI": 0.85,
+      "syn_z": -0.1
+    },
+    "gnomad_v4_constraint": null,
+    "hgnc_id": "HGNC:202",
+    "name": "GRCh37 only gene",
+    "omim_id": null,
+    "previous_symbols": [],
+    "reference_genome": "GRCh37",
+    "search_terms": [
+      "G37ONLY"
+    ],
+    "start": 300000,
+    "stop": 300500,
+    "strand": "+",
+    "symbol": "G37ONLY"
+  }
+}
