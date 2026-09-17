@@ -73,6 +73,7 @@ interface VariantsInGeneProps {
   renderVariantAttributes: (record: any) => any
   variantDetailColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences: boolean
+  variantExportNote?: string
   gene: Gene
   variants: VariantRow[]
 }
@@ -112,6 +113,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
     additionalVariantDetailSummaryColumns: undefined,
     variantDetailColumns: undefined,
     renderVariantTranscriptConsequences: false,
+    variantExportNote: undefined,
   }
 
   constructor(props: VariantsInGeneProps) {
@@ -385,6 +387,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
       additionalVariantDetailSummaryColumns,
       variantDetailColumns,
       renderVariantTranscriptConsequences,
+      variantExportNote,
     } = this.props
 
     const {
@@ -462,6 +465,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
             variantAnalysisGroupOptions={variantAnalysisGroupOptions}
             selectedAnalysisGroup={selectedAnalysisGroup}
             onChangeAnalysisGroup={this.onChangeAnalysisGroup}
+            exportNote={variantExportNote}
           />
           <VariantTable
             columns={currentTableColumns}
