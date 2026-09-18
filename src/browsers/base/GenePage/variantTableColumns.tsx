@@ -5,8 +5,13 @@ import styled from 'styled-components'
 
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { TextButton } from '@gnomad/ui'
-import { ConsequenceCategory, VariantColumnConfig } from '../Browser'
+import { VariantColumnConfig } from '../Browser'
 import { applyColumnGroupHeadings } from '../columnGroupHeadings'
+import {
+  DEFAULT_VARIANT_CATEGORY_COLOR,
+  DEFAULT_VARIANT_CATEGORY_OPTIONS,
+  VariantCategoryOption,
+} from '../variantCategories'
 import { FilterState } from './VariantFilterControls'
 
 const VariantIdButton = styled(TextButton)`
@@ -15,21 +20,6 @@ const VariantIdButton = styled(TextButton)`
   text-overflow: ellipsis;
   white-space: nowrap;
 `
-
-interface CategoryColors {
-  lof: string
-  missense: string
-  synonymous: string
-  other: string
-  [key: string]: string
-}
-
-const categoryColors: CategoryColors = {
-  lof: '#DD2C00',
-  missense: 'orange',
-  synonymous: '#2E7D32',
-  other: '#424242',
-}
 
 const VariantCategoryMarker = styled.span`
   display: inline-block;
@@ -64,7 +54,7 @@ export interface VariantRow {
   variant_id: string
   pos: number
   consequence: string
-  consequenceCategory: ConsequenceCategory
+  consequenceCategory: string
   hgvsp: string
   hgvsc: string
   group_results: { [key: string]: GroupResult }
@@ -145,7 +135,9 @@ export interface VariantTableColumn {
   renderForCSV: (row: VariantRow, key: string) => string | number | null
 }
 
-const variantDescriptionColumns: VariantTableColumn[] = [
+const buildVariantDescriptionColumns = (
+  categoryColors: Record<string, string>
+): VariantTableColumn[] => [
   {
     key: 'variant_id',
     heading: 'Variant ID',
@@ -192,7 +184,9 @@ const variantDescriptionColumns: VariantTableColumn[] = [
     render: (row, _key, { highlightWords = [] }) =>
       row.consequence && (
         <span className="grid-cell-content">
-          <VariantCategoryMarker color={categoryColors[row.consequenceCategory]} />
+          <VariantCategoryMarker
+            color={categoryColors[row.consequenceCategory] || DEFAULT_VARIANT_CATEGORY_COLOR}
+          />
           <Highlighter searchWords={highlightWords} textToHighlight={row.consequence || ''} />
         </span>
       ),
@@ -514,15 +508,20 @@ const gp2StatColumns: VariantTableColumn[] = [
 type GetVariantTableColumnsProps = {
   variantResultColumns: VariantColumnConfig[]
   filter: FilterState
+  variantCategoryOptions?: VariantCategoryOption[]
 }
 
 const getVariantTableColumns = ({
   variantResultColumns,
   filter,
+  variantCategoryOptions = DEFAULT_VARIANT_CATEGORY_OPTIONS,
 }: GetVariantTableColumnsProps): VariantTableColumn[] => {
   const { datasetId } = window.datasetConfig
 
-  const datasetColumns = [...variantDescriptionColumns]
+  const categoryColors = Object.fromEntries(
+    variantCategoryOptions.map((option) => [option.id, option.color])
+  )
+  const datasetColumns = [...buildVariantDescriptionColumns(categoryColors)]
 
   if (datasetId === 'GP2') {
     let renderedGP2Columns = gp2StatColumns

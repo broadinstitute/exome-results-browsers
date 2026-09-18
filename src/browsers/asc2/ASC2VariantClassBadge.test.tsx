@@ -5,6 +5,7 @@ import ASC2VariantClassBadge, {
   ASC2_VARIANT_CLASS_COLORS,
   compareASC2VariantClassSeverity,
 } from './ASC2VariantClassBadge'
+import { ASC2VariantClass } from './ascTypes'
 
 describe('ASC2VariantClassBadge', () => {
   it.each(Object.keys(ASC2_VARIANT_CLASS_COLORS))(
@@ -14,7 +15,9 @@ describe('ASC2VariantClassBadge', () => {
 
       const badge = screen.getByText(variantClass === 'synonymous' ? 'Synonymous' : variantClass)
 
-      expect(badge).toHaveStyle({ background: ASC2_VARIANT_CLASS_COLORS[variantClass] })
+      expect(badge).toHaveStyle({
+        background: ASC2_VARIANT_CLASS_COLORS[variantClass as ASC2VariantClass],
+      })
     }
   )
 
@@ -39,6 +42,8 @@ describe('compareASC2VariantClassSeverity', () => {
   })
 
   it('sorts an unrecognized class after every known class', () => {
-    expect(compareASC2VariantClassSeverity('unexpected-future-class', 'synonymous')).toBeGreaterThan(0)
+    expect(
+      compareASC2VariantClassSeverity('unexpected-future-class', 'synonymous')
+    ).toBeGreaterThan(0)
   })
 })

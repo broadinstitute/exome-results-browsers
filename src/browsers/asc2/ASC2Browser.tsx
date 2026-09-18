@@ -10,15 +10,20 @@ import Browser, {
   VariantLollipopTrackGroup,
 } from '../base/Browser'
 import { renderCount, renderFloatAsScientific } from '../base/tableCells'
+import { defineVariantCategoryOptions } from '../base/variantCategories'
 
 import ASC2AboutPage from './ASC2AboutPage'
 import ASC2HomePage from './ASC2HomePage'
 import ASC2TermsPage from './ASC2TermsPage'
-import ASC2VariantClassBadge, { compareASC2VariantClassSeverity } from './ASC2VariantClassBadge'
+import ASC2VariantClassBadge, {
+  ASC2_VARIANT_CLASS_COLORS,
+  compareASC2VariantClassSeverity,
+} from './ASC2VariantClassBadge'
 import { renderASC2BayesFactor, renderASC2FalseDiscoveryRate } from './ascNumberFormatting'
 import {
   ASC2_VARIANT_CLASS_CATEGORIES,
   ASC2GeneResult,
+  ASC2VariantClass,
   ASC2VariantClassCategory,
   ASC2VariantInfo,
   describeVariantClass,
@@ -66,6 +71,21 @@ export const asc2VariantConsequences: VariantConsequence[] = [
   { term: 'upstream gene', label: 'upstream gene', category: 'other' },
   { term: 'downstream gene', label: 'downstream gene', category: 'other' },
 ]
+
+export const asc2VariantCategoryOptions = defineVariantCategoryOptions<ASC2VariantClass>({
+  PTV: { label: 'PTV', color: ASC2_VARIANT_CLASS_COLORS.PTV, keyboardShortcut: 'p' },
+  Mis2: { label: 'Mis2', color: ASC2_VARIANT_CLASS_COLORS.Mis2, keyboardShortcut: '2' },
+  Mis1: { label: 'Mis1', color: ASC2_VARIANT_CLASS_COLORS.Mis1, keyboardShortcut: '1' },
+  Mis0: { label: 'Mis0', color: ASC2_VARIANT_CLASS_COLORS.Mis0, keyboardShortcut: '0' },
+  synonymous: {
+    label: 'Synonymous',
+    color: ASC2_VARIANT_CLASS_COLORS.synonymous,
+    keyboardShortcut: 's',
+  },
+})
+
+const getASC2VariantCategory = (variant: { info: ASC2VariantInfo }): ASC2VariantClass =>
+  variant.info.variant_class
 
 const COLUMN_GROUP_COLOR_A = '#e8e9ed'
 const COLUMN_GROUP_COLOR_B = '#f0f1f3'
@@ -139,8 +159,6 @@ interface VariantClassColumnSpec {
   tooltip: (category: ASC2VariantClassCategory) => string
 }
 
-
-
 const variantClassCategoryColumns = (
   group: GeneResultColumnGroup,
   minWidth: number,
@@ -186,7 +204,8 @@ const caseControlColumns = variantClassCategoryColumns(caseControlColumnGroup, 7
   {
     key: ({ suffix }) => `${suffix}_case`,
     heading: ({ label }) => `${label} Case`,
-    tooltip: (category) => `${describeVariantClass(category)} in case/control burden analysis, cases`,
+    tooltip: (category) =>
+      `${describeVariantClass(category)} in case/control burden analysis, cases`,
   },
   {
     key: ({ suffix }) => `${suffix}_control`,
@@ -365,6 +384,8 @@ const ASC2Browser = () => (
       },
     ]}
     variantConsequences={asc2VariantConsequences}
+    variantCategoryOptions={asc2VariantCategoryOptions}
+    getVariantCategory={getASC2VariantCategory}
     variantExportNote="Only SNVs, and not CNVs, are displayed below. All variants, except for Mis1 and synonymous variants were included in our gene discovery framework."
     variantLollipopTrackGroups={variantLollipopTrackGroups}
   />

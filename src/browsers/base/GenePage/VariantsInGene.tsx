@@ -20,24 +20,35 @@ import VariantFilterControls, { FilterState } from './VariantFilterControls'
 import VariantTable, { SortOrder } from './VariantTable'
 import getVariantTableColumns, { VariantRow } from './variantTableColumns'
 import {
-  ConsequenceCategory,
   DatasetId,
   ReferenceGenome,
   VariantColumnConfig,
-  VariantConsequenceCategoryLabels,
   VariantLollipopTrack,
   VariantLollipopTrackGroup,
 } from '../Browser'
+import {
+  DEFAULT_VARIANT_CATEGORY_COLOR,
+  DEFAULT_VARIANT_CATEGORY_OPTIONS,
+  VariantCategoryOption,
+} from '../variantCategories'
 import { alleleFreqForRelativeRadius } from './relativeAlleleFrequencySizing'
 
-const consequenceCategoryColors: Record<ConsequenceCategory, string> = {
-  lof: 'rgba(255, 88, 63, 0.7)',
-  missense: 'rgba(240, 201, 77, 0.7)',
-  synonymous: 'rgba(0, 128, 0, 0.7)',
-  other: 'rgba(117, 117, 117, 0.7)',
+const DOT_COLOR_ALPHA = 0.7
+
+const withAlpha = (hexColor: string, alpha: number): string => {
+  const r = parseInt(hexColor.slice(1, 3), 16)
+  const g = parseInt(hexColor.slice(3, 5), 16)
+  const b = parseInt(hexColor.slice(5, 7), 16)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
-const variantColor = (variant: VariantRow) => consequenceCategoryColors[variant.consequenceCategory]
+const buildVariantColor = (variantCategoryOptions: VariantCategoryOption[]) => {
+  const colorsByCategory = Object.fromEntries(
+    variantCategoryOptions.map((option) => [option.id, option.color])
+  )
+  return (variant: VariantRow) =>
+    withAlpha(colorsByCategory[variant.consequenceCategory] || DEFAULT_VARIANT_CATEGORY_COLOR, DOT_COLOR_ALPHA)
+}
 
 const ModalStyles = createGlobalStyle`
   #variant-details-modal .modal-content {
@@ -121,7 +132,8 @@ interface VariantsInGeneProps {
   variantSortKey?: string
   variantSortOrder?: SortOrder
   variantResultColumns: VariantColumnConfig[]
-  variantConsequenceCategoryLabels: VariantConsequenceCategoryLabels
+  variantCategoryOptions: VariantCategoryOption[]
+  getVariantCategory?: (variant: any) => string
   variantCustomFilter: VariantCustomFilter
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
   renderVariantAttributes: (record: any) => any
@@ -162,7 +174,8 @@ const defaultASC2IncludedColumns = {
 class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState> {
   static defaultProps = {
     variantAnalysisGroupLabels: {},
-    variantConsequenceCategoryLabels: undefined,
+    variantCategoryOptions: DEFAULT_VARIANT_CATEGORY_OPTIONS,
+    getVariantCategory: undefined,
     variantCustomFilter: undefined,
     renderVariantAttributes: undefined,
     additionalVariantDetailSummaryColumns: undefined,
@@ -176,12 +189,9 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
     super(props)
 
     const defaultFilter: FilterState = {
-      includeCategories: {
-        lof: true,
-        missense: true,
-        synonymous: true,
-        other: true,
-      },
+      includeCategories: Object.fromEntries(
+        props.variantCategoryOptions.map((option) => [option.id, true])
+      ),
       searchText: '',
       custom: (props.variantCustomFilter || {}).defaultFilter,
       gp2VariantColumnGroups: props.datasetId === 'GP2' ? defaultGP2IncludedColumns : undefined,
@@ -339,13 +349,9 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
 
     let filteredVariants = variants
 
-    const isEveryConsequenceCategorySelected =
-      filter.includeCategories.lof &&
-      filter.includeCategories.missense &&
-      filter.includeCategories.synonymous &&
-      filter.includeCategories.other
+    const isEveryVariantCategorySelected = Object.values(filter.includeCategories).every(Boolean)
 
-    if (!isEveryConsequenceCategorySelected) {
+    if (!isEveryVariantCategorySelected) {
       filteredVariants = variants.filter((variant) => {
         return filter.includeCategories[variant.consequenceCategory]
       })
@@ -403,6 +409,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
     const tableColumns = getVariantTableColumns({
       variantResultColumns: variantResultColumns,
       filter: currentFilter,
+      variantCategoryOptions: this.props.variantCategoryOptions,
     })
 
     const column = tableColumns.find((c) => c.key === sortKey)
@@ -437,7 +444,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
       variantAnalysisGroupLabels,
       variantAnalysisGroupOptions,
       variantResultColumns,
-      variantConsequenceCategoryLabels,
+      variantCategoryOptions,
       variantCustomFilter,
       renderVariantAttributes,
       additionalVariantDetailSummaryColumns,
@@ -478,7 +485,10 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
     const currentTableColumns = getVariantTableColumns({
       variantResultColumns,
       filter,
+      variantCategoryOptions,
     })
+
+    const variantColor = buildVariantColor(variantCategoryOptions)
 
     return (
       <>
@@ -539,7 +549,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
         <TrackPageSection style={{ fontSize: '14px', marginTop: '1em' }}>
           <VariantFilterControls
             datasetId={datasetId as DatasetId}
-            consequenceCategoryLabels={variantConsequenceCategoryLabels}
+            variantCategoryOptions={variantCategoryOptions}
             filter={filter}
             onChangeFilter={this.onChangeFilter}
             customFilterComponent={(variantCustomFilter || {}).component}
@@ -681,7 +691,7 @@ const addOverallAFForGP2 = (args: { groupResult: any }) => {
 interface VariantConsequence {
   term: string
   label?: string
-  category?: ConsequenceCategory
+  category?: string
 }
 
 interface VariantsInGeneContainerProps {
@@ -692,6 +702,11 @@ interface VariantsInGeneContainerProps {
   defaultVariantAnalysisGroup?: string
   variantResultColumns: VariantColumnConfig[]
   variantAlleleFrequencyOverride?: number
+  // When provided, this determines each variant's category (and therefore how it's
+  // colored and filtered) directly, instead of the default VEP-consequence-term lookup
+  // built from `variantConsequences` below. ASC2 uses this to categorize by its own
+  // Mis0/Mis1/Mis2/PTV/synonymous `info.variant_class`, which VEP terms don't capture.
+  getVariantCategory?: (variant: any) => string
   [key: string]: any
 }
 
@@ -703,6 +718,7 @@ const VariantsInGeneContainer = ({
   defaultVariantAnalysisGroup = undefined,
   variantResultColumns,
   variantAlleleFrequencyOverride = undefined,
+  getVariantCategory = undefined,
   ...otherProps
 }: VariantsInGeneContainerProps) => {
   return (
@@ -782,13 +798,12 @@ const VariantsInGeneContainer = ({
 
           variant.hgvs = variant.hgvsp || variant.hgvsc
 
-          if (variant.consequence) {
-            variant.consequenceCategory =
-              (consequences[variant.consequence] || {}).category || 'other'
-            variant.consequence =
-              (consequences[variant.consequence] || {}).label || variant.consequence
-          } else {
-            variant.consequenceCategory = 'other'
+          const rawConsequenceTerm = variant.consequence
+          variant.consequenceCategory = getVariantCategory
+            ? getVariantCategory(variant)
+            : (rawConsequenceTerm && (consequences[rawConsequenceTerm] || {}).category) || 'other'
+          if (rawConsequenceTerm) {
+            variant.consequence = (consequences[rawConsequenceTerm] || {}).label || rawConsequenceTerm
           }
 
           return variant

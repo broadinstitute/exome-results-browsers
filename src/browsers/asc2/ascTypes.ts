@@ -116,13 +116,15 @@ export const describeVariantClass = (category: ASC2VariantClassCategory): string
   }
 }
 
+export type ASC2VariantClass = 'PTV' | 'Mis2' | 'Mis1' | 'Mis0' | 'synonymous'
+
 export interface ASC2VariantInfo {
   mpc: number | null
   alpha_missense: number | null
   is_other_splice: boolean | null
   gnomad_af: number | null
   transcript_id: string | null
-  variant_class: string
+  variant_class: ASC2VariantClass
 }
 
 export interface ASC2VariantGroupResult {
