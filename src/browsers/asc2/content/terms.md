@@ -14,7 +14,7 @@ ASC principal investigators include Dr. [Joseph Buxbaum](mailto:joseph.buxbaum@m
 
 ## How to cite us?
 
-We ask that any use of data from the ASC Browser cite the Consortium's latest flagship paper ([Satterstrom et al., 2026](https://www.medrxiv.org/content/10.64898/2026.08.24.26360398v1.article-info)), and that online resources that include the data set provide a link to this browser. References to the ASC should note the 2012 Flagship paper ([Buxbaum et al., 2012](https://pubmed.ncbi.nlm.nih.gov/23259942/)).
+We ask that any use of data from the ASC Browser cite the Consortium's latest flagship paper ([Satterstrom et al., 2026a](https://www.medrxiv.org/content/10.64898/2026.08.24.26360398v1)), and that online resources that include the data set provide a link to this browser. References to the ASC should note the 2012 Flagship paper ([Buxbaum et al., 2012](https://pubmed.ncbi.nlm.nih.gov/23259942/)).
 
 Satterstrom, F. K., Auwerx, C., Fu, J. M., _et al._ Rare variation illuminates the distinct and pleiotropic genetic architecture of autism across neuropsychiatric traits. _medRxiv_ (2026). DOI: [https://doi.org/10.64898/2026.08.24.26360398](https://doi.org/10.64898/2026.08.24.26360398).
 
