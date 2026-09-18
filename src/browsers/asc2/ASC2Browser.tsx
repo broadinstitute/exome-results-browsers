@@ -222,14 +222,14 @@ const ASC2Browser = () => (
         heading: 'De\u00a0novo AC (proband)',
         tooltip: 'De\u00a0novo allele count in probands',
         minWidth: 110,
-        group: 'deNovo',
+        group: deNovoColumnGroup,
       },
       {
         key: 'group_result.de_novo_ac_sibling',
         heading: 'De\u00a0novo AC (sibling)',
         tooltip: 'De\u00a0novo allele count in siblings',
         minWidth: 110,
-        group: 'deNovo',
+        group: deNovoColumnGroup,
       },
 
       {
@@ -237,14 +237,14 @@ const ASC2Browser = () => (
         heading: 'Transmitted AC',
         tooltip: 'Allele count transmitted to probands',
         minWidth: 110,
-        group: 'transmittedUntransmitted',
+        group: transmittedUntransmittedColumnGroup,
       },
       {
         key: 'group_result.untransmitted_ac_proband',
         heading: 'Untransmitted AC',
         tooltip: 'Allele count not transmitted to probands',
         minWidth: 110,
-        group: 'transmittedUntransmitted',
+        group: transmittedUntransmittedColumnGroup,
       },
 
       {
@@ -252,14 +252,14 @@ const ASC2Browser = () => (
         heading: 'Case/control AC (case)',
         tooltip: 'Allele count in cases (case/control burden)',
         minWidth: 110,
-        group: 'caseControl',
+        group: caseControlColumnGroup,
       },
       {
         key: 'group_result.ac_ctrl',
         heading: 'Case/control AC (control)',
         tooltip: 'Allele count in controls (case/control burden)',
         minWidth: 110,
-        group: 'caseControl',
+        group: caseControlColumnGroup,
       },
       {
         key: 'info.gnomad_af',

@@ -184,6 +184,14 @@ const VariantFilterControls = ({
     { key: 'caseControl', label: 'Case / Control' },
   ]
 
+  // `heading` may be a column-group banner element rather than plain text; `csvHeading`
+  // carries the underlying text for CSV export.
+  const csvExportColumns = variantTableColumns.map((column) => ({
+    ...column,
+    heading:
+      column.csvHeading || (typeof column.heading === 'string' ? column.heading : column.key),
+  }))
+
   return (
     <SettingsWrapper>
       <FiltersWrapper>
@@ -241,7 +249,7 @@ const VariantFilterControls = ({
 
             <CSVExportButton
               data={renderedVariants}
-              columns={variantTableColumns}
+              columns={csvExportColumns}
               filename={`${selectedAnalysisGroup}_${geneId}_variants`}
             >
               Export variants to CSV
