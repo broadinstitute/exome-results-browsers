@@ -186,6 +186,18 @@ export type VariantCustomFilter = {
   applyFilter: (variants: any[], filterState: any) => any[]
 }
 
+export type VariantLollipopTrack = {
+  key: string
+  title: string
+  acField: string
+  height?: number
+}
+
+export type VariantLollipopTrackGroup = {
+  key: string
+  tracks: [VariantLollipopTrack, VariantLollipopTrack]
+}
+
 type BrowserProps = {
   browserTitle?: string
   navBarBackgroundColor?: string
@@ -215,6 +227,7 @@ type BrowserProps = {
   getGeneNotFoundMessage?: (geneIdOrSymbol: string) => string | undefined
   variantAlleleFrequencyOverride?: number
   variantExportNote?: string
+  variantLollipopTrackGroups?: VariantLollipopTrackGroup[]
 }
 
 const Browser = ({
@@ -252,6 +265,7 @@ const Browser = ({
   getGeneNotFoundMessage = undefined,
   variantAlleleFrequencyOverride = undefined,
   variantExportNote = undefined,
+  variantLollipopTrackGroups = undefined,
 }: BrowserProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAuthLoading, setIsAuthLoading] = useState(true)
@@ -343,6 +357,7 @@ const Browser = ({
                 getGeneNotFoundMessage={getGeneNotFoundMessage}
                 variantAlleleFrequencyOverride={variantAlleleFrequencyOverride}
                 variantExportNote={variantExportNote}
+                variantLollipopTrackGroups={variantLollipopTrackGroups}
               />
             )}
           />

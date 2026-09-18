@@ -24,6 +24,7 @@ import {
   ReferenceGenome,
   VariantColumnConfig,
   VariantConsequenceCategoryLabels,
+  VariantLollipopTrackGroup,
 } from '../Browser'
 
 const consequenceCategoryColors: Record<ConsequenceCategory, string> = {
@@ -74,6 +75,7 @@ interface VariantsInGeneProps {
   variantDetailColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences: boolean
   variantExportNote?: string
+  variantLollipopTrackGroups?: VariantLollipopTrackGroup[]
   gene: Gene
   variants: VariantRow[]
 }
@@ -114,6 +116,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
     variantDetailColumns: undefined,
     renderVariantTranscriptConsequences: false,
     variantExportNote: undefined,
+    variantLollipopTrackGroups: undefined,
   }
 
   constructor(props: VariantsInGeneProps) {

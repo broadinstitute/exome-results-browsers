@@ -22,6 +22,7 @@ import {
   VariantConsequence,
   VariantConsequenceCategoryLabels,
   VariantCustomFilter,
+  VariantLollipopTrackGroup,
 } from '../Browser'
 import { IndividualGeneAPIResponse } from '../GeneResultsPage/geneResultTableColumns'
 import { SortOrder } from './VariantTable'
@@ -65,6 +66,7 @@ interface GenePageProps {
   renderVariantTranscriptConsequences?: boolean
   variantAlleleFrequencyOverride?: number
   variantExportNote?: string
+  variantLollipopTrackGroups?: VariantLollipopTrackGroup[]
 }
 
 const GenePage = ({
@@ -86,6 +88,7 @@ const GenePage = ({
   renderVariantTranscriptConsequences = false,
   variantAlleleFrequencyOverride = undefined,
   variantExportNote = undefined,
+  variantLollipopTrackGroups = undefined,
 }: GenePageProps) => {
   return (
     <TrackPage>
@@ -190,6 +193,7 @@ const GenePage = ({
           variantResultColumns={variantResultColumns}
           variantAlleleFrequencyOverride={variantAlleleFrequencyOverride}
           variantExportNote={variantExportNote}
+          variantLollipopTrackGroups={variantLollipopTrackGroups}
         />
       </RegionViewer>
     </TrackPage>
