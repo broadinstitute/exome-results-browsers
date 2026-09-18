@@ -45,6 +45,8 @@ interface GeneResultsPageProps {
   analysisGroupOptions: readonly string[]
   defaultAnalysisGroup: string
   defaultSortKey?: string
+  defaultSortOrder?: string
+  defaultColumnGroups?: Record<string, boolean>
   geneResultColumns: GeneResultColumnConfig[]
   pageHeading?: string
   geneResults: GeneRow[]
@@ -56,13 +58,20 @@ const GeneResultsPage = ({
   analysisGroupOptions,
   defaultAnalysisGroup,
   defaultSortKey = undefined,
+  defaultSortOrder = undefined,
+  defaultColumnGroups = undefined,
   geneResultColumns,
   pageHeading = 'Results',
   geneResults,
   tabs = [],
 }: GeneResultsPageProps) => {
   const [includedColumnGroups, setIncludedColumnGroups] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(getColumnGroups(geneResultColumns).map((group) => [group.key, true]))
+    Object.fromEntries(
+      getColumnGroups(geneResultColumns).map((group) => [
+        group.key,
+        defaultColumnGroups ? defaultColumnGroups[group.key] === true : true,
+      ])
+    )
   )
   const columnGroups = useMemo(() => getColumnGroups(geneResultColumns), [geneResultColumns])
   const filteredGeneResultColumns = useMemo(
@@ -177,6 +186,7 @@ const GeneResultsPage = ({
                 render: () => (
                   <GeneResultsTable
                     defaultSortKey={defaultSortKey}
+                    defaultSortOrder={defaultSortOrder}
                     geneResultColumns={tableColumns}
                     geneResults={results}
                     highlightText={searchText}
@@ -198,6 +208,7 @@ const GeneResultsPage = ({
         ) : (
           <GeneResultsTable
             defaultSortKey={defaultSortKey}
+            defaultSortOrder={defaultSortOrder}
             geneResultColumns={tableColumns}
             geneResults={results}
             highlightText={searchText}
@@ -213,6 +224,8 @@ interface GeneResultsPageContainerProps {
   analysisGroupOptions?: readonly string[]
   defaultAnalysisGroup?: string
   defaultSortKey: string
+  defaultSortOrder?: string
+  defaultColumnGroups?: Record<string, boolean>
   geneResultColumns: GeneResultColumnConfig[]
   pageHeading: string
   tabs: GeneResultTabConfig[]
@@ -223,6 +236,8 @@ const GeneResultsPageContainer = ({
   analysisGroupOptions = undefined,
   defaultAnalysisGroup = undefined,
   defaultSortKey,
+  defaultSortOrder = undefined,
+  defaultColumnGroups = undefined,
   geneResultColumns,
   pageHeading,
   tabs,
@@ -272,6 +287,8 @@ const GeneResultsPageContainer = ({
               defaultAnalysisGroup || datasetConfig.gene_result_analysis_groups[0]
             }
             defaultSortKey={defaultSortKey}
+            defaultSortOrder={defaultSortOrder}
+            defaultColumnGroups={defaultColumnGroups}
             geneResultColumns={geneResultColumns}
             pageHeading={pageHeading}
             tabs={tabs}

@@ -9,16 +9,13 @@ import Browser, {
   VariantConsequence,
   VariantLollipopTrackGroup,
 } from '../base/Browser'
-import {
-  renderCount,
-  renderFloatAsScientific,
-  renderStringOrFloatPvalueAsScientific,
-} from '../base/tableCells'
+import { renderCount, renderFloatAsScientific } from '../base/tableCells'
 
 import ASC2AboutPage from './ASC2AboutPage'
 import ASC2HomePage from './ASC2HomePage'
 import ASC2TermsPage from './ASC2TermsPage'
 import ASC2VariantClassBadge, { compareASC2VariantClassSeverity } from './ASC2VariantClassBadge'
+import { renderASC2BayesFactor, renderASC2FalseDiscoveryRate } from './ascNumberFormatting'
 import {
   ASC2_VARIANT_CLASS_CATEGORIES,
   ASC2GeneResult,
@@ -217,20 +214,26 @@ const ASC2Browser = () => (
     geneResultsPageHeading="Results"
     geneResultAnalysisGroupOptions={ascAnalysisGroups}
     defaultGeneResultAnalysisGroup={ascDefaultAnalysisGroup}
-    defaultGeneResultSortKey="false_discovery_rate"
+    defaultGeneResultSortKey="bayes_factor"
+    defaultGeneResultSortOrder="descending"
+    defaultGeneResultColumnGroups={{
+      deNovo: true,
+      transmittedUntransmitted: false,
+      caseControl: false,
+    }}
     geneResultColumns={[
       {
         key: 'bayes_factor',
         heading: 'Bayes Factor',
         minWidth: 140,
-        render: (value) => renderStringOrFloatPvalueAsScientific({ value, decimalPlaces: 4 }),
+        render: (value) => renderASC2BayesFactor(value),
       },
       {
         key: 'false_discovery_rate',
         heading: 'FDR',
         tooltip: 'False discovery rate',
         minWidth: 140,
-        render: (value) => renderStringOrFloatPvalueAsScientific({ value, decimalPlaces: 4 }),
+        render: (value) => renderASC2FalseDiscoveryRate(value),
       },
       {
         key: 'was_flagged_in_qc',

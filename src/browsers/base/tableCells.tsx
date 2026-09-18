@@ -12,7 +12,7 @@ const CountCell = styled.span`
 
 export const renderCount = (value: any) => <CountCell>{value} </CountCell>
 
-const NumberCell = styled.span`
+export const NumberCell = styled.span`
   overflow: hidden;
   width: 100%;
   padding-right: 15px;
@@ -57,7 +57,11 @@ export const renderOddsRatioCI = ({
     return '-'
   }
 
-  if (confidenceInterval === null || confidenceInterval === undefined || confidenceInterval === '') {
+  if (
+    confidenceInterval === null ||
+    confidenceInterval === undefined ||
+    confidenceInterval === ''
+  ) {
     return '-'
   }
 
