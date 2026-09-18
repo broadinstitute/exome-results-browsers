@@ -1,9 +1,13 @@
 import React, { ReactNode } from 'react'
 
+// @ts-expect-error: no types in this @gnomad/ui version
+import { Badge } from '@gnomad/ui'
+
 import Browser, {
   GeneResultColumnConfig,
   GeneResultColumnGroup,
   VariantConsequence,
+  VariantLollipopTrackGroup,
 } from '../base/Browser'
 import {
   renderCount,
@@ -20,9 +24,6 @@ import {
   ASC2VariantClassCategory,
   ASC2VariantInfo,
 } from './ascTypes'
-
-// sizing of overridden bubbles on frequency lollipop chart
-const ASC2_VARIANT_DOT_ALLELE_FREQ = 0.0003
 
 export type ASC2VariantColumnGroup = 'deNovo' | 'transmittedUntransmitted' | 'caseControl'
 
@@ -86,6 +87,52 @@ const caseControlColumnGroup: GeneResultColumnGroup = {
   label: 'Case-Control',
   color: COLUMN_GROUP_COLOR_C,
 }
+
+// Dot size on each track is proportional to AC relative to the largest AC
+// across both tracks in its group, not a fixed/global scale.
+const variantLollipopTrackGroups: VariantLollipopTrackGroup[] = [
+  {
+    key: deNovoColumnGroup.key,
+    label: deNovoColumnGroup.label,
+    color: deNovoColumnGroup.color,
+    tooltip:
+      'We expect a 4:1 allele count ratio based on a 4:1 proband:sibling ratio. Dot size is scaled to the largest AC of the observed variants in the De novo group.',
+    tracks: [
+      { key: 'de_novo_proband', title: 'Proband', acField: 'group_result.de_novo_ac_proband' },
+      { key: 'de_novo_sibling', title: 'Sibling', acField: 'group_result.de_novo_ac_sibling' },
+    ],
+  },
+  {
+    key: transmittedUntransmittedColumnGroup.key,
+    label: transmittedUntransmittedColumnGroup.label,
+    color: transmittedUntransmittedColumnGroup.color,
+    tooltip:
+      'We expect a 1:1 allele count ratio based on a 50% Mendelian inheritance rate. Dot size is scaled to the largest AC of the observed variants in the Inherited (proband) group.',
+    tracks: [
+      {
+        key: 'transmitted_proband',
+        title: 'Transmitted',
+        acField: 'group_result.transmitted_ac_proband',
+      },
+      {
+        key: 'untransmitted_proband',
+        title: 'Untransmitted',
+        acField: 'group_result.untransmitted_ac_proband',
+      },
+    ],
+  },
+  {
+    key: caseControlColumnGroup.key,
+    label: caseControlColumnGroup.label,
+    color: caseControlColumnGroup.color,
+    tooltip:
+      'We expect a 1:1 allele count ratio based on a 1:1 case:control ratio. Dot size is scaled to the largest AC of the observed variants in the Case-Control group.',
+    tracks: [
+      { key: 'case', title: 'Case', acField: 'group_result.ac_case' },
+      { key: 'control', title: 'Control', acField: 'group_result.ac_ctrl' },
+    ],
+  },
+]
 
 interface VariantClassColumnSpec {
   key: (category: ASC2VariantClassCategory) => keyof ASC2GeneResult
@@ -171,9 +218,6 @@ const ASC2Browser = () => (
     defaultGeneResultAnalysisGroup={ascDefaultAnalysisGroup}
     defaultGeneResultSortKey="false_discovery_rate"
     geneResultColumns={[
-      ...deNovoColumns,
-      ...transmittedUntransmittedColumns,
-      ...caseControlColumns,
       {
         key: 'bayes_factor',
         heading: 'Bayes Factor',
@@ -192,8 +236,21 @@ const ASC2Browser = () => (
         heading: 'Flag',
         tooltip: 'Gene flagged in analysis',
         minWidth: 90,
-        render: (value) => `${value === true ? 'Yes' : ''}`,
+        render: (value) =>
+          value === true ? (
+            <Badge
+              level="error"
+              tooltip="Concern that the association is driven by clonal expansion in spermatogonia or mapping errors (see manuscript Methods for details)."
+            >
+              Flag
+            </Badge>
+          ) : (
+            ''
+          ),
       },
+      ...deNovoColumns,
+      ...transmittedUntransmittedColumns,
+      ...caseControlColumns,
     ]}
     geneResultTabs={[
       {
@@ -299,8 +356,8 @@ const ASC2Browser = () => (
       },
     ]}
     variantConsequences={asc2VariantConsequences}
-    variantAlleleFrequencyOverride={ASC2_VARIANT_DOT_ALLELE_FREQ}
     variantExportNote="Only SNVs, and not CNVs, are displayed below. All variants, except for Mis1 and synonymous variants were included in our gene discovery framework."
+    variantLollipopTrackGroups={variantLollipopTrackGroups}
   />
 )
 
