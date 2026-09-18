@@ -1,18 +1,19 @@
 import { get, throttle } from 'lodash'
 // import PropTypes from 'prop-types'
 import React, { Component, ComponentType } from 'react'
-import { createGlobalStyle } from 'styled-components'
+import styled, { createGlobalStyle } from 'styled-components'
 
 // @ts-expect-error: this version of @gnomad/... doesn't have types
-import { Cursor, PositionAxisTrack } from '@gnomad/region-viewer'
+import { Cursor, PositionAxisTrack, RegionViewerContext } from '@gnomad/region-viewer'
 // @ts-expect-error: this version of @gnomad/... doesn't have types
 import VariantTrack from '@gnomad/track-variants'
 // @ts-expect-error: this version of @gnomad/... doesn't have types
-import { Modal } from '@gnomad/ui'
+import { Modal, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 
 import datasetConfig from '../../datasetConfig'
 import Fetch from '../Fetch'
 import StatusMessage from '../StatusMessage'
+import { DEFAULT_COLUMN_GROUP_COLOR } from '../columnGroupHeadings'
 import { TrackPageSection } from './TrackPage'
 import VariantDetails from './VariantDetails'
 import VariantFilterControls, { FilterState } from './VariantFilterControls'
@@ -24,8 +25,10 @@ import {
   ReferenceGenome,
   VariantColumnConfig,
   VariantConsequenceCategoryLabels,
+  VariantLollipopTrack,
   VariantLollipopTrackGroup,
 } from '../Browser'
+import { alleleFreqForRelativeRadius } from './relativeAlleleFrequencySizing'
 
 const consequenceCategoryColors: Record<ConsequenceCategory, string> = {
   lof: 'rgba(255, 88, 63, 0.7)',
@@ -47,6 +50,56 @@ const selectGroupResult = (variants: VariantRow[], group: string) => {
     .filter((v) => v.group_results[group])
     .map((v) => ({ ...v, group_result: v.group_results[group] }))
 }
+
+const acFieldValue = (variant: VariantRow, acField: string): number => Number(get(variant, acField)) || 0
+
+export const maxAcAcrossGroupTracks = (
+  variants: VariantRow[],
+  group: VariantLollipopTrackGroup
+): number =>
+  Math.max(0, ...variants.flatMap((v) => group.tracks.map((track) => acFieldValue(v, track.acField))))
+
+export const lollipopTrackVariants = (
+  variants: VariantRow[],
+  track: VariantLollipopTrack,
+  maxAcInGroup: number
+) =>
+  variants
+    .filter((v) => acFieldValue(v, track.acField) > 0)
+    .map((v) => ({
+      ...v,
+      allele_freq: alleleFreqForRelativeRadius(acFieldValue(v, track.acField) / maxAcInGroup),
+    }))
+
+// pass in leftPanelWidth size to have it match, re-use column group header colors
+const LollipopGroupHeaderBanner = styled.div<{ $color: string; $width: number }>`
+  width: ${({ $width }) => $width}px;
+  margin-top: 0.75em;
+  margin-bottom: 0.35em;
+  padding: 0.25em 0.5em;
+  font-weight: bold;
+  text-align: center;
+  background: ${({ $color }) => $color};
+`
+
+const LollipopGroupHeader = ({ group }: { group: VariantLollipopTrackGroup }) => (
+  <RegionViewerContext.Consumer>
+    {({ leftPanelWidth }: { leftPanelWidth: number }) => (
+      <LollipopGroupHeaderBanner
+        $color={group.color || DEFAULT_COLUMN_GROUP_COLOR}
+        $width={leftPanelWidth}
+      >
+        {group.tooltip ? (
+          <TooltipAnchor tooltip={group.tooltip}>
+            <TooltipHint>{group.label}</TooltipHint>
+          </TooltipAnchor>
+        ) : (
+          group.label
+        )}
+      </LollipopGroupHeaderBanner>
+    )}
+  </RegionViewerContext.Consumer>
+)
 
 // TK: TODO: fixme: this type could possibly be GeneRow from Browser.tsx
 export interface Gene {
@@ -391,6 +444,7 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
       variantDetailColumns,
       renderVariantTranscriptConsequences,
       variantExportNote,
+      variantLollipopTrackGroups,
     } = this.props
 
     const {
@@ -411,15 +465,15 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
       datasetId === 'GP2'
         ? renderedVariants
         : renderedVariants
-            .filter((v) => v.group_result.ac_case > 0)
-            .map((v) => ({ ...v, allele_freq: v.group_result.af_case }))
+          .filter((v) => v.group_result.ac_case > 0)
+          .map((v) => ({ ...v, allele_freq: v.group_result.af_case }))
 
     const controls =
       datasetId === 'GP2'
         ? renderedVariants
         : renderedVariants
-            .filter((v) => v.group_result.ac_ctrl > 0)
-            .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
+          .filter((v) => v.group_result.ac_ctrl > 0)
+          .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
 
     const currentTableColumns = getVariantTableColumns({
       variantResultColumns,
@@ -428,16 +482,44 @@ class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGeneState>
 
     return (
       <>
-        <VariantTrack
-          title={`Cases\n(${cases.length} variants)`}
-          variants={cases}
-          variantColor={variantColor}
-        />
-        <VariantTrack
-          title={`Controls\n(${controls.length} variants)`}
-          variants={controls}
-          variantColor={variantColor}
-        />
+        {variantLollipopTrackGroups ? (
+          variantLollipopTrackGroups
+            .filter(
+              (group) =>
+                !filter.asc2VariantColumnGroups || filter.asc2VariantColumnGroups[group.key]
+            )
+            .flatMap((group) => {
+              const maxAc = maxAcAcrossGroupTracks(renderedVariants, group)
+              return [
+                <LollipopGroupHeader key={`${group.key}-header`} group={group} />,
+                ...group.tracks.map((track) => {
+                  const trackVariants = lollipopTrackVariants(renderedVariants, track, maxAc)
+                  return (
+                    <VariantTrack
+                      key={track.key}
+                      title={`${track.title}\n(${trackVariants.length} variants)`}
+                      variants={trackVariants}
+                      variantColor={variantColor}
+                      height={track.height}
+                    />
+                  )
+                }),
+              ]
+            })
+        ) : (
+          <>
+            <VariantTrack
+              title={`Cases\n(${cases.length} variants)`}
+              variants={cases}
+              variantColor={variantColor}
+            />
+            <VariantTrack
+              title={`Controls\n(${controls.length} variants)`}
+              variants={controls}
+              variantColor={variantColor}
+            />
+          </>
+        )}
         <Cursor onClick={this.onClickPosition}>
           <VariantTrack
             title="Viewing in table"

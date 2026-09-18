@@ -195,6 +195,9 @@ export type VariantLollipopTrack = {
 
 export type VariantLollipopTrackGroup = {
   key: string
+  label: string
+  tooltip?: string
+  color?: string
   tracks: [VariantLollipopTrack, VariantLollipopTrack]
 }
 
