@@ -21,6 +21,13 @@ import vepConsequences from './vepConsequences'
 import LoginPage from './LoginPage'
 import { userHasBearerCookie } from './auth'
 import { GeneRow } from './GeneResultsPage/geneResultTableColumns'
+import {
+  ConsequenceCategory,
+  VariantCategoryOption,
+  VariantConsequence,
+  VariantConsequenceCategoryLabels,
+  DEFAULT_VARIANT_CATEGORY_OPTIONS,
+} from './variantCategories'
 
 export type DatasetId = 'ASC' | 'ASC2' | 'BipEx' | 'BipEx2' | 'Epi25' | 'GP2' | 'IBD' | 'SCHEMA'
 
@@ -170,15 +177,10 @@ export type VariantColumnConfig = {
   type?: string
 }
 
-export type ConsequenceCategory = 'lof' | 'missense' | 'synonymous' | 'other'
-
-export interface VariantConsequence {
-  term: string
-  label?: string
-  category: ConsequenceCategory
-}
-
-export type VariantConsequenceCategoryLabels = Record<ConsequenceCategory, string>
+// Re-exported from a leaf module with no other project imports; see variantCategories.ts
+// for why (files that only need e.g. `DEFAULT_VARIANT_CATEGORY_OPTIONS` must not be forced
+// to pull in this whole module's import graph, which has dataset-config side effects).
+export * from './variantCategories'
 
 export type VariantCustomFilter = {
   component: React.ElementType
@@ -224,6 +226,8 @@ type BrowserProps = {
   defaultVariantTableSortOrder?: string
   variantConsequences?: VariantConsequence[]
   variantConsequenceCategoryLabels?: VariantConsequenceCategoryLabels
+  variantCategoryOptions?: VariantCategoryOption[]
+  getVariantCategory?: (variant: any) => string
   variantCustomFilter?: VariantCustomFilter
   variantDetailColumns?: VariantColumnConfig[]
   renderVariantAttributes?: (record: any) => void
@@ -264,6 +268,8 @@ const Browser = ({
     synonymous: 'Synonymous',
     other: 'Other',
   },
+  variantCategoryOptions = DEFAULT_VARIANT_CATEGORY_OPTIONS,
+  getVariantCategory = undefined,
   variantCustomFilter = undefined,
   renderVariantAttributes = undefined,
   additionalVariantDetailSummaryColumns = undefined,
@@ -358,6 +364,8 @@ const Browser = ({
                 variantSortOrder={defaultVariantTableSortOrder}
                 variantConsequences={variantConsequences}
                 variantConsequenceCategoryLabels={variantConsequenceCategoryLabels}
+                variantCategoryOptions={variantCategoryOptions}
+                getVariantCategory={getVariantCategory}
                 variantCustomFilter={variantCustomFilter}
                 renderVariantAttributes={renderVariantAttributes}
                 additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}

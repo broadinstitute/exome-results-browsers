@@ -1,7 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 
-export const ASC2_VARIANT_CLASS_COLORS: Record<string, string> = {
+import { ASC2VariantClass } from './ascTypes'
+
+export const ASC2_VARIANT_CLASS_COLORS: Record<ASC2VariantClass, string> = {
   PTV: '#cc0f74',
   Mis2: '#f07800',
   Mis1: '#ffa600',
@@ -11,7 +13,7 @@ export const ASC2_VARIANT_CLASS_COLORS: Record<string, string> = {
 
 const DEFAULT_VARIANT_CLASS_COLOR = '#e0e0e0'
 
-const ASC2_VARIANT_CLASS_SEVERITY_RANK: Record<string, number> = {
+const ASC2_VARIANT_CLASS_SEVERITY_RANK: Record<ASC2VariantClass, number> = {
   PTV: 0,
   Mis2: 1,
   Mis1: 2,
@@ -21,11 +23,17 @@ const ASC2_VARIANT_CLASS_SEVERITY_RANK: Record<string, number> = {
 
 const UNRECOGNIZED_VARIANT_CLASS_RANK = 99
 
-export const compareASC2VariantClassSeverity = (a: string, b: string): number =>
-  (ASC2_VARIANT_CLASS_SEVERITY_RANK[a] ?? UNRECOGNIZED_VARIANT_CLASS_RANK) -
-  (ASC2_VARIANT_CLASS_SEVERITY_RANK[b] ?? UNRECOGNIZED_VARIANT_CLASS_RANK)
+const lookupByVariantClass = <T,>(
+  table: Partial<Record<ASC2VariantClass, T>>,
+  variantClass: string,
+  fallback: T
+): T => (table as Record<string, T>)[variantClass] ?? fallback
 
-const VARIANT_CLASS_LABELS: Record<string, string> = {
+export const compareASC2VariantClassSeverity = (a: string, b: string): number =>
+  lookupByVariantClass(ASC2_VARIANT_CLASS_SEVERITY_RANK, a, UNRECOGNIZED_VARIANT_CLASS_RANK) -
+  lookupByVariantClass(ASC2_VARIANT_CLASS_SEVERITY_RANK, b, UNRECOGNIZED_VARIANT_CLASS_RANK)
+
+const VARIANT_CLASS_LABELS: Partial<Record<ASC2VariantClass, string>> = {
   synonymous: 'Synonymous',
 }
 
@@ -51,11 +59,15 @@ const Badge = styled.span<{ $color: string; $isLight: boolean }>`
 `
 
 const ASC2VariantClassBadge = ({ variantClass }: { variantClass: string }) => {
-  const color = ASC2_VARIANT_CLASS_COLORS[variantClass] || DEFAULT_VARIANT_CLASS_COLOR
+  const color = lookupByVariantClass(
+    ASC2_VARIANT_CLASS_COLORS,
+    variantClass,
+    DEFAULT_VARIANT_CLASS_COLOR
+  )
 
   return (
     <Badge $color={color} $isLight={isLightColor(color)}>
-      {VARIANT_CLASS_LABELS[variantClass] || variantClass}
+      {lookupByVariantClass(VARIANT_CLASS_LABELS, variantClass, variantClass)}
     </Badge>
   )
 }

@@ -12,15 +12,9 @@ import {
 } from '@gnomad/ui'
 
 import CSVExportButton from '../CSVExportButton'
-import { ConsequenceCategory, DatasetId, VariantConsequenceCategoryLabels } from '../Browser'
+import { DatasetId } from '../Browser'
+import { VariantCategoryOption } from '../variantCategories'
 import { VariantRow, VariantTableColumn } from './variantTableColumns'
-
-export const consequenceCategoryColors = {
-  lof: '#FF583F',
-  missense: '#F0C94D',
-  synonymous: 'green',
-  other: '#757575',
-}
 
 export const SettingsWrapper = styled.div`
   display: flex;
@@ -123,15 +117,8 @@ const SearchWrapper = styled.div`
   }
 `
 
-export const keyboardShortcuts: Record<ConsequenceCategory, string> = {
-  lof: 'l',
-  missense: 'm',
-  synonymous: 's',
-  other: 'o',
-}
-
 export interface FilterState {
-  includeCategories: Record<ConsequenceCategory, boolean>
+  includeCategories: Record<string, boolean>
   searchText: string
   custom: any // TK: TODO: fixme: any!!,
   gp2VariantColumnGroups?: Record<string, boolean>
@@ -140,7 +127,7 @@ export interface FilterState {
 
 interface VariantFilterControlProps {
   datasetId: DatasetId
-  consequenceCategoryLabels: VariantConsequenceCategoryLabels
+  variantCategoryOptions: VariantCategoryOption[]
   customFilterComponent: any
   exportNote?: string
   filter: FilterState
@@ -154,11 +141,9 @@ interface VariantFilterControlProps {
   variantTableColumns: VariantTableColumn[]
 }
 
-export const lofCategories: ConsequenceCategory[] = ['lof', 'missense', 'synonymous', 'other']
-
 const VariantFilterControls = ({
   datasetId,
-  consequenceCategoryLabels,
+  variantCategoryOptions,
   customFilterComponent: CustomFilterComponent,
   exportNote,
   filter,
@@ -197,33 +182,35 @@ const VariantFilterControls = ({
       <FiltersWrapper>
         <FiltersFirstColumn>
           <CategoryFilterControl
-            categories={lofCategories.map((category) => ({
-              id: category,
-              label: consequenceCategoryLabels[category],
+            categories={variantCategoryOptions.map((option) => ({
+              id: option.id,
+              label: option.label,
               className: 'category',
-              color: consequenceCategoryColors[category],
+              color: option.color,
             }))}
             categorySelections={filter.includeCategories}
             id="variant-consequence-category-filter"
-            onChange={(includeCategories: Record<ConsequenceCategory, boolean>) => {
+            onChange={(includeCategories: Record<string, boolean>) => {
               onChangeFilter({ ...filter, includeCategories })
             }}
           />
-          {(Object.keys(keyboardShortcuts) as ConsequenceCategory[]).map((category) => (
-            <KeyboardShortcut
-              key={category}
-              handler={() => {
-                onChangeFilter({
-                  ...filter,
-                  includeCategories: {
-                    ...filter.includeCategories,
-                    [category]: !filter.includeCategories[category],
-                  },
-                })
-              }}
-              keys={keyboardShortcuts[category]}
-            />
-          ))}
+          {variantCategoryOptions
+            .filter((option) => option.keyboardShortcut)
+            .map((option) => (
+              <KeyboardShortcut
+                key={option.id}
+                handler={() => {
+                  onChangeFilter({
+                    ...filter,
+                    includeCategories: {
+                      ...filter.includeCategories,
+                      [option.id]: !filter.includeCategories[option.id],
+                    },
+                  })
+                }}
+                keys={option.keyboardShortcut}
+              />
+            ))}
 
           <AnalysisGroupMenuWrapper>
             {variantAnalysisGroupOptions.length > 1 && (

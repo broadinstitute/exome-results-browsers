@@ -24,6 +24,7 @@ import {
   VariantCustomFilter,
   VariantLollipopTrackGroup,
 } from '../Browser'
+import { DEFAULT_VARIANT_CATEGORY_OPTIONS, VariantCategoryOption } from '../variantCategories'
 import { IndividualGeneAPIResponse } from '../GeneResultsPage/geneResultTableColumns'
 import { SortOrder } from './VariantTable'
 import { VariantTableColumn } from './variantTableColumns'
@@ -57,6 +58,8 @@ interface GenePageProps {
   variantSortOrder?: SortOrder
   variantConsequences: VariantConsequence[]
   variantConsequenceCategoryLabels?: VariantConsequenceCategoryLabels
+  variantCategoryOptions?: VariantCategoryOption[]
+  getVariantCategory?: (variant: any) => string
   variantResultColumns: VariantColumnConfig[]
   variantCustomFilter?: VariantCustomFilter
   // TK: TODO: fixme: type this better in Browser.tsx, import here
@@ -80,6 +83,8 @@ const GenePage = ({
   variantSortOrder = 'ascending',
   variantConsequences,
   variantConsequenceCategoryLabels = undefined,
+  variantCategoryOptions = DEFAULT_VARIANT_CATEGORY_OPTIONS,
+  getVariantCategory = undefined,
   variantResultColumns,
   variantCustomFilter = undefined,
   additionalVariantDetailSummaryColumns = undefined,
@@ -188,7 +193,8 @@ const GenePage = ({
           variantSortKey={variantSortKey}
           variantSortOrder={variantSortOrder}
           variantConsequences={variantConsequences}
-          variantConsequenceCategoryLabels={variantConsequenceCategoryLabels}
+          variantCategoryOptions={variantCategoryOptions}
+          getVariantCategory={getVariantCategory}
           variantCustomFilter={variantCustomFilter}
           variantResultColumns={variantResultColumns}
           variantAlleleFrequencyOverride={variantAlleleFrequencyOverride}
