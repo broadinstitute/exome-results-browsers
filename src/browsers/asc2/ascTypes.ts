@@ -52,53 +52,69 @@ export interface ASC2GeneResult {
 export interface ASC2VariantClassCategory {
   suffix: 'ptv' | 'mis2' | 'mis1' | 'mis0' | 'syn' | 'del' | 'dup'
   label: string
-  details: string
+  criteria?: string
   tooltip: string
   // Categories reviewed but excluded from the ASC2 analysis, shown de-emphasized in the gene result table.
   isExcludedFromAnalysis?: boolean
 }
 
+const MIS2_CRITERIA = '(MPC \u2265 2 and AM \u2265 0.97)'
+const MIS1_CRITERIA = '(MPC \u2265 2 or AM \u2265 0.97)'
+const MIS0_CRITERIA = '(MPC < 2 and AM < 0.97)'
+
 export const ASC2_VARIANT_CLASS_CATEGORIES: ASC2VariantClassCategory[] = [
-  { suffix: 'ptv', label: 'PTV', details: '', tooltip: 'Protein-truncating variants.' },
+  { suffix: 'ptv', label: 'PTV', tooltip: 'Protein-truncating variants.' },
   {
     suffix: 'mis2',
     label: 'Mis2',
-    details: '(MPC \u2265 2)',
-    tooltip: 'Mis2 variants (MPC \u2265 2 and AM \u2265 0.97).',
+    criteria: MIS2_CRITERIA,
+    tooltip: `Mis2 variants ${MIS2_CRITERIA}.`,
   },
   {
     suffix: 'mis1',
     label: 'Mis1',
-    details: '(MPC 1-2)',
-    tooltip: 'Mis1 variants (MPC \u2265 2 or AM \u2265 0.97).',
+    criteria: MIS1_CRITERIA,
+    tooltip: `Mis1 variants ${MIS1_CRITERIA}.`,
   },
   {
     suffix: 'mis0',
     label: 'Mis0',
-    details: '(MPC < 1)',
-    tooltip: 'Mis0 variants (MPC < 2 and AM < 0.97). Not used for gene discovery.',
+    criteria: MIS0_CRITERIA,
+    tooltip: `Mis0 variants ${MIS0_CRITERIA}. Not used for gene discovery.`,
     isExcludedFromAnalysis: true,
   },
   {
     suffix: 'syn',
     label: 'SYN',
-    details: '',
     tooltip: 'Synonymous variants. Not used for gene discovery.',
     isExcludedFromAnalysis: true,
   },
   {
     suffix: 'del',
     label: 'DEL',
-    details: '',
     tooltip: 'Qualifying deletions (affecting 1-3 constrained genes).',
   },
   {
     suffix: 'dup',
     label: 'DUP',
-    details: '',
     tooltip: 'Qualifying duplications (affecting 1-3 constrained genes).',
   },
 ]
+
+export const describeVariantClass = (category: ASC2VariantClassCategory): string => {
+  switch (category.suffix) {
+    case 'mis2':
+    case 'mis1':
+    case 'mis0':
+      return `${category.label} variant ${category.criteria}`
+    case 'del':
+      return 'Deletions'
+    case 'dup':
+      return 'Duplications'
+    default:
+      return `${category.label} variants`
+  }
+}
 
 export interface ASC2VariantInfo {
   mpc: number | null

@@ -21,6 +21,7 @@ import {
   ASC2GeneResult,
   ASC2VariantClassCategory,
   ASC2VariantInfo,
+  describeVariantClass,
 } from './ascTypes'
 
 export type ASC2VariantColumnGroup = 'deNovo' | 'transmittedUntransmitted' | 'caseControl'
@@ -138,6 +139,8 @@ interface VariantClassColumnSpec {
   tooltip: (category: ASC2VariantClassCategory) => string
 }
 
+
+
 const variantClassCategoryColumns = (
   group: GeneResultColumnGroup,
   minWidth: number,
@@ -153,12 +156,12 @@ const deNovoColumns = variantClassCategoryColumns(deNovoColumnGroup, 70, [
   {
     key: ({ suffix }) => `de_novo_${suffix}_proband`,
     heading: ({ label }) => `${label} Proband`,
-    tooltip: ({ label, details }) => `De\u00a0novo ${label}${details} variants in probands`,
+    tooltip: (category) => `De\u00a0novo ${describeVariantClass(category)} in probands`,
   },
   {
     key: ({ suffix }) => `de_novo_${suffix}_sibling`,
     heading: ({ label }) => `${label} Sibling`,
-    tooltip: ({ label, details }) => `De\u00a0novo ${label}${details} variants in siblings`,
+    tooltip: (category) => `De\u00a0novo ${describeVariantClass(category)} in siblings`,
   },
 ])
 
@@ -169,12 +172,12 @@ const transmittedUntransmittedColumns = variantClassCategoryColumns(
     {
       key: ({ suffix }) => `transmitted_${suffix}_proband`,
       heading: ({ label }) => `Transmitted ${label}`,
-      tooltip: ({ label, details }) => `${label}${details} variants transmitted to probands`,
+      tooltip: (category) => `${describeVariantClass(category)} transmitted to probands`,
     },
     {
       key: ({ suffix }) => `untransmitted_${suffix}_proband`,
       heading: ({ label }) => `Untransmitted ${label}`,
-      tooltip: ({ label, details }) => `${label}${details} variants not transmitted to probands`,
+      tooltip: (category) => `${describeVariantClass(category)} not transmitted to probands`,
     },
   ]
 )
@@ -183,14 +186,13 @@ const caseControlColumns = variantClassCategoryColumns(caseControlColumnGroup, 7
   {
     key: ({ suffix }) => `${suffix}_case`,
     heading: ({ label }) => `${label} Case`,
-    tooltip: ({ label, details }) =>
-      `${label}${details} variants in case/control burden analysis, cases`,
+    tooltip: (category) => `${describeVariantClass(category)} in case/control burden analysis, cases`,
   },
   {
     key: ({ suffix }) => `${suffix}_control`,
     heading: ({ label }) => `${label} Control`,
-    tooltip: ({ label, details }) =>
-      `${label}${details} variants in case/control burden analysis, controls`,
+    tooltip: (category) =>
+      `${describeVariantClass(category)} in case/control burden analysis, controls`,
   },
 ])
 
