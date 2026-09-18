@@ -4,7 +4,7 @@ import styled from 'styled-components'
 // @ts-expect-error: no types in this @gnomad/ui version
 import { BaseTable, TooltipAnchor, TooltipHint } from '@gnomad/ui'
 import { ASC2AnalysisGroup } from './ASC2Browser'
-import { renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import { renderASC2BayesFactor, renderASC2FalseDiscoveryRate } from './ascNumberFormatting'
 import { ASC2_VARIANT_CLASS_CATEGORIES, ASC2GeneResult } from './ascTypes'
 
 const EXCLUDED_FROM_ANALYSIS_ROW_COLOR = '#767676'
@@ -115,15 +115,10 @@ const ASC2GeneResult = ({ result }: ASC2GeneResultProps) => (
     </Table>
 
     <p>
-      <strong>Bayes Factor:</strong>{' '}
-      {renderStringOrFloatPvalueAsScientific({ value: result.bayes_factor, decimalPlaces: 4 })}
+      <strong>Bayes Factor:</strong> {renderASC2BayesFactor(result.bayes_factor)}
     </p>
     <p>
-      <strong>FDR:</strong>{' '}
-      {renderStringOrFloatPvalueAsScientific({
-        value: result.false_discovery_rate,
-        decimalPlaces: 4,
-      })}
+      <strong>FDR:</strong> {renderASC2FalseDiscoveryRate(result.false_discovery_rate)}
     </p>
   </div>
 )

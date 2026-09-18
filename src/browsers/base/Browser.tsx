@@ -211,6 +211,8 @@ type BrowserProps = {
   geneResultAnalysisGroupOptions?: readonly string[]
   defaultGeneResultAnalysisGroup?: string
   defaultGeneResultSortKey?: string
+  defaultGeneResultSortOrder?: string
+  defaultGeneResultColumnGroups?: Record<string, boolean>
   geneResultColumns?: GeneResultColumnConfig[]
   geneResultTabs?: GeneResultTabConfig[]
 
@@ -244,6 +246,8 @@ const Browser = ({
   geneResultAnalysisGroupOptions = undefined,
   defaultGeneResultAnalysisGroup = undefined,
   defaultGeneResultSortKey = 'gene_symbol',
+  defaultGeneResultSortOrder = undefined,
+  defaultGeneResultColumnGroups = undefined,
   geneResultColumns = [],
   geneResultTabs = [],
   // Variant results
@@ -327,6 +331,8 @@ const Browser = ({
                   analysisGroupOptions={geneResultAnalysisGroupOptions}
                   defaultAnalysisGroup={defaultGeneResultAnalysisGroup}
                   defaultSortKey={defaultGeneResultSortKey}
+                  defaultSortOrder={defaultGeneResultSortOrder}
+                  defaultColumnGroups={defaultGeneResultColumnGroups}
                   geneResultColumns={geneResultColumns}
                   pageHeading={geneResultsPageHeading}
                   tabs={geneResultTabs}

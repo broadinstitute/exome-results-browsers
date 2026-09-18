@@ -6,6 +6,7 @@ import { GeneResultTableColumn, GeneRow } from './geneResultTableColumns'
 
 interface GeneResultsTableProps {
   defaultSortKey: string
+  defaultSortOrder?: string
   geneResultColumns: GeneResultTableColumn[]
   geneResults: GeneRow[]
   highlightText?: string
@@ -19,6 +20,7 @@ interface GeneResultsTableState {
 class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsTableState> {
   static defaultProps = {
     defaultSortKey: 'gene_id',
+    defaultSortOrder: undefined,
     highlightText: '',
   }
 
@@ -27,7 +29,7 @@ class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsT
 
     this.state = {
       sortKey: props.defaultSortKey || 'gene_id',
-      sortAscending: true,
+      sortAscending: props.defaultSortOrder !== 'descending',
     }
   }
 
