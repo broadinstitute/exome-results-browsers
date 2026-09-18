@@ -3,7 +3,7 @@ import React from 'react'
 // @ts-expect-error: no types in this @gnomad/ui version
 import { Button } from '@gnomad/ui'
 
-const formatCell = (value: any): string => {
+export const formatCell = (value: any): string => {
   if (value === undefined || value === null) {
     return ''
   }
@@ -13,10 +13,10 @@ const formatCell = (value: any): string => {
 
   const stringValue = String(value)
 
-  if (value.includes(',') || value.includes('"') || value.includes("'")) {
-    return `"${value.replace(/"/g, '""')}"`
+  if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes("'")) {
+    return `"${stringValue.replace(/"/g, '""')}"`
   }
-  return value
+  return stringValue
 }
 
 type CsvData = any[]
@@ -44,15 +44,15 @@ const downloadCSV = (data: CsvData, baseFileName: string) => {
   const timestamp = `${date.getFullYear()}_${(date.getMonth() + 1)
     .toString()
     .padStart(2, '0')}_${date
-      .getDate()
-      .toString()
-      .padStart(2, '0')}_${date
-        .getHours()
-        .toString()
-        .padStart(2, '0')}_${date
-          .getMinutes()
-          .toString()
-          .padStart(2, '0')}_${date.getSeconds().toString().padStart(2, '0')}`
+    .getDate()
+    .toString()
+    .padStart(2, '0')}_${date
+    .getHours()
+    .toString()
+    .padStart(2, '0')}_${date
+    .getMinutes()
+    .toString()
+    .padStart(2, '0')}_${date.getSeconds().toString().padStart(2, '0')}`
 
   const csv = generateCSV(data)
   const blob = new Blob([csv], { type: 'text/csv' })
