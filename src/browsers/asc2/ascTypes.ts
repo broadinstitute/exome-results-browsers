@@ -108,9 +108,11 @@ export const describeVariantClass = (category: ASC2VariantClassCategory): string
     case 'mis0':
       return `${category.label} variant ${category.criteria}`
     case 'del':
-      return 'Deletions'
+      return 'deletions'
     case 'dup':
-      return 'Duplications'
+      return 'duplications'
+    case 'syn':
+      return 'synonymous variants'
     default:
       return `${category.label} variants`
   }
