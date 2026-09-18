@@ -549,8 +549,8 @@ const getVariantTableColumns = ({
   const filteredVariantResultColumns =
     datasetId === 'ASC2' && filter.asc2VariantColumnGroups
       ? variantResultColumns.filter(
-          (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
-        )
+        (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
+      )
       : variantResultColumns
 
   const resultColumns: VariantTableColumn[] = applyColumnGroupHeadings(
@@ -561,9 +561,9 @@ const getVariantTableColumns = ({
       heading: column.heading || column.key,
       csvHeading: filteredVariantResultColumns[index].heading || column.key,
       tooltip: column.tooltip,
-      isSortable: true,
-      sortFunction: (a, b) => a - b,
-      sortKey: column.key,
+      isSortable: column.isSortable !== false,
+      sortFunction: column.sortFunction || ((a, b) => a - b),
+      sortKey: column.sortKey || column.key,
       minWidth: column.minWidth || 65,
       render: column.render
         ? (row, key) => column.render!(get(row, key))

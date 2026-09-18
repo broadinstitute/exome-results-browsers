@@ -18,6 +18,7 @@ import {
 import ASC2AboutPage from './ASC2AboutPage'
 import ASC2HomePage from './ASC2HomePage'
 import ASC2TermsPage from './ASC2TermsPage'
+import ASC2VariantClassBadge, { compareASC2VariantClassSeverity } from './ASC2VariantClassBadge'
 import {
   ASC2_VARIANT_CLASS_CATEGORIES,
   ASC2GeneResult,
@@ -270,9 +271,12 @@ const ASC2Browser = () => (
       {
         key: 'info.variant_class',
         heading: 'Class',
-        tooltip: 'PTV/Mis2/Mis1/Mis0/synonymous, by MPC/AlphaMissense pathogenicity for missense variants',
+        tooltip:
+          'PTV/Mis2/Mis1/Mis0/synonymous, by MPC/AlphaMissense pathogenicity for missense variants',
         minWidth: 90,
-        render: (value) => renderMissing(value),
+        render: (value) =>
+          value ? <ASC2VariantClassBadge variantClass={value} /> : renderMissing(value),
+        sortFunction: compareASC2VariantClassSeverity,
       },
       {
         key: 'group_result.de_novo_ac_proband',
