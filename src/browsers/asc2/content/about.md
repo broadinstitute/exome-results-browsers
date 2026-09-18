@@ -10,7 +10,7 @@ This Browser displays the results of the latest autism exome sequencing aggregat
 
 Over the past several years, analyses led by the ASC have identified a growing number of autism-associated genes (**Fig. 1**).
 
-<figure style="max-width: 620px;">
+<figure style="max-width: 75%">
 
 ![Figure 1 | Evolution of the ASC gene discovery efforts.](./fig1_gene_discovery.png)
 
@@ -30,7 +30,7 @@ Data in this Browser originate from the ASC's most recent exome sequencing aggre
 
 Family-based data are drawn from four major cohorts: the ASC, the [Simons Simplex Collection](https://www.sfari.org/resource/simons-simplex-collection/) (SSC), the [Simons Powering Autism Research](https://sparkforautism.org/) (SPARK) study, and the GeneDx clinical testing laboratory (CTL); we also include published _de novo_ variants from individuals with autism from the [Deciphering Developmental Disorders](https://www.ddduk.org/) (DDD) study. Case-control data are drawn from three cohorts: a [Lundbeck Foundation Initiative for Integrative Psychiatric Research](https://ipsych.dk/en/about-ipsych) (iPSYCH) cohort, the Population-based Autism Genetics and Environment Study (PAGES), and non-family-based cases from SPARK matched to [UK Biobank](https://www.ukbiobank.ac.uk/) control samples (**Fig. 2**).
 
-<figure style="max-width: 535px;">
+<figure style="max-width: 90%;">
 
 ![Figure 2 | Cohort composition.](./fig2_cohort_composition.png)
 
@@ -46,13 +46,13 @@ Sample count by cohort of origin. For each cohort, the number of affected proban
 
 We generated and harmonized callsets of short sequence variants (i.e., single nucleotide variants [SNVs] and small insertions/deletions [indels]) and copy-number variants (CNV; i.e., deletions and duplications) (**Fig. 2b**). For family-based data, variants are divided by inheritance mode (_de novo_ and rare inherited variants), while for case-control data all rare variants are analyzed. Rare variants are defined by an allele frequency ≤ 0.1%. SNVs/indels included in this analysis are those annotated as protein-truncating variants (PTVs), missense variants, or synonymous variants (Fig. 3); missense variants are further categorized using Missense Deleteriousness Prediction by Constraint (MPC) and AlphaMissense estimated pathogenicity (AM path) scores, with "Mis2" variants satisfying MPC ≥ 2 and AM path ≥ 0.97, "Mis1" variants satisfying one of these criteria, and "Mis0" variants satisfying neither. Included CNVs are restricted to those that span ≥ 3 exons and affect 1-3 constrained genes (Fig. 3).
 
-<figure style="max-width: 438px;">
+<figure style="max-width: 90%;">
 
 ![Figure 3 | Autosomal variant callset description.](./fig3_variant_callset.png)
 
 <figcaption>
 
-**Figure 3 | Variant callset description.**
+**Figure 3 | Autosomal variant callset description.**
 
 Relative abundance of variant classes in probands (_de novo_ and inherited data) or cases (case-control data). SNVs/indels are classified as PTVs (stratified by gnomAD v2.1.1 LOEUF constraint decile), missense variants (categorized as Mis2, Mis1, or Mis0 based on their MPC and AM path scores), or synonymous variants.
 
@@ -62,7 +62,7 @@ Relative abundance of variant classes in probands (_de novo_ and inherited data)
 
 To identify genes in which rare damaging variants associate with autism risk, we employed the Transmission And De Novo Association (TADA) Bayesian framework that was developed by the ASC to empower gene discovery through integration of evidence from different data sources ([He et al., 2013](https://pubmed.ncbi.nlm.nih.gov/23966865/)). TADA allows us to jointly model _de novo_, inherited, and case-control data across classes of variation for which we see enrichment in autism cases compared to controls (i.e., PTVs, Mis2 variants, Mis1 variants, deletions, and duplications). For each gene, TADA calculates a Bayes Factor (BF) for each combination of inheritance mode and variant class; BFs can then be multiplied to obtain a single overall BF that reflects the total association evidence for that gene (Fig. 4). BFs can be transformed into an estimated false discovery rate (FDR). Applying TADA to autosomal variants from our aggregated 62,429 affected individuals and respective family-based and population controls, we identify 253 genes where damaging mutations are associated with an autism diagnosis at FDR < 0.001, which approximates exome-wide significance. A total of 696 genes reach FDR < 0.05.
 
-<figure style="max-width: 491px;">
+<figure style="max-width: 75%;">
 
 ![Figure 4 | Transmission and de novo Association Bayesian association framework.](./fig4_tada_framework.png)
 
@@ -90,9 +90,9 @@ Funding supporting this research, new data collections, sequencing, and analysis
 
 ## Publications
 
-A complete list of publications can be found on [PubMed](https://pubmed.ncbi.nlm.nih.gov/collections/67634890/?sort=pubdate).
+A complete list of the ASC publications can be found on [PubMed](https://pubmed.ncbi.nlm.nih.gov/collections/67634890/?sort=pubdate).
 
-## ASC Flagship publications
+#### ASC Flagship publications
 
 Satterstrom, F. K., Auwerx, C., Fu, J. M., _et al._ Rare variation illuminates the distinct and pleiotropic genetic architecture of autism across neuropsychiatric traits. _medRxiv_ (2026a). DOI: [https://doi.org/10.64898/2026.08.24.26360398](https://www.medrxiv.org/content/10.64898/2026.08.24.26360398v1).
 
@@ -104,7 +104,7 @@ De Rubeis, S. _et al._ Synaptic, transcriptional and chromatin genes disrupted i
 
 Buxbaum, J. D., _et al._, 2012. The autism sequencing consortium: large-scale, high-throughput sequencing in autism spectrum disorders. _Neuron_ **76**, 1052–1056 (2012). PMID: [23259942](https://pubmed.ncbi.nlm.nih.gov/23259942/).
 
-## Other selected publications
+#### Other selected publications
 
 He, X., _et al._ Integrated Model of _De Novo_ and Inherited Genetic Variants Yields Greater Power to Identify Risk Genes. _PLoS Genet_ **9**, e1003671 (2013). PMID: [23966865](https://pubmed.ncbi.nlm.nih.gov/23966865).
 
