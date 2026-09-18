@@ -56,16 +56,11 @@ export default () => (
     </p>
 
     <p>
-      The{' '}
+      This Browser displays the results of the latest autism exome sequencing aggregation and gene discovery effort, encompassing data from 62,429 individuals with recorded autism (38,680 probands and 23,749 cases) and 33,316 individuals without recorded autism (9,567 siblings and 23,749 controls). The data were aggregated and analyzed by the{' '}
       <ExternalLink href="https://genome.emory.edu/ASC/">
         Autism Sequencing Consortium (ASC)
       </ExternalLink>{' '}
-      is an international collaboration dedicated to the collection, aggregation, and analysis of
-      sequencing data of autistic individuals, with the aim of advancing our understanding of the
-      genetic basis of autism spectrum disorder (ASD). This Browser displays the results of the
-      ASC’s latest exome aggregation and gene discovery efforts, encompassing data from 62,429
-      individuals with recorded autism (38,680 probands and 23,749 cases) and 33,316 individuals
-      without recorded autism (9,567 siblings and 23,749 controls).
+      , an international collaboration dedicated to advancing our understanding of the genetic basis of autism spectrum disorder (ASD).
     </p>
 
     <LogoRow>
@@ -76,7 +71,7 @@ export default () => (
 
     <p>
       More information can be found on data collection and generation can be found{' '}
-      <Link to="/results">here</Link>. All data are released for the benefit of the biomedical
+      <Link to="/about">here</Link>. All data are released for the benefit of the biomedical
       community (see the <Link to="/terms">terms of use</Link>).
     </p>
   </HomePageWrapper>
