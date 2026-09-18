@@ -537,7 +537,7 @@ const VariantDetails = ({
   const filteredVariantResultColumns =
     datasetId === 'ASC2' && filter.asc2VariantColumnGroups
       ? variantResultColumns.filter(
-          (column) => !column.group || filter.asc2VariantColumnGroups![column.group]
+          (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
         )
       : variantResultColumns
 

@@ -6,6 +6,7 @@ import styled from 'styled-components'
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { TextButton } from '@gnomad/ui'
 import { ConsequenceCategory, VariantColumnConfig } from '../Browser'
+import { applyColumnGroupHeadings } from '../columnGroupHeadings'
 import { FilterState } from './VariantFilterControls'
 
 const VariantIdButton = styled(TextButton)`
@@ -129,7 +130,10 @@ interface RenderContext {
 
 export interface VariantTableColumn {
   key: string
-  heading: string
+  heading: React.ReactNode
+  // Plain-text heading for CSV export; differs from `heading` when the latter has been
+  // replaced with a column-group banner.
+  csvHeading?: string
   tooltip?: string
   isRowHeader?: boolean
   isSortable: boolean
@@ -545,14 +549,17 @@ const getVariantTableColumns = ({
   const filteredVariantResultColumns =
     datasetId === 'ASC2' && filter.asc2VariantColumnGroups
       ? variantResultColumns.filter(
-          (column) => !column.group || filter.asc2VariantColumnGroups![column.group]
+          (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
         )
       : variantResultColumns
 
-  const resultColumns: VariantTableColumn[] = filteredVariantResultColumns.map((column) => {
+  const resultColumns: VariantTableColumn[] = applyColumnGroupHeadings(
+    filteredVariantResultColumns
+  ).map((column, index) => {
     return {
       key: column.key,
       heading: column.heading || column.key,
+      csvHeading: filteredVariantResultColumns[index].heading || column.key,
       tooltip: column.tooltip,
       isSortable: true,
       sortFunction: (a, b) => a - b,

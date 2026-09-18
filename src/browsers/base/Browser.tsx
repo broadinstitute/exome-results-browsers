@@ -164,7 +164,7 @@ export type VariantColumnConfig = {
   showOnGenePage?: boolean
   showOnDetails?: boolean
   isSortable?: boolean
-  group?: string
+  group?: GeneResultColumnGroup
   sortFunction?: (a: any, b: any) => number
   sortKey?: string
   type?: string
