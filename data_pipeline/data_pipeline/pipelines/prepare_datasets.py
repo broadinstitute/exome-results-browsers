@@ -149,13 +149,7 @@ def main():
 
     print(f"\nPreparing datasets: {list(datasets_to_prepare)} ...\n\n")
 
-    # hl.init()
-    hl.init(
-        spark_conf={
-            "spark.driver.bindAddress": "127.0.0.1",
-            "spark.driver.host": "127.0.0.1",
-        },
-    )
+    hl.init()
 
     output_root = get_output_root(args.output_location)
     for dataset in datasets_to_prepare:
