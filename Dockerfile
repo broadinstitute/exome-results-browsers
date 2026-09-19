@@ -23,6 +23,10 @@ RUN set -a && . ./build.env && set +a && yarn run build
 
 # Copy server source, transpile TS to JS
 COPY --chown=node:node src/server ./src/server
+
+# copy globals type file
+COPY --chown=node:node src/globals.d.ts ./src/globals.d.ts
+
 RUN npx tsc
 
 ###############################################################################
