@@ -257,7 +257,7 @@ const ASC2Browser = () => (
         render: (value) => renderASC2FalseDiscoveryRate(value),
       },
       {
-        key: 'was_flagged_in_qc',
+        key: 'qc_flagged',
         heading: 'Flag',
         tooltip: 'Gene flagged in analysis',
         minWidth: 90,
