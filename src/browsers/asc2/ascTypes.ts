@@ -1,7 +1,7 @@
 export interface ASC2GeneResult {
   bayes_factor: number
   false_discovery_rate: number
-  was_flagged_in_qc: boolean
+  qc_flagged: boolean
 
   de_novo_ptv_proband: number
   de_novo_ptv_sibling: number
