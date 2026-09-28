@@ -141,7 +141,8 @@ type ExtraPage = {
 
 export type GeneResultColumnGroup = {
   key: string
-  label: string
+  geneTableLabel: string
+  variantTableLabel: string
   color?: string
 }
 

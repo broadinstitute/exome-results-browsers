@@ -164,7 +164,7 @@ export const GeneResultsPage = ({
               <Checkbox
                 key={group.key}
                 id={`gene-result-column-group-${group.key}`}
-                label={group.label}
+                label={group.geneTableLabel}
                 checked={includedColumnGroups[group.key] !== false}
                 onChange={(isChecked: boolean) =>
                   setIncludedColumnGroups((previous) => ({
