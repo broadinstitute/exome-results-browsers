@@ -35,7 +35,7 @@ TEST_GENE_INTERVALS: dict[str, dict[str, str]] = {
 #
 # Genes filtered from a dataset's gene results but not from its variant results.
 GENES_EXCLUDED_FROM_VARIANT_FILTERING: dict[str, tuple[str, ...]] = {
-    "BipEx2": ("C1orf61",),  # ENSG00000125462
+    "BipEx": ("C1orf61",),  # ENSG00000125462
     "IBD": ("PCSK9",),
 }
 
