@@ -126,7 +126,7 @@ def test_get_test_gene_intervals_uses_requested_reference_genome():
         # IBD's PCSK9 and BipEx2's C1orf61 appear in gene results but are excluded
         # from variant filtering
         ("IBD", "PCSK9,NOD2", ["chr16"]),
-        ("BipEx2", "PCSK9,C1orf61", ["chr1"]),
+        ("BipEx", "PCSK9,C1orf61", ["chr1"]),
         # ClinVar and GP2 keep variants for genes beyond their test_genes
         ("ClinVarGRCh38", "PCSK9", ["chr1", "chr1", "chr22"]),
         ("GP2", "PCSK9,GBA1", ["chr1", "chr1", "chr22"]),
