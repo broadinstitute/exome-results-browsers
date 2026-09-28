@@ -93,17 +93,20 @@ const COLUMN_GROUP_COLOR_C = '#dfe1e6'
 
 const deNovoColumnGroup: GeneResultColumnGroup = {
   key: 'deNovo',
-  label: 'De\u00a0novo',
+  geneTableLabel: 'De\u00a0novo',
+  variantTableLabel: 'De\u00a0novo AC',
   color: COLUMN_GROUP_COLOR_A,
 }
 const transmittedUntransmittedColumnGroup: GeneResultColumnGroup = {
   key: 'transmittedUntransmitted',
-  label: 'Inherited (proband)',
+  geneTableLabel: 'Inherited (proband)',
+  variantTableLabel: 'Inherited proband AC',
   color: COLUMN_GROUP_COLOR_B,
 }
 const caseControlColumnGroup: GeneResultColumnGroup = {
   key: 'caseControl',
-  label: 'Case-Control',
+  geneTableLabel: 'Case-Control',
+  variantTableLabel: 'Case-Control AC',
   color: COLUMN_GROUP_COLOR_C,
 }
 
@@ -112,7 +115,7 @@ const caseControlColumnGroup: GeneResultColumnGroup = {
 const variantLollipopTrackGroups: VariantLollipopTrackGroup[] = [
   {
     key: deNovoColumnGroup.key,
-    label: deNovoColumnGroup.label,
+    label: deNovoColumnGroup.geneTableLabel,
     color: deNovoColumnGroup.color,
     tooltip:
       'We expect a 4:1 allele count ratio based on a 4:1 proband:sibling ratio. Dot size is scaled to the largest AC of the observed variants in the De novo group.',
@@ -123,7 +126,7 @@ const variantLollipopTrackGroups: VariantLollipopTrackGroup[] = [
   },
   {
     key: transmittedUntransmittedColumnGroup.key,
-    label: transmittedUntransmittedColumnGroup.label,
+    label: transmittedUntransmittedColumnGroup.geneTableLabel,
     color: transmittedUntransmittedColumnGroup.color,
     tooltip:
       'We expect a 1:1 allele count ratio based on a 50% Mendelian inheritance rate. Dot size is scaled to the largest AC of the observed variants in the Inherited (proband) group.',
@@ -142,7 +145,7 @@ const variantLollipopTrackGroups: VariantLollipopTrackGroup[] = [
   },
   {
     key: caseControlColumnGroup.key,
-    label: caseControlColumnGroup.label,
+    label: caseControlColumnGroup.geneTableLabel,
     color: caseControlColumnGroup.color,
     tooltip:
       'We expect a 1:1 allele count ratio based on a 1:1 case:control ratio. Dot size is scaled to the largest AC of the observed variants in the Case-Control group.',
@@ -304,14 +307,14 @@ const ASC2Browser = () => (
       },
       {
         key: 'group_result.de_novo_ac_proband',
-        heading: 'De\u00a0novo AC (proband)',
+        heading: 'Proband',
         tooltip: 'De\u00a0novo allele count in probands',
         minWidth: 110,
         group: deNovoColumnGroup,
       },
       {
         key: 'group_result.de_novo_ac_sibling',
-        heading: 'De\u00a0novo AC (sibling)',
+        heading: 'Sibling',
         tooltip: 'De\u00a0novo allele count in siblings',
         minWidth: 110,
         group: deNovoColumnGroup,
@@ -319,14 +322,14 @@ const ASC2Browser = () => (
 
       {
         key: 'group_result.transmitted_ac_proband',
-        heading: 'Transmitted AC',
+        heading: 'Transmitted',
         tooltip: 'Allele count transmitted to probands',
         minWidth: 110,
         group: transmittedUntransmittedColumnGroup,
       },
       {
         key: 'group_result.untransmitted_ac_proband',
-        heading: 'Untransmitted AC',
+        heading: 'Untransmitted',
         tooltip: 'Allele count not transmitted to probands',
         minWidth: 110,
         group: transmittedUntransmittedColumnGroup,
@@ -334,14 +337,14 @@ const ASC2Browser = () => (
 
       {
         key: 'group_result.ac_case',
-        heading: 'Case/control AC (case)',
+        heading: 'Case',
         tooltip: 'Allele count in cases (case/control burden)',
         minWidth: 110,
         group: caseControlColumnGroup,
       },
       {
         key: 'group_result.ac_ctrl',
-        heading: 'Case/control AC (control)',
+        heading: 'Control',
         tooltip: 'Allele count in controls (case/control burden)',
         minWidth: 110,
         group: caseControlColumnGroup,
