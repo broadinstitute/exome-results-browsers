@@ -136,7 +136,8 @@ def main():
     else:
         datasets_to_prepare = all_datasets
 
-    hl.init()
+    hl.init(show_progress=True)
+    hl.spark_context().setLogLevel("WARN")
 
     prepared_output_root = get_output_root(args.output_location, is_downloads=False)
     downloads_output_root = get_output_root(args.output_location, is_downloads=True)
