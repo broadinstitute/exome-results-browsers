@@ -170,7 +170,8 @@ def main():
 
     print(f"\nCombining datasets: {list(datasets_to_combine)} ...\n\n")
 
-    hl.init()
+    hl.init(show_progress=True)
+    hl.spark_context().setLogLevel("WARN")
 
     output_root = get_output_root(args.output_location)
     combined_output_date = pipeline_config.get("output", "output_last_updated")
