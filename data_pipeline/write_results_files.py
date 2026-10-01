@@ -157,87 +157,76 @@ def write_data_files(table_path, output_directory, genes=None):
 
     ds = hl.read_table(table_path)
 
+    if genes is not None:
+        if not genes:
+            raise ValueError("genes must contain at least one gene ID")
+        ds = ds.filter(hl.literal(set(genes)).contains(ds.gene_id))
+        missing_genes = sorted(set(genes) - set(ds.gene_id.collect()))
+        if missing_genes:
+            raise ValueError(f"Unknown gene IDs: {', '.join(missing_genes)}")
+
     write_gene_summary_file(output_directory, ds)
+    print("Writing out files in a single step...")
 
-    if genes:
-        ds = ds.filter(hl.set(genes).contains(ds.gene_id))
+    expected_datasets = [
+        "ASC",
+        "ASC2",
+        "BipEx",
+        "BipEx2",
+        "Epi25",
+        "GP2",
+        "IBD",
+        "SCHEMA",
+        "ClinVarGRCh38",
+    ]
 
-        temp_dir_name = "temp_parts"
-        n_rows = ds.count()
-        ds.select(data=hl.json(ds.row)).export(
-            f"{output_directory}/{temp_dir_name}",
-            header=False,
-            parallel="separate_header",
+    counts_expr = {}
+    for name in expected_datasets:
+        if name in ds.variants:
+            counts_expr[name] = hl.or_else(hl.len(ds.variants[name]), 0)
+        else:
+            counts_expr[name] = 0
+
+    ds = ds.annotate(variant_counts=hl.struct(**counts_expr))
+
+    ds = ds.annotate(
+        total_variants=(
+            ds.variant_counts.ASC
+            + ds.variant_counts.ASC2
+            + ds.variant_counts.BipEx
+            + ds.variant_counts.BipEx2
+            + ds.variant_counts.Epi25
+            + ds.variant_counts.GP2
+            + ds.variant_counts.IBD
+            + ds.variant_counts.SCHEMA
+            + ds.variant_counts.ClinVarGRCh38
         )
+    )
 
-        write_json_files(output_directory, temp_dir_name, n_rows)
+    VARIANT_THRESHOLD = 200_000
 
-        return
+    ds_large_genes = ds.filter(ds.total_variants > VARIANT_THRESHOLD)
+    large_gene_symbols = ds_large_genes.symbol.collect()
 
-    else:
-        print("Writing out files in a single step...")
+    print(f"Removing {len(large_gene_symbols)} genes with > {VARIANT_THRESHOLD:,} variants:")
+    for symbol in large_gene_symbols:
+        print(f" - {symbol}")
 
-        expected_datasets = [
-            "ASC",
-            "ASC2",
-            "BipEx",
-            "BipEx2",
-            "Epi25",
-            "GP2",
-            "IBD",
-            "SCHEMA",
-            "ClinVarGRCh38",
-        ]
+    ds_filtered = ds.filter(ds.total_variants <= VARIANT_THRESHOLD)
+    ds_filtered = ds_filtered.drop("variant_counts", "total_variants")
 
-        counts_expr = {}
-        for name in expected_datasets:
-            if name in ds.variants:
-                counts_expr[name] = hl.or_else(hl.len(ds.variants[name]), 0)
-            else:
-                counts_expr[name] = 0
+    temp_dir_name = "temp_parts"
+    n_rows = ds_filtered.count()
 
-        ds = ds.annotate(variant_counts=hl.struct(**counts_expr))
+    ds_filtered = ds_filtered.repartition(500)
 
-        ds = ds.annotate(
-            total_variants=(
-                ds.variant_counts.ASC
-                + ds.variant_counts.ASC2
-                + ds.variant_counts.BipEx
-                + ds.variant_counts.BipEx2
-                + ds.variant_counts.Epi25
-                + ds.variant_counts.GP2
-                + ds.variant_counts.IBD
-                + ds.variant_counts.SCHEMA
-                + ds.variant_counts.ClinVarGRCh38
-            )
-        )
+    ds_filtered.select(data=hl.json(ds_filtered.row)).export(
+        f"{output_directory}/{temp_dir_name}",
+        header=False,
+        parallel="separate_header",
+    )
 
-        VARIANT_THRESHOLD = 200_000
-
-        ds_large_genes = ds.filter(ds.total_variants > VARIANT_THRESHOLD)
-        large_gene_symbols = ds_large_genes.symbol.collect()
-
-        print(f"Removing {len(large_gene_symbols)} genes with > {VARIANT_THRESHOLD:,} variants:")
-        for symbol in large_gene_symbols:
-            print(f" - {symbol}")
-
-        ds_filtered = ds.filter(ds.total_variants <= VARIANT_THRESHOLD)
-        ds_filtered = ds_filtered.drop("variant_counts", "total_variants")
-
-        temp_dir_name = "temp_parts"
-        n_rows = ds_filtered.count()
-
-        ds_filtered = ds_filtered.repartition(500)
-
-        ds_filtered.select(data=hl.json(ds_filtered.row)).export(
-            f"{output_directory}/{temp_dir_name}",
-            header=False,
-            parallel="separate_header",
-        )
-
-        write_json_files(output_directory, temp_dir_name, n_rows)
-
-        return
+    write_json_files(output_directory, temp_dir_name, n_rows)
 
 
 def init_hail(env="local"):
