@@ -84,9 +84,20 @@ def parse_test_gene_intervals(intervals_str: str) -> list[hl.Interval]:
     return intervals
 
 
-def filter_gene_results_to_test_genes(results: hl.Table, field: str, test_gene_symbols: Iterable[str]) -> hl.Table:
-    test_gene_set = hl.literal([s.upper() for s in test_gene_symbols])
-    results = results.filter(test_gene_set.contains(results[field].upper()))
+def filter_gene_results_to_test_genes(
+    results: hl.Table,
+    field: str,
+    test_gene_symbols: Iterable[str],
+    *,
+    case_sensitive: bool = False,
+) -> hl.Table:
+    if case_sensitive:
+        test_gene_set = hl.literal(list(test_gene_symbols))
+        gene_symbol = results[field]
+    else:
+        test_gene_set = hl.literal([s.upper() for s in test_gene_symbols])
+        gene_symbol = results[field].upper()
+    results = results.filter(test_gene_set.contains(gene_symbol))
     return results.persist()
 
 
