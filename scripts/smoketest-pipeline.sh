@@ -65,11 +65,11 @@ done
 echo "==> prepare_gene_models"
 "${UV_RUN[@]}" ./data_pipeline/run_pipeline.py --environment local prepare_gene_models --output-local
 
-echo "==> prepare_datasets (${DATASETS[*]})"
+printf '==> prepare_datasets: %s\n' "${DATASETS[*]}"
 "${UV_RUN[@]}" ./data_pipeline/run_pipeline.py --environment local prepare_datasets \
   --datasets "${DATASETS[@]}" --output-local --test-genes
 
-echo "==> combine_datasets (${DATASETS[*]})"
+printf '==> combine_datasets: %s\n' "${DATASETS[*]}"
 "${UV_RUN[@]}" ./data_pipeline/run_pipeline.py --environment local combine_datasets \
   --datasets "${DATASETS[@]}" --output-local
 

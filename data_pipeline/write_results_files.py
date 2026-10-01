@@ -155,6 +155,7 @@ def write_data_files(table_path, output_directory, genes=None):
     if output_directory.startswith("gs://"):
         raise ValueError("Google Storage paths are not supported for output_directory")
 
+    print(f"\n\n === Reading combined hail table from {table_path}", flush=True)
     ds = hl.read_table(table_path)
 
     if genes is not None:
@@ -165,8 +166,9 @@ def write_data_files(table_path, output_directory, genes=None):
         if missing_genes:
             raise ValueError(f"Unknown gene IDs: {', '.join(missing_genes)}")
 
+    print("\n\n === Writing metadata, gene search terms, and result summaries", flush=True)
     write_gene_summary_file(output_directory, ds)
-    print("Writing out files in a single step...")
+    print("\n\n === Checking gene variant counts", flush=True)
 
     expected_datasets = [
         "ASC",
@@ -220,13 +222,16 @@ def write_data_files(table_path, output_directory, genes=None):
 
     ds_filtered = ds_filtered.repartition(500)
 
+    print(f"\n\n === Exporting {n_rows} gene rows to {output_directory}/{temp_dir_name}", flush=True)
     ds_filtered.select(data=hl.json(ds_filtered.row)).export(
         f"{output_directory}/{temp_dir_name}",
         header=False,
         parallel="separate_header",
     )
 
+    print("\n\n === Writing per-gene JSON files", flush=True)
     write_json_files(output_directory, temp_dir_name, n_rows)
+    print("Finished writing per-gene JSON files", flush=True)
 
 
 def init_hail(env="local"):

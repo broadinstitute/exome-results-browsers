@@ -85,6 +85,7 @@ def prepare_dataset(dataset_id, test_genes, output_root):
         ht_clinvar_variants = clinvar_grch38_module.prepare_clinvar_variants(test_genes)
         ht_clinvar_variants.write(os.path.join(output_path, "variant_results.ht"), overwrite=True)
 
+        print(f"\n\n === Preparing {dataset_id} genes hail table", flush=True)
         clinvar_grch38_dummy_genes_module = importlib.import_module(
             "data_pipeline.datasets.clinvar.clinvar_grch38_dummy_genes"
         )
