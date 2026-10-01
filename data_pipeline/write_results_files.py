@@ -8,12 +8,25 @@ import multiprocessing
 import os
 import shutil
 import sys
+import tempfile
 from json.encoder import _make_iterencode, encode_basestring_ascii
 
 import hail as hl
 from tqdm import tqdm
 
 INFINITY = float("inf")
+VARIANT_THRESHOLD = 200_000
+VARIANT_CHUNK_SIZE = 10_000
+EXPECTED_DATASETS = [
+    "ASC",
+    "ASC2",
+    "BipEx",
+    "Epi25",
+    "GP2",
+    "IBD",
+    "SCHEMA",
+    "ClinVarGRCh38",
+]
 
 
 class ResultEncoder(json.JSONEncoder):
@@ -71,6 +84,80 @@ def split_data(row):
     all_variants = {k: json.dumps({"variants": v}, cls=ResultEncoder) for k, v in all_variants.items()}
 
     return gene_id, gene_grch37, gene_grch38, all_variants
+
+
+def split_gene_document(row):
+    gene_id = row[0]
+    gene = json.loads(row[1])
+    gene_grch37 = gene.pop("GRCh37")
+    gene_grch38 = gene.pop("GRCh38")
+
+    if gene_grch37:
+        gene_grch37 = {**gene, "reference_genome": "GRCh37", **gene_grch37}
+        gene_grch37 = json.dumps({"gene": gene_grch37}, cls=ResultEncoder)
+
+    if gene_grch38:
+        gene_grch38 = {**gene, "reference_genome": "GRCh38", **gene_grch38}
+        gene_grch38 = json.dumps({"gene": gene_grch38}, cls=ResultEncoder)
+
+    return gene_id, gene_grch37, gene_grch38
+
+
+def assemble_variant_chunks(output_path, chunk_files, expected_chunk_count, expected_variant_count):
+    if os.path.exists(output_path):
+        os.remove(output_path)
+
+    chunk_indices = [chunk_index for chunk_index, _ in chunk_files]
+    if len(chunk_indices) != len(set(chunk_indices)):
+        raise ValueError(f"Duplicate chunks for {output_path}")
+
+    expected_chunk_indices = list(range(expected_chunk_count))
+    if sorted(chunk_indices) != expected_chunk_indices:
+        raise ValueError(
+            f"Invalid chunks for {output_path}: expected {expected_chunk_indices}, observed {sorted(chunk_indices)}"
+        )
+
+    output_directory = os.path.dirname(output_path)
+    os.makedirs(output_directory, exist_ok=True)
+    temp_file = tempfile.NamedTemporaryFile(
+        mode="w",
+        encoding="utf-8",
+        dir=output_directory,
+        prefix=f".{os.path.basename(output_path)}.",
+        suffix=".tmp",
+        delete=False,
+    )
+    temp_path = temp_file.name
+    written_variant_count = 0
+
+    try:
+        with temp_file:
+            temp_file.write('{"variants":[')
+            needs_comma = False
+            for _, chunk_path in sorted(chunk_files):
+                with open(chunk_path, encoding="utf-8") as chunk_file:
+                    variants = json.load(chunk_file)
+                for variant in variants:
+                    if needs_comma:
+                        temp_file.write(",")
+                    temp_file.write(json.dumps(variant, cls=ResultEncoder))
+                    needs_comma = True
+                    written_variant_count += 1
+            temp_file.write("]}")
+
+        if written_variant_count != expected_variant_count:
+            raise ValueError(
+                f"Invalid variant count for {output_path}: expected {expected_variant_count}, "
+                f"wrote {written_variant_count}"
+            )
+
+        os.replace(temp_path, output_path)
+    except BaseException:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        raise
+
+    return written_variant_count, os.path.getsize(output_path)
 
 
 def write_gene_summary_file(output_directory, ds):
@@ -151,6 +238,160 @@ def write_json_files(output_directory, tsv_dirname, n_rows):
     shutil.rmtree(f"{output_directory}/{tsv_dirname}")
 
 
+def write_oversized_gene_documents(output_directory, ds, n_rows):
+    temp_dir_name = "temp_oversized_gene_parts"
+    gene_fields = ds.drop("variants", "variant_counts", "total_variants")
+    gene_fields.select(data=hl.json(gene_fields.row)).export(
+        f"{output_directory}/{temp_dir_name}",
+        header=False,
+        parallel="separate_header",
+    )
+
+    written_documents = {}
+    csv.field_size_limit(sys.maxsize)
+
+    def iter_part_files(directory):
+        for part_file in glob.glob(f"{directory}/part-*"):
+            with open(part_file, encoding="utf-8") as data_file:
+                yield from csv.reader(data_file, delimiter="\t")
+
+    with multiprocessing.get_context("spawn").Pool() as pool:
+        rows = iter_part_files(f"{output_directory}/{temp_dir_name}")
+        for gene_id, gene_grch37, gene_grch38 in tqdm(pool.imap(split_gene_document, rows), total=n_rows):
+            num = int(gene_id.lstrip("ENSGR"))
+            gene_dir = f"{output_directory}/genes/{str(num % 1000).zfill(3)}"
+            os.makedirs(gene_dir, exist_ok=True)
+            gene_document_paths = []
+
+            if gene_grch37:
+                output_path = f"{gene_dir}/{gene_id}_GRCh37.json"
+                with open(output_path, mode="w", encoding="utf-8") as output_file:
+                    output_file.write(gene_grch37)
+                gene_document_paths.append(output_path)
+
+            if gene_grch38:
+                output_path = f"{gene_dir}/{gene_id}_GRCh38.json"
+                with open(output_path, mode="w", encoding="utf-8") as output_file:
+                    output_file.write(gene_grch38)
+                gene_document_paths.append(output_path)
+
+            written_documents[gene_id] = gene_document_paths
+
+    shutil.rmtree(f"{output_directory}/{temp_dir_name}")
+    return written_documents
+
+
+def export_oversized_variant_chunks(output_directory, ds, dataset_ids):
+    temp_directory = f"{output_directory}/temp_oversized_variant_parts"
+
+    for dataset_id in dataset_ids:
+        source_variant_count = hl.len(ds.variants[dataset_id])
+        chunk_count = (source_variant_count + VARIANT_CHUNK_SIZE - 1) // VARIANT_CHUNK_SIZE
+        chunk_rows = ds.select(
+            dataset_variants=ds.variants[dataset_id],
+            source_variant_count=source_variant_count,
+            chunk_count=chunk_count,
+            chunk_index=hl.range(0, chunk_count),
+        ).explode("chunk_index")
+        chunk_start = chunk_rows.chunk_index * VARIANT_CHUNK_SIZE
+        chunk_rows.select(
+            dataset=hl.literal(dataset_id),
+            chunk_index=chunk_rows.chunk_index,
+            chunk_count=chunk_rows.chunk_count,
+            source_variant_count=chunk_rows.source_variant_count,
+            data=hl.json(chunk_rows.dataset_variants[chunk_start : chunk_start + VARIANT_CHUNK_SIZE]),
+        ).export(
+            f"{temp_directory}/{dataset_id}",
+            header=False,
+            parallel="separate_header",
+        )
+
+    return temp_directory
+
+
+def stage_oversized_variant_chunks(temp_directory, staging_directory, expected_variants):
+    if os.path.exists(staging_directory):
+        shutil.rmtree(staging_directory)
+    os.makedirs(staging_directory)
+
+    staged_chunks = {key: [] for key in expected_variants}
+    observed_chunk_indices = {key: set() for key in expected_variants}
+
+    for dataset_directory in glob.glob(f"{temp_directory}/*"):
+        for part_file in glob.glob(f"{dataset_directory}/part-*"):
+            with open(part_file, encoding="utf-8") as data_file:
+                for row in csv.reader(data_file, delimiter="\t"):
+                    gene_id, dataset_id = row[0], row[1]
+                    chunk_index, chunk_count, source_variant_count = map(int, row[2:5])
+                    key = (gene_id, dataset_id)
+                    if key not in expected_variants:
+                        raise ValueError(f"Unexpected oversized variant chunk for {gene_id} {dataset_id}")
+
+                    expected_variant_count = expected_variants[key]
+                    expected_chunk_count = (expected_variant_count + VARIANT_CHUNK_SIZE - 1) // VARIANT_CHUNK_SIZE
+                    if source_variant_count != expected_variant_count or chunk_count != expected_chunk_count:
+                        raise ValueError(f"Inconsistent oversized variant chunk metadata for {gene_id} {dataset_id}")
+                    if chunk_index in observed_chunk_indices[key]:
+                        raise ValueError(f"Duplicate oversized variant chunk {chunk_index} for {gene_id} {dataset_id}")
+
+                    observed_chunk_indices[key].add(chunk_index)
+                    chunk_directory = os.path.join(staging_directory, gene_id, dataset_id)
+                    os.makedirs(chunk_directory, exist_ok=True)
+                    chunk_path = os.path.join(chunk_directory, f"{chunk_index}.json")
+                    with open(chunk_path, mode="w", encoding="utf-8") as chunk_file:
+                        chunk_file.write(row[5])
+                    staged_chunks[key].append((chunk_index, chunk_path))
+
+    return staged_chunks
+
+
+def write_oversized_variants(output_directory, oversized_genes, dataset_ids, staged_chunks):
+    report_genes = []
+
+    for gene in oversized_genes:
+        gene_id = gene["gene_id"]
+        num = int(gene_id.lstrip("ENSGR"))
+        gene_directory = f"{output_directory}/genes/{str(num % 1000).zfill(3)}"
+        dataset_reports = []
+
+        for dataset_id in dataset_ids:
+            source_variant_count = gene["variant_counts"][dataset_id]
+            expected_chunk_count = (source_variant_count + VARIANT_CHUNK_SIZE - 1) // VARIANT_CHUNK_SIZE
+            output_path = f"{gene_directory}/{gene_id}_{dataset_id.lower()}_variants.json"
+            chunks = staged_chunks[(gene_id, dataset_id)]
+            written_variant_count, byte_size = assemble_variant_chunks(
+                output_path,
+                chunks,
+                expected_chunk_count,
+                source_variant_count,
+            )
+            dataset_reports.append(
+                {
+                    "dataset": dataset_id,
+                    "source_variant_count": source_variant_count,
+                    "expected_chunks": expected_chunk_count,
+                    "observed_chunks": len(chunks),
+                    "written_variants": written_variant_count,
+                    "final_path": output_path,
+                    "byte_size": byte_size,
+                }
+            )
+
+        report_genes.append(
+            {
+                "gene_id": gene_id,
+                "symbol": gene["symbol"],
+                "gene_document_paths": gene["gene_document_paths"],
+                "datasets": dataset_reports,
+            }
+        )
+
+    report_path = f"{output_directory}/oversized_genes_report.json"
+    with open(report_path, mode="w", encoding="utf-8") as report_file:
+        json.dump({"genes": report_genes}, report_file, indent=2)
+        report_file.write("\n")
+
+
 def write_data_files(table_path, output_directory, genes=None):
     if output_directory.startswith("gs://"):
         raise ValueError("Google Storage paths are not supported for output_directory")
@@ -170,19 +411,8 @@ def write_data_files(table_path, output_directory, genes=None):
     write_gene_summary_file(output_directory, ds)
     print("\n\n === Checking gene variant counts", flush=True)
 
-    expected_datasets = [
-        "ASC",
-        "ASC2",
-        "BipEx",
-        "Epi25",
-        "GP2",
-        "IBD",
-        "SCHEMA",
-        "ClinVarGRCh38",
-    ]
-
     counts_expr = {}
-    for name in expected_datasets:
+    for name in EXPECTED_DATASETS:
         if name in ds.variants:
             counts_expr[name] = hl.or_else(hl.len(ds.variants[name]), 0)
         else:
@@ -203,14 +433,21 @@ def write_data_files(table_path, output_directory, genes=None):
         )
     )
 
-    VARIANT_THRESHOLD = 200_000
-
     ds_large_genes = ds.filter(ds.total_variants > VARIANT_THRESHOLD)
-    large_gene_symbols = ds_large_genes.symbol.collect()
+    dataset_ids = list(ds.variants.dtype.fields)
+    large_gene_rows = ds_large_genes.select("symbol", "variant_counts").collect()
+    oversized_genes = [
+        {
+            "gene_id": row.gene_id,
+            "symbol": row.symbol,
+            "variant_counts": {dataset_id: row.variant_counts[dataset_id] for dataset_id in dataset_ids},
+        }
+        for row in large_gene_rows
+    ]
 
-    print(f"Removing {len(large_gene_symbols)} genes with > {VARIANT_THRESHOLD:,} variants:")
-    for symbol in large_gene_symbols:
-        print(f" - {symbol}")
+    print(f"Routing {len(oversized_genes)} genes with > {VARIANT_THRESHOLD:,} variants through chunked export:")
+    for gene in oversized_genes:
+        print(f" - {gene['symbol']} ({gene['gene_id']})")
 
     ds_filtered = ds.filter(ds.total_variants <= VARIANT_THRESHOLD)
     ds_filtered = ds_filtered.drop("variant_counts", "total_variants")
@@ -229,6 +466,36 @@ def write_data_files(table_path, output_directory, genes=None):
 
     print("\n\n === Writing per-gene JSON files", flush=True)
     write_json_files(output_directory, temp_dir_name, n_rows)
+
+    if oversized_genes:
+        print("\n\n === Exporting oversized gene documents", flush=True)
+        written_documents = write_oversized_gene_documents(output_directory, ds_large_genes, len(oversized_genes))
+        for gene in oversized_genes:
+            gene["gene_document_paths"] = written_documents[gene["gene_id"]]
+
+        print("\n\n === Exporting oversized variant chunks", flush=True)
+        chunk_parts_directory = export_oversized_variant_chunks(output_directory, ds_large_genes, dataset_ids)
+        chunk_staging_directory = f"{output_directory}/temp_oversized_variant_chunks"
+        expected_variants = {
+            (gene["gene_id"], dataset_id): gene["variant_counts"][dataset_id]
+            for gene in oversized_genes
+            for dataset_id in dataset_ids
+        }
+        staged_chunks = stage_oversized_variant_chunks(
+            chunk_parts_directory,
+            chunk_staging_directory,
+            expected_variants,
+        )
+
+        print("\n\n === Assembling oversized variant files", flush=True)
+        write_oversized_variants(output_directory, oversized_genes, dataset_ids, staged_chunks)
+        shutil.rmtree(chunk_parts_directory)
+        shutil.rmtree(chunk_staging_directory)
+    else:
+        with open(f"{output_directory}/oversized_genes_report.json", mode="w", encoding="utf-8") as report_file:
+            json.dump({"genes": []}, report_file, indent=2)
+            report_file.write("\n")
+
     print("Finished writing per-gene JSON files", flush=True)
 
 
