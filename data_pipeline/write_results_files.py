@@ -407,8 +407,6 @@ def write_data_files(table_path, output_directory, genes=None):
         if missing_genes:
             raise ValueError(f"Unknown gene IDs: {', '.join(missing_genes)}")
 
-    print("\n\n === Writing metadata, gene search terms, and result summaries", flush=True)
-    write_gene_summary_file(output_directory, ds)
     print("\n\n === Checking gene variant counts", flush=True)
 
     counts_expr = {}
@@ -449,24 +447,6 @@ def write_data_files(table_path, output_directory, genes=None):
     for gene in oversized_genes:
         print(f" - {gene['symbol']} ({gene['gene_id']})")
 
-    ds_filtered = ds.filter(ds.total_variants <= VARIANT_THRESHOLD)
-    ds_filtered = ds_filtered.drop("variant_counts", "total_variants")
-
-    temp_dir_name = "temp_parts"
-    n_rows = ds_filtered.count()
-
-    ds_filtered = ds_filtered.repartition(500)
-
-    print(f"\n\n === Exporting {n_rows} gene rows to {output_directory}/{temp_dir_name}", flush=True)
-    ds_filtered.select(data=hl.json(ds_filtered.row)).export(
-        f"{output_directory}/{temp_dir_name}",
-        header=False,
-        parallel="separate_header",
-    )
-
-    print("\n\n === Writing per-gene JSON files", flush=True)
-    write_json_files(output_directory, temp_dir_name, n_rows)
-
     if oversized_genes:
         print("\n\n === Exporting oversized gene documents", flush=True)
         written_documents = write_oversized_gene_documents(output_directory, ds_large_genes, len(oversized_genes))
@@ -496,6 +476,24 @@ def write_data_files(table_path, output_directory, genes=None):
             json.dump({"genes": []}, report_file, indent=2)
             report_file.write("\n")
 
+    print("\n\n === Writing metadata, gene search terms, and result summaries", flush=True)
+    write_gene_summary_file(output_directory, ds)
+
+    ds_filtered = ds.filter(ds.total_variants <= VARIANT_THRESHOLD)
+    ds_filtered = ds_filtered.drop("variant_counts", "total_variants")
+    temp_dir_name = "temp_parts"
+    n_rows = ds_filtered.count()
+    ds_filtered = ds_filtered.repartition(500)
+
+    print(f"\n\n === Exporting {n_rows} ordinary gene rows to {output_directory}/{temp_dir_name}", flush=True)
+    ds_filtered.select(data=hl.json(ds_filtered.row)).export(
+        f"{output_directory}/{temp_dir_name}",
+        header=False,
+        parallel="separate_header",
+    )
+
+    print("\n\n === Writing ordinary per-gene JSON files", flush=True)
+    write_json_files(output_directory, temp_dir_name, n_rows)
     print("Finished writing per-gene JSON files", flush=True)
 
 
