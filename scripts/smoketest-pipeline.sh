@@ -4,6 +4,7 @@
 #   ./scripts/smoketest-pipeline.sh
 #   ./scripts/smoketest-pipeline.sh --genes=ENSG00000169174,ENSG00000167207
 #   ./scripts/smoketest-pipeline.sh --output-dir=data/smoke
+#   ./scripts/smoketest-pipeline.sh --datasets GP2 --genes=ENSG00000169174
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -21,8 +22,23 @@ IBD_GENE_ID=ENSG00000167207
 SMOKE_GENES=("$PCSK9_GENE_ID" "$IBD_GENE_ID")
 SMOKE_DIR=data/smoke
 
-for arg in "$@"; do
+DATASETS=(ASC BipEx Epi25 SCHEMA IBD GP2 ClinVarGRCh38)
+
+while [ "$#" -gt 0 ]; do
+  arg="$1"
+  shift
   case "$arg" in
+    --datasets)
+      DATASETS=()
+      while [ "$#" -gt 0 ] && [[ "$1" != --* ]]; do
+        DATASETS+=("$1")
+        shift
+      done
+      if [ "${#DATASETS[@]}" -eq 0 ]; then
+        echo "error: --datasets requires at least one dataset" >&2
+        exit 1
+      fi
+      ;;
     --genes=*)
       IFS=',' read -r -a SMOKE_GENES <<< "${arg#--genes=}"
       ;;
@@ -36,7 +52,15 @@ for arg in "$@"; do
   esac
 done
 
-DATASETS=(ASC BipEx BipEx2 Epi25 SCHEMA IBD GP2 ClinVarGRCh38)
+for dataset in "${DATASETS[@]}"; do
+  case "$dataset" in
+    ASC|ASC2|BipEx|Epi25|SCHEMA|IBD|GP2|ClinVarGRCh38) ;;
+    *)
+      echo "error: unknown dataset: $dataset" >&2
+      exit 1
+      ;;
+  esac
+done
 
 echo "==> prepare_gene_models"
 "${UV_RUN[@]}" ./data_pipeline/run_pipeline.py --environment local prepare_gene_models --output-local

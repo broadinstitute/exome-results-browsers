@@ -5,6 +5,7 @@
 #   ./scripts/smoketest.sh --clean-install                        # clear and re-sync dependencies
 #   ./scripts/smoketest.sh --genes=ENSG00000169174,ENSG00000167207 # only write results for these genes
 #   ./scripts/smoketest.sh --output-dir=data/smoke                 # write smoke test data elsewhere
+#   ./scripts/smoketest.sh --datasets GP2 --project=GP2
 #   ./scripts/smoketest.sh --project=SCHEMA                        # only playwright test a certain dataset
 set -euo pipefail
 
@@ -13,8 +14,17 @@ cd "$(dirname "$0")/.."
 clean_install=false
 pipeline_args=()
 args=()
-for arg in "$@"; do
+while [ "$#" -gt 0 ]; do
+  arg="$1"
+  shift
   case "$arg" in
+    --datasets)
+      pipeline_args+=("$arg")
+      while [ "$#" -gt 0 ] && [[ "$1" != --* ]]; do
+        pipeline_args+=("$1")
+        shift
+      done
+      ;;
     --clean-install) clean_install=true ;;
     --genes=*|--output-dir=*) pipeline_args+=("$arg") ;;
     *) args+=("$arg") ;;
