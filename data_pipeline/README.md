@@ -133,6 +133,21 @@ The pipelines accept arguments for which environment to run the pipeline in (dat
 
 To run data pipelines locally, use the flags: `--environment local`, `--output-local`, and `--test-genes` to subset the input data for fast iteration on the real input data. The dataset files themselves are reponsible for determining which gene intervals to subset the input data to.
 
+#### Smoke selected datasets
+
+Select the datasets to prepare and combine with pipeline-style arguments:
+
+```bash
+yarn smoketest:pipeline --datasets GP2 \
+  --genes=ENSG00000169174 \
+  --output-dir=data/smoke-gp2
+```
+
+Use `--datasets GP2 SCHEMA` to select several datasets. Omit `--datasets` to
+retain the default smoke selection. For the complete smoke command, pass
+`--datasets` to select pipeline inputs and `--project=GP2` separately to select
+the Playwright browser project.
+
 #### Prepare gene models
 
 ```bash
