@@ -117,6 +117,7 @@ def load_hgnc(hgnc_path):
 
 
 def prepare_gene_models_helper(reference_genome):
+    print(f"\n\n === Preparing {reference_genome} gene models", flush=True)
     gencode_path = pipeline_config.get("reference_data", f"{reference_genome.lower()}_gencode_path")
     canonical_transcripts_path = pipeline_config.get(
         "reference_data", f"{reference_genome.lower()}_canonical_transcripts_path"
@@ -264,6 +265,7 @@ def prepare_gene_models(output_path):
     genes = genes_grch37.join(genes_grch38, how="outer")
 
     # Annotate genes with information from HGNC
+    print("\n\n === Annotating gene models with HGNC", flush=True)
     hgnc_path = pipeline_config.get("reference_data", "hgnc_path")
     hgnc = load_hgnc(hgnc_path)
     genes = genes.annotate(**hgnc[genes.gene_id])
@@ -285,19 +287,24 @@ def prepare_gene_models(output_path):
         ),
     )
 
+    print("\n\n === Preparing ExAC constraint annotations", flush=True)
     exac_constraint_path = pipeline_config.get("reference_data", "exac_constraint_path")
     exac_constraint = prepare_exac_constraint(exac_constraint_path)
     genes = genes.annotate(exac_constraint=exac_constraint[genes.GRCh37.canonical_transcript_id])
 
+    print("\n\n === Preparing gnomAD v2 constraint annotations", flush=True)
     gnomad_v2_constraint_path = pipeline_config.get("reference_data", "gnomad_v2_constraint_path")
     gnomad_v2_constraint = prepare_gnomad_v2_constraint(gnomad_v2_constraint_path)
     genes = genes.annotate(gnomad_v2_constraint=gnomad_v2_constraint[genes.GRCh37.canonical_transcript_id])
 
+    print("\n\n === Preparing gnomAD v4 constraint annotations", flush=True)
     gnomad_v4_constraint_path = pipeline_config.get("reference_data", "gnomad_v4_constraint_path")
     gnomad_v4_constraint = prepare_gnomad_v4_constraint(gnomad_v4_constraint_path)
     genes = genes.annotate(gnomad_v4_constraint=gnomad_v4_constraint[genes.GRCh38.canonical_transcript_id])
 
+    print(f"\n\n === Writing gene models hail table to {output_path}", flush=True)
     genes.write(output_path, overwrite=True)
+    print("Finished writing gene models hail table", flush=True)
 
 
 def main():
