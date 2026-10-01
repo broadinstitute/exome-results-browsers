@@ -20,6 +20,7 @@ VARIANT_FIELDS = [
 def combine_datasets(dataset_ids, output_root):
     gene_models_last_updated = pipeline_config.get("reference_data", "output_last_updated")
     gene_models_path = f"{output_root}/gene_models/{gene_models_last_updated}/gene_models.ht"
+    print(f"\n\n === Reading gene models hail table from {gene_models_path}", flush=True)
     ds = hl.read_table(gene_models_path)
 
     ds = ds.annotate(gene_results=hl.struct(), variants=hl.struct())
@@ -29,6 +30,7 @@ def combine_datasets(dataset_ids, output_root):
         dataset_last_updated = pipeline_config.get(dataset_id, "output_last_updated")
         dataset_path = os.path.join(output_root, dataset_id.lower(), dataset_last_updated)
 
+        print(f"\n\n === Combining {dataset_id} gene results", flush=True)
         gene_results = hl.read_table(os.path.join(dataset_path, "gene_results.ht"))
 
         gene_group_result_field_names = gene_results.group_results.dtype.value_type.fields
@@ -50,6 +52,7 @@ def combine_datasets(dataset_ids, output_root):
 
         ds = ds.annotate(gene_results=ds.gene_results.annotate(**{dataset_id: gene_results[ds.gene_id]}))
 
+        print(f"\n\n === Combining {dataset_id} variant results", flush=True)
         variant_results = hl.read_table(os.path.join(dataset_path, "variant_results.ht"))
 
         reference_genome = variant_results.locus.dtype.reference_genome.name
@@ -177,7 +180,9 @@ def main():
     combined_output_date = pipeline_config.get("output", "output_last_updated")
     output_path = os.path.join(output_root, "combined", combined_output_date, "combined.ht")
     combined_ht = combine_datasets(datasets_to_combine, output_root)
+    print(f"\n\n === Writing combined hail table to {output_path}", flush=True)
     combined_ht.write(output_path, overwrite=True)
+    print("Finished writing combined hail table", flush=True)
 
 
 if __name__ == "__main__":
