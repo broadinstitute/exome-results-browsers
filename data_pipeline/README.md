@@ -148,6 +148,14 @@ retain the default smoke selection. For the complete smoke command, pass
 `--datasets` to select pipeline inputs and `--project=GP2` separately to select
 the Playwright browser project.
 
+Use the writer's `--genes` to restrict search/results summaries and per-gene
+output, not upstream preparation. Request only genes present in the combined
+gene-model table.
+
+Before the large-gene fix, expect selected genes exceeding 200,000 combined
+variants to appear in the writer's removal log and have no per-gene files. Check
+the selected gene's actual count rather than assuming it exceeds the threshold.
+
 #### Prepare gene models
 
 ```bash
