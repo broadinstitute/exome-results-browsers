@@ -1,4 +1,5 @@
 import json
+import stat
 
 import pytest
 from write_results_files import ResultEncoder, assemble_variant_chunks
@@ -28,6 +29,7 @@ def test_assemble_variant_chunks_preserves_existing_json_format(tmp_path):
 
     expected = json.dumps({"variants": variants}, cls=ResultEncoder)
     assert output_path.read_text(encoding="utf-8") == expected
+    assert stat.S_IMODE(output_path.stat().st_mode) == 0o644
     assert written_variant_count == 3
     assert byte_size == len(expected.encode())
 

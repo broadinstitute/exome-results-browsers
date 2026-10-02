@@ -15,6 +15,7 @@ import hail as hl
 from tqdm import tqdm
 
 INFINITY = float("inf")
+RESULT_FILE_MODE = 0o644
 VARIANT_THRESHOLD = 200_000
 VARIANT_CHUNK_SIZE = 10_000
 EXPECTED_DATASETS = [
@@ -151,6 +152,7 @@ def assemble_variant_chunks(output_path, chunk_files, expected_chunk_count, expe
                 f"wrote {written_variant_count}"
             )
 
+        os.chmod(temp_path, RESULT_FILE_MODE)
         os.replace(temp_path, output_path)
     except BaseException:
         if os.path.exists(temp_path):
