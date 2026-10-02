@@ -17,7 +17,10 @@ def prepare_gene_results(_test_genes, _output_root):
     #   no gp2 gene data, and we're using epi25 data just to make the pipeline run
     if True:  # pylint: disable=using-constant-test
         results = filter_gene_results_to_test_genes(
-            results, "gene_symbol", parse_test_genes(pipeline_config.get("GP2", "test_genes"))
+            results,
+            "gene_symbol",
+            parse_test_genes(pipeline_config.get("GP2", "test_genes")),
+            case_sensitive=True,
         )
 
     results = results.select_globals()
