@@ -281,10 +281,19 @@ def write_oversized_gene_documents(output_directory, ds, n_rows):
     return written_documents
 
 
-def export_oversized_variant_chunks(output_directory, ds, dataset_ids):
+def export_oversized_variant_chunks(output_directory, ds, dataset_ids, oversized_genes):
     temp_directory = f"{output_directory}/temp_oversized_variant_parts"
 
     for dataset_id in dataset_ids:
+        total_variant_count = sum(gene["variant_counts"][dataset_id] for gene in oversized_genes)
+        total_chunk_count = sum(
+            (gene["variant_counts"][dataset_id] + VARIANT_CHUNK_SIZE - 1) // VARIANT_CHUNK_SIZE
+            for gene in oversized_genes
+        )
+        print(
+            f"Exporting {dataset_id}: {total_variant_count:,} variants in {total_chunk_count:,} chunks",
+            flush=True,
+        )
         source_variant_count = hl.len(ds.variants[dataset_id])
         chunk_count = (source_variant_count + VARIANT_CHUNK_SIZE - 1) // VARIANT_CHUNK_SIZE
         chunk_rows = ds.select(
@@ -305,6 +314,7 @@ def export_oversized_variant_chunks(output_directory, ds, dataset_ids):
             header=False,
             parallel="separate_header",
         )
+        print(f"Finished exporting {dataset_id}", flush=True)
 
     return temp_directory
 
@@ -316,31 +326,38 @@ def stage_oversized_variant_chunks(temp_directory, staging_directory, expected_v
 
     staged_chunks = {key: [] for key in expected_variants}
     observed_chunk_indices = {key: set() for key in expected_variants}
+    total_chunk_count = sum(
+        (variant_count + VARIANT_CHUNK_SIZE - 1) // VARIANT_CHUNK_SIZE for variant_count in expected_variants.values()
+    )
 
-    for dataset_directory in glob.glob(f"{temp_directory}/*"):
-        for part_file in glob.glob(f"{dataset_directory}/part-*"):
-            with open(part_file, encoding="utf-8") as data_file:
-                for row in csv.reader(data_file, delimiter="\t"):
-                    gene_id, dataset_id = row[0], row[1]
-                    chunk_index, chunk_count, source_variant_count = map(int, row[2:5])
-                    key = (gene_id, dataset_id)
-                    if key not in expected_variants:
-                        raise ValueError(f"Unexpected oversized variant chunk for {gene_id} {dataset_id}")
+    def iter_exported_chunk_rows():
+        for dataset_directory in glob.glob(f"{temp_directory}/*"):
+            for part_file in glob.glob(f"{dataset_directory}/part-*"):
+                with open(part_file, encoding="utf-8") as data_file:
+                    yield from csv.reader(data_file, delimiter="\t")
 
-                    expected_variant_count = expected_variants[key]
-                    expected_chunk_count = (expected_variant_count + VARIANT_CHUNK_SIZE - 1) // VARIANT_CHUNK_SIZE
-                    if source_variant_count != expected_variant_count or chunk_count != expected_chunk_count:
-                        raise ValueError(f"Inconsistent oversized variant chunk metadata for {gene_id} {dataset_id}")
-                    if chunk_index in observed_chunk_indices[key]:
-                        raise ValueError(f"Duplicate oversized variant chunk {chunk_index} for {gene_id} {dataset_id}")
+    rows = iter_exported_chunk_rows()
+    for row in tqdm(rows, total=total_chunk_count, desc="Staging oversized chunks", unit="chunk"):
+        gene_id, dataset_id = row[0], row[1]
+        chunk_index, chunk_count, source_variant_count = map(int, row[2:5])
+        key = (gene_id, dataset_id)
+        if key not in expected_variants:
+            raise ValueError(f"Unexpected oversized variant chunk for {gene_id} {dataset_id}")
 
-                    observed_chunk_indices[key].add(chunk_index)
-                    chunk_directory = os.path.join(staging_directory, gene_id, dataset_id)
-                    os.makedirs(chunk_directory, exist_ok=True)
-                    chunk_path = os.path.join(chunk_directory, f"{chunk_index}.json")
-                    with open(chunk_path, mode="w", encoding="utf-8") as chunk_file:
-                        chunk_file.write(row[5])
-                    staged_chunks[key].append((chunk_index, chunk_path))
+        expected_variant_count = expected_variants[key]
+        expected_chunk_count = (expected_variant_count + VARIANT_CHUNK_SIZE - 1) // VARIANT_CHUNK_SIZE
+        if source_variant_count != expected_variant_count or chunk_count != expected_chunk_count:
+            raise ValueError(f"Inconsistent oversized variant chunk metadata for {gene_id} {dataset_id}")
+        if chunk_index in observed_chunk_indices[key]:
+            raise ValueError(f"Duplicate oversized variant chunk {chunk_index} for {gene_id} {dataset_id}")
+
+        observed_chunk_indices[key].add(chunk_index)
+        chunk_directory = os.path.join(staging_directory, gene_id, dataset_id)
+        os.makedirs(chunk_directory, exist_ok=True)
+        chunk_path = os.path.join(chunk_directory, f"{chunk_index}.json")
+        with open(chunk_path, mode="w", encoding="utf-8") as chunk_file:
+            chunk_file.write(row[5])
+        staged_chunks[key].append((chunk_index, chunk_path))
 
     return staged_chunks
 
@@ -348,7 +365,7 @@ def stage_oversized_variant_chunks(temp_directory, staging_directory, expected_v
 def write_oversized_variants(output_directory, oversized_genes, dataset_ids, staged_chunks):
     report_genes = []
 
-    for gene in oversized_genes:
+    for gene in tqdm(oversized_genes, desc="Assembling oversized genes", unit="gene"):
         gene_id = gene["gene_id"]
         num = int(gene_id.lstrip("ENSGR"))
         gene_directory = f"{output_directory}/genes/{str(num % 1000).zfill(3)}"
@@ -454,7 +471,12 @@ def write_data_files(table_path, output_directory, genes=None):
             gene["gene_document_paths"] = written_documents[gene["gene_id"]]
 
         print("\n\n === Exporting oversized variant chunks", flush=True)
-        chunk_parts_directory = export_oversized_variant_chunks(output_directory, ds_large_genes, dataset_ids)
+        chunk_parts_directory = export_oversized_variant_chunks(
+            output_directory,
+            ds_large_genes,
+            dataset_ids,
+            oversized_genes,
+        )
         chunk_staging_directory = f"{output_directory}/temp_oversized_variant_chunks"
         expected_variants = {
             (gene["gene_id"], dataset_id): gene["variant_counts"][dataset_id]
