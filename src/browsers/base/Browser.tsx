@@ -242,7 +242,6 @@ type BrowserProps = {
   renderVariantAttributes?: RenderVariantAttributes
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences?: boolean
-  getGeneNotFoundMessage?: (geneIdOrSymbol: string) => string | undefined
   variantAlleleFrequencyOverride?: number
   variantExportNote?: string
   variantLollipopTrackGroups?: VariantLollipopTrackGroup[]
@@ -284,7 +283,6 @@ const Browser = ({
   additionalVariantDetailSummaryColumns = undefined,
   variantDetailColumns = undefined,
   renderVariantTranscriptConsequences = false,
-  getGeneNotFoundMessage = undefined,
   variantAlleleFrequencyOverride = undefined,
   variantExportNote = undefined,
   variantLollipopTrackGroups = undefined,
@@ -380,7 +378,6 @@ const Browser = ({
                 additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
                 variantDetailColumns={variantDetailColumns}
                 renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
-                getGeneNotFoundMessage={getGeneNotFoundMessage}
                 variantAlleleFrequencyOverride={variantAlleleFrequencyOverride}
                 variantExportNote={variantExportNote}
                 variantLollipopTrackGroups={variantLollipopTrackGroups}
