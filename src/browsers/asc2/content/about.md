@@ -80,7 +80,7 @@ Sample count by cohort of origin. For each cohort, the number of affected proban
 
 We generated and harmonized callsets of short sequence variants (i.e., single nucleotide variants [SNVs] and small insertions/deletions [indels]) and copy-number variants (CNV; i.e., deletions and duplications) (**Fig. 2b**). For family-based data, variants are divided by inheritance mode (_de novo_ and rare inherited variants), while for case-control data all rare variants are analyzed. Rare variants are defined by an allele frequency ≤ 0.1%. SNVs/indels included in this analysis are those annotated as protein-truncating variants (PTVs), missense variants, or synonymous variants (**Fig. 3**); missense variants are further categorized using Missense Deleteriousness Prediction by Constraint (MPC) and AlphaMissense estimated pathogenicity (AM path) scores, with “Mis2” variants satisfying MPC ≥ 2 and AM path ≥ 0.97, “Mis1” variants satisfying one of these criteria, and “Mis0” variants satisfying neither. Included CNVs are restricted to those that span ≥ 3 exons and affect 1-3 constrained genes (**Fig. 3**).
 
-<figure style="max-width: 75%;">
+<figure style="max-width: 90%;">
 
 ![Figure 3 | Autosomal variant callset description.](./fig3_variant_callset.png)
 
