@@ -220,7 +220,7 @@ const caseControlColumns = variantClassCategoryColumns(caseControlColumnGroup, 7
 
 const ASC2Browser = () => (
   <Browser
-    browserTitle="DEMO; ASC exome analysis"
+    browserTitle="DEMO; Autism Genomics Browser"
     navBarBackgroundColor="#23509c"
     homePage={ASC2HomePage}
     extraPages={[
