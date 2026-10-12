@@ -395,6 +395,7 @@ const ASC2Browser = () => (
       {
         key: 'info.transcript_id',
         heading: 'Transcript ID',
+        sortFunction: (a: string, b: string) => a.localeCompare(b),
         minWidth: 160,
         tooltip: 'Ensembl transcript ID',
         render: (value) => renderMissing(value),
