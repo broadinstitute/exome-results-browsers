@@ -43,7 +43,7 @@ const GeneReferences = ({ gene }: GeneReferencesProps) => {
           onRequestClose={() => {
             setIsExpanded(false)
           }}
-          title={`References for ${gene.symbol}`}
+          title={`Gene resources for ${gene.symbol}`}
         >
           <List>
             <ListItem>
@@ -199,7 +199,7 @@ const GeneInfo = ({ gene, showManeSelectTranscript = false }: GeneInfoProps) => 
         <dd>{`Chr${gene.chrom}:${gene.start}-${gene.stop}`}</dd>
       </DescriptionListItem>
       <DescriptionListItem>
-        <dt>References</dt>
+        <dt>Gene resources</dt>
         <dd>
           <GeneReferences gene={gene} />
         </dd>
