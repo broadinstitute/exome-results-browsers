@@ -5,14 +5,17 @@ import styled from 'styled-components'
 
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { TextButton } from '@gnomad/ui'
-import { VariantColumnConfig } from '../Browser'
-import { applyColumnGroupHeadings } from '../columnGroupHeadings'
+import { GeneResultColumnGroup, VariantColumnConfig } from '../Browser'
 import {
   DEFAULT_VARIANT_CATEGORY_COLOR,
   DEFAULT_VARIANT_CATEGORY_OPTIONS,
   VariantCategoryOption,
 } from '../variantCategories'
 import { FilterState } from './VariantFilterControls'
+
+const ColumnHeadingLabel = styled.div<{ $isCentered?: boolean }>`
+  text-align: ${({ $isCentered }) => ($isCentered ? 'center' : 'left')};
+`
 
 const VariantIdButton = styled(TextButton)`
   overflow: hidden;
@@ -122,10 +125,9 @@ interface RenderContext {
 
 export interface VariantTableColumn {
   centerNumericValues?: boolean
+  group?: GeneResultColumnGroup
   key: string
   heading: React.ReactNode
-  // Plain-text heading for CSV export; differs from `heading` when the latter has been
-  // replaced with a column-group banner.
   csvHeading?: string
   tooltip?: string
   isRowHeader?: boolean
@@ -567,16 +569,19 @@ const getVariantTableColumns = ({
         )
       : variantResultColumns
 
-  const resultColumns: VariantTableColumn[] = applyColumnGroupHeadings(
-    filteredVariantResultColumns,
-    (group) => group.variantTableLabel
-  ).map((column, index) => {
+  const resultColumns: VariantTableColumn[] = filteredVariantResultColumns.map((column) => {
     const getValue = column.accessor ?? ((row: any) => get(row, column.key))
+
+    const plainHeading = column.heading || column.key
+    const alignedHeading = (
+      <ColumnHeadingLabel $isCentered={column.centerHeading}>{plainHeading}</ColumnHeadingLabel>
+    )
 
     return {
       key: column.key,
-      heading: column.heading || column.key,
-      csvHeading: filteredVariantResultColumns[index].heading || column.key,
+      group: column.group,
+      heading: column.group || column.centerHeading ? alignedHeading : plainHeading,
+      csvHeading: plainHeading,
       centerNumericValues: column.centerNumericValues,
       tooltip: column.tooltip,
       isSortable: column.isSortable !== false,

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { Grid } from '@gnomad/ui'
 import { VariantRow, VariantTableColumn } from './variantTableColumns'
+import VariantTableGroupHeadings from './VariantTableGroupHeadings'
 
 const CenteredNumericCell = styled.span`
   display: flex;
@@ -111,7 +112,7 @@ class VariantTable extends Component<VariantTableProps> {
       }
     })
 
-    return (
+    const variantGrid = (
       <Grid
         cellData={cellData}
         columns={alignedColumns}
@@ -128,6 +129,10 @@ class VariantTable extends Component<VariantTableProps> {
         sortOrder={sortOrder}
       />
     )
+    const groupedVariantGrid = (
+      <VariantTableGroupHeadings columns={columns}>{variantGrid}</VariantTableGroupHeadings>
+    )
+    return columns.some((column) => column.group) ? groupedVariantGrid : variantGrid
   }
 }
 

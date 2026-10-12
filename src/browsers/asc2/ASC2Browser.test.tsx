@@ -249,11 +249,12 @@ describe('ASC2 variant count alignment', () => {
     expect(column.renderForCSV(row, column.key)).toBe(123)
   })
 
-  it('leaves the upper De novo header left-positioned', () => {
+  it('keeps the upper De novo group separate from the sortable lower header', () => {
     const column = getVariantCountColumn('group_result.de_novo_ac_proband')
     render(<>{column.heading}</>)
 
-    expect(screen.getByText('De novo AC')).toHaveStyle('left: 0.5em;')
+    expect(column.group?.variantTableLabel).toMatch(/^De\snovo AC$/)
+    expect(screen.queryByText('De novo AC')).not.toBeInTheDocument()
   })
 
   it.each([

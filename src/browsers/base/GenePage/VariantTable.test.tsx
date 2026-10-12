@@ -1,10 +1,10 @@
-import { render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
 
 import { VariantColumnConfig } from '../Browser'
 
 import VariantTable from './VariantTable'
-import getVariantTableColumns, { VariantRow } from './variantTableColumns'
+import getVariantTableColumns, { VariantRow, VariantTableColumn } from './variantTableColumns'
 
 const buildVariants = (counts: (number | null | undefined)[]): VariantRow[] => {
   return counts.map((count, index) => ({
@@ -71,6 +71,7 @@ describe('centered numeric variant columns', () => {
     }
     expect(screen.getAllByText('988000')[0].firstChild?.nodeType).toBe(Node.TEXT_NODE)
     expect(columns[0].renderForCSV(variants[variants.length - 1], 'info.count')).toBe(1234)
+    expect(screen.queryByRole('group', { name: 'Variant column groups' })).not.toBeInTheDocument()
   })
 
   it('recalculates the shared width when the filtered data changes', () => {
