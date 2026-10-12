@@ -1,5 +1,4 @@
 import React from 'react'
-import styled from 'styled-components'
 
 // @ts-expect-error: no types in this @gnomad/ui version
 import { Badge } from '@gnomad/ui'
@@ -38,17 +37,6 @@ const renderBoolean = (value: boolean | null) =>
   value === null || value === undefined ? '\u2013' : value ? 'yes' : 'no'
 
 import ASC2WaterfallPlot from './ASC2WaterfallPlot'
-
-const CenteredGeneResult = styled.span`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-
-  > span {
-    padding-right: 0;
-    text-align: center;
-  }
-`
 
 const geneCountColumn = (
   key: keyof ASC2GeneResult,
@@ -264,21 +252,22 @@ const ASC2Browser = () => (
       {
         key: 'bayes_factor',
         heading: 'Bayes Factor',
+        centerHeading: true,
         minWidth: 140,
-        render: (value) => <CenteredGeneResult>{renderASC2BayesFactor(value)}</CenteredGeneResult>,
+        render: (value) => renderASC2BayesFactor(value),
       },
       {
         key: 'false_discovery_rate',
         heading: 'FDR',
+        centerHeading: true,
         tooltip: 'False discovery rate.',
         minWidth: 140,
-        render: (value) => (
-          <CenteredGeneResult>{renderASC2FalseDiscoveryRate(value)}</CenteredGeneResult>
-        ),
+        render: (value) => renderASC2FalseDiscoveryRate(value),
       },
       {
         key: 'qc_flagged',
         heading: 'Flag',
+        centerHeading: true,
         tooltip: 'Gene flagged in analysis.',
         minWidth: 90,
         render: (value) => {
@@ -290,7 +279,7 @@ const ASC2Browser = () => (
               Flag
             </Badge>
           )
-          return <CenteredGeneResult>{value === true ? flaggedBadge : ''}</CenteredGeneResult>
+          return value === true ? flaggedBadge : ''
         },
       },
       ...deNovoColumns,

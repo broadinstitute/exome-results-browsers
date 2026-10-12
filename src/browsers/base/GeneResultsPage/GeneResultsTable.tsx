@@ -1,9 +1,21 @@
 import React, { PureComponent } from 'react'
+import styled from 'styled-components'
 
 // @ts-expect-error: no types in this @gnomad/ui version
 import { Grid } from '@gnomad/ui'
 import { GeneResultTableColumn, GeneRow } from './geneResultTableColumns'
 import { parseNumericValue } from '../tableCells'
+
+const TableWrapper = styled.div<{ $columns: GeneResultTableColumn[] }>`
+  ${({ $columns }) =>
+    $columns
+      .map((column, index) =>
+        column.centerHeading
+          ? `[role="columnheader"][aria-colindex="${index + 1}"] { justify-content: center; }`
+          : ''
+      )
+      .join('\n')}
+`
 
 interface GeneResultsTableProps {
   defaultSortKey: string
@@ -78,7 +90,7 @@ class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsT
     const renderedResults = this.getRenderedResults()
 
     return (
-      <div>
+      <TableWrapper $columns={geneResultColumns}>
         {renderedResults.length === 0 ? (
           'No results found'
         ) : (
@@ -93,7 +105,7 @@ class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsT
             onRequestSort={this.setSortKey}
           />
         )}
-      </div>
+      </TableWrapper>
     )
   }
 }

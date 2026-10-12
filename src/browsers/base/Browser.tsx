@@ -147,6 +147,7 @@ export type GeneResultColumnGroup = {
 }
 
 export type GeneResultColumnConfig<RowType = any, ValueType = any> = {
+  centerHeading?: boolean
   // `key` is both for labeling the CSV export column, and for use in a lodash get call when not using the optional `accessor` prop to get data
   key: string
   heading?: React.ReactNode
