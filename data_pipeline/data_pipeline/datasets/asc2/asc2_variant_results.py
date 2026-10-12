@@ -3,16 +3,6 @@ import hail as hl
 from data_pipeline.config import pipeline_config
 from data_pipeline.gene_filter_utils import filter_variant_results_to_test_gene_intervals, get_test_gene_intervals
 
-CLASS_SEVERITY_RANK = hl.dict(
-    {
-        "PTV": 0,
-        "Mis2": 1,
-        "Mis1": 2,
-        "Mis0": 3,
-        "synonymous": 4,
-    }
-)
-
 VARIANT_RESULTS_FIELDS = {
     "Variant": ("variant", hl.tstr),
     "Gene": ("gene_name", hl.tstr),
@@ -65,13 +55,6 @@ def prepare_variant_results(test_genes, _output_root):
     ds = ds.rename({raw_name: new_name for raw_name, (new_name, _) in VARIANT_RESULTS_FIELDS.items()})
 
     ds = ds.drop("variant")
-
-    # NOTE: ~20 variants are duplicated by locus/allele, differing in
-    # id and vep consequence, keep only most severe row for now and ask analyst
-    ds = ds.group_by("locus", "alleles").aggregate(
-        most_severe_row=hl.agg.take(ds.row_value, 1, ordering=CLASS_SEVERITY_RANK.get(ds.variant_class, 99))[0]
-    )
-    ds = ds.transmute(**{field: ds.most_severe_row[field] for field in ds.most_severe_row.dtype.fields})
 
     ds = ds.annotate(
         info=hl.struct(
