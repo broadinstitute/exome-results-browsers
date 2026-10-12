@@ -52,4 +52,18 @@ describe('ASC2 all-genes table', () => {
     expect(container.textContent).toBe('')
   })
 
+  it.each(['deNovo', 'transmittedUntransmitted', 'caseControl'])(
+    'keeps only the analysis variant classes in the %s group',
+    (groupKey) => {
+      const columns = getGeneResultColumns().filter((column) => column.group?.key === groupKey)
+
+      expect(columns).toHaveLength(10)
+      expect(columns.map((column) => column.key)).not.toEqual(
+        expect.arrayContaining([expect.stringMatching(/_(mis0|syn)_/)])
+      )
+      for (const suffix of ['ptv', 'mis2', 'mis1', 'del', 'dup']) {
+        expect(columns.filter((column) => column.key.includes(`${suffix}_`))).toHaveLength(2)
+      }
+    }
+  )
 })
