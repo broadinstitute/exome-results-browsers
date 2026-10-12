@@ -168,7 +168,7 @@ const GenePage = ({
                       <p>ExAC constraint is not available for this gene.</p>
                     ),
                 },
-              ]}
+              ].filter((tab) => datasetId !== 'ASC2' || tab.id !== 'exac')}
             />
           </ConstraintWrapper>
         </TablesWrapper>
