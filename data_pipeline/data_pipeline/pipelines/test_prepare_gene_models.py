@@ -74,3 +74,50 @@ def test_prepare_gene_models_preserves_mane_select_without_changing_canonical(
             (transcript_id for transcript_id in transcript_ids if transcript_id in mane_select_transcripts), None
         )
         assert gene.mane_select_transcript_id == (expected_mane_transcript if include_mane_tags else None)
+
+
+@pytest.mark.parametrize("version", ["v2", "v4"])
+def test_prepare_gnomad_constraint_preserves_plof_confidence_bounds(tmp_path, version):
+    source = hl.utils.range_table(2)
+    upper = hl.if_else(source.idx == 0, 0.32, hl.missing(hl.tfloat64))
+    common = {
+        "transcript": hl.str(source.idx),
+        "gene": "GENE1",
+    }
+    if version == "v2":
+        metrics = {f"{prefix}_{category}": 0.1 for prefix in ("exp", "obs", "oe") for category in ("lof", "mis", "syn")}
+        source = source.select(
+            **common,
+            **metrics,
+            oe_lof_lower=0.01,
+            oe_lof_upper=upper,
+            lof_z=1.0,
+            mis_z=2.0,
+            syn_z=3.0,
+            pLI=0.99,
+        )
+    else:
+        category_metrics = hl.struct(exp=0.1, obs=0.1, oe=0.1, z_score=1.0)
+        source = source.select(
+            **common,
+            gene_id="ENSG1",
+            canonical=True,
+            mane_select=True,
+            lof=category_metrics.annotate(pLI=0.99, oe_ci=hl.struct(lower=0.01, upper=upper)),
+            mis=category_metrics,
+            syn=category_metrics,
+        )
+    source = source.key_by(
+        *(["gene", "transcript"] if version == "v2" else ["gene", "gene_id", "transcript", "canonical", "mane_select"])
+    )
+    path = str(tmp_path / f"gnomad_{version}.ht")
+    source.write(path)
+
+    prepare = getattr(prepare_gene_models, f"prepare_gnomad_{version}_constraint")
+    rows = {row.transcript_id: row for row in prepare(path).collect()}
+
+    assert rows["0"].oe_lof == 0.1
+    assert rows["0"].oe_lof_lower == 0.01
+    assert rows["0"].oe_lof_upper == 0.32
+    assert rows["1"].oe_lof_lower == 0.01
+    assert rows["1"].oe_lof_upper is None
