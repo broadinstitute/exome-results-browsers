@@ -143,16 +143,16 @@ const buildVariantDescriptionColumns = (
   const hgvsColumnDefinitions =
     datasetId === 'ASC2'
       ? [
-          { key: 'hgvsp', heading: 'HGVSp', tooltip: 'HGVS protein sequence' },
-          { key: 'hgvsc', heading: 'HGVSc', tooltip: 'HGVS coding sequence' },
-        ]
+        { key: 'hgvsp', heading: 'HGVSp', tooltip: 'HGVS protein sequence' },
+        { key: 'hgvsc', heading: 'HGVSc', tooltip: 'HGVS coding sequence' },
+      ]
       : [
-          {
-            key: 'hgvs',
-            heading: 'HGVSp/c',
-            tooltip: 'HGVS protein (if available) or coding sequence',
-          },
-        ]
+        {
+          key: 'hgvs',
+          heading: 'HGVSp/c',
+          tooltip: 'HGVS protein (if available) or coding sequence',
+        },
+      ]
 
   return [
     {
@@ -163,7 +163,7 @@ const buildVariantDescriptionColumns = (
       isSortable: true,
       sortFunction: (a, b) => a - b,
       sortKey: 'pos',
-      minWidth: 130,
+      minWidth: 150,
       grow: 2,
       render: (row, key, { highlightWords = [], onClickVariant }) => (
         <VariantIdButton onClick={() => onClickVariant?.(row)} tabIndex={-1}>
@@ -568,8 +568,8 @@ const getVariantTableColumns = ({
   const filteredVariantResultColumns =
     datasetId === 'ASC2' && filter.asc2VariantColumnGroups
       ? variantResultColumns.filter(
-          (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
-        )
+        (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
+      )
       : variantResultColumns
 
   const resultColumns: VariantTableColumn[] = applyColumnGroupHeadings(
