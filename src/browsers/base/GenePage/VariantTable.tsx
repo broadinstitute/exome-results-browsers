@@ -5,6 +5,30 @@ import styled from 'styled-components'
 import { Grid } from '@gnomad/ui'
 import { VariantRow, VariantTableColumn } from './variantTableColumns'
 
+const CenteredNumericCell = styled.span`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+`
+
+const RightAlignedNumericBlock = styled.span<{ $characterCount: number }>`
+  flex-shrink: 0;
+  width: ${({ $characterCount }) => $characterCount}ch;
+  text-align: right;
+`
+
+const getNumericCellText = (value: React.ReactNode): string => {
+  if (value === null || value === undefined || typeof value === 'boolean') {
+    return ''
+  }
+  if (typeof value === 'string' || typeof value === 'number') {
+    return String(value)
+  }
+  throw new Error('Centered numeric columns must render plain text.')
+}
+
 const NoVariants = styled.div<{ height: number }>`
   display: flex;
   justify-content: center;
@@ -64,10 +88,33 @@ class VariantTable extends Component<VariantTableProps> {
       return <NoVariants height={500}>No variants found</NoVariants>
     }
 
+    const cellData = { highlightWords: highlightText.split(/\s+/), onClickVariant }
+    const alignedColumns = columns.map((column) => {
+      if (!column.centerNumericValues) {
+        return column
+      }
+      const characterCount = variants.reduce<number>(
+        (longest, row) =>
+          Math.max(longest, getNumericCellText(column.render(row, column.key, cellData)).length),
+        1
+      )
+
+      return {
+        ...column,
+        render: (row: VariantRow, key: string) => (
+          <CenteredNumericCell>
+            <RightAlignedNumericBlock $characterCount={characterCount}>
+              {getNumericCellText(column.render(row, key, cellData))}
+            </RightAlignedNumericBlock>
+          </CenteredNumericCell>
+        ),
+      }
+    })
+
     return (
       <Grid
-        cellData={{ highlightWords: highlightText.split(/\s+/), onClickVariant }}
-        columns={columns}
+        cellData={cellData}
+        columns={alignedColumns}
         data={variants}
         numRowsRendered={20}
         onHoverRow={(rowIndex: number | null) => {

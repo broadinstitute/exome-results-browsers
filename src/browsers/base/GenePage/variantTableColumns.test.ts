@@ -69,6 +69,35 @@ describe('getVariantTableColumns', () => {
     expect(column.sortKey).toBe('info.severity_rank')
   })
 
+  it('keeps default grouped headers left-aligned and numeric cells unwrapped', () => {
+    const column = buildTableColumn([
+      {
+        key: 'info.score',
+        heading: 'Score',
+        group: { key: 'scores', geneTableLabel: 'Scores', variantTableLabel: 'Scores' },
+      },
+    ])
+    render(React.createElement(React.Fragment, null, column.heading))
+
+    expect(screen.getByText('Score')).toHaveStyle('text-align: left;')
+    expect(
+      column.render(
+        {
+          variant_id: '1-100-A-T',
+          pos: 100,
+          consequence: 'missense',
+          consequenceCategory: 'missense',
+          hgvsp: '',
+          hgvsc: '',
+          group_results: {},
+          info: { score: 123 },
+        },
+        column.key,
+        {}
+      )
+    ).toBe('123')
+  })
+
   it('honors isSortable: false', () => {
     const column = buildTableColumn([
       { key: 'info.severity', heading: 'Severity', isSortable: false },
