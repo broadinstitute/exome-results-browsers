@@ -7,7 +7,12 @@ import { BaseTable, ExternalLink, ListItem } from '@gnomad/ui'
 
 import { VariantAttribute, VariantAttributeList } from './VariantAttributes'
 import { renderExponentialIfSmall, VariantRow } from './variantTableColumns'
-import { ReferenceGenome, RenderVariantAttributes, VariantColumnConfig } from '../Browser'
+import {
+  GeneResultColumnGroup,
+  ReferenceGenome,
+  RenderVariantAttributes,
+  VariantColumnConfig,
+} from '../Browser'
 import { FilterState } from './VariantFilterControls'
 
 const VariantContainer = styled.div`
@@ -32,6 +37,22 @@ const Columns = styled.div`
     ${Column} {
       flex-basis: 100%;
     }
+  }
+`
+
+const VariantSummaryGroup = styled.div`
+  margin-bottom: 1em;
+
+  > dt {
+    font-weight: bold;
+  }
+
+  > dd {
+    margin-left: 1em;
+  }
+
+  > dd > dl {
+    margin: 0.5em 0 0;
   }
 `
 
@@ -387,6 +408,24 @@ const VariantDetails = ({
     ...(additionalVariantDetailSummaryColumns || []),
   ]
 
+  const variantSummarySections: {
+    group?: GeneResultColumnGroup
+    columns: VariantColumnConfig[]
+  }[] = []
+
+  renderedVariantSummaryRows.forEach((column) => {
+    const group = datasetId === 'ASC2' ? column.group : undefined
+    const existingSection = group
+      ? variantSummarySections.find((section) => section.group?.key === group.key)
+      : undefined
+
+    if (existingSection) {
+      existingSection.columns.push(column)
+    } else {
+      variantSummarySections.push({ group, columns: [column] })
+    }
+  })
+
   const standardColumns: VariantColumnConfig[] = [
     { key: 'group_result.ac_case', heading: 'AC Case', render: (value: number) => value },
     { key: 'group_result.an_case', heading: 'AN Case', render: (value: number) => value },
@@ -590,13 +629,28 @@ const VariantDetails = ({
                   </VariantAttribute>
                 </>
               )}
-              {renderedVariantSummaryRows.map((c) => (
-                <VariantAttribute key={c.key} label={c.heading || ''}>
-                  {get(variant, c.key) === null
-                    ? null
-                    : (c.render || renderNumber)(get(variant, c.key))}
-                </VariantAttribute>
-              ))}
+              {variantSummarySections.map(({ group, columns }) => {
+                const attributes = columns.map((column) => (
+                  <VariantAttribute key={column.key} label={column.heading || ''}>
+                    {get(variant, column.key) === null
+                      ? null
+                      : (column.render || renderNumber)(get(variant, column.key))}
+                  </VariantAttribute>
+                ))
+
+                if (!group) {
+                  return attributes
+                }
+
+                return (
+                  <VariantSummaryGroup key={group.key}>
+                    <dt>{group.variantTableLabel}</dt>
+                    <dd>
+                      <dl>{attributes}</dl>
+                    </dd>
+                  </VariantSummaryGroup>
+                )
+              })}
             </VariantAttributeList>
           </Column>
         )}
