@@ -1,6 +1,9 @@
+import React from 'react'
+import { render, screen } from '@testing-library/react'
+
 import { VariantColumnConfig } from '../Browser'
 import { FilterState } from './VariantFilterControls'
-import getVariantTableColumns from './variantTableColumns'
+import getVariantTableColumns, { VariantRow } from './variantTableColumns'
 
 const DEFAULT_FILTER: FilterState = {
   includeCategories: { lof: true, missense: true, synonymous: true, other: true },
@@ -72,5 +75,92 @@ describe('getVariantTableColumns', () => {
     ])
 
     expect(column.isSortable).toBe(false)
+  })
+})
+
+describe('HGVS description columns', () => {
+  const variant: VariantRow = {
+    variant_id: '1-100-A-T',
+    pos: 100,
+    consequence: 'missense_variant',
+    consequenceCategory: 'missense',
+    hgvsp: 'p.Lys34Asn',
+    hgvsc: 'c.100A>T',
+    hgvs: 'p.Lys34Asn',
+    group_results: {},
+    info: {},
+  }
+
+  const buildDescriptionColumns = (datasetId: string) => {
+    return getVariantTableColumns({
+      datasetId,
+      variantResultColumns: [{ key: 'info.score', heading: 'Score' }],
+      filter: { ...DEFAULT_FILTER, gp2VariantColumnGroups: {} },
+    })
+  }
+
+  const getAsc2HgvsColumn = (key: string) => {
+    const column = buildDescriptionColumns('ASC2').find((candidate) => candidate.key === key)
+    if (!column) {
+      throw new Error(`Missing ASC2 column: ${key}`)
+    }
+    return column
+  }
+
+  it('replaces the combined ASC2 column with HGVSp and HGVSc in place', () => {
+    const columns = buildDescriptionColumns('ASC2')
+
+    expect(columns.map((column) => column.key)).toEqual([
+      'variant_id',
+      'hgvsp',
+      'hgvsc',
+      'consequence',
+      'info.score',
+    ])
+    expect(columns.slice(1, 3).map((column) => column.heading)).toEqual(['HGVSp', 'HGVSc'])
+  })
+
+  it.each(['ASC', 'BipEx', 'BipEx2', 'Epi25', 'GP2', 'IBD', 'SCHEMA'])(
+    'keeps the combined column for %s',
+    (datasetId) => {
+      const columns = buildDescriptionColumns(datasetId)
+
+      expect(columns.slice(0, 3).map((column) => column.key)).toEqual([
+        'variant_id',
+        'hgvs',
+        'consequence',
+      ])
+      expect(columns[1].heading).toBe('HGVSp/c')
+      expect(columns[1].renderForCSV(variant, 'hgvs')).toBe('p.Lys34Asn')
+    }
+  )
+
+  it.each([
+    ['hgvsp', 'p.Lys34Asn', 'c.100A>T'],
+    ['hgvsc', 'c.100A>T', 'p.Lys34Asn'],
+  ])('renders and exports only %s', (key, expected, otherValue) => {
+    const column = getAsc2HgvsColumn(key)
+
+    render(React.createElement(React.Fragment, null, column.render(variant, key, {})))
+
+    expect(screen.getByText(expected)).toBeInTheDocument()
+    expect(screen.queryByText(otherValue)).not.toBeInTheDocument()
+    expect(column.renderForCSV(variant, key)).toBe(expected)
+    expect(column.sortKey).toBe(key)
+    expect(column.isSortable).toBe(true)
+    expect(column.sortFunction('a', 'b')).toBeLessThan(0)
+    expect(column.sortFunction('b', 'a')).toBeGreaterThan(0)
+  })
+
+  it.each(['hgvsp', 'hgvsc'])('leaves a missing %s blank without falling back', (key) => {
+    const column = getAsc2HgvsColumn(key)
+    const variantWithMissingHgvs = { ...variant, [key]: '' }
+
+    const { container } = render(
+      React.createElement(React.Fragment, null, column.render(variantWithMissingHgvs, key, {}))
+    )
+
+    expect(container.textContent).toBe('')
+    expect(column.renderForCSV(variantWithMissingHgvs, key)).toBe('')
   })
 })
