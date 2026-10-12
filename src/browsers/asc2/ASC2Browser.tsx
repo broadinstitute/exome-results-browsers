@@ -267,6 +267,7 @@ const ASC2Browser = () => (
         key: 'bayes_factor',
         heading: 'Bayes Factor',
         centerHeading: true,
+        centerNumericValues: true,
         minWidth: 140,
         render: (value) => renderASC2BayesFactor(value),
       },
@@ -274,6 +275,7 @@ const ASC2Browser = () => (
         key: 'false_discovery_rate',
         heading: 'FDR',
         centerHeading: true,
+        centerNumericValues: true,
         tooltip: 'False discovery rate.',
         minWidth: 140,
         render: (value) => renderASC2FalseDiscoveryRate(value),
@@ -282,6 +284,7 @@ const ASC2Browser = () => (
         key: 'qc_flagged',
         heading: 'Flag',
         centerHeading: true,
+        centerCellContent: true,
         tooltip: 'Gene flagged in analysis.',
         minWidth: 90,
         render: (value) => {

@@ -5,6 +5,12 @@ import styled from 'styled-components'
 import { Grid } from '@gnomad/ui'
 import { GeneResultTableColumn, GeneRow } from './geneResultTableColumns'
 import { parseNumericValue } from '../tableCells'
+import { CenteredCellContent } from '../GenePage/VariantTable'
+
+const CenteredNumericContent = styled(CenteredCellContent)`
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+`
 
 const TableWrapper = styled.div<{ $columns: GeneResultTableColumn[] }>`
   ${({ $columns }) =>
@@ -88,6 +94,18 @@ class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsT
     const { sortKey, sortAscending } = this.state
 
     const renderedResults = this.getRenderedResults()
+    const alignedColumns = geneResultColumns.map((column) => {
+      if (!column.centerNumericValues && !column.centerCellContent) return column
+      return {
+        ...column,
+        render: (row: GeneRow, key: string, context: { highlightWords?: string[] }) => {
+          const content = column.render(row, key, context)
+          const numericContent = <CenteredNumericContent>{content}</CenteredNumericContent>
+          const centeredContent = <CenteredCellContent>{content}</CenteredCellContent>
+          return column.centerNumericValues ? numericContent : centeredContent
+        },
+      }
+    })
 
     return (
       <TableWrapper $columns={geneResultColumns}>
@@ -96,7 +114,7 @@ class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsT
         ) : (
           <Grid
             cellData={{ highlightWords: (highlightText || '').split(/\s+/) }}
-            columns={geneResultColumns}
+            columns={alignedColumns}
             data={renderedResults}
             numRowsRendered={32}
             rowKey={(result: GeneRow) => `${result.gene_id}-${result.gene_symbol}`}
