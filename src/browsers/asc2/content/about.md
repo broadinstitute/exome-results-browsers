@@ -4,7 +4,7 @@ title: About the Autism Genomics Browser
 
 ## About this Browser
 
-The Autism Genomics Browser (AGB) displays the results of our cross-consortia autism genomics data aggregation and gene discovery efforts. The most recent data freeze ([Satterstrom, Auwerx, Fu et al., 2026](https://www.medrxiv.org/content/10.64898/2026.08.24.26360398v1), _medRxiv_) encompasses data from 62,429 individuals with recorded autism (38,680 probands and 23,749 cases) and 33,316 individuals without recorded autism (9,567 siblings and 23,749 controls). The data were aggregated and analyzed as part of an initiative that includes investigators and samples from the [Autism Sequencing Consortium (ASC)](https://pubmed.ncbi.nlm.nih.gov/23259942/), the [Simons Foundation Autism Research Initiative (SFARI)](https://www.sfari.org/), our clinical diagnostic laboratory partner [GeneDx](https://www.genedx.com/), the Danish [iPSYCH](https://ipsych.dk/en/about-ipsych) project, and other collaborators dedicated to advancing our understanding of the genetic basis of autism.
+The Autism Genomics Browser (AGB) displays the results of our cross-consortia autism genomics data aggregation and gene discovery efforts. The most recent data freeze ([Satterstrom, Auwerx, Fu et al., 2026](https://www.medrxiv.org/content/10.64898/2026.08.24.26360398v1), _medRxiv_) encompasses data from 62,429 individuals with recorded autism (38,680 probands and 23,749 cases) and 33,316 individuals without recorded autism (9,567 siblings and 23,749 controls). The data were aggregated and analyzed as part of an initiative that includes investigators and samples from the [Autism Sequencing Consortium (ASC)](https://pubmed.ncbi.nlm.nih.gov/23259942/), the [Simons Foundation Autism Research Initiative (SFARI)](https://www.sfari.org/), the [Simons Foundation Powering Autism Research (SPARK)](https://sparkforautism.org/) initiative, our clinical diagnostic laboratory partner [GeneDx](https://www.genedx.com/), the Danish [iPSYCH](https://ipsych.dk/en/about-ipsych) project, and other collaborators dedicated to advancing our understanding of the genetic basis of autism.
 
 ## About these Consortia
 
@@ -14,7 +14,7 @@ The [Autism Sequencing Consortium (ASC)](https://pubmed.ncbi.nlm.nih.gov/2325994
 
 ### SPARK
 
-[SPARK](https://sparkforautism.org/) (Simons Foundation Powering Autism Research) is an autism research study and a growing community of individuals with autism, their families, and researchers. SPARK’s mission is to improve the lives of people with autism by identifying the causes of autism and supporting research that informs more effective diagnoses, therapies, treatments, services, and supports. SPARK is funded by [SFARI](https://www.sfari.org/). The program includes collaboration with 31 university-affiliated research clinics in 26 states across the U.S. In addition, numerous national and local autism community organizations across the U.S. partner with SPARK to help recruit participants and spread the word about this landmark study. Since SPARK launched in 2016, it has become one of the largest and most widely used autism datasets, including over 157,771 people with autism and 222,906 of their family members.
+[SPARK](https://sparkforautism.org/) (Simons Foundation Powering Autism Research) is an autism research study and a growing community of individuals with autism, their families, and researchers. SPARK’s mission is to improve the lives of people with autism by identifying the causes of autism and supporting research that informs more effective diagnoses, therapies, treatments, services, and supports. SPARK is funded by the [Simons Foundation](https://www.simonsfoundation.org/) and [Simons Foundation International](https://www.sfi.org.bm/). The program includes collaboration with 31 university-affiliated research clinics in 26 states across the U.S. In addition, numerous national and local autism community organizations across the U.S. partner with SPARK to help recruit participants and spread the word about this landmark study. Since SPARK launched in 2016, it has become one of the largest and most widely used autism datasets, including over 157,771 people with autism and 222,906 of their family members. Data are available to approved researchers via [SFARI Base](https://www.sfari.org/resource/sfari-base/).
 
 ### Simons Simplex Collection
 
@@ -24,9 +24,9 @@ The [Simons Simplex Collection](https://www.sfari.org/resource/simons-simplex-co
 
 [GeneDx](https://www.genedx.com/), LLC is a genomics and biotechnology company that provides genetic testing, clinical interpretation, and related information to support diagnosis, treatment decisions, and research for rare and inherited conditions. Through our partnership with GeneDx, we have accessed anonymized genetic and phenotypic data from individuals with a recorded autism diagnosis who have been referred for clinical genetic testing.
 
-### DDD
+### DDD and global studies of developmental disorders
 
-The [DDD](https://www.ddduk.org/) (Deciphering Developmental Disorders) study aims to improve understanding of the genetic bases of developmental disorders. The study collaborates with 24 Regional Genetics Services throughout the UK and Republic of Ireland and scientists at the [Wellcome Sanger Institute](https://www.sanger.ac.uk/), with support from the NHS National Institute for Health Research. While enrolment for DDD is now finished, the study has collected genetic data from over 30,000 children with undiagnosed developmental disorders and their families.
+The [DDD](https://www.ddduk.org/) (Deciphering Developmental Disorders) study aims to improve understanding of the genetic bases of developmental disorders. The study collaborates with 24 Regional Genetics Services throughout the UK and Republic of Ireland and scientists at the [Wellcome Sanger Institute](https://www.sanger.ac.uk/), with support from the NHS National Institute for Health Research. While enrolment for DDD is now finished, the study has collected genetic data from over 30,000 children with undiagnosed developmental disorders and their families, including 13,500 UK families, as well as families recruited through USA and European partners. Initial gene discovery analyses in these samples were published in a 2020 Flagship paper ([Kaplanis et al., 2020](https://pubmed.ncbi.nlm.nih.gov/33057194/)).
 
 ### iPSYCH
 
@@ -56,7 +56,7 @@ Over the past decade, our teams have led analyses to identify a growing number o
 
 **Figure 1 | Trajectory of autism gene discovery efforts.**
 
-**(a)** Number of autism-associated genes (y-axis) identified by our teams as a function of sample size (y-axis) at various false discovery rates (FDR). Years refer to ASC publications: De Rubeis et al., 2014; Satterstrom, Kosmicki, Wang et al., 2020; Fu, Satterstrom, Peng, Brand, et al., 2022; Satterstrom, Auwerx, Fu, et al., 2026. **(b)** Replication of autism-associated genes identified by consecutive ASC studies at FDR < 0.001, which approximates exome-wide significance. Years correspond to studies as in (a).
+**(a)** Number of autism-associated genes (y-axis) identified by our teams as a function of sample size (y-axis) at various false discovery rates (FDR). Years refer to autism publications from the consortia studies used in the AGB: De Rubeis et al., 2014; Satterstrom, Kosmicki, Wang et al., 2020; Fu, Satterstrom, Peng, Brand, et al., 2022; Satterstrom, Auwerx, Fu, et al., 2026. **(b)** Replication of autism-associated genes identified by each study at FDR < 0.001, which approximates exome-wide significance. Years correspond to studies as in (a).
 
 </figcaption>
 
@@ -64,7 +64,7 @@ Over the past decade, our teams have led analyses to identify a growing number o
 
 Data in the Autism Genomics Browser originates from our team’s latest exome sequencing aggregation efforts ([Satterstrom, Auwerx, Fu, et al., 2026](https://www.medrxiv.org/content/10.64898/2026.08.24.26360398v1.article-info)). We aggregated exome sequence data from research, clinical, and population cohorts, including both family-based and case-control data (**Fig. 2**). In the family-based data (i.e., trios with parental sequences), where we can distinguish between _de novo_ mutations and inherited variants, we refer to cases and controls as “probands” and “siblings,” respectively. We analyze variants from 62,429 individuals with recorded autism (38,680 probands and 23,749 cases) and 33,316 individuals without recorded autism (9,567 siblings and 23,749 controls).
 
-Family-based data are drawn from four major cohorts: the ASC, the SSC, the SPARK study, and the GeneDx clinical testing laboratory (CTL); we also include published _de novo_ variants from individuals with autism from the [Deciphering Developmental Disorders](https://www.ddduk.org/) (DDD) study. Case-control data are drawn from three cohorts: iPSYCH, PAGES, and non-family-based cases from SPARK matched to [UK Biobank](https://www.ukbiobank.ac.uk/) control samples (**Fig. 2**).
+Family-based data are drawn from four major cohorts: the ASC, the SSC, the SPARK study, and the GeneDx clinical testing laboratory (CTL); we also include published _de novo_ variants from individuals with autism from the [Deciphering Developmental Disorders](https://www.ddduk.org/) (DDD) project and the consortium study on developmental disorders published in Kaplanis et al., 2020. Case-control data are drawn from three cohorts: iPSYCH, PAGES, and non-family-based cases from SPARK matched to [UK Biobank](https://www.ukbiobank.ac.uk/) control samples (**Fig. 2**).
 
 <figure style="max-width: 90%;">
 
@@ -122,7 +122,7 @@ In addition to autosomal variants, the Browser also displays sex chromosome SNVs
 
 We are grateful to individuals who consented to have their sequencing data used in research, as this study would not be possible without them. We are also grateful for the collaboration of our commercial diagnostic laboratory partner, GeneDx LLC.
 
-Funding to support the development of the Autism Genomics Browser (AGB) was provided by the Stanley Center for Psychiatric Research at the Broad Institute of MIT and Harvard, the National Institute of Mental Health (NIMH), the National Human Genome Research Institute (NHGRI), and the Swiss National Science Foundation. Analyses of the data in the AGB were supported by the Simons Foundation Autism Research Initiative (SFARI), the National Institutes of Health (NIMH, NHGRI), the Seaver Foundation, the SWT Foundation, the Lundbeck Foundation, the Novo Nordisk Foundation, the Swiss National Science Foundation, the Health Data Research UK QQ2 Molecules to Health Records Driver Programme, and the São Paulo Research Foundation.
+Funding to support the development of the Autism Genomics Browser (AGB) was provided by the Stanley Center for Psychiatric Research at the Broad Institute of MIT and Harvard, the National Institute of Mental Health (NIMH), the National Human Genome Research Institute (NHGRI), the Simons Foundation Autism Research Initiative (SFARI), and the Swiss National Science Foundation. Analyses of the data in the AGB were supported by the Simons Foundation Autism Research Initiative (SFARI), the National Institutes of Health (NIMH, NHGRI), the Seaver Foundation, the SWT Foundation, the Lundbeck Foundation, the Novo Nordisk Foundation, the Swiss National Science Foundation, the Health Data Research UK QQ2 Molecules to Health Records Driver Programme, and the São Paulo Research Foundation.
 
 ## Publications
 
@@ -130,7 +130,7 @@ Generation of data displayed in the AGB is described here:
 
 Satterstrom, F. K., Auwerx, C., Fu, J. M., _et al._ Rare variation illuminates the distinct and pleiotropic genetic architecture of autism across neuropsychiatric traits. _medRxiv_ (2026). DOI: [https://doi.org/10.64898/2026.08.24.26360398](https://doi.org/10.64898/2026.08.24.26360398).
 
-## Contact
+## AGB Contact
 
 For questions about data aggregation, analyses, and gene discovery in the AGB, please contact [Dr. Michael Talkowski](mailto:talkowsk@broadinstitute.org) and [Dr. Mark Daly](mailto:mjdaly@broadinstitute.org). For questions about analyses in Satterstrom et al., 2026, please contact [Dr. Kyle Satterstrom](mailto:satterst@broadinstitute.org) and [Dr. Chiara Auwerx](mailto:cauwerx@broadinstitute.org).
 
