@@ -137,63 +137,82 @@ export interface VariantTableColumn {
 }
 
 const buildVariantDescriptionColumns = (
-  categoryColors: Record<string, string>
-): VariantTableColumn[] => [
-  {
-    key: 'variant_id',
-    heading: 'Variant ID',
-    tooltip: 'Chromosome-position-reference-alternate',
-    isRowHeader: true,
-    isSortable: true,
-    sortFunction: (a, b) => a - b,
-    sortKey: 'pos',
-    minWidth: 130,
-    grow: 2,
-    render: (row, key, { highlightWords = [], onClickVariant }) => (
-      <VariantIdButton onClick={() => onClickVariant?.(row)} tabIndex={-1}>
-        <Highlighter searchWords={highlightWords} textToHighlight={row[key]} />
-      </VariantIdButton>
-    ),
-    renderForCSV: get,
-  },
-  {
-    key: 'hgvs',
-    heading: 'HGVSp/c',
-    tooltip: 'HGVS protein (if available) or coding sequence',
-    isSortable: true,
-    sortFunction: (a, b) => a.localeCompare(b),
-    sortKey: 'hgvs',
-    minWidth: 130,
-    grow: 2,
-    render: (row, key, { highlightWords = [] }) => (
-      <Highlighter
-        className="grid-cell-content"
-        searchWords={highlightWords}
-        textToHighlight={row[key] || ''}
-      />
-    ),
-    renderForCSV: get,
-  },
-  {
-    key: 'consequence',
-    heading: 'Consequence',
-    tooltip: 'Predicted functional consequence',
-    isSortable: true,
-    sortFunction: (a, b) => a.localeCompare(b),
-    sortKey: 'consequence',
-    minWidth: 180,
-    render: (row, _key, { highlightWords = [] }) =>
-      row.consequence && (
-        <span className="grid-cell-content">
-          <VariantCategoryMarker
-            color={categoryColors[row.consequenceCategory] || DEFAULT_VARIANT_CATEGORY_COLOR}
-          />
-          <Highlighter searchWords={highlightWords} textToHighlight={row.consequence || ''} />
-        </span>
+  categoryColors: Record<string, string>,
+  datasetId: string
+): VariantTableColumn[] => {
+  const hgvsColumnDefinitions =
+    datasetId === 'ASC2'
+      ? [
+          { key: 'hgvsp', heading: 'HGVSp', tooltip: 'HGVS protein sequence' },
+          { key: 'hgvsc', heading: 'HGVSc', tooltip: 'HGVS coding sequence' },
+        ]
+      : [
+          {
+            key: 'hgvs',
+            heading: 'HGVSp/c',
+            tooltip: 'HGVS protein (if available) or coding sequence',
+          },
+        ]
+
+  return [
+    {
+      key: 'variant_id',
+      heading: 'Variant ID',
+      tooltip: 'Chromosome-position-reference-alternate',
+      isRowHeader: true,
+      isSortable: true,
+      sortFunction: (a, b) => a - b,
+      sortKey: 'pos',
+      minWidth: 130,
+      grow: 2,
+      render: (row, key, { highlightWords = [], onClickVariant }) => (
+        <VariantIdButton onClick={() => onClickVariant?.(row)} tabIndex={-1}>
+          <Highlighter searchWords={highlightWords} textToHighlight={row[key]} />
+        </VariantIdButton>
       ),
-    renderForCSV: get,
-  },
-]
+      renderForCSV: get,
+    },
+    ...hgvsColumnDefinitions.map(
+      ({ key, heading, tooltip }): VariantTableColumn => ({
+        key,
+        heading,
+        tooltip,
+        isSortable: true,
+        sortFunction: (a, b) => a.localeCompare(b),
+        sortKey: key,
+        minWidth: 130,
+        grow: 2,
+        render: (row, columnKey, { highlightWords = [] }) => (
+          <Highlighter
+            className="grid-cell-content"
+            searchWords={highlightWords}
+            textToHighlight={row[columnKey] || ''}
+          />
+        ),
+        renderForCSV: get,
+      })
+    ),
+    {
+      key: 'consequence',
+      heading: 'Consequence',
+      tooltip: 'Predicted functional consequence',
+      isSortable: true,
+      sortFunction: (a, b) => a.localeCompare(b),
+      sortKey: 'consequence',
+      minWidth: 180,
+      render: (row, _key, { highlightWords = [] }) =>
+        row.consequence && (
+          <span className="grid-cell-content">
+            <VariantCategoryMarker
+              color={categoryColors[row.consequenceCategory] || DEFAULT_VARIANT_CATEGORY_COLOR}
+            />
+            <Highlighter searchWords={highlightWords} textToHighlight={row.consequence || ''} />
+          </span>
+        ),
+      renderForCSV: get,
+    },
+  ]
+}
 
 const statColumns: VariantTableColumn[] = [
   {
@@ -522,7 +541,7 @@ const getVariantTableColumns = ({
   const categoryColors = Object.fromEntries(
     variantCategoryOptions.map((option) => [option.id, option.color])
   )
-  const datasetColumns = [...buildVariantDescriptionColumns(categoryColors)]
+  const datasetColumns = [...buildVariantDescriptionColumns(categoryColors, datasetId)]
 
   if (datasetId === 'GP2') {
     let renderedGP2Columns = gp2StatColumns
