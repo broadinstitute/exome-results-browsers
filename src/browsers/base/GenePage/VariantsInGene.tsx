@@ -757,7 +757,7 @@ const VariantsInGeneContainer = ({
           }
         })
 
-        const variants = data.variants.map((variantValues: VariantRow[]) => {
+        const variants = data.variants.map((variantValues: VariantRow[], sourceRowIndex: number) => {
           const variant: {
             info: Record<string, any>
             group_results: Record<string, any>
@@ -814,6 +814,9 @@ const VariantsInGeneContainer = ({
           })
 
           variant.hgvs = variant.hgvsp || variant.hgvsc
+          if (datasetId === 'ASC2') {
+            variant.annotationRowId = `${gene.gene_id}:${variant.variant_id}:${sourceRowIndex}`
+          }
 
           const rawConsequenceTerm = variant.consequence
           variant.consequenceCategory = getVariantCategory

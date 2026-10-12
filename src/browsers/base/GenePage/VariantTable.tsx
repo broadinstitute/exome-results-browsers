@@ -76,7 +76,7 @@ class VariantTable extends Component<VariantTableProps> {
         onRequestSort={onRequestSort}
         onVisibleRowsChange={onVisibleRowsChange}
         ref={this.grid}
-        rowKey={(variant: VariantRow) => variant.variant_id}
+        rowKey={(variant: VariantRow) => variant.annotationRowId ?? variant.variant_id}
         sortKey={sortKey}
         sortOrder={sortOrder}
       />

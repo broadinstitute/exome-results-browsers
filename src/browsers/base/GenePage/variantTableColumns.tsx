@@ -52,6 +52,7 @@ interface GroupResult {
 
 export interface VariantRow {
   variant_id: string
+  annotationRowId?: string
   pos: number
   consequence: string
   consequenceCategory: string
