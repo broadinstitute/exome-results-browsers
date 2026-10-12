@@ -129,7 +129,7 @@ interface ASC2GeneResultsProps {
 
 const ASC2GeneResults = ({ results }: ASC2GeneResultsProps) => (
   <>
-    <h2>Gene Summary Allele Counts</h2>
+    <h2>Gene Summary (Allele Counts)</h2>
     {results.meta ? <ASC2GeneResult result={results.meta} /> : <p>No result for this gene.</p>}
   </>
 )
