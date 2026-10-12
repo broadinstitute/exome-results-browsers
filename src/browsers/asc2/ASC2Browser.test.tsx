@@ -6,6 +6,7 @@ import Browser from '../base/Browser'
 import { GeneResultsPage } from '../base/GeneResultsPage/GeneResultsPage'
 import { GeneRow } from '../base/GeneResultsPage/geneResultTableColumns'
 import getVariantTableColumns, { VariantRow } from '../base/GenePage/variantTableColumns'
+import VariantTable from '../base/GenePage/VariantTable'
 
 import ASC2Browser from './ASC2Browser'
 
@@ -247,6 +248,56 @@ describe('ASC2 variant count alignment', () => {
     expect(screen.getByText('123')).toBeInTheDocument()
     expect(column.csvHeading).toBe(heading)
     expect(column.renderForCSV(row, column.key)).toBe(123)
+  })
+
+  it('renders and centers real MPC and AlphaMissense cells, including zero and missing scores', () => {
+    const columns = ['info.mpc', 'info.alpha_missense'].map(getVariantCountColumn)
+    const variants = [
+      { ...countVariant, info: { mpc: 0.123, alpha_missense: 0.456 } },
+      { ...countVariant, variant_id: '1-101-A-T', info: { mpc: 0, alpha_missense: 0 } },
+      { ...countVariant, variant_id: '1-102-A-T', info: { mpc: null, alpha_missense: undefined } },
+    ]
+    render(
+      <VariantTable
+        columns={columns}
+        variants={variants}
+        sortKey="info.mpc"
+        sortOrder="ascending"
+        onClickVariant={jest.fn()}
+        onHoverVariant={jest.fn()}
+        onRequestSort={jest.fn()}
+        onVisibleRowsChange={jest.fn()}
+      />
+    )
+
+    for (const heading of ['MPC', 'AlphaMissense']) {
+      expect(screen.getByText(heading)).toHaveStyle('text-align: center;')
+    }
+    for (const value of ['1.230e-1', '4.560e-1', '0']) {
+      for (const cell of screen.getAllByText(value)) {
+        expect(cell).toHaveStyle('width: auto; padding-right: 0; text-align: center;')
+        expect(cell.parentElement).toHaveStyle(
+          'display: flex; justify-content: center; width: 100%;'
+        )
+      }
+    }
+    expect(screen.getAllByText('-')).toHaveLength(2)
+    expect(columns[0].renderForCSV(variants[0], columns[0].key)).toBe(0.123)
+    expect(columns[1].renderForCSV(variants[0], columns[1].key)).toBe(0.456)
+  })
+
+  it('centers the Other splice header and Yes/No content', () => {
+    const column = getVariantCountColumn('info.is_other_splice')
+    render(<>{column.heading}</>)
+    expect(screen.getByText('Other splice')).toHaveStyle('text-align: center;')
+    expect(column.centerCellContent).toBe(true)
+    expect(column.centerNumericValues).not.toBe(true)
+    expect(
+      column.render({ ...countVariant, info: { is_other_splice: true } }, column.key, {})
+    ).toBe('yes')
+    expect(
+      column.renderForCSV({ ...countVariant, info: { is_other_splice: true } }, column.key)
+    ).toBe(true)
   })
 
   it('keeps the upper De novo group separate from the sortable lower header', () => {

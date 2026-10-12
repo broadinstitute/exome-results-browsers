@@ -392,7 +392,7 @@ const ASC2Browser = () => (
       {
         key: 'info.transcript_id',
         heading: 'Transcript ID',
-        minWidth: 140,
+        minWidth: 160,
         tooltip: 'Ensembl transcript ID',
         render: (value) => renderMissing(value),
       },
@@ -400,6 +400,8 @@ const ASC2Browser = () => (
       {
         key: 'info.mpc',
         heading: 'MPC',
+        centerHeading: true,
+        centerCellContent: true,
         tooltip: 'Missense deleteriousness Prediction by Constraint',
         minWidth: 110,
         render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 3 }),
@@ -407,6 +409,8 @@ const ASC2Browser = () => (
       {
         key: 'info.alpha_missense',
         heading: 'AlphaMissense',
+        centerHeading: true,
+        centerCellContent: true,
         tooltip: 'AlphaMissense pathogenicity score',
         minWidth: 110,
         render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 3 }),
@@ -414,8 +418,10 @@ const ASC2Browser = () => (
       {
         key: 'info.is_other_splice',
         heading: 'Other splice',
+        centerHeading: true,
+        centerCellContent: true,
         tooltip: 'LOFTEE other splice (OS) annotation',
-        minWidth: 70,
+        minWidth: 130,
         render: (value) => renderBoolean(value),
       },
     ]}

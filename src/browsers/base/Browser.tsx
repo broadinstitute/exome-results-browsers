@@ -167,6 +167,7 @@ export type GeneResultTabConfig = {
 }
 
 export type VariantColumnConfig<RowType = any, ValueType = any> = {
+  centerCellContent?: boolean
   centerHeading?: boolean
   // Require a plain-text renderer to measure centered numeric values.
   centerNumericValues?: boolean

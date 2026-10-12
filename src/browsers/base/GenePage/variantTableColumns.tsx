@@ -124,6 +124,7 @@ interface RenderContext {
 }
 
 export interface VariantTableColumn {
+  centerCellContent?: boolean
   centerNumericValues?: boolean
   group?: GeneResultColumnGroup
   key: string
@@ -582,6 +583,7 @@ const getVariantTableColumns = ({
       group: column.group,
       heading: column.group || column.centerHeading ? alignedHeading : plainHeading,
       csvHeading: plainHeading,
+      centerCellContent: column.centerCellContent,
       centerNumericValues: column.centerNumericValues,
       tooltip: column.tooltip,
       isSortable: column.isSortable !== false,

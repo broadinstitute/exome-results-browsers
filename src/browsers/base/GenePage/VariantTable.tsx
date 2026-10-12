@@ -3,8 +3,21 @@ import styled from 'styled-components'
 
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { Grid } from '@gnomad/ui'
+import { NumberCell } from '../tableCells'
 import { VariantRow, VariantTableColumn } from './variantTableColumns'
 import VariantTableGroupHeadings from './VariantTableGroupHeadings'
+
+const CenteredCellContent = styled.span`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  ${NumberCell} {
+    width: auto;
+    padding-right: 0;
+    text-align: center;
+  }
+`
 
 const CenteredNumericCell = styled.span`
   display: flex;
@@ -91,6 +104,14 @@ class VariantTable extends Component<VariantTableProps> {
 
     const cellData = { highlightWords: highlightText.split(/\s+/), onClickVariant }
     const alignedColumns = columns.map((column) => {
+      if (column.centerCellContent) {
+        return {
+          ...column,
+          render: (row: VariantRow, key: string) => (
+            <CenteredCellContent>{column.render(row, key, cellData)}</CenteredCellContent>
+          ),
+        }
+      }
       if (!column.centerNumericValues) {
         return column
       }
