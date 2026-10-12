@@ -34,14 +34,15 @@ describe('ASC2 all-genes table', () => {
     ['bayes_factor', 123, '123.00'],
     ['false_discovery_rate', 0.05, '5.00e-2'],
     ['qc_flagged', true, 'Flag'],
-  ])('centers the content of %s', (key, value, text) => {
+  ])('centers only the heading of %s', (key, value, text) => {
     const column = getGeneResultColumn(key)
     const { container, getByText } = render(<>{column.render?.(value)}</>)
 
+    expect(column.centerHeading).toBe(true)
     expect(getByText(text)).toBeInTheDocument()
-    expect(container.firstChild).toHaveStyle('display: flex; width: 100%; justify-content: center;')
+    expect(container.firstChild).not.toHaveStyle('justify-content: center;')
     if (key !== 'qc_flagged') {
-      expect(getByText(text)).toHaveStyle('padding-right: 0; text-align: center;')
+      expect(getByText(text)).toHaveStyle('padding-right: 15px; text-align: right;')
     }
   })
 
