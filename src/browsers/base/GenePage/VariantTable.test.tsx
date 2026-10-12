@@ -98,6 +98,38 @@ describe('centered numeric variant columns', () => {
     expect(screen.getByText('12')).toHaveStyle('width: 2ch;')
   })
 
+  it('centers configured nonnumeric content without changing its rendering or CSV value', () => {
+    const columns = buildColumns([
+      {
+        key: 'info.count',
+        heading: 'Other splice',
+        centerCellContent: true,
+        render: (value) => (value === null ? '–' : value ? 'yes' : 'no'),
+      },
+    ])
+    const variants = buildVariants([1, 0, null])
+    render(
+      <VariantTable
+        columns={columns}
+        variants={variants}
+        sortKey="info.count"
+        sortOrder="ascending"
+        onClickVariant={callbacks.onClickVariant}
+        onHoverVariant={callbacks.onHoverVariant}
+        onRequestSort={callbacks.onRequestSort}
+        onVisibleRowsChange={callbacks.onVisibleRowsChange}
+      />
+    )
+
+    for (const value of ['yes', 'no', '–']) {
+      expect(screen.getByText(value)).toHaveStyle(
+        'display: flex; justify-content: center; width: 100%;'
+      )
+      expect(screen.getByText(value)).not.toHaveStyle('text-align: right;')
+    }
+    expect(columns[0].renderForCSV(variants[0], 'info.count')).toBe(1)
+  })
+
   it('measures formatted text from a custom accessor and renderer per column', () => {
     const columns = buildColumns([
       {
