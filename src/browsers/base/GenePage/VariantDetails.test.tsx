@@ -160,7 +160,7 @@ describe('VariantDetails ASC2 count groups', () => {
   }
 
   it('groups ASC2 counts under their configured labels and preserves ungrouped fields', () => {
-    render(
+    const { container } = render(
       <VariantDetails
         {...props}
         variant={variant}
@@ -207,7 +207,7 @@ describe('VariantDetails ASC2 count groups', () => {
       expect(within(groupContainer).queryByText('MPC:')).not.toBeInTheDocument()
     })
 
-    expect(screen.getAllByRole('term').map((term) => term.textContent)).toEqual([
+    expect(Array.from(container.querySelectorAll('dt'), (term) => term.textContent)).toEqual([
       'MPC:',
       'De novo AC',
       'Proband:',
