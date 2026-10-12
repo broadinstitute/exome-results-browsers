@@ -4,6 +4,8 @@ import { MemoryRouter } from 'react-router-dom'
 
 import Browser from '../base/Browser'
 import { GeneResultsPage } from '../base/GeneResultsPage/GeneResultsPage'
+import GeneResultsTable from '../base/GeneResultsPage/GeneResultsTable'
+import getTableColumns from '../base/GeneResultsPage/geneResultTableColumns'
 import { GeneRow } from '../base/GeneResultsPage/geneResultTableColumns'
 import getVariantTableColumns, { VariantRow } from '../base/GenePage/variantTableColumns'
 import VariantTable from '../base/GenePage/VariantTable'
@@ -67,20 +69,76 @@ const renderGeneResultsPage = () => {
 }
 
 describe('ASC2 all-genes table', () => {
-  it.each<[string, number | boolean, string]>([
-    ['bayes_factor', 123, '123.00'],
-    ['false_discovery_rate', 0.05, '5.00e-2'],
-    ['qc_flagged', true, 'Flag'],
-  ])('centers only the heading of %s', (key, value, text) => {
-    const column = getGeneResultColumn(key)
-    const { container, getByText } = render(<>{column.render?.(value)}</>)
-
-    expect(column.centerHeading).toBe(true)
-    expect(getByText(text)).toBeInTheDocument()
-    expect(container.firstChild).not.toHaveStyle('justify-content: center;')
-    if (key !== 'qc_flagged') {
-      expect(getByText(text)).toHaveStyle('padding-right: 15px; text-align: right;')
+  it('centers formatted Bayes Factor, FDR, and Flag cells without changing sorting or CSV values', () => {
+    const columns = getTableColumns(
+      getGeneResultColumns().filter((column) =>
+        ['bayes_factor', 'false_discovery_rate', 'qc_flagged'].includes(column.key)
+      )
+    )
+    const gene: GeneRow = {
+      gene_id: 'ENSG000001',
+      gene_symbol: 'GENE',
+      symbol: 'GENE',
+      reference_genome: 'GRCh38',
+      canonical_transcript_id: 'ENST000001',
+      start: 1,
+      stop: 100,
+      group_results: {},
+      bayes_factor: 123,
+      false_discovery_rate: 0.05,
+      qc_flagged: true,
     }
+    render(
+      <MemoryRouter>
+        <GeneResultsTable
+          defaultSortKey="bayes_factor"
+          geneResultColumns={columns}
+          geneResults={[
+            gene,
+            {
+              ...gene,
+              gene_id: 'ENSG000002',
+              gene_symbol: 'OTHER',
+              bayes_factor: 0,
+              false_discovery_rate: null,
+              qc_flagged: false,
+            },
+          ]}
+        />
+      </MemoryRouter>
+    )
+
+    for (const heading of ['Bayes Factor', 'FDR', 'Flag']) {
+      expect(screen.getByRole('columnheader', { name: heading })).toHaveStyle(
+        'justify-content: center;'
+      )
+    }
+    for (const value of ['123.00', '5.00e-2', '0.00']) {
+      const number = screen.getByText(value)
+      expect(number).toHaveStyle('width: auto; padding-right: 0; text-align: center;')
+      expect(number.parentElement).toHaveStyle(
+        'display: flex; justify-content: center; width: 100%; font-variant-numeric: tabular-nums;'
+      )
+    }
+    expect(screen.getByRole('gridcell', { name: 'Flag' }).firstElementChild).toHaveStyle(
+      'display: flex; justify-content: center; width: 100%;'
+    )
+    expect(screen.getByRole('gridcell', { name: 'Flag' }).firstElementChild).not.toHaveStyle(
+      'font-variant-numeric: tabular-nums;'
+    )
+    expect(screen.getByText('-')).toHaveStyle('justify-content: center;')
+    expect(screen.getByRole('gridcell', { name: 'GENE' }).firstElementChild).not.toHaveStyle(
+      'justify-content: center;'
+    )
+    expect(
+      columns
+        .filter((column) => column.centerNumericValues || column.centerCellContent)
+        .map((column) => column.renderForCSV(gene, column.key))
+    ).toEqual([123, 0.05, true])
+
+    expect(screen.getAllByRole('row')[1]).toHaveTextContent('0.00')
+    fireEvent.click(screen.getByRole('button', { name: 'Bayes Factor' }))
+    expect(screen.getAllByRole('row')[1]).toHaveTextContent('123.00')
   })
 
   it.each([false, null, undefined])('leaves the flag empty for %s', (value) => {

@@ -7,7 +7,7 @@ import { NumberCell } from '../tableCells'
 import { VariantRow, VariantTableColumn } from './variantTableColumns'
 import VariantTableGroupHeadings from './VariantTableGroupHeadings'
 
-const CenteredCellContent = styled.span`
+export const CenteredCellContent = styled.span`
   display: flex;
   justify-content: center;
   width: 100%;
