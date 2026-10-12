@@ -406,14 +406,14 @@ const ASC2Browser = () => (
       },
       {
         key: 'info.alpha_missense',
-        heading: 'AM',
+        heading: 'AlphaMissense',
         tooltip: 'AlphaMissense pathogenicity score',
         minWidth: 110,
         render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 3 }),
       },
       {
         key: 'info.is_other_splice',
-        heading: 'is OS',
+        heading: 'Other splice',
         tooltip: 'LOFTEE other splice (OS) annotation',
         minWidth: 70,
         render: (value) => renderBoolean(value),
