@@ -191,12 +191,12 @@ const deNovoColumns = variantClassCategoryColumns(deNovoColumnGroup, 70, [
   {
     key: ({ suffix }) => `de_novo_${suffix}_proband`,
     heading: ({ label }) => `${label} Proband`,
-    tooltip: (category) => `De\u00a0novo ${describeVariantClass(category)} in probands`,
+    tooltip: (category) => `De\u00a0novo ${describeVariantClass(category)} in probands.`,
   },
   {
     key: ({ suffix }) => `de_novo_${suffix}_sibling`,
     heading: ({ label }) => `${label} Sibling`,
-    tooltip: (category) => `De\u00a0novo ${describeVariantClass(category)} in siblings`,
+    tooltip: (category) => `De\u00a0novo ${describeVariantClass(category)} in siblings.`,
   },
 ])
 
@@ -207,12 +207,12 @@ const transmittedUntransmittedColumns = variantClassCategoryColumns(
     {
       key: ({ suffix }) => `transmitted_${suffix}_proband`,
       heading: ({ label }) => `Transmitted ${label}`,
-      tooltip: (category) => `${describeVariantClass(category)} transmitted to probands`,
+      tooltip: (category) => `${describeVariantClass(category)} transmitted to probands.`,
     },
     {
       key: ({ suffix }) => `untransmitted_${suffix}_proband`,
       heading: ({ label }) => `Untransmitted ${label}`,
-      tooltip: (category) => `${describeVariantClass(category)} not transmitted to probands`,
+      tooltip: (category) => `${describeVariantClass(category)} not transmitted to probands.`,
     },
   ]
 )
@@ -222,13 +222,13 @@ const caseControlColumns = variantClassCategoryColumns(caseControlColumnGroup, 7
     key: ({ suffix }) => `${suffix}_case`,
     heading: ({ label }) => `${label} Case`,
     tooltip: (category) =>
-      `${describeVariantClass(category)} in case/control burden analysis, cases`,
+      `${describeVariantClass(category)} in case/control burden analysis, cases.`,
   },
   {
     key: ({ suffix }) => `${suffix}_control`,
     heading: ({ label }) => `${label} Control`,
     tooltip: (category) =>
-      `${describeVariantClass(category)} in case/control burden analysis, controls`,
+      `${describeVariantClass(category)} in case/control burden analysis, controls.`,
   },
 ])
 
@@ -270,7 +270,7 @@ const ASC2Browser = () => (
       {
         key: 'false_discovery_rate',
         heading: 'FDR',
-        tooltip: 'False discovery rate',
+        tooltip: 'False discovery rate.',
         minWidth: 140,
         render: (value) => (
           <CenteredGeneResult>{renderASC2FalseDiscoveryRate(value)}</CenteredGeneResult>
@@ -279,7 +279,7 @@ const ASC2Browser = () => (
       {
         key: 'qc_flagged',
         heading: 'Flag',
-        tooltip: 'Gene flagged in analysis',
+        tooltip: 'Gene flagged in analysis.',
         minWidth: 90,
         render: (value) => {
           const flaggedBadge = (
