@@ -226,6 +226,7 @@ type BrowserProps = {
   defaultGeneResultColumnGroups?: Record<string, boolean>
   geneResultColumns?: GeneResultColumnConfig[]
   geneResultTabs?: GeneResultTabConfig[]
+  showManeSelectTranscript?: boolean
 
   variantAnalysisGroupOptions: readonly string[]
   defaultVariantAnalysisGroup: string
@@ -263,6 +264,7 @@ const Browser = ({
   defaultGeneResultColumnGroups = undefined,
   geneResultColumns = [],
   geneResultTabs = [],
+  showManeSelectTranscript = false,
   // Variant results
   defaultVariantAnalysisGroup,
   variantAnalysisGroupOptions,
@@ -362,6 +364,7 @@ const Browser = ({
             path="/gene/:gene"
             render={({ match }) => (
               <GenePage
+                showManeSelectTranscript={showManeSelectTranscript}
                 datasetId={datasetId}
                 geneIdOrSymbol={match.params.gene}
                 browserTitle={browserTitle}
