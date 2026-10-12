@@ -149,8 +149,9 @@ const AlternateGeneSymbolRows = ({ gene }: { gene: IndividualGeneAPIResponse }) 
 
 interface GeneInfoProps {
   gene: IndividualGeneAPIResponse
+  showManeSelectTranscript?: boolean
 }
-const GeneInfo = ({ gene }: GeneInfoProps) => {
+const GeneInfo = ({ gene, showManeSelectTranscript = false }: GeneInfoProps) => {
   const ucscReferenceGenomeId = gene.reference_genome === 'GRCh38' ? 'hg38' : 'hg19'
 
   const allOtherStudies: { id: DatasetId }[] = [
@@ -185,6 +186,12 @@ const GeneInfo = ({ gene }: GeneInfoProps) => {
         <DescriptionListItem>
           <dt>Ensembl transcript ID</dt>
           <dd>{gene.canonical_transcript_id}</dd>
+        </DescriptionListItem>
+      )}
+      {showManeSelectTranscript && gene.mane_select_transcript_id && (
+        <DescriptionListItem>
+          <dt>MANE Select transcript</dt>
+          <dd>{gene.mane_select_transcript_id}</dd>
         </DescriptionListItem>
       )}
       <DescriptionListItem>

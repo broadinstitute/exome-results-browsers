@@ -52,6 +52,7 @@ interface GenePageProps {
   datasetId: DatasetId
   browserTitle: string
   gene: IndividualGeneAPIResponse
+  showManeSelectTranscript?: boolean
   defaultVariantAnalysisGroup: string
   variantAnalysisGroupLabels?: Record<string, string>
   variantAnalysisGroupOptions: readonly string[]
@@ -77,6 +78,7 @@ const GenePage = ({
   datasetId,
   browserTitle,
   gene,
+  showManeSelectTranscript = false,
   defaultVariantAnalysisGroup,
   variantAnalysisGroupLabels = undefined,
   variantAnalysisGroupOptions,
@@ -105,7 +107,7 @@ const GenePage = ({
           {gene.symbol} <GeneName>{gene.name}</GeneName>
         </PageHeading>
 
-        <GeneInfo gene={gene} />
+        <GeneInfo gene={gene} showManeSelectTranscript={showManeSelectTranscript} />
 
         <TablesWrapper>
           <div>
@@ -212,6 +214,7 @@ const GenePage = ({
 interface GenePageContainerProps {
   datasetId: DatasetId
   geneIdOrSymbol: string
+  showManeSelectTranscript?: boolean
   browserTitle: string
   defaultVariantAnalysisGroup: string
   variantAnalysisGroupOptions: readonly string[]
@@ -225,6 +228,7 @@ interface GenePageContainerProps {
 const GenePageContainer = ({
   datasetId,
   geneIdOrSymbol,
+  showManeSelectTranscript = false,
   defaultVariantAnalysisGroup,
   variantAnalysisGroupOptions,
   variantConsequences,
@@ -254,6 +258,7 @@ const GenePageContainer = ({
           <GenePage
             datasetId={datasetId}
             gene={geneData.gene}
+            showManeSelectTranscript={showManeSelectTranscript}
             defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
             variantAnalysisGroupOptions={variantAnalysisGroupOptions}
             variantConsequences={variantConsequences}

@@ -55,6 +55,7 @@ export interface IndividualGeneAPIResponse {
   gencode_gene_symbol: string
   canonical_transcript_id: string
   canonical_transcript: CanonicalTranscriptAPIResponse
+  mane_select_transcript_id?: string | null
 }
 
 // TK: TODO: should this type live here, or another file?
