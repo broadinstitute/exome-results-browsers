@@ -99,28 +99,27 @@ describe('HGVS description columns', () => {
     })
   }
 
-  const getAsc2HgvsColumn = (key: string) => {
-    const column = buildDescriptionColumns('ASC2').find((candidate) => candidate.key === key)
+  const getAsc2HgvsColumn = () => {
+    const column = buildDescriptionColumns('ASC2').find((candidate) => candidate.key === 'hgvs')
     if (!column) {
-      throw new Error(`Missing ASC2 column: ${key}`)
+      throw new Error('Missing ASC2 column: hgvs')
     }
     return column
   }
 
-  it('replaces the combined ASC2 column with HGVSp and HGVSc in place', () => {
+  it('keeps the combined ASC2 column in its original position', () => {
     const columns = buildDescriptionColumns('ASC2')
 
     expect(columns.map((column) => column.key)).toEqual([
       'variant_id',
-      'hgvsp',
-      'hgvsc',
+      'hgvs',
       'consequence',
       'info.score',
     ])
-    expect(columns.slice(1, 3).map((column) => column.heading)).toEqual(['HGVSp', 'HGVSc'])
+    expect(columns[1].heading).toBe('HGVSp/c')
   })
 
-  it.each(['ASC', 'BipEx', 'BipEx2', 'Epi25', 'GP2', 'IBD', 'SCHEMA'])(
+  it.each(['ASC', 'ASC2', 'BipEx', 'BipEx2', 'Epi25', 'GP2', 'IBD', 'SCHEMA'])(
     'keeps the combined column for %s',
     (datasetId) => {
       const columns = buildDescriptionColumns(datasetId)
@@ -136,31 +135,31 @@ describe('HGVS description columns', () => {
   )
 
   it.each([
-    ['hgvsp', 'p.Lys34Asn', 'c.100A>T'],
-    ['hgvsc', 'c.100A>T', 'p.Lys34Asn'],
-  ])('renders and exports only %s', (key, expected, otherValue) => {
-    const column = getAsc2HgvsColumn(key)
+    { hgvsp: 'p.Lys34Asn', hgvsc: 'c.100A>T', expected: 'p.Lys34Asn' },
+    { hgvsp: '', hgvsc: 'c.100A>T', expected: 'c.100A>T' },
+  ])('renders and exports the combined HGVS value $expected', ({ hgvsp, hgvsc, expected }) => {
+    const column = getAsc2HgvsColumn()
+    const normalizedVariant = { ...variant, hgvsp, hgvsc, hgvs: hgvsp || hgvsc }
 
-    render(React.createElement(React.Fragment, null, column.render(variant, key, {})))
+    render(React.createElement(React.Fragment, null, column.render(normalizedVariant, 'hgvs', {})))
 
     expect(screen.getByText(expected)).toBeInTheDocument()
-    expect(screen.queryByText(otherValue)).not.toBeInTheDocument()
-    expect(column.renderForCSV(variant, key)).toBe(expected)
-    expect(column.sortKey).toBe(key)
+    expect(column.renderForCSV(normalizedVariant, 'hgvs')).toBe(expected)
+    expect(column.sortKey).toBe('hgvs')
     expect(column.isSortable).toBe(true)
     expect(column.sortFunction('a', 'b')).toBeLessThan(0)
     expect(column.sortFunction('b', 'a')).toBeGreaterThan(0)
   })
 
-  it.each(['hgvsp', 'hgvsc'])('leaves a missing %s blank without falling back', (key) => {
-    const column = getAsc2HgvsColumn(key)
-    const variantWithMissingHgvs = { ...variant, [key]: '' }
+  it('leaves the combined column blank when both HGVS values are missing', () => {
+    const column = getAsc2HgvsColumn()
+    const variantWithMissingHgvs = { ...variant, hgvsp: '', hgvsc: '', hgvs: '' }
 
     const { container } = render(
-      React.createElement(React.Fragment, null, column.render(variantWithMissingHgvs, key, {}))
+      React.createElement(React.Fragment, null, column.render(variantWithMissingHgvs, 'hgvs', {}))
     )
 
     expect(container.textContent).toBe('')
-    expect(column.renderForCSV(variantWithMissingHgvs, key)).toBe('')
+    expect(column.renderForCSV(variantWithMissingHgvs, 'hgvs')).toBe('')
   })
 })

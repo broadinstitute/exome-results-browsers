@@ -137,22 +137,15 @@ export interface VariantTableColumn {
 }
 
 const buildVariantDescriptionColumns = (
-  categoryColors: Record<string, string>,
-  datasetId: string
+  categoryColors: Record<string, string>
 ): VariantTableColumn[] => {
-  const hgvsColumnDefinitions =
-    datasetId === 'ASC2'
-      ? [
-        { key: 'hgvsp', heading: 'HGVSp', tooltip: 'HGVS protein sequence' },
-        { key: 'hgvsc', heading: 'HGVSc', tooltip: 'HGVS coding sequence' },
-      ]
-      : [
-        {
-          key: 'hgvs',
-          heading: 'HGVSp/c',
-          tooltip: 'HGVS protein (if available) or coding sequence',
-        },
-      ]
+  const hgvsColumnDefinitions = [
+    {
+      key: 'hgvs',
+      heading: 'HGVSp/c',
+      tooltip: 'HGVS protein (if available) or coding sequence',
+    },
+  ]
 
   return [
     {
@@ -541,7 +534,7 @@ const getVariantTableColumns = ({
   const categoryColors = Object.fromEntries(
     variantCategoryOptions.map((option) => [option.id, option.color])
   )
-  const datasetColumns = [...buildVariantDescriptionColumns(categoryColors, datasetId)]
+  const datasetColumns = [...buildVariantDescriptionColumns(categoryColors)]
 
   if (datasetId === 'GP2') {
     let renderedGP2Columns = gp2StatColumns
@@ -568,8 +561,8 @@ const getVariantTableColumns = ({
   const filteredVariantResultColumns =
     datasetId === 'ASC2' && filter.asc2VariantColumnGroups
       ? variantResultColumns.filter(
-        (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
-      )
+          (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
+        )
       : variantResultColumns
 
   const resultColumns: VariantTableColumn[] = applyColumnGroupHeadings(
