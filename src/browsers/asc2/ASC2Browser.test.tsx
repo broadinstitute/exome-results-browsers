@@ -1,7 +1,10 @@
-import { render } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import React from 'react'
+import { MemoryRouter } from 'react-router-dom'
 
 import Browser from '../base/Browser'
+import { GeneResultsPage } from '../base/GeneResultsPage/GeneResultsPage'
+import { GeneRow } from '../base/GeneResultsPage/geneResultTableColumns'
 
 import ASC2Browser from './ASC2Browser'
 
@@ -15,11 +18,13 @@ jest.mock('./ASC2WaterfallPlot', () => ({
   default: () => null,
 }))
 
-const getGeneResultColumns = () => {
+const getBrowserConfiguration = () => {
   jest.mocked(Browser).mockClear()
   render(<ASC2Browser />)
-  return jest.mocked(Browser).mock.calls[0][0].geneResultColumns ?? []
+  return jest.mocked(Browser).mock.calls[0][0]
 }
+
+const getGeneResultColumns = () => getBrowserConfiguration().geneResultColumns ?? []
 
 const getGeneResultColumn = (key: string) => {
   const column = getGeneResultColumns().find((candidate) => candidate.key === key)
@@ -27,6 +32,36 @@ const getGeneResultColumn = (key: string) => {
     throw new Error(`Missing ASC2 gene result column: ${key}`)
   }
   return column
+}
+
+const renderGeneResultsPage = () => {
+  const configuration = getBrowserConfiguration()
+  const columns = configuration.geneResultColumns ?? []
+  const gene: GeneRow = {
+    gene_id: 'ENSG000001',
+    gene_symbol: 'GENE',
+    symbol: 'GENE',
+    reference_genome: 'GRCh38',
+    canonical_transcript_id: 'ENST000001',
+    start: 1,
+    stop: 100,
+    group_results: {
+      meta: Object.fromEntries(columns.map((column) => [column.key, 1])),
+    },
+  }
+
+  return render(
+    <MemoryRouter>
+      <GeneResultsPage
+        browserTitle="ASC2"
+        analysisGroupOptions={['meta']}
+        defaultAnalysisGroup="meta"
+        defaultColumnGroups={configuration.defaultGeneResultColumnGroups}
+        geneResultColumns={columns}
+        geneResults={[gene]}
+      />
+    </MemoryRouter>
+  )
 }
 
 describe('ASC2 all-genes table', () => {
@@ -67,6 +102,84 @@ describe('ASC2 all-genes table', () => {
       }
     }
   )
+
+  it('shows four visibility controls with both De novo roles enabled by default', () => {
+    renderGeneResultsPage()
+
+    expect(screen.getAllByRole('checkbox').map((checkbox) => checkbox.id)).toEqual([
+      'gene-result-column-group-deNovoProband',
+      'gene-result-column-group-deNovoSibling',
+      'gene-result-column-group-transmittedUntransmitted',
+      'gene-result-column-group-caseControl',
+    ])
+    expect(screen.getByRole('checkbox', { name: 'De\u00a0novo (proband)' })).toBeChecked()
+    expect(screen.getByRole('checkbox', { name: 'De\u00a0novo (sibling)' })).toBeChecked()
+    expect(screen.getByRole('checkbox', { name: 'Inherited (proband)' })).not.toBeChecked()
+    expect(screen.getByRole('checkbox', { name: 'Case-Control' })).not.toBeChecked()
+  })
+
+  it.each([
+    [true, true],
+    [true, false],
+    [false, true],
+    [false, false],
+  ])('shows the shared header for proband=%s and sibling=%s', (hasProband, hasSibling) => {
+    renderGeneResultsPage()
+
+    if (!hasProband) {
+      fireEvent.click(screen.getByRole('checkbox', { name: 'De\u00a0novo (proband)' }))
+    }
+    if (!hasSibling) {
+      fireEvent.click(screen.getByRole('checkbox', { name: 'De\u00a0novo (sibling)' }))
+    }
+
+    for (const category of ['PTV', 'Mis2', 'Mis1', 'DEL', 'DUP']) {
+      expect(screen.queryAllByText(`${category} Proband`)).toHaveLength(hasProband ? 1 : 0)
+      expect(screen.queryAllByText(`${category} Sibling`)).toHaveLength(hasSibling ? 1 : 0)
+    }
+    expect(screen.queryAllByText('De novo')).toHaveLength(hasProband || hasSibling ? 1 : 0)
+    expect(screen.getByText('Bayes Factor')).toBeInTheDocument()
+    expect(screen.getByText('FDR')).toBeInTheDocument()
+    expect(screen.queryByText('Transmitted PTV')).not.toBeInTheDocument()
+    expect(screen.queryByText('PTV Case')).not.toBeInTheDocument()
+  })
+
+  it('keeps the inherited and case-control toggles independent of De novo roles', () => {
+    renderGeneResultsPage()
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Inherited (proband)' }))
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Case-Control' }))
+    expect(screen.getByText('Transmitted PTV')).toBeInTheDocument()
+    expect(screen.getByText('PTV Case')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'De\u00a0novo (proband)' }))
+    fireEvent.click(screen.getByRole('checkbox', { name: 'De\u00a0novo (sibling)' }))
+    expect(screen.getByText('Transmitted PTV')).toBeInTheDocument()
+    expect(screen.getByText('PTV Case')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Inherited (proband)' }))
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Case-Control' }))
+    expect(screen.queryByText('Transmitted PTV')).not.toBeInTheDocument()
+    expect(screen.queryByText('PTV Case')).not.toBeInTheDocument()
+  })
+
+  it('preserves the three variant groups and the paired De novo lollipop tracks', () => {
+    const configuration = getBrowserConfiguration()
+    const variantColumns = configuration.variantResultColumns ?? []
+    const groups = new Set(
+      variantColumns.flatMap((column) => (column.group ? [column.group.key] : []))
+    )
+
+    expect([...groups]).toEqual(['deNovo', 'transmittedUntransmitted', 'caseControl'])
+    expect(
+      variantColumns.filter((column) => column.group?.key === 'deNovo').map((column) => column.key)
+    ).toEqual(['group_result.de_novo_ac_proband', 'group_result.de_novo_ac_sibling'])
+    expect(configuration.variantLollipopTrackGroups?.[0].key).toBe('deNovo')
+    expect(configuration.variantLollipopTrackGroups?.[0].tracks.map((track) => track.key)).toEqual([
+      'de_novo_proband',
+      'de_novo_sibling',
+    ])
+  })
 
   it('ends every configured gene-table tooltip with a period', () => {
     const tooltips = getGeneResultColumns().flatMap((column) =>

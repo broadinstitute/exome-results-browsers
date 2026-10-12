@@ -154,6 +154,7 @@ export type GeneResultColumnConfig<RowType = any, ValueType = any> = {
   minWidth?: number
   tooltip?: string
   group?: GeneResultColumnGroup
+  visibilityGroup?: GeneResultColumnGroup
   accessor?: (row: RowType) => ValueType
   render?: (value: ValueType, row?: RowType) => React.ReactNode
   renderForCSV?: (value: ValueType, row?: RowType) => string | number

@@ -97,6 +97,16 @@ const deNovoColumnGroup: GeneResultColumnGroup = {
   variantTableLabel: 'De\u00a0novo AC',
   color: COLUMN_GROUP_COLOR_A,
 }
+const deNovoProbandVisibilityGroup: GeneResultColumnGroup = {
+  ...deNovoColumnGroup,
+  key: 'deNovoProband',
+  geneTableLabel: 'De\u00a0novo (proband)',
+}
+const deNovoSiblingVisibilityGroup: GeneResultColumnGroup = {
+  ...deNovoColumnGroup,
+  key: 'deNovoSibling',
+  geneTableLabel: 'De\u00a0novo (sibling)',
+}
 const transmittedUntransmittedColumnGroup: GeneResultColumnGroup = {
   key: 'transmittedUntransmitted',
   geneTableLabel: 'Inherited (proband)',
@@ -157,6 +167,7 @@ const variantLollipopTrackGroups: VariantLollipopTrackGroup[] = [
 ]
 
 interface VariantClassColumnSpec {
+  visibilityGroup?: GeneResultColumnGroup
   key: (category: ASC2VariantClassCategory) => keyof ASC2GeneResult
   heading: (category: ASC2VariantClassCategory) => string
   tooltip: (category: ASC2VariantClassCategory) => string
@@ -167,22 +178,24 @@ const variantClassCategoryColumns = (
   minWidth: number,
   columnsPerRole: VariantClassColumnSpec[]
 ): GeneResultColumnConfig[] =>
-  ASC2_VARIANT_CLASS_CATEGORIES.filter(
-    (category) => !category.isExcludedFromAnalysis
-  ).flatMap((category) =>
-    columnsPerRole.map(({ key, heading, tooltip }) =>
-      geneCountColumn(key(category), heading(category), tooltip(category), minWidth, group)
-    )
+  ASC2_VARIANT_CLASS_CATEGORIES.filter((category) => !category.isExcludedFromAnalysis).flatMap(
+    (category) =>
+      columnsPerRole.map(({ key, heading, tooltip, visibilityGroup }) => ({
+        ...geneCountColumn(key(category), heading(category), tooltip(category), minWidth, group),
+        visibilityGroup,
+      }))
   )
 
 const deNovoColumns = variantClassCategoryColumns(deNovoColumnGroup, 70, [
   {
     key: ({ suffix }) => `de_novo_${suffix}_proband`,
+    visibilityGroup: deNovoProbandVisibilityGroup,
     heading: ({ label }) => `${label} Proband`,
     tooltip: (category) => `De\u00a0novo ${describeVariantClass(category)} in probands.`,
   },
   {
     key: ({ suffix }) => `de_novo_${suffix}_sibling`,
+    visibilityGroup: deNovoSiblingVisibilityGroup,
     heading: ({ label }) => `${label} Sibling`,
     tooltip: (category) => `De\u00a0novo ${describeVariantClass(category)} in siblings.`,
   },
@@ -244,7 +257,8 @@ const ASC2Browser = () => (
     defaultGeneResultSortKey="bayes_factor"
     defaultGeneResultSortOrder="descending"
     defaultGeneResultColumnGroups={{
-      deNovo: true,
+      deNovoProband: true,
+      deNovoSibling: true,
       transmittedUntransmitted: false,
       caseControl: false,
     }}
