@@ -415,6 +415,8 @@ def write_data_files(table_path, output_directory, genes=None):
     if output_directory.startswith("gs://"):
         raise ValueError("Google Storage paths are not supported for output_directory")
 
+    os.makedirs(output_directory, exist_ok=True)
+
     print(f"\n\n === Reading combined hail table from {table_path}", flush=True)
     ds = hl.read_table(table_path)
 
