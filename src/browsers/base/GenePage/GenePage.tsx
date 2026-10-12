@@ -66,6 +66,7 @@ interface GenePageProps {
   renderVariantAttributes?: RenderVariantAttributes
   additionalVariantDetailSummaryColumns?: VariantTableColumn[]
   variantDetailColumns?: VariantTableColumn[]
+  variantDetailsSingleAnalysisGroup?: boolean
   renderVariantTranscriptConsequences?: boolean
   variantAlleleFrequencyOverride?: number
   variantExportNote?: string
@@ -90,6 +91,7 @@ const GenePage = ({
   additionalVariantDetailSummaryColumns = undefined,
   renderVariantAttributes = undefined,
   variantDetailColumns = undefined,
+  variantDetailsSingleAnalysisGroup = false,
   renderVariantTranscriptConsequences = false,
   variantAlleleFrequencyOverride = undefined,
   variantExportNote = undefined,
@@ -187,6 +189,7 @@ const GenePage = ({
           renderVariantAttributes={renderVariantAttributes}
           additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
           variantDetailColumns={variantDetailColumns}
+          variantDetailsSingleAnalysisGroup={variantDetailsSingleAnalysisGroup}
           renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
           variantAnalysisGroupLabels={variantAnalysisGroupLabels}
           variantAnalysisGroupOptions={variantAnalysisGroupOptions}

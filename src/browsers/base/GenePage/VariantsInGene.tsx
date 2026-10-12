@@ -48,7 +48,10 @@ const buildVariantColor = (variantCategoryOptions: VariantCategoryOption[]) => {
     variantCategoryOptions.map((option) => [option.id, option.color])
   )
   return (variant: VariantRow) =>
-    withAlpha(colorsByCategory[variant.consequenceCategory] || DEFAULT_VARIANT_CATEGORY_COLOR, DOT_COLOR_ALPHA)
+    withAlpha(
+      colorsByCategory[variant.consequenceCategory] || DEFAULT_VARIANT_CATEGORY_COLOR,
+      DOT_COLOR_ALPHA
+    )
 }
 
 const ModalStyles = createGlobalStyle`
@@ -63,13 +66,17 @@ const selectGroupResult = (variants: VariantRow[], group: string) => {
     .map((v) => ({ ...v, group_result: v.group_results[group] }))
 }
 
-const acFieldValue = (variant: VariantRow, acField: string): number => Number(get(variant, acField)) || 0
+const acFieldValue = (variant: VariantRow, acField: string): number =>
+  Number(get(variant, acField)) || 0
 
 export const maxAcAcrossGroupTracks = (
   variants: VariantRow[],
   group: VariantLollipopTrackGroup
 ): number =>
-  Math.max(0, ...variants.flatMap((v) => group.tracks.map((track) => acFieldValue(v, track.acField))))
+  Math.max(
+    0,
+    ...variants.flatMap((v) => group.tracks.map((track) => acFieldValue(v, track.acField)))
+  )
 
 export const lollipopTrackVariants = (
   variants: VariantRow[],
@@ -139,6 +146,7 @@ interface VariantsInGeneProps {
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
   renderVariantAttributes: RenderVariantAttributes
   variantDetailColumns?: VariantColumnConfig[]
+  variantDetailsSingleAnalysisGroup?: boolean
   renderVariantTranscriptConsequences: boolean
   variantExportNote?: string
   variantLollipopTrackGroups?: VariantLollipopTrackGroup[]
@@ -181,6 +189,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
     renderVariantAttributes: undefined,
     additionalVariantDetailSummaryColumns: undefined,
     variantDetailColumns: undefined,
+    variantDetailsSingleAnalysisGroup: false,
     renderVariantTranscriptConsequences: false,
     variantExportNote: undefined,
     variantLollipopTrackGroups: undefined,
@@ -451,6 +460,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
       renderVariantAttributes,
       additionalVariantDetailSummaryColumns,
       variantDetailColumns,
+      variantDetailsSingleAnalysisGroup,
       renderVariantTranscriptConsequences,
       variantExportNote,
       variantLollipopTrackGroups,
@@ -474,15 +484,15 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
       datasetId === 'GP2'
         ? renderedVariants
         : renderedVariants
-          .filter((v) => v.group_result.ac_case > 0)
-          .map((v) => ({ ...v, allele_freq: v.group_result.af_case }))
+            .filter((v) => v.group_result.ac_case > 0)
+            .map((v) => ({ ...v, allele_freq: v.group_result.af_case }))
 
     const controls =
       datasetId === 'GP2'
         ? renderedVariants
         : renderedVariants
-          .filter((v) => v.group_result.ac_ctrl > 0)
-          .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
+            .filter((v) => v.group_result.ac_ctrl > 0)
+            .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
 
     const currentTableColumns = getVariantTableColumns({
       datasetId,
@@ -599,6 +609,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
               renderVariantAttributes={renderVariantAttributes}
               additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
               variantDetailColumns={variantDetailColumns}
+              variantDetailsSingleAnalysisGroup={variantDetailsSingleAnalysisGroup}
               renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
               filter={filter}
             />
@@ -706,6 +717,7 @@ interface VariantsInGeneContainerProps {
   defaultVariantAnalysisGroup?: string
   variantResultColumns: VariantColumnConfig[]
   variantAlleleFrequencyOverride?: number
+  variantDetailsSingleAnalysisGroup?: boolean
   // When provided, this determines each variant's category (and therefore how it's
   // colored and filtered) directly, instead of the default VEP-consequence-term lookup
   // built from `variantConsequences` below. ASC2 uses this to categorize by its own
@@ -722,6 +734,7 @@ const VariantsInGeneContainer = ({
   defaultVariantAnalysisGroup = undefined,
   variantResultColumns,
   variantAlleleFrequencyOverride = undefined,
+  variantDetailsSingleAnalysisGroup = false,
   getVariantCategory = undefined,
   ...otherProps
 }: VariantsInGeneContainerProps) => {
@@ -807,7 +820,8 @@ const VariantsInGeneContainer = ({
             ? getVariantCategory(variant)
             : (rawConsequenceTerm && (consequences[rawConsequenceTerm] || {}).category) || 'other'
           if (rawConsequenceTerm) {
-            variant.consequence = (consequences[rawConsequenceTerm] || {}).label || rawConsequenceTerm
+            variant.consequence =
+              (consequences[rawConsequenceTerm] || {}).label || rawConsequenceTerm
           }
 
           return variant
@@ -826,6 +840,7 @@ const VariantsInGeneContainer = ({
             variants={variants}
             datasetId={datasetId}
             variantResultColumns={variantResultColumns}
+            variantDetailsSingleAnalysisGroup={variantDetailsSingleAnalysisGroup}
           />
         )
       }}
