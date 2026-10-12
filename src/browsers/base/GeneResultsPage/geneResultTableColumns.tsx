@@ -84,6 +84,7 @@ interface RenderContext {
 }
 
 export interface GeneResultTableColumn {
+  centerHeading?: boolean
   key: string
   heading: React.ReactNode
   csvHeading: string
@@ -145,6 +146,7 @@ const getTableColumns = (geneResultColumns: GeneResultColumnConfig[]): GeneResul
       return {
         key: column.key,
         heading: column.heading || column.key,
+        centerHeading: column.centerHeading,
         csvHeading,
         tooltip: column.tooltip,
         isSortable: true,
