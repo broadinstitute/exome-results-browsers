@@ -16,7 +16,7 @@ def hail_backend(tmp_path_factory):
 
 
 @pytest.mark.parametrize("include_hgvsc_column", [True, False])
-def test_prepare_variant_results_imports_hgvsc_and_accepts_legacy_handoffs(tmp_path, monkeypatch, include_hgvsc_column):
+def test_prepare_variant_results_requires_hgvsc_column(tmp_path, monkeypatch, include_hgvsc_column):
     source_path = tmp_path / "variants.tsv"
     fields = [
         field for field in asc2_variant_results.VARIANT_RESULTS_FIELDS if include_hgvsc_column or field != "HGVSc"
@@ -68,6 +68,11 @@ def test_prepare_variant_results_imports_hgvsc_and_accepts_legacy_handoffs(tmp_p
     config["ASC2"] = {"variant_results_path": str(source_path)}
     monkeypatch.setattr(asc2_variant_results, "pipeline_config", config)
 
+    if not include_hgvsc_column:
+        with pytest.raises(LookupError, match="no field 'HGVSc'"):
+            asc2_variant_results.prepare_variant_results(False, str(tmp_path))
+        return
+
     variants = asc2_variant_results.prepare_variant_results(False, str(tmp_path))
     rows = {row.locus.position: row for row in variants.collect()}
 
@@ -76,7 +81,7 @@ def test_prepare_variant_results_imports_hgvsc_and_accepts_legacy_handoffs(tmp_p
     for source_variant in source_variants:
         position = int(source_variant["Variant"].split(":")[1])
         row = rows[position]
-        expected_hgvsc = (source_variant["HGVSc"] or None) if include_hgvsc_column else None
+        expected_hgvsc = source_variant["HGVSc"] or None
         assert row.hgvsc == expected_hgvsc
         assert row.hgvsp == (source_variant["HGVSp"] or None)
         assert row.info.transcript_id == "ENST00000000001"
