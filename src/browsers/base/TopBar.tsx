@@ -121,6 +121,7 @@ interface TopBarOwnProps {
 type TopBarProps = TopBarOwnProps & RouteComponentProps
 
 const TopBar = ({
+  location,
   title,
   links = [],
   backgroundColor = '#000',
@@ -143,7 +144,11 @@ const TopBar = ({
 
   const [showOtherStudiesModal, setShowOtherStudiesModal] = useState(false)
 
-  if (isAuthLoading || (passwordProtectedDatasets.includes(datasetId) && !isAuthenticated)) {
+  if (
+    isAuthLoading ||
+    (passwordProtectedDatasets.includes(datasetId) &&
+      (!isAuthenticated || location.pathname === '/login'))
+  ) {
     return <></>
   }
 
