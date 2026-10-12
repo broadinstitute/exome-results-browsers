@@ -437,13 +437,11 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
       const sortValue1 = get(variant1, column.sortKey)
       const sortValue2 = get(variant2, column.sortKey)
 
-      // Always sort null values to end of list
-      if (sortValue1 === undefined || sortValue1 === null || sortValue1 === '') {
-        return 1
-      }
-      if (sortValue2 === undefined || sortValue2 === null || sortValue2 === '') {
-        return -1
-      }
+      const isMissing1 = sortValue1 === undefined || sortValue1 === null || sortValue1 === ''
+      const isMissing2 = sortValue2 === undefined || sortValue2 === null || sortValue2 === ''
+      if (isMissing1 && isMissing2) return 0
+      if (isMissing1) return 1
+      if (isMissing2) return -1
       return sortFunction(sortValue1, sortValue2)
     })
   }
@@ -757,78 +755,80 @@ const VariantsInGeneContainer = ({
           }
         })
 
-        const variants = data.variants.map((variantValues: VariantRow[], sourceRowIndex: number) => {
-          const variant: {
-            info: Record<string, any>
-            group_results: Record<string, any>
-            [key: string]: any
-          } = {
-            info: {},
-            group_results: {},
-          }
-
-          datasetConfig.variant_fields.forEach((field, fieldIndex) => {
-            if (field === 'info') {
-              datasetConfig.variant_info_field_names.forEach((infoField, infoFieldIndex) => {
-                variant.info[infoField] = variantValues[fieldIndex][infoFieldIndex]
-              })
-            } else if (field === 'group_results') {
-              datasetConfig.variant_result_analysis_groups.forEach((group, groupIndex) => {
-                const groupResultValues = variantValues[fieldIndex][groupIndex]
-
-                if (groupResultValues) {
-                  const groupResult: { [key: string]: string | number } = {}
-                  datasetConfig.variant_group_result_field_names.forEach(
-                    (groupResultField, groupResultFieldIndex) => {
-                      groupResult[groupResultField] = groupResultValues[groupResultFieldIndex]
-                    }
-                  )
-
-                  if (variantAlleleFrequencyOverride !== undefined) {
-                    groupResult.af = variantAlleleFrequencyOverride
-                    groupResult.af_case = variantAlleleFrequencyOverride
-                    groupResult.af_ctrl = variantAlleleFrequencyOverride
-                  } else if (datasetId !== 'GP2') {
-                    addSingleAF({ groupResult, prefix: '', suffix: 'case' })
-                    addSingleAF({ groupResult, prefix: '', suffix: 'ctrl' })
-                    addOverallAF({ groupResult })
-                  }
-
-                  if (datasetId === 'GP2') {
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'pd' })
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'psp' })
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'dlb' })
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'msa' })
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'ctrl' })
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'other' })
-                    addSingleAF({ groupResult, prefix: 'ces_', suffix: 'pd' })
-                    addOverallAFForGP2({ groupResult })
-                  }
-
-                  variant.group_results[group] = groupResult
-                }
-              })
-            } else {
-              variant[field] = variantValues[fieldIndex]
+        const variants = data.variants.map(
+          (variantValues: VariantRow[], sourceRowIndex: number) => {
+            const variant: {
+              info: Record<string, any>
+              group_results: Record<string, any>
+              [key: string]: any
+            } = {
+              info: {},
+              group_results: {},
             }
-          })
 
-          variant.hgvs = variant.hgvsp || variant.hgvsc
-          if (datasetId === 'ASC2') {
-            variant.annotationRowId = `${gene.gene_id}:${variant.variant_id}:${sourceRowIndex}`
+            datasetConfig.variant_fields.forEach((field, fieldIndex) => {
+              if (field === 'info') {
+                datasetConfig.variant_info_field_names.forEach((infoField, infoFieldIndex) => {
+                  variant.info[infoField] = variantValues[fieldIndex][infoFieldIndex]
+                })
+              } else if (field === 'group_results') {
+                datasetConfig.variant_result_analysis_groups.forEach((group, groupIndex) => {
+                  const groupResultValues = variantValues[fieldIndex][groupIndex]
+
+                  if (groupResultValues) {
+                    const groupResult: { [key: string]: string | number } = {}
+                    datasetConfig.variant_group_result_field_names.forEach(
+                      (groupResultField, groupResultFieldIndex) => {
+                        groupResult[groupResultField] = groupResultValues[groupResultFieldIndex]
+                      }
+                    )
+
+                    if (variantAlleleFrequencyOverride !== undefined) {
+                      groupResult.af = variantAlleleFrequencyOverride
+                      groupResult.af_case = variantAlleleFrequencyOverride
+                      groupResult.af_ctrl = variantAlleleFrequencyOverride
+                    } else if (datasetId !== 'GP2') {
+                      addSingleAF({ groupResult, prefix: '', suffix: 'case' })
+                      addSingleAF({ groupResult, prefix: '', suffix: 'ctrl' })
+                      addOverallAF({ groupResult })
+                    }
+
+                    if (datasetId === 'GP2') {
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'pd' })
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'psp' })
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'dlb' })
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'msa' })
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'ctrl' })
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'other' })
+                      addSingleAF({ groupResult, prefix: 'ces_', suffix: 'pd' })
+                      addOverallAFForGP2({ groupResult })
+                    }
+
+                    variant.group_results[group] = groupResult
+                  }
+                })
+              } else {
+                variant[field] = variantValues[fieldIndex]
+              }
+            })
+
+            variant.hgvs = variant.hgvsp || variant.hgvsc
+            if (datasetId === 'ASC2') {
+              variant.annotationRowId = `${gene.gene_id}:${variant.variant_id}:${sourceRowIndex}`
+            }
+
+            const rawConsequenceTerm = variant.consequence
+            variant.consequenceCategory = getVariantCategory
+              ? getVariantCategory(variant)
+              : (rawConsequenceTerm && (consequences[rawConsequenceTerm] || {}).category) || 'other'
+            if (rawConsequenceTerm) {
+              variant.consequence =
+                (consequences[rawConsequenceTerm] || {}).label || rawConsequenceTerm
+            }
+
+            return variant
           }
-
-          const rawConsequenceTerm = variant.consequence
-          variant.consequenceCategory = getVariantCategory
-            ? getVariantCategory(variant)
-            : (rawConsequenceTerm && (consequences[rawConsequenceTerm] || {}).category) || 'other'
-          if (rawConsequenceTerm) {
-            variant.consequence =
-              (consequences[rawConsequenceTerm] || {}).label || rawConsequenceTerm
-          }
-
-          return variant
-        })
+        )
 
         return (
           <VariantsInGene
