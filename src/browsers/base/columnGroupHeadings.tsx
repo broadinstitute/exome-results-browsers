@@ -29,11 +29,12 @@ const ColumnGroupBannerLabel = styled.span`
   font-weight: bold;
 `
 
-const ColumnHeadingLabel = styled.div`
-  text-align: left;
+const ColumnHeadingLabel = styled.div<{ $isCentered?: boolean }>`
+  text-align: ${({ $isCentered }) => ($isCentered ? 'center' : 'left')};
 `
 
 export interface ColumnWithOptionalGroup {
+  centerHeading?: boolean
   key: string
   heading?: React.ReactNode
   minWidth?: number
@@ -68,7 +69,9 @@ export const applyColumnGroupHeadings = <Column extends ColumnWithOptionalGroup>
               <ColumnGroupBannerLabel>{getGroupLabel(column.group)}</ColumnGroupBannerLabel>
             ) : null}
           </ColumnGroupBanner>
-          <ColumnHeadingLabel>{column.heading || column.key}</ColumnHeadingLabel>
+          <ColumnHeadingLabel $isCentered={column.centerHeading}>
+            {column.heading || column.key}
+          </ColumnHeadingLabel>
         </React.Fragment>
       ),
     }

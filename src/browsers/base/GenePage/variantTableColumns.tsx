@@ -121,6 +121,7 @@ interface RenderContext {
 }
 
 export interface VariantTableColumn {
+  centerNumericValues?: boolean
   key: string
   heading: React.ReactNode
   // Plain-text heading for CSV export; differs from `heading` when the latter has been
@@ -576,6 +577,7 @@ const getVariantTableColumns = ({
       key: column.key,
       heading: column.heading || column.key,
       csvHeading: filteredVariantResultColumns[index].heading || column.key,
+      centerNumericValues: column.centerNumericValues,
       tooltip: column.tooltip,
       isSortable: column.isSortable !== false,
       sortFunction: column.sortFunction || ((a, b) => a - b),
