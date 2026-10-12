@@ -1,5 +1,5 @@
 import { Component } from 'react'
-import { addAuthHeader } from './auth'
+import { addAuthHeader, handleUnauthorizedResponse } from './auth'
 
 const cancelable = (promise: Promise<any>) => {
   let isCanceled = false
@@ -26,12 +26,13 @@ const cancelable = (promise: Promise<any>) => {
   }
 }
 
-const fetchApi = (path: string) => {
+const fetchApi = (path: string): Promise<FetchData> => {
   const options = addAuthHeader({
     method: 'GET',
     credentials: 'include',
   })
   return fetch(`/api${path}`, options).then((response) => {
+    handleUnauthorizedResponse(response)
     const isOk = response.ok
     return response.json().then(
       (data) => {
@@ -49,21 +50,21 @@ const fetchApi = (path: string) => {
 
 // TODO: turn this into a union type of the possibly returned types
 // e.g. variant data array, gene data, etc
-type FetchData = any;
+type FetchData = any
 
 interface FetchState {
-  data: FetchData | null;
-  error: Error | null;
-  loading: boolean;
+  data: FetchData | null
+  error: Error | null
+  loading: boolean
 }
 
 type FetchProps = {
-  children: (state: FetchState) => React.ReactNode,
-  path: string,
+  children: (state: FetchState) => React.ReactNode
+  path: string
 }
 
 class Fetch extends Component<FetchProps, FetchState> {
-  private currentRequest: { promise: Promise<any>; cancel: () => void } | null = null;
+  private currentRequest: { promise: Promise<any>; cancel: () => void } | null = null
 
   constructor(props: FetchProps) {
     super(props)
@@ -80,7 +81,7 @@ class Fetch extends Component<FetchProps, FetchState> {
 
   componentDidUpdate(prevProps: FetchProps) {
     if (this.props.path !== prevProps.path) {
-      this.loadData();
+      this.loadData()
     }
   }
 
@@ -127,5 +128,6 @@ class Fetch extends Component<FetchProps, FetchState> {
   }
 }
 
+export { fetchApi }
 
 export default Fetch
