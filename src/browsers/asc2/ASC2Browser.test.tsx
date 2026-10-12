@@ -66,4 +66,15 @@ describe('ASC2 all-genes table', () => {
       }
     }
   )
+
+  it('ends every configured gene-table tooltip with a period', () => {
+    const tooltips = getGeneResultColumns().flatMap((column) =>
+      column.tooltip ? [column.tooltip] : []
+    )
+
+    expect(tooltips).toHaveLength(32)
+    for (const tooltip of tooltips) {
+      expect(tooltip).toMatch(/\.$/)
+    }
+  })
 })
