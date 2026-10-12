@@ -389,7 +389,7 @@ const ASC2Browser = () => (
     variantConsequences={asc2VariantConsequences}
     variantCategoryOptions={asc2VariantCategoryOptions}
     getVariantCategory={getASC2VariantCategory}
-    variantExportNote="Only SNVs, and not CNVs, are displayed below. All variants, except for Mis1 and synonymous variants were included in our gene discovery framework."
+    variantExportNote="Only SNVs, and not CNVs, are displayed below. All variants except for Mis0 and synonymous variants were included in our gene discovery framework."
     variantLollipopTrackGroups={variantLollipopTrackGroups}
   />
 )
