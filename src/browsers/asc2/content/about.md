@@ -36,11 +36,13 @@ The [DDD](https://www.ddduk.org/) (Deciphering Developmental Disorders) study ai
 
 PAGES (Population-based Autism Genetics and Environment Study) is a study launched by the Karolinska Institutet in 2010 (originally called SAGA) to disentangle genetic and environmental factors contributing to autism. People living in Sweden who have been diagnosed with autism at some point in their lives are identified via the National Patient Register and contacted and offered to participate.
 
-<figure style="max-width: 70%;">
+<figure style="max-width: 70%; margin-top: 3rem;">
 
 ![Logos of the participating autism genomics consortia and collaborators](./consortia_logos.png)
 
 </figure>
+
+<div style="margin-top: 10rem;" />
 
 ## Autosomal gene discovery efforts
 
@@ -96,7 +98,7 @@ Relative abundance of variant classes in probands (_de novo_ and inherited data)
 
 To identify genes in which rare damaging variants are associated with autism risk, we employed the Transmission And _De Novo_ Association (TADA) Bayesian framework to empower gene discovery through integration of evidence from different data sources ([He et al., 2013](https://pubmed.ncbi.nlm.nih.gov/23966865/)). TADA allows us to jointly model _de novo_, inherited, and case-control data across classes of variation for which we see enrichment in autism cases compared to controls (i.e., PTVs, Mis2 variants, Mis1 variants, deletions, and duplications). For each gene, TADA calculates a Bayes Factor (BF) for each combination of inheritance mode and variant class; BFs can then be multiplied to obtain a single overall BF that reflects the total association evidence for that gene (**Fig. 4**). BFs can be transformed into an estimated false discovery rate (FDR). Applying TADA to autosomal variants from our aggregated 62,429 affected individuals and respective family-based and population controls, we identify 253 genes where damaging mutations are associated with an autism diagnosis at FDR < 0.001, which approximates exome-wide significance. A total of 696 genes reach FDR < 0.05.
 
-<figure style="max-width: 75%;">
+<figure style="max-width: 65%;">
 
 ![Figure 4 | Transmission and de novo Association Bayesian association framework.](./fig4_tada_framework.png)
 
