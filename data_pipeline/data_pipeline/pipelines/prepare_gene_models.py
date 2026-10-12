@@ -213,6 +213,8 @@ def prepare_gnomad_v2_constraint(gnomad_v2_constraint_path):
         obs_syn=ds.obs_syn,
         # Observed/Expected
         oe_lof=ds.oe_lof,
+        oe_lof_lower=ds.oe_lof_lower,
+        oe_lof_upper=ds.oe_lof_upper,
         oe_mis=ds.oe_mis,
         oe_syn=ds.oe_syn,
         # Z
@@ -246,6 +248,8 @@ def prepare_gnomad_v4_constraint(gnomad_v4_constraint_path):
         obs_syn=ds.syn.obs,
         # Observed/Expected
         oe_lof=ds.lof.oe,
+        oe_lof_lower=ds.lof.oe_ci.lower,
+        oe_lof_upper=ds.lof.oe_ci.upper,
         oe_mis=ds.mis.oe,
         oe_syn=ds.syn.oe,
         # Z
