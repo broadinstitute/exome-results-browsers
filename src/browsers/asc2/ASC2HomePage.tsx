@@ -82,6 +82,10 @@ const HomePage = (): React.JSX.Element => {
         <ExternalLink href="https://www.sfari.org/">
           Simons Foundation Autism Research Initiative (SFARI)
         </ExternalLink>
+        , the{' '}
+        <ExternalLink href="https://sparkforautism.org/">
+          Simons Foundation Powering Autism Research (SPARK) initiaive
+        </ExternalLink>
         , our clinical diagnostic laboratory partner{' '}
         <ExternalLink href="https://www.genedx.com/">GeneDx</ExternalLink>, the Danish{' '}
         <ExternalLink href="https://ipsych.dk/en/about-ipsych">iPSYCH</ExternalLink> project, and
