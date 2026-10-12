@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom'
 import Browser from '../base/Browser'
 import { GeneResultsPage } from '../base/GeneResultsPage/GeneResultsPage'
 import { GeneRow } from '../base/GeneResultsPage/geneResultTableColumns'
+import getVariantTableColumns, { VariantRow } from '../base/GenePage/variantTableColumns'
 
 import ASC2Browser from './ASC2Browser'
 
@@ -190,5 +191,82 @@ describe('ASC2 all-genes table', () => {
     for (const tooltip of tooltips) {
       expect(tooltip).toMatch(/\.$/)
     }
+  })
+})
+
+const getVariantCountColumn = (key: string) => {
+  const configuration = getBrowserConfiguration()
+  const columns = getVariantTableColumns({
+    datasetId: 'ASC2',
+    variantResultColumns: configuration.variantResultColumns ?? [],
+    filter: {
+      includeCategories: { lof: true, missense: true, synonymous: true, other: true },
+      searchText: '',
+      custom: undefined,
+    },
+  })
+  const column = columns.find((candidate) => candidate.key === key)
+  if (!column) {
+    throw new Error(`Missing ASC2 variant count column: ${key}`)
+  }
+  return column
+}
+
+const countVariant: VariantRow = {
+  variant_id: '1-100-A-T',
+  pos: 100,
+  consequence: 'missense',
+  consequenceCategory: 'missense',
+  hgvsp: 'p.Lys34Asn',
+  hgvsc: 'c.100A>T',
+  group_results: {},
+  info: {},
+}
+
+describe('ASC2 variant count alignment', () => {
+  it.each([
+    ['de_novo_ac_proband', 'Proband'],
+    ['de_novo_ac_sibling', 'Sibling'],
+    ['transmitted_ac_proband', 'Transmitted'],
+    ['untransmitted_ac_proband', 'Untransmitted'],
+    ['ac_case', 'Case'],
+    ['ac_ctrl', 'Control'],
+  ])('centers the lower header and enables a centered numeric block for %s', (field, heading) => {
+    const column = getVariantCountColumn(`group_result.${field}`)
+    const row = { ...countVariant, group_result: { [field]: 123 } }
+
+    render(
+      <>
+        {column.heading}
+        {column.render(row, column.key, {})}
+      </>
+    )
+
+    expect(screen.getByText(heading)).toHaveStyle('text-align: center;')
+    expect(column.centerNumericValues).toBe(true)
+    expect(screen.getByText('123')).toBeInTheDocument()
+    expect(column.csvHeading).toBe(heading)
+    expect(column.renderForCSV(row, column.key)).toBe(123)
+  })
+
+  it('leaves the upper De novo header left-positioned', () => {
+    const column = getVariantCountColumn('group_result.de_novo_ac_proband')
+    render(<>{column.heading}</>)
+
+    expect(screen.getByText('De novo AC')).toHaveStyle('left: 0.5em;')
+  })
+
+  it.each([
+    [0, '0'],
+    [99999, '100000'],
+    [null, ''],
+    [undefined, ''],
+  ])('preserves count formatting and CSV values for %s', (value, expectedText) => {
+    const column = getVariantCountColumn('group_result.ac_case')
+    const row = { ...countVariant, group_result: { ac_case: value } }
+    const { container } = render(<>{column.render(row, column.key, {})}</>)
+
+    expect(container.textContent).toBe(expectedText)
+    expect(column.renderForCSV(row, column.key)).toBe(value)
   })
 })
