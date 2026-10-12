@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 
@@ -9,6 +9,8 @@ import getTableColumns from '../base/GeneResultsPage/geneResultTableColumns'
 import { GeneRow } from '../base/GeneResultsPage/geneResultTableColumns'
 import getVariantTableColumns, { VariantRow } from '../base/GenePage/variantTableColumns'
 import VariantTable from '../base/GenePage/VariantTable'
+import AutosizedRegionViewer from '../base/GenePage/AutosizedRegionViewer'
+import { VariantsInGene } from '../base/GenePage/VariantsInGene'
 
 import ASC2Browser from './ASC2Browser'
 
@@ -139,6 +141,97 @@ describe('ASC2 all-genes table', () => {
     expect(screen.getAllByRole('row')[1]).toHaveTextContent('0.00')
     fireEvent.click(screen.getByRole('button', { name: 'Bayes Factor' }))
     expect(screen.getAllByRole('row')[1]).toHaveTextContent('123.00')
+  })
+
+  it('sorts every all-genes column in both directions, keeping missing values last', () => {
+    const configuration = getGeneResultColumns()
+    const columns = getTableColumns(configuration)
+    const genes: GeneRow[] = [10, 2, 0, null].map((value, index) => ({
+      ...Object.fromEntries(configuration.map((column) => [column.key, value])),
+      gene_id: `ENSG${index}`,
+      gene_symbol: ['ZETA', 'ALPHA', 'BETA', 'MISSING'][index],
+      gene_name: ['Zebra', 'Apple', 'Berry', undefined][index],
+      symbol: 'GENE',
+      reference_genome: 'GRCh38',
+      canonical_transcript_id: 'ENST1',
+      start: 1,
+      stop: 100,
+      group_results: {},
+      qc_flagged: [false, true, false, null][index],
+      bayes_factor: ['Infinity', 2, 0, null][index],
+      false_discovery_rate: [0.7, 0.05, 0, undefined][index],
+    }))
+    render(
+      <MemoryRouter>
+        <GeneResultsTable
+          defaultSortKey="bayes_factor"
+          defaultSortOrder="descending"
+          geneResultColumns={columns}
+          geneResults={genes}
+        />
+      </MemoryRouter>
+    )
+    const geneOrder = () =>
+      screen
+        .getAllByRole('row')
+        .slice(1)
+        .map((row) => row.querySelector('[aria-colindex="1"]')?.textContent)
+    for (const [columnIndex, column] of columns.entries()) {
+      const header = screen.getAllByRole('columnheader')[columnIndex]
+      const button = header?.querySelector('button')
+      if (!button) throw new Error(`Missing sortable header ${column.key}`)
+      fireEvent.click(button)
+      expect(header).toHaveAttribute('aria-sort', 'ascending')
+      if (column.key === 'gene_id')
+        expect(geneOrder()).toEqual(['ALPHA', 'BETA', 'MISSING', 'ZETA'])
+      else if (column.key === 'gene_name')
+        expect(geneOrder()).toEqual(['ALPHA', 'BETA', 'ZETA', 'MISSING'])
+      else if (column.key === 'qc_flagged')
+        expect(geneOrder()).toEqual(['ZETA', 'BETA', 'ALPHA', 'MISSING'])
+      else expect(geneOrder()).toEqual(['BETA', 'ALPHA', 'ZETA', 'MISSING'])
+      fireEvent.click(button)
+      expect(header).toHaveAttribute('aria-sort', 'descending')
+      if (column.key === 'gene_id')
+        expect(geneOrder()).toEqual(['ZETA', 'MISSING', 'BETA', 'ALPHA'])
+      else if (column.key === 'gene_name')
+        expect(geneOrder()).toEqual(['ZETA', 'BETA', 'ALPHA', 'MISSING'])
+      else if (column.key === 'qc_flagged')
+        expect(geneOrder()).toEqual(['ALPHA', 'ZETA', 'BETA', 'MISSING'])
+      else expect(geneOrder()).toEqual(['ZETA', 'ALPHA', 'BETA', 'MISSING'])
+    }
+  })
+
+  it('sorts Flag without crashing when no genes are flagged', () => {
+    const columns = getTableColumns([getGeneResultColumn('qc_flagged')])
+    const genes: GeneRow[] = [false, false, null, undefined].map((qc_flagged, index) => ({
+      gene_id: `ENSG${index}`,
+      gene_symbol: `GENE${index}`,
+      symbol: `GENE${index}`,
+      reference_genome: 'GRCh38',
+      canonical_transcript_id: 'ENST1',
+      start: 1,
+      stop: 100,
+      gene_name: undefined,
+      group_results: {},
+      qc_flagged,
+    }))
+    render(
+      <MemoryRouter>
+        <GeneResultsTable
+          defaultSortKey="gene_id"
+          geneResultColumns={columns}
+          geneResults={genes}
+        />
+      </MemoryRouter>
+    )
+    const flagHeader = screen.getByRole('button', { name: 'Flag' })
+    fireEvent.click(flagHeader)
+    fireEvent.click(flagHeader)
+    expect(screen.getAllByRole('row')).toHaveLength(5)
+    expect(screen.getByRole('columnheader', { name: 'Flag' })).toHaveAttribute(
+      'aria-sort',
+      'descending'
+    )
   })
 
   it.each([false, null, undefined])('leaves the flag empty for %s', (value) => {
@@ -281,6 +374,111 @@ const countVariant: VariantRow = {
   group_results: {},
   info: {},
 }
+
+describe('ASC2 variant sorting', () => {
+  it('sorts every single-gene variant column in both directions without crashing', () => {
+    const configuration = getBrowserConfiguration()
+    const countFields = [
+      'de_novo_ac_proband',
+      'de_novo_ac_sibling',
+      'transmitted_ac_proband',
+      'untransmitted_ac_proband',
+      'ac_case',
+      'ac_ctrl',
+    ]
+    const variants: VariantRow[] = [10, 2, 0, null].map((value, index) => ({
+      variant_id: ['1-103-A-T', '1-102-A-T', '1-101-A-T', '1-104-A-T'][index],
+      pos: [103, 102, 101, 104][index],
+      hgvs: ['p.Z', 'p.A', 'p.B', ''][index],
+      hgvsp: ['p.Z', 'p.A', 'p.B', ''][index],
+      hgvsc: '',
+      consequence: ['stop_gained', 'missense_variant', 'synonymous_variant', ''][index],
+      consequenceCategory: ['PTV', 'Mis2', 'Mis1', 'synonymous'][index],
+      group_results: {
+        meta: {
+          ...Object.fromEntries(countFields.map((field) => [field, value])),
+          ac_case: value ?? 0,
+          ac_ctrl: value ?? 0,
+          an_case: 20,
+          an_ctrl: 20,
+          af_case: 0.1,
+          af_ctrl: 0.1,
+          af: 0.1,
+        },
+      },
+      info: {
+        variant_class: ['PTV', 'Mis2', 'Mis1', 'synonymous'][index],
+        transcript_id: ['ENST_Z', 'ENST_A', 'ENST_B', null][index],
+        mpc: value,
+        alpha_missense: [0.9, 0.2, 0, null][index],
+        gnomad_af: [0.09, 0.02, 0, undefined][index],
+        is_other_splice: [true, false, false, null][index],
+      },
+    }))
+    const resultColumns = configuration.variantResultColumns ?? []
+    const columns = getVariantTableColumns({
+      datasetId: 'ASC2',
+      variantResultColumns: resultColumns,
+      variantCategoryOptions: configuration.variantCategoryOptions,
+      filter: { includeCategories: {}, searchText: '', custom: undefined },
+    })
+    render(
+      <MemoryRouter>
+        <AutosizedRegionViewer regions={[{ start: 90, stop: 150, feature_type: 'exon' }]}>
+          <VariantsInGene
+            datasetId="ASC2"
+            gene={{ gene_id: 'ENSG1', reference_genome: 'GRCh38' }}
+            variants={variants}
+            variantAnalysisGroupOptions={['meta']}
+            defaultVariantAnalysisGroup="meta"
+            variantResultColumns={resultColumns}
+            variantCategoryOptions={configuration.variantCategoryOptions}
+            getVariantCategory={configuration.getVariantCategory}
+            variantLollipopTrackGroups={configuration.variantLollipopTrackGroups}
+          />
+        </AutosizedRegionViewer>
+      </MemoryRouter>
+    )
+    const grid = screen.getByRole('grid')
+    const order = () =>
+      within(grid)
+        .getAllByRole('row')
+        .slice(1)
+        .map((row) => row.querySelector('[aria-colindex="1"]')?.textContent)
+    const high = '1-103-A-T',
+      low = '1-102-A-T',
+      zero = '1-101-A-T',
+      missing = '1-104-A-T'
+    for (const [columnIndex, column] of columns.entries()) {
+      const button = within(grid).getAllByRole('columnheader')[columnIndex]?.querySelector('button')
+      if (!button) throw new Error(`Missing sortable variant header ${column.key}`)
+      fireEvent.click(button)
+      fireEvent.click(button)
+      if (column.key === 'variant_id') expect(order()).toEqual([zero, low, high, missing])
+      else if (column.key === 'info.variant_class')
+        expect(order()).toEqual([high, low, zero, missing])
+      else if (column.key === 'consequence') expect(order()).toEqual([low, high, zero, missing])
+      else if (['hgvs', 'info.transcript_id', 'info.is_other_splice'].includes(column.key))
+        expect({ column: column.key, rows: order() }).toEqual({
+          column: column.key,
+          rows: [low, zero, high, missing],
+        })
+      else if (['group_result.ac_case', 'group_result.ac_ctrl'].includes(column.key))
+        expect(order()).toEqual([zero, missing, low, high])
+      else expect(order()).toEqual([zero, low, high, missing])
+      fireEvent.click(button)
+      if (column.key === 'variant_id') expect(order()).toEqual([missing, high, low, zero])
+      else if (column.key === 'info.variant_class')
+        expect(order()).toEqual([missing, zero, low, high])
+      else if (column.key === 'consequence') expect(order()).toEqual([zero, high, low, missing])
+      else if (column.key === 'info.is_other_splice')
+        expect(order()).toEqual([high, low, zero, missing])
+      else if (['hgvs', 'info.transcript_id'].includes(column.key))
+        expect(order()).toEqual([high, zero, low, missing])
+      else expect(order()).toEqual([high, low, zero, missing])
+    }
+  })
+})
 
 describe('ASC2 variant count alignment', () => {
   it.each([

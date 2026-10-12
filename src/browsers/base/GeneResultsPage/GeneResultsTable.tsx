@@ -53,10 +53,10 @@ class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsT
   }
 
   setSortKey = (sortKey: string) => {
+    const resolvedSortKey = sortKey === 'gene_id' ? 'gene_symbol' : sortKey
     this.setState((state) => ({
-      // ...state,
-      sortKey: sortKey === 'gene_id' ? 'gene_symbol' : sortKey,
-      sortAscending: sortKey === state.sortKey ? !state.sortAscending : true,
+      sortKey: resolvedSortKey,
+      sortAscending: resolvedSortKey === state.sortKey ? !state.sortAscending : true,
     }))
   }
 
@@ -65,9 +65,16 @@ class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsT
     const { sortKey, sortAscending } = this.state
 
     const comparator =
-      sortKey === 'gene_id' || sortKey === 'gene_name' || sortKey === 'flags'
+      sortKey === 'gene_id' ||
+      sortKey === 'gene_symbol' ||
+      sortKey === 'gene_name' ||
+      sortKey === 'flags'
         ? (a: any, b: any) => a.localeCompare(b)
-        : (a: any, b: any) => parseNumericValue(a) - parseNumericValue(b)
+        : (a: any, b: any) => {
+            const numericA = typeof a === 'boolean' ? Number(a) : parseNumericValue(a)
+            const numericB = typeof b === 'boolean' ? Number(b) : parseNumericValue(b)
+            return numericA - numericB
+          }
 
     const orderedComparator = sortAscending ? comparator : (a: any, b: any) => comparator(b, a)
 
@@ -75,13 +82,11 @@ class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsT
       const sortValA = resultA[sortKey]
       const sortValB = resultB[sortKey]
 
-      if (sortValA === null || sortValA === '') {
-        return 1
-      }
-
-      if (sortValB === null || sortValB === '') {
-        return -1
-      }
+      const isMissingA = sortValA === null || sortValA === undefined || sortValA === ''
+      const isMissingB = sortValB === null || sortValB === undefined || sortValB === ''
+      if (isMissingA && isMissingB) return 0
+      if (isMissingA) return 1
+      if (isMissingB) return -1
 
       return orderedComparator(sortValA, sortValB)
     })
@@ -118,7 +123,7 @@ class GeneResultsTable extends PureComponent<GeneResultsTableProps, GeneResultsT
             data={renderedResults}
             numRowsRendered={32}
             rowKey={(result: GeneRow) => `${result.gene_id}-${result.gene_symbol}`}
-            sortKey={sortKey}
+            sortKey={sortKey === 'gene_symbol' ? 'gene_id' : sortKey}
             sortOrder={sortAscending ? 'ascending' : 'descending'}
             onRequestSort={this.setSortKey}
           />
