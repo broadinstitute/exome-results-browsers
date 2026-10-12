@@ -18,6 +18,7 @@ VARIANT_RESULTS_FIELDS = {
     "Gene": ("gene_name", hl.tstr),
     "Gene ID": ("gene_id", hl.tstr),
     "HGVSp": ("hgvsp", hl.tstr),
+    "HGVSc": ("hgvsc", hl.tstr),
     # consequence terms here are different than 'standard' VEP terms
     "Consequence": ("consequence", hl.tstr),
     "Class": ("variant_class", hl.tstr),
@@ -81,8 +82,6 @@ def prepare_variant_results(test_genes, _output_root):
             transcript_id=ds.transcript_id,
             variant_class=ds.variant_class,
         ),
-        # not included in handoff table, required in validation
-        hgvsc=hl.missing(hl.tstr),
     )
 
     ds = ds.annotate(
