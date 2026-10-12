@@ -179,7 +179,9 @@ const variantClassCategoryColumns = (
   minWidth: number,
   columnsPerRole: VariantClassColumnSpec[]
 ): GeneResultColumnConfig[] =>
-  ASC2_VARIANT_CLASS_CATEGORIES.flatMap((category) =>
+  ASC2_VARIANT_CLASS_CATEGORIES.filter(
+    (category) => !category.isExcludedFromAnalysis
+  ).flatMap((category) =>
     columnsPerRole.map(({ key, heading, tooltip }) =>
       geneCountColumn(key(category), heading(category), tooltip(category), minWidth, group)
     )
