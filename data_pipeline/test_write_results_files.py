@@ -1,7 +1,9 @@
 import json
 import stat
+from unittest.mock import MagicMock
 
 import pytest
+import write_results_files
 from write_results_files import ResultEncoder, assemble_variant_chunks
 
 
@@ -95,3 +97,35 @@ def test_assemble_variant_chunks_rejects_wrong_variant_count_atomically(tmp_path
 
     assert not output_path.exists()
     assert not list(tmp_path.glob(".variants.json.*.tmp"))
+
+
+@pytest.mark.parametrize("directory_exists", [False, True])
+def test_write_data_files_writes_empty_oversized_report_without_prior_exports(tmp_path, monkeypatch, directory_exists):
+    output_directory = tmp_path / "nested" / "results"
+    if directory_exists:
+        output_directory.mkdir(parents=True)
+        (output_directory / "existing.txt").write_text("keep", encoding="utf-8")
+
+    table = MagicMock()
+    for method in ["annotate", "filter", "select", "drop", "repartition"]:
+        getattr(table, method).return_value = table
+    table.collect.return_value = []
+    table.count.return_value = 1
+    table.total_variants = 1
+    table.variants.dtype.fields = ["ASC2"]
+    hail = MagicMock()
+    hail.read_table.return_value = table
+    write_gene_summary_file = MagicMock()
+    write_json_files = MagicMock()
+    monkeypatch.setattr(write_results_files, "hl", hail)
+    monkeypatch.setattr(write_results_files, "write_gene_summary_file", write_gene_summary_file)
+    monkeypatch.setattr(write_results_files, "write_json_files", write_json_files)
+
+    write_results_files.write_data_files("combined.ht", str(output_directory))
+
+    report_path = output_directory / "oversized_genes_report.json"
+    assert json.loads(report_path.read_text(encoding="utf-8")) == {"genes": []}
+    write_gene_summary_file.assert_called_once_with(str(output_directory), table)
+    write_json_files.assert_called_once_with(str(output_directory), "temp_parts", 1)
+    if directory_exists:
+        assert (output_directory / "existing.txt").read_text(encoding="utf-8") == "keep"
