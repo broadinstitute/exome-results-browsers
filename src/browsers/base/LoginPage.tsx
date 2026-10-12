@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { Page, PageHeading } from '@gnomad/ui'
 
 import DocumentTitle from './DocumentTitle'
+import Link from './Link'
 import { userHasBearerCookie, logout } from './auth'
 
 const ErrorMessage = styled.div`
@@ -87,11 +88,19 @@ const LoginPage = () => {
 
   if (userHasBearerCookie()) {
     return (
-      <>
+      <Page>
+        <DocumentTitle title="Browser sign-in" />
+        <PageHeading>Browser sign-in</PageHeading>
+        <p>Your browser has a saved sign-in.</p>
+        <p>
+          Continue to the browser, or log out to sign in again. If your sign-in has expired,
+          you&apos;ll be asked to enter the password again.
+        </p>
+        <Link to="/">Continue to browser</Link>
         <Button type="button" onClick={logout} variant="logout" disabled={loading}>
-          Logout
+          Log out
         </Button>
-      </>
+      </Page>
     )
   }
 
