@@ -356,6 +356,7 @@ interface VariantDetailsProps {
   renderVariantAttributes: RenderVariantAttributes
   additionalVariantDetailSummaryColumns: VariantColumnConfig[] | undefined
   variantDetailColumns: VariantColumnConfig[] | undefined
+  variantDetailsSingleAnalysisGroup?: boolean
   renderVariantTranscriptConsequences: boolean
   filter: FilterState
 }
@@ -371,6 +372,7 @@ const VariantDetails = ({
   renderVariantAttributes,
   additionalVariantDetailSummaryColumns,
   variantDetailColumns,
+  variantDetailsSingleAnalysisGroup = false,
   renderVariantTranscriptConsequences,
   filter,
 }: VariantDetailsProps) => {
@@ -558,6 +560,10 @@ const VariantDetails = ({
     variant.group_results = parsedGroupResults
   }
 
+  const analysisLabel = variantDetailsSingleAnalysisGroup
+    ? 'Analysis'
+    : `Analysis (${defaultVariantAnalysisGroup})`
+
   return (
     <VariantContainer>
       <div>
@@ -571,7 +577,7 @@ const VariantDetails = ({
       <Columns>
         {datasetId !== 'GP2' && defaultGroupResult && (
           <Column>
-            <VariantAttributeList label={`Analysis (${defaultVariantAnalysisGroup})`}>
+            <VariantAttributeList label={analysisLabel}>
               {datasetId !== 'ASC2' && (
                 <>
                   <VariantAttribute label="Cases">
@@ -615,54 +621,58 @@ const VariantDetails = ({
         </Column>
       </Columns>
 
-      <h2>Analysis Groups</h2>
-      <TableWrapper>
-        <BaseTable>
-          <thead>
-            <tr>
-              <th scope="col">Group</th>
-              {renderedVariantColumns.map((c) => (
-                <th key={c.key} scope="col">
-                  {c.heading}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Object.keys(variant.group_results)
-              .sort((g1, g2) => {
-                if (g1 === defaultVariantAnalysisGroup) {
-                  return -1
-                }
-                if (g2 === defaultVariantAnalysisGroup) {
-                  return 1
-                }
-                return (variantAnalysisGroupLabels[g1] || g1).localeCompare(
-                  variantAnalysisGroupLabels[g2] || g2
-                )
-              })
-              .map((analysisGroup) => {
-                const groupResult = variant.group_results[analysisGroup]
-                const rowVariant = { ...variant, group_result: groupResult }
-
-                return (
-                  <tr key={analysisGroup}>
-                    <th scope="row">
-                      {variantAnalysisGroupLabels[analysisGroup] || analysisGroup}
+      {!variantDetailsSingleAnalysisGroup && (
+        <>
+          <h2>Analysis Groups</h2>
+          <TableWrapper>
+            <BaseTable>
+              <thead>
+                <tr>
+                  <th scope="col">Group</th>
+                  {renderedVariantColumns.map((c) => (
+                    <th key={c.key} scope="col">
+                      {c.heading}
                     </th>
-                    {renderedVariantColumns.map((c) => (
-                      <td key={c.key}>
-                        {get(rowVariant, c.key) === null
-                          ? ''
-                          : (c.render || renderNumber)(get(rowVariant, c.key))}
-                      </td>
-                    ))}
-                  </tr>
-                )
-              })}
-          </tbody>
-        </BaseTable>
-      </TableWrapper>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Object.keys(variant.group_results)
+                  .sort((g1, g2) => {
+                    if (g1 === defaultVariantAnalysisGroup) {
+                      return -1
+                    }
+                    if (g2 === defaultVariantAnalysisGroup) {
+                      return 1
+                    }
+                    return (variantAnalysisGroupLabels[g1] || g1).localeCompare(
+                      variantAnalysisGroupLabels[g2] || g2
+                    )
+                  })
+                  .map((analysisGroup) => {
+                    const groupResult = variant.group_results[analysisGroup]
+                    const rowVariant = { ...variant, group_result: groupResult }
+
+                    return (
+                      <tr key={analysisGroup}>
+                        <th scope="row">
+                          {variantAnalysisGroupLabels[analysisGroup] || analysisGroup}
+                        </th>
+                        {renderedVariantColumns.map((c) => (
+                          <td key={c.key}>
+                            {get(rowVariant, c.key) === null
+                              ? ''
+                              : (c.render || renderNumber)(get(rowVariant, c.key))}
+                          </td>
+                        ))}
+                      </tr>
+                    )
+                  })}
+              </tbody>
+            </BaseTable>
+          </TableWrapper>
+        </>
+      )}
 
       {renderVariantTranscriptConsequences && variant.info && variant.info.transcript_consequences && (
         <>

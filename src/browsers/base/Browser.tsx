@@ -239,6 +239,7 @@ type BrowserProps = {
   getVariantCategory?: (variant: any) => string
   variantCustomFilter?: VariantCustomFilter
   variantDetailColumns?: VariantColumnConfig[]
+  variantDetailsSingleAnalysisGroup?: boolean
   renderVariantAttributes?: RenderVariantAttributes
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences?: boolean
@@ -282,6 +283,7 @@ const Browser = ({
   renderVariantAttributes = undefined,
   additionalVariantDetailSummaryColumns = undefined,
   variantDetailColumns = undefined,
+  variantDetailsSingleAnalysisGroup = false,
   renderVariantTranscriptConsequences = false,
   variantAlleleFrequencyOverride = undefined,
   variantExportNote = undefined,
@@ -377,6 +379,7 @@ const Browser = ({
                 renderVariantAttributes={renderVariantAttributes}
                 additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
                 variantDetailColumns={variantDetailColumns}
+                variantDetailsSingleAnalysisGroup={variantDetailsSingleAnalysisGroup}
                 renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
                 variantAlleleFrequencyOverride={variantAlleleFrequencyOverride}
                 variantExportNote={variantExportNote}

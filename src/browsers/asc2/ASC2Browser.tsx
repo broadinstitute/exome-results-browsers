@@ -294,6 +294,7 @@ const ASC2Browser = () => (
     ]}
     variantAnalysisGroupOptions={ascAnalysisGroups}
     defaultVariantAnalysisGroup={ascDefaultAnalysisGroup}
+    variantDetailsSingleAnalysisGroup
     variantResultColumns={[
       {
         key: 'info.variant_class',
