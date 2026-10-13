@@ -112,7 +112,7 @@ def test_write_data_files_writes_empty_oversized_report_without_prior_exports(tm
     table.collect.return_value = []
     table.count.return_value = 1
     table.total_variants = 1
-    table.variants.dtype.fields = ["ASC2"]
+    table.variants.dtype.fields = ["AGB"]
     hail = MagicMock()
     hail.read_table.return_value = table
     write_gene_summary_file = MagicMock()

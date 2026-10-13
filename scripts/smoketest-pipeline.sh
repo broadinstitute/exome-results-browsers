@@ -54,7 +54,7 @@ done
 
 for dataset in "${DATASETS[@]}"; do
   case "$dataset" in
-    ASC|ASC2|BipEx|Epi25|SCHEMA|IBD|GP2|ClinVarGRCh38) ;;
+    ASC|AGB|BipEx|Epi25|SCHEMA|IBD|GP2|ClinVarGRCh38) ;;
     *)
       echo "error: unknown dataset: $dataset" >&2
       exit 1

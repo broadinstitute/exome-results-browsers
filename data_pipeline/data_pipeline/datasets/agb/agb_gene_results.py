@@ -58,7 +58,7 @@ GENE_RESULTS_FIELDS = {
 
 def prepare_gene_results(test_genes, _output_root):
     ds = hl.import_table(
-        pipeline_config.get("ASC2", "gene_results_path"),
+        pipeline_config.get("AGB", "gene_results_path"),
         force=True,
         missing="",
         types={raw_name: field_type for raw_name, (_, field_type) in GENE_RESULTS_FIELDS.items()},
@@ -68,7 +68,7 @@ def prepare_gene_results(test_genes, _output_root):
 
     if test_genes:
         ds = filter_gene_results_to_test_genes(
-            ds, "gene_symbol", parse_test_genes(pipeline_config.get("ASC2", "test_genes"))
+            ds, "gene_symbol", parse_test_genes(pipeline_config.get("AGB", "test_genes"))
         )
 
     ds = ds.key_by("gene_id")

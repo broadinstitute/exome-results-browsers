@@ -28,7 +28,7 @@ VARIANT_RESULTS_FIELDS = {
 
 def prepare_variant_results(test_genes, _output_root):
     ds = hl.import_table(
-        pipeline_config.get("ASC2", "variant_results_path"),
+        pipeline_config.get("AGB", "variant_results_path"),
         force=True,
         missing="",
         types={raw_name: field_type for raw_name, (_, field_type) in VARIANT_RESULTS_FIELDS.items()},
@@ -49,7 +49,7 @@ def prepare_variant_results(test_genes, _output_root):
 
     if test_genes:
         ds = filter_variant_results_to_test_gene_intervals(
-            ds, get_test_gene_intervals("ASC2", pipeline_config.get("ASC2", "test_genes"))
+            ds, get_test_gene_intervals("AGB", pipeline_config.get("AGB", "test_genes"))
         )
 
     ds = ds.rename({raw_name: new_name for raw_name, (new_name, _) in VARIANT_RESULTS_FIELDS.items()})
