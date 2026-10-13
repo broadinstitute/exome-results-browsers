@@ -19,7 +19,6 @@ RESULT_FILE_MODE = 0o644
 VARIANT_THRESHOLD = 200_000
 VARIANT_CHUNK_SIZE = 10_000
 EXPECTED_DATASETS = [
-    "ASC",
     "AGB",
     "BipEx",
     "Epi25",
@@ -441,8 +440,7 @@ def write_data_files(table_path, output_directory, genes=None):
 
     ds = ds.annotate(
         total_variants=(
-            ds.variant_counts.ASC
-            + ds.variant_counts.AGB
+            ds.variant_counts.AGB
             + ds.variant_counts.BipEx
             + ds.variant_counts.Epi25
             + ds.variant_counts.GP2
