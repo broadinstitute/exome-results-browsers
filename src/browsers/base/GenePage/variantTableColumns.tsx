@@ -559,14 +559,14 @@ const getVariantTableColumns = ({
     })
 
     datasetColumns.push(...renderedGP2Columns)
-  } else if (datasetId !== 'ASC2') {
+  } else if (datasetId !== 'AGB') {
     datasetColumns.push(...statColumns)
   }
 
   const filteredVariantResultColumns =
-    datasetId === 'ASC2' && filter.asc2VariantColumnGroups
+    datasetId === 'AGB' && filter.agbVariantColumnGroups
       ? variantResultColumns.filter(
-          (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
+          (column) => !column.group || filter.agbVariantColumnGroups![column.group.key]
         )
       : variantResultColumns
 

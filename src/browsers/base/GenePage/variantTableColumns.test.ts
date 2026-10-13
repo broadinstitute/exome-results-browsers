@@ -128,16 +128,16 @@ describe('HGVS description columns', () => {
     })
   }
 
-  const getAsc2HgvsColumn = () => {
-    const column = buildDescriptionColumns('ASC2').find((candidate) => candidate.key === 'hgvs')
+  const getAgbHgvsColumn = () => {
+    const column = buildDescriptionColumns('AGB').find((candidate) => candidate.key === 'hgvs')
     if (!column) {
-      throw new Error('Missing ASC2 column: hgvs')
+      throw new Error('Missing AGB column: hgvs')
     }
     return column
   }
 
-  it('keeps the combined ASC2 column in its original position', () => {
-    const columns = buildDescriptionColumns('ASC2')
+  it('keeps the combined AGB column in its original position', () => {
+    const columns = buildDescriptionColumns('AGB')
 
     expect(columns.map((column) => column.key)).toEqual([
       'variant_id',
@@ -148,7 +148,7 @@ describe('HGVS description columns', () => {
     expect(columns[1].heading).toBe('HGVSp/c')
   })
 
-  it.each(['ASC', 'ASC2', 'BipEx', 'BipEx2', 'Epi25', 'GP2', 'IBD', 'SCHEMA'])(
+  it.each(['ASC', 'AGB', 'BipEx', 'BipEx2', 'Epi25', 'GP2', 'IBD', 'SCHEMA'])(
     'keeps the combined column for %s',
     (datasetId) => {
       const columns = buildDescriptionColumns(datasetId)
@@ -167,7 +167,7 @@ describe('HGVS description columns', () => {
     { hgvsp: 'p.Lys34Asn', hgvsc: 'c.100A>T', expected: 'p.Lys34Asn' },
     { hgvsp: '', hgvsc: 'c.100A>T', expected: 'c.100A>T' },
   ])('renders and exports the combined HGVS value $expected', ({ hgvsp, hgvsc, expected }) => {
-    const column = getAsc2HgvsColumn()
+    const column = getAgbHgvsColumn()
     const normalizedVariant = { ...variant, hgvsp, hgvsc, hgvs: hgvsp || hgvsc }
 
     render(React.createElement(React.Fragment, null, column.render(normalizedVariant, 'hgvs', {})))
@@ -181,7 +181,7 @@ describe('HGVS description columns', () => {
   })
 
   it('leaves the combined column blank when both HGVS values are missing', () => {
-    const column = getAsc2HgvsColumn()
+    const column = getAgbHgvsColumn()
     const variantWithMissingHgvs = { ...variant, hgvsp: '', hgvsc: '', hgvs: '' }
 
     const { container } = render(

@@ -19,7 +19,7 @@ const Caption = styled.p`
   color: #555;
 `
 
-const ASC2WaterfallPlot = () => (
+const AGBWaterfallPlot = () => (
   <Wrapper>
     <Image src={WaterfallPlotImage} alt="TADA waterfall plot" />
     <Caption>
@@ -33,4 +33,4 @@ const ASC2WaterfallPlot = () => (
   </Wrapper>
 )
 
-export default ASC2WaterfallPlot
+export default AGBWaterfallPlot

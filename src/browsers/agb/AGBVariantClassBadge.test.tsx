@@ -1,38 +1,38 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 
-import ASC2VariantClassBadge, {
-  ASC2_VARIANT_CLASS_COLORS,
-  compareASC2VariantClassSeverity,
-} from './ASC2VariantClassBadge'
-import { ASC2VariantClass } from './ascTypes'
+import AGBVariantClassBadge, {
+  AGB_VARIANT_CLASS_COLORS,
+  compareAGBVariantClassSeverity,
+} from './AGBVariantClassBadge'
+import { AGBVariantClass } from './agbTypes'
 
-describe('ASC2VariantClassBadge', () => {
-  it.each(Object.keys(ASC2_VARIANT_CLASS_COLORS))(
+describe('AGBVariantClassBadge', () => {
+  it.each(Object.keys(AGB_VARIANT_CLASS_COLORS))(
     'renders %s with the color sampled from fig3_variant_callset.png',
     (variantClass) => {
-      render(<ASC2VariantClassBadge variantClass={variantClass} />)
+      render(<AGBVariantClassBadge variantClass={variantClass} />)
 
       const badge = screen.getByText(variantClass === 'synonymous' ? 'Synonymous' : variantClass)
 
       expect(badge).toHaveStyle({
-        background: ASC2_VARIANT_CLASS_COLORS[variantClass as ASC2VariantClass],
+        background: AGB_VARIANT_CLASS_COLORS[variantClass as AGBVariantClass],
       })
     }
   )
 
   it('falls back to a neutral color for an unrecognized class instead of throwing', () => {
-    render(<ASC2VariantClassBadge variantClass="unexpected-future-class" />)
+    render(<AGBVariantClassBadge variantClass="unexpected-future-class" />)
 
     expect(screen.getByText('unexpected-future-class')).toBeInTheDocument()
   })
 })
 
-describe('compareASC2VariantClassSeverity', () => {
+describe('compareAGBVariantClassSeverity', () => {
   it('orders classes by severity, matching CLASS_SEVERITY_RANK in the data pipeline', () => {
     const classes = ['synonymous', 'Mis0', 'PTV', 'Mis1', 'Mis2']
 
-    expect([...classes].sort(compareASC2VariantClassSeverity)).toEqual([
+    expect([...classes].sort(compareAGBVariantClassSeverity)).toEqual([
       'PTV',
       'Mis2',
       'Mis1',
@@ -42,8 +42,8 @@ describe('compareASC2VariantClassSeverity', () => {
   })
 
   it('sorts an unrecognized class after every known class', () => {
-    expect(
-      compareASC2VariantClassSeverity('unexpected-future-class', 'synonymous')
-    ).toBeGreaterThan(0)
+    expect(compareAGBVariantClassSeverity('unexpected-future-class', 'synonymous')).toBeGreaterThan(
+      0
+    )
   })
 })

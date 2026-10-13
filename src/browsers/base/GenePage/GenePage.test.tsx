@@ -93,8 +93,8 @@ const renderGenePage = (datasetId: DatasetId) => {
 }
 
 describe('gene page constraint tabs', () => {
-  it('removes ExAC for ASC2 while retaining both gnomAD tables', () => {
-    renderGenePage('ASC2')
+  it('removes ExAC for AGB while retaining both gnomAD tables', () => {
+    renderGenePage('AGB')
 
     expect(screen.queryByText('ExAC')).not.toBeInTheDocument()
     expect(screen.getByText('gnomAD v4')).toBeInTheDocument()

@@ -1,4 +1,4 @@
-export interface ASC2GeneResult {
+export interface AGBGeneResult {
   bayes_factor: number
   false_discovery_rate: number
   qc_flagged: boolean
@@ -49,12 +49,12 @@ export interface ASC2GeneResult {
   dup_control: number
 }
 
-export interface ASC2VariantClassCategory {
+export interface AGBVariantClassCategory {
   suffix: 'ptv' | 'mis2' | 'mis1' | 'mis0' | 'syn' | 'del' | 'dup'
   label: string
   criteria?: string
   tooltip: string
-  // Categories reviewed but excluded from the ASC2 analysis, shown de-emphasized in the gene result table.
+  // Categories reviewed but excluded from the AGB analysis, shown de-emphasized in the gene result table.
   isExcludedFromAnalysis?: boolean
 }
 
@@ -62,7 +62,7 @@ const MIS2_CRITERIA = '(MPC \u2265 2 and AM \u2265 0.97)'
 const MIS1_CRITERIA = '(MPC \u2265 2 or AM \u2265 0.97)'
 const MIS0_CRITERIA = '(MPC < 2 and AM < 0.97)'
 
-export const ASC2_VARIANT_CLASS_CATEGORIES: ASC2VariantClassCategory[] = [
+export const AGB_VARIANT_CLASS_CATEGORIES: AGBVariantClassCategory[] = [
   { suffix: 'ptv', label: 'PTV', tooltip: 'Protein-truncating variants.' },
   {
     suffix: 'mis2',
@@ -101,7 +101,7 @@ export const ASC2_VARIANT_CLASS_CATEGORIES: ASC2VariantClassCategory[] = [
   },
 ]
 
-export const describeVariantClass = (category: ASC2VariantClassCategory): string => {
+export const describeVariantClass = (category: AGBVariantClassCategory): string => {
   switch (category.suffix) {
     case 'mis2':
     case 'mis1':
@@ -118,18 +118,18 @@ export const describeVariantClass = (category: ASC2VariantClassCategory): string
   }
 }
 
-export type ASC2VariantClass = 'PTV' | 'Mis2' | 'Mis1' | 'Mis0' | 'synonymous'
+export type AGBVariantClass = 'PTV' | 'Mis2' | 'Mis1' | 'Mis0' | 'synonymous'
 
-export interface ASC2VariantInfo {
+export interface AGBVariantInfo {
   mpc: number | null
   alpha_missense: number | null
   is_other_splice: boolean | null
   gnomad_af: number | null
   transcript_id: string | null
-  variant_class: ASC2VariantClass
+  variant_class: AGBVariantClass
 }
 
-export interface ASC2VariantGroupResult {
+export interface AGBVariantGroupResult {
   de_novo_ac_proband: number
   de_novo_ac_sibling: number
   transmitted_ac_proband: number
@@ -138,7 +138,7 @@ export interface ASC2VariantGroupResult {
   ac_ctrl: number
 }
 
-export interface ASC2VariantRow {
-  info: ASC2VariantInfo
-  group_result: ASC2VariantGroupResult
+export interface AGBVariantRow {
+  info: AGBVariantInfo
+  group_result: AGBVariantGroupResult
 }

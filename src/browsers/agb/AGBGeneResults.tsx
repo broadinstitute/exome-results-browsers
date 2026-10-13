@@ -3,9 +3,9 @@ import styled from 'styled-components'
 
 // @ts-expect-error: no types in this @gnomad/ui version
 import { BaseTable, TooltipAnchor, TooltipHint } from '@gnomad/ui'
-import { ASC2AnalysisGroup } from './ASC2Browser'
-import { renderASC2BayesFactor, renderASC2FalseDiscoveryRate } from './ascNumberFormatting'
-import { ASC2_VARIANT_CLASS_CATEGORIES, ASC2GeneResult } from './ascTypes'
+import { AGBAnalysisGroup } from './AGBBrowser'
+import { renderAGBBayesFactor, renderAGBFalseDiscoveryRate } from './agbNumberFormatting'
+import { AGB_VARIANT_CLASS_CATEGORIES, AGBGeneResult } from './agbTypes'
 
 const EXCLUDED_FROM_ANALYSIS_ROW_COLOR = '#767676'
 const EXCLUDED_FROM_ANALYSIS_ROW_ITALIC = true
@@ -58,11 +58,11 @@ const ClassRow = styled.tr<{ $isExcludedFromAnalysis?: boolean }>`
 
 const renderCount = (value: number | null) => (value === null ? '\u2014' : value)
 
-interface ASC2GeneResultProps {
-  result: ASC2GeneResult
+interface AGBGeneResultProps {
+  result: AGBGeneResult
 }
 
-const ASC2GeneResult = ({ result }: ASC2GeneResultProps) => (
+const AGBGeneResult = ({ result }: AGBGeneResultProps) => (
   <div>
     <Table>
       <thead>
@@ -96,7 +96,7 @@ const ASC2GeneResult = ({ result }: ASC2GeneResultProps) => (
         </tr>
       </thead>
       <tbody>
-        {ASC2_VARIANT_CLASS_CATEGORIES.map(({ suffix, label, tooltip, isExcludedFromAnalysis }) => (
+        {AGB_VARIANT_CLASS_CATEGORIES.map(({ suffix, label, tooltip, isExcludedFromAnalysis }) => (
           <ClassRow key={suffix} $isExcludedFromAnalysis={isExcludedFromAnalysis}>
             <th scope="row">
               <TooltipAnchor tooltip={tooltip}>
@@ -115,23 +115,23 @@ const ASC2GeneResult = ({ result }: ASC2GeneResultProps) => (
     </Table>
 
     <p>
-      <strong>Bayes Factor:</strong> {renderASC2BayesFactor(result.bayes_factor)}
+      <strong>Bayes Factor:</strong> {renderAGBBayesFactor(result.bayes_factor)}
     </p>
     <p>
-      <strong>FDR:</strong> {renderASC2FalseDiscoveryRate(result.false_discovery_rate)}
+      <strong>FDR:</strong> {renderAGBFalseDiscoveryRate(result.false_discovery_rate)}
     </p>
   </div>
 )
 
-interface ASC2GeneResultsProps {
-  results: Record<ASC2AnalysisGroup, ASC2GeneResult>
+interface AGBGeneResultsProps {
+  results: Record<AGBAnalysisGroup, AGBGeneResult>
 }
 
-const ASC2GeneResults = ({ results }: ASC2GeneResultsProps) => (
+const AGBGeneResults = ({ results }: AGBGeneResultsProps) => (
   <>
     <h2>Gene Summary (Allele Counts)</h2>
-    {results.meta ? <ASC2GeneResult result={results.meta} /> : <p>No result for this gene.</p>}
+    {results.meta ? <AGBGeneResult result={results.meta} /> : <p>No result for this gene.</p>}
   </>
 )
 
-export default ASC2GeneResults
+export default AGBGeneResults

@@ -1,9 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { ASC2VariantClass } from './ascTypes'
+import { AGBVariantClass } from './agbTypes'
 
-export const ASC2_VARIANT_CLASS_COLORS: Record<ASC2VariantClass, string> = {
+export const AGB_VARIANT_CLASS_COLORS: Record<AGBVariantClass, string> = {
   PTV: '#cc0f74',
   Mis2: '#f07800',
   Mis1: '#ffa600',
@@ -13,7 +13,7 @@ export const ASC2_VARIANT_CLASS_COLORS: Record<ASC2VariantClass, string> = {
 
 const DEFAULT_VARIANT_CLASS_COLOR = '#e0e0e0'
 
-const ASC2_VARIANT_CLASS_SEVERITY_RANK: Record<ASC2VariantClass, number> = {
+const AGB_VARIANT_CLASS_SEVERITY_RANK: Record<AGBVariantClass, number> = {
   PTV: 0,
   Mis2: 1,
   Mis1: 2,
@@ -24,16 +24,16 @@ const ASC2_VARIANT_CLASS_SEVERITY_RANK: Record<ASC2VariantClass, number> = {
 const UNRECOGNIZED_VARIANT_CLASS_RANK = 99
 
 const lookupByVariantClass = <T,>(
-  table: Partial<Record<ASC2VariantClass, T>>,
+  table: Partial<Record<AGBVariantClass, T>>,
   variantClass: string,
   fallback: T
 ): T => (table as Record<string, T>)[variantClass] ?? fallback
 
-export const compareASC2VariantClassSeverity = (a: string, b: string): number =>
-  lookupByVariantClass(ASC2_VARIANT_CLASS_SEVERITY_RANK, a, UNRECOGNIZED_VARIANT_CLASS_RANK) -
-  lookupByVariantClass(ASC2_VARIANT_CLASS_SEVERITY_RANK, b, UNRECOGNIZED_VARIANT_CLASS_RANK)
+export const compareAGBVariantClassSeverity = (a: string, b: string): number =>
+  lookupByVariantClass(AGB_VARIANT_CLASS_SEVERITY_RANK, a, UNRECOGNIZED_VARIANT_CLASS_RANK) -
+  lookupByVariantClass(AGB_VARIANT_CLASS_SEVERITY_RANK, b, UNRECOGNIZED_VARIANT_CLASS_RANK)
 
-const VARIANT_CLASS_LABELS: Partial<Record<ASC2VariantClass, string>> = {
+const VARIANT_CLASS_LABELS: Partial<Record<AGBVariantClass, string>> = {
   synonymous: 'Synonymous',
 }
 
@@ -58,9 +58,9 @@ const Badge = styled.span<{ $color: string; $isLight: boolean }>`
   white-space: nowrap;
 `
 
-const ASC2VariantClassBadge = ({ variantClass }: { variantClass: string }) => {
+const AGBVariantClassBadge = ({ variantClass }: { variantClass: string }) => {
   const color = lookupByVariantClass(
-    ASC2_VARIANT_CLASS_COLORS,
+    AGB_VARIANT_CLASS_COLORS,
     variantClass,
     DEFAULT_VARIANT_CLASS_COLOR
   )
@@ -72,4 +72,4 @@ const ASC2VariantClassBadge = ({ variantClass }: { variantClass: string }) => {
   )
 }
 
-export default ASC2VariantClassBadge
+export default AGBVariantClassBadge
