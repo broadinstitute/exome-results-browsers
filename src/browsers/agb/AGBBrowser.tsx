@@ -12,34 +12,34 @@ import Browser, {
 import { renderCount, renderFloatAsScientific } from '../base/tableCells'
 import { defineVariantCategoryOptions } from '../base/variantCategories'
 
-import ASC2AboutPage from './ASC2AboutPage'
-import ASC2HomePage from './ASC2HomePage'
-import ASC2TermsPage from './ASC2TermsPage'
-import ASC2VariantClassBadge, {
-  ASC2_VARIANT_CLASS_COLORS,
-  compareASC2VariantClassSeverity,
-} from './ASC2VariantClassBadge'
-import { renderASC2BayesFactor, renderASC2FalseDiscoveryRate } from './ascNumberFormatting'
+import AGBAboutPage from './AGBAboutPage'
+import AGBHomePage from './AGBHomePage'
+import AGBTermsPage from './AGBTermsPage'
+import AGBVariantClassBadge, {
+  AGB_VARIANT_CLASS_COLORS,
+  compareAGBVariantClassSeverity,
+} from './AGBVariantClassBadge'
+import { renderAGBBayesFactor, renderAGBFalseDiscoveryRate } from './agbNumberFormatting'
 import {
-  ASC2_VARIANT_CLASS_CATEGORIES,
-  ASC2GeneResult,
-  ASC2VariantClass,
-  ASC2VariantClassCategory,
-  ASC2VariantInfo,
+  AGB_VARIANT_CLASS_CATEGORIES,
+  AGBGeneResult,
+  AGBVariantClass,
+  AGBVariantClassCategory,
+  AGBVariantInfo,
   describeVariantClass,
-} from './ascTypes'
+} from './agbTypes'
 
-export type ASC2VariantColumnGroup = 'deNovo' | 'transmittedUntransmitted' | 'caseControl'
+export type AGBVariantColumnGroup = 'deNovo' | 'transmittedUntransmitted' | 'caseControl'
 
 const renderMissing = (value: any) => (value === null || value === undefined ? '\u2013' : value)
 
 const renderBoolean = (value: boolean | null) =>
   value === null || value === undefined ? '\u2013' : value ? 'yes' : 'no'
 
-import ASC2WaterfallPlot from './ASC2WaterfallPlot'
+import AGBWaterfallPlot from './AGBWaterfallPlot'
 
 const geneCountColumn = (
-  key: keyof ASC2GeneResult,
+  key: keyof AGBGeneResult,
   heading: string,
   tooltip: string,
   minWidth = 70,
@@ -53,11 +53,11 @@ const geneCountColumn = (
   render: renderCount,
 })
 
-export const ascAnalysisGroups = ['meta'] as const
-export type ASC2AnalysisGroup = typeof ascAnalysisGroups[number]
-export const ascDefaultAnalysisGroup: ASC2AnalysisGroup = 'meta'
+export const agbAnalysisGroups = ['meta'] as const
+export type AGBAnalysisGroup = typeof agbAnalysisGroups[number]
+export const agbDefaultAnalysisGroup: AGBAnalysisGroup = 'meta'
 
-export const asc2VariantConsequences: VariantConsequence[] = [
+export const agbVariantConsequences: VariantConsequence[] = [
   { term: 'frameshift', label: 'frameshift', category: 'lof' },
   { term: 'splice acceptor', label: 'splice acceptor', category: 'lof' },
   { term: 'splice donor', label: 'splice donor', category: 'lof' },
@@ -72,19 +72,19 @@ export const asc2VariantConsequences: VariantConsequence[] = [
   { term: 'downstream gene', label: 'downstream gene', category: 'other' },
 ]
 
-export const asc2VariantCategoryOptions = defineVariantCategoryOptions<ASC2VariantClass>({
-  PTV: { label: 'PTV', color: ASC2_VARIANT_CLASS_COLORS.PTV, keyboardShortcut: 'p' },
-  Mis2: { label: 'Mis2', color: ASC2_VARIANT_CLASS_COLORS.Mis2, keyboardShortcut: '2' },
-  Mis1: { label: 'Mis1', color: ASC2_VARIANT_CLASS_COLORS.Mis1, keyboardShortcut: '1' },
-  Mis0: { label: 'Mis0', color: ASC2_VARIANT_CLASS_COLORS.Mis0, keyboardShortcut: '0' },
+export const agbVariantCategoryOptions = defineVariantCategoryOptions<AGBVariantClass>({
+  PTV: { label: 'PTV', color: AGB_VARIANT_CLASS_COLORS.PTV, keyboardShortcut: 'p' },
+  Mis2: { label: 'Mis2', color: AGB_VARIANT_CLASS_COLORS.Mis2, keyboardShortcut: '2' },
+  Mis1: { label: 'Mis1', color: AGB_VARIANT_CLASS_COLORS.Mis1, keyboardShortcut: '1' },
+  Mis0: { label: 'Mis0', color: AGB_VARIANT_CLASS_COLORS.Mis0, keyboardShortcut: '0' },
   synonymous: {
     label: 'Synonymous',
-    color: ASC2_VARIANT_CLASS_COLORS.synonymous,
+    color: AGB_VARIANT_CLASS_COLORS.synonymous,
     keyboardShortcut: 's',
   },
 })
 
-const getASC2VariantCategory = (variant: { info: ASC2VariantInfo }): ASC2VariantClass =>
+const getAGBVariantCategory = (variant: { info: AGBVariantInfo }): AGBVariantClass =>
   variant.info.variant_class
 
 const COLUMN_GROUP_COLOR_A = '#e8e9ed'
@@ -168,9 +168,9 @@ const variantLollipopTrackGroups: VariantLollipopTrackGroup[] = [
 
 interface VariantClassColumnSpec {
   visibilityGroup?: GeneResultColumnGroup
-  key: (category: ASC2VariantClassCategory) => keyof ASC2GeneResult
-  heading: (category: ASC2VariantClassCategory) => string
-  tooltip: (category: ASC2VariantClassCategory) => string
+  key: (category: AGBVariantClassCategory) => keyof AGBGeneResult
+  heading: (category: AGBVariantClassCategory) => string
+  tooltip: (category: AGBVariantClassCategory) => string
 }
 
 const variantClassCategoryColumns = (
@@ -178,7 +178,7 @@ const variantClassCategoryColumns = (
   minWidth: number,
   columnsPerRole: VariantClassColumnSpec[]
 ): GeneResultColumnConfig[] =>
-  ASC2_VARIANT_CLASS_CATEGORIES.filter((category) => !category.isExcludedFromAnalysis).flatMap(
+  AGB_VARIANT_CLASS_CATEGORIES.filter((category) => !category.isExcludedFromAnalysis).flatMap(
     (category) =>
       columnsPerRole.map(({ key, heading, tooltip, visibilityGroup }) => ({
         ...geneCountColumn(key(category), heading(category), tooltip(category), minWidth, group),
@@ -233,27 +233,27 @@ const caseControlColumns = variantClassCategoryColumns(caseControlColumnGroup, 7
   },
 ])
 
-const ASC2Browser = () => (
+const AGBBrowser = () => (
   <Browser
     showManeSelectTranscript
     browserTitle="DEMO; Autism Genomics Browser"
     navBarBackgroundColor="#23509c"
-    homePage={ASC2HomePage}
+    homePage={AGBHomePage}
     extraPages={[
       {
         path: '/about',
         label: 'About',
-        component: ASC2AboutPage,
+        component: AGBAboutPage,
       },
       {
         path: '/terms',
         label: 'Terms',
-        component: ASC2TermsPage,
+        component: AGBTermsPage,
       },
     ]}
     geneResultsPageHeading="Results"
-    geneResultAnalysisGroupOptions={ascAnalysisGroups}
-    defaultGeneResultAnalysisGroup={ascDefaultAnalysisGroup}
+    geneResultAnalysisGroupOptions={agbAnalysisGroups}
+    defaultGeneResultAnalysisGroup={agbDefaultAnalysisGroup}
     defaultGeneResultSortKey="bayes_factor"
     defaultGeneResultSortOrder="descending"
     defaultGeneResultColumnGroups={{
@@ -269,7 +269,7 @@ const ASC2Browser = () => (
         centerHeading: true,
         centerNumericValues: true,
         minWidth: 140,
-        render: (value) => renderASC2BayesFactor(value),
+        render: (value) => renderAGBBayesFactor(value),
       },
       {
         key: 'false_discovery_rate',
@@ -278,7 +278,7 @@ const ASC2Browser = () => (
         centerNumericValues: true,
         tooltip: 'False discovery rate.',
         minWidth: 140,
-        render: (value) => renderASC2FalseDiscoveryRate(value),
+        render: (value) => renderAGBFalseDiscoveryRate(value),
       },
       {
         key: 'qc_flagged',
@@ -307,16 +307,16 @@ const ASC2Browser = () => (
       {
         id: 'waterfall-plot',
         label: 'Waterfall Plot',
-        render: () => <ASC2WaterfallPlot />,
+        render: () => <AGBWaterfallPlot />,
       },
     ]}
-    renderVariantAttributes={(info: ASC2VariantInfo) => [
+    renderVariantAttributes={(info: AGBVariantInfo) => [
       { label: 'MPC', content: info.mpc === null ? '–' : info.mpc },
       { label: 'AlphaMissense', content: info.alpha_missense === null ? '–' : info.alpha_missense },
       { label: 'gnomAD AF', content: info.gnomad_af === null ? '–' : info.gnomad_af },
     ]}
-    variantAnalysisGroupOptions={ascAnalysisGroups}
-    defaultVariantAnalysisGroup={ascDefaultAnalysisGroup}
+    variantAnalysisGroupOptions={agbAnalysisGroups}
+    defaultVariantAnalysisGroup={agbDefaultAnalysisGroup}
     variantDetailsSingleAnalysisGroup
     variantResultColumns={[
       {
@@ -326,8 +326,8 @@ const ASC2Browser = () => (
           'PTV/Mis2/Mis1/Mis0/synonymous, by MPC/AlphaMissense pathogenicity for missense variants',
         minWidth: 90,
         render: (value) =>
-          value ? <ASC2VariantClassBadge variantClass={value} /> : renderMissing(value),
-        sortFunction: compareASC2VariantClassSeverity,
+          value ? <AGBVariantClassBadge variantClass={value} /> : renderMissing(value),
+        sortFunction: compareAGBVariantClassSeverity,
       },
       {
         key: 'group_result.de_novo_ac_proband',
@@ -429,12 +429,12 @@ const ASC2Browser = () => (
         render: (value) => renderBoolean(value),
       },
     ]}
-    variantConsequences={asc2VariantConsequences}
-    variantCategoryOptions={asc2VariantCategoryOptions}
-    getVariantCategory={getASC2VariantCategory}
+    variantConsequences={agbVariantConsequences}
+    variantCategoryOptions={agbVariantCategoryOptions}
+    getVariantCategory={getAGBVariantCategory}
     variantExportNote="Only SNVs, and not CNVs, are displayed below. All variants except for Mis0 and synonymous variants were included in our gene discovery framework."
     variantLollipopTrackGroups={variantLollipopTrackGroups}
   />
 )
 
-export default ASC2Browser
+export default AGBBrowser

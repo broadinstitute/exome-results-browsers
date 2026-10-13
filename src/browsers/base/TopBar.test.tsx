@@ -16,7 +16,7 @@ const originalDatasetConfig = window.datasetConfig
 
 beforeEach(() => {
   document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
-  window.datasetConfig = buildWindowDatasetConfig('ASC2')
+  window.datasetConfig = buildWindowDatasetConfig('AGB')
 })
 
 afterEach(() => {
@@ -27,7 +27,7 @@ afterEach(() => {
 const renderTopBar = (path: string) => {
   return render(
     <MemoryRouter initialEntries={[path]}>
-      <TopBar title="Demo browser" passwordProtectedDatasets={['ASC2']} />
+      <TopBar title="Demo browser" passwordProtectedDatasets={['AGB']} />
       <Link to="/login">Open login</Link>
     </MemoryRouter>
   )

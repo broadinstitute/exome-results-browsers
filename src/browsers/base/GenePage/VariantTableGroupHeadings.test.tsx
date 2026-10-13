@@ -20,7 +20,7 @@ const configuration: VariantColumnConfig[] = [
   { key: 'info.control', heading: 'Control', group: caseControlGroup },
 ]
 const columns = getVariantTableColumns({
-  datasetId: 'ASC2',
+  datasetId: 'AGB',
   variantResultColumns: configuration,
   filter: {
     includeCategories: { lof: true, missense: true, synonymous: true, other: true },
@@ -183,13 +183,13 @@ describe('measured variant column group headings', () => {
       ]
       const enabled: Record<string, boolean> = { deNovo, caseControl, inherited }
       const visibleColumns = getVariantTableColumns({
-        datasetId: 'ASC2',
+        datasetId: 'AGB',
         variantResultColumns: allConfiguration,
         filter: {
           includeCategories: { lof: true, missense: true, synonymous: true, other: true },
           searchText: '',
           custom: undefined,
-          asc2VariantColumnGroups: enabled,
+          agbVariantColumnGroups: enabled,
         },
       }).filter((column) => allConfiguration.some((configured) => configured.key === column.key))
       columnWidths = visibleColumns.map(() => 100)

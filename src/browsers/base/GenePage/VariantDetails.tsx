@@ -414,7 +414,7 @@ const VariantDetails = ({
   }[] = []
 
   renderedVariantSummaryRows.forEach((column) => {
-    const group = datasetId === 'ASC2' ? column.group : undefined
+    const group = datasetId === 'AGB' ? column.group : undefined
     const existingSection = group
       ? variantSummarySections.find((section) => section.group?.key === group.key)
       : undefined
@@ -573,12 +573,12 @@ const VariantDetails = ({
   })
 
   const datasetColumns =
-    datasetId === 'GP2' ? renderedGP2Columns : datasetId === 'ASC2' ? [] : standardColumns
+    datasetId === 'GP2' ? renderedGP2Columns : datasetId === 'AGB' ? [] : standardColumns
 
   const filteredVariantResultColumns =
-    datasetId === 'ASC2' && filter.asc2VariantColumnGroups
+    datasetId === 'AGB' && filter.agbVariantColumnGroups
       ? variantResultColumns.filter(
-          (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
+          (column) => !column.group || filter.agbVariantColumnGroups![column.group.key]
         )
       : variantResultColumns
 
@@ -617,7 +617,7 @@ const VariantDetails = ({
         {datasetId !== 'GP2' && defaultGroupResult && (
           <Column>
             <VariantAttributeList label={analysisLabel}>
-              {datasetId !== 'ASC2' && (
+              {datasetId !== 'AGB' && (
                 <>
                   <VariantAttribute label="Cases">
                     {defaultGroupResult.ac_case} / {defaultGroupResult.an_case} (

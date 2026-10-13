@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 
-import HomePage from './ASC2HomePage'
+import HomePage from './AGBHomePage'
 import AgbLogo from './content/agb_logo.png'
 
 const renderHomePage = () => {
@@ -13,7 +13,7 @@ const renderHomePage = () => {
   )
 }
 
-describe('ASC2 Home page', () => {
+describe('AGB Home page', () => {
   it('displays the AGB title, new logo, release date, and reference genome', () => {
     renderHomePage()
 
@@ -33,7 +33,7 @@ describe('ASC2 Home page', () => {
 
     expect(screen.getByPlaceholderText('Search results by gene')).toHaveAttribute(
       'id',
-      'asc-search'
+      'agb-search'
     )
     expect(screen.getByRole('heading', { name: 'Example' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'SHANK3' })).toHaveAttribute(
