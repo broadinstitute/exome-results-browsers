@@ -1,10 +1,24 @@
 import json
 import stat
+from configparser import ConfigParser
+from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
 import write_results_files
 from write_results_files import ResultEncoder, assemble_variant_chunks
+
+
+def test_expected_datasets_match_pipeline_config_without_legacy_asc():
+    config = ConfigParser()
+    config.read(Path(__file__).with_name("pipeline_config.ini"))
+    configured_datasets = config.get("datasets", "datasets").split(",")
+
+    assert "ASC" not in configured_datasets
+    assert not config.has_section("ASC")
+    assert "AGB" in configured_datasets
+    assert set(write_results_files.EXPECTED_DATASETS) == set(configured_datasets)
 
 
 def write_chunk(path, variants):
@@ -112,6 +126,7 @@ def test_write_data_files_writes_empty_oversized_report_without_prior_exports(tm
     table.collect.return_value = []
     table.count.return_value = 1
     table.total_variants = 1
+    table.variant_counts = SimpleNamespace(**{dataset: 1 for dataset in write_results_files.EXPECTED_DATASETS})
     table.variants.dtype.fields = ["AGB"]
     hail = MagicMock()
     hail.read_table.return_value = table
@@ -122,6 +137,9 @@ def test_write_data_files_writes_empty_oversized_report_without_prior_exports(tm
     monkeypatch.setattr(write_results_files, "write_json_files", write_json_files)
 
     write_results_files.write_data_files("combined.ht", str(output_directory))
+
+    assert table.annotate.call_args_list[1].kwargs["total_variants"] == len(write_results_files.EXPECTED_DATASETS)
+    assert set(hail.struct.call_args.kwargs) == set(write_results_files.EXPECTED_DATASETS)
 
     report_path = output_directory / "oversized_genes_report.json"
     assert json.loads(report_path.read_text(encoding="utf-8")) == {"genes": []}
