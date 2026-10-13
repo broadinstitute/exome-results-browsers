@@ -15,11 +15,19 @@ file and fill in values for variables.
 
 ```
 cat <<EOF > build.env
-DEMO_PASSWORD=
+DEMO_PASSWORDS="ascdemo,agbdemo"
 EOF
 ```
 
-Note that the `DEMO_PASSWORD` should be a string with no `""`s, if quotes are included, the password will include the quotes. e.g. `DEMO_PASSWORD="password"` would require a user to type `"password"` into the box, as opposed to just `password`.
+Set `DEMO_PASSWORDS` to a comma-separated list of accepted demo passwords. Surrounding
+spaces and empty entries are ignored, and either password grants the same access.
+Restart the server after changing the configuration.
+
+Use `DEMO_PASSWORD` for an existing single-password deployment. A nonempty
+`DEMO_PASSWORDS` list takes precedence; an absent or empty list falls back to
+`DEMO_PASSWORD`. If neither provides a password, the existing default is `password`.
+Outer double quotes are removed from both variables, including quotes retained by
+`start.sh` when reading `build.env`. Use `DEMO_PASSWORD` if a password contains commas.
 
 GA tracking IDs are hardcoded in `src/browsers/webpack.config.js` and do not need to be set in `build.env`.
 
