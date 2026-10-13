@@ -5,7 +5,7 @@ import { GeneResultColumnGroup, VariantColumnConfig } from '../Browser'
 import VariantDetails from './VariantDetails'
 
 const props: React.ComponentProps<typeof VariantDetails> = {
-  datasetId: 'ASC2',
+  datasetId: 'AGB',
   defaultVariantAnalysisGroup: 'meta',
   referenceGenome: 'GRCh38',
   variant: {
@@ -118,7 +118,7 @@ describe('VariantDetails single analysis group layout', () => {
   })
 })
 
-describe('VariantDetails ASC2 count groups', () => {
+describe('VariantDetails AGB count groups', () => {
   const deNovoGroup: GeneResultColumnGroup = {
     key: 'deNovo',
     geneTableLabel: 'De novo',
@@ -159,7 +159,7 @@ describe('VariantDetails ASC2 count groups', () => {
     },
   }
 
-  it('groups ASC2 counts under their configured labels and preserves ungrouped fields', () => {
+  it('groups AGB counts under their configured labels and preserves ungrouped fields', () => {
     const { container } = render(
       <VariantDetails
         {...props}

@@ -12,21 +12,21 @@ import VariantTable from '../base/GenePage/VariantTable'
 import AutosizedRegionViewer from '../base/GenePage/AutosizedRegionViewer'
 import { VariantsInGene } from '../base/GenePage/VariantsInGene'
 
-import ASC2Browser from './ASC2Browser'
+import AGBBrowser from './AGBBrowser'
 
 jest.mock('../base/Browser', () => ({
   __esModule: true,
   default: jest.fn(() => null),
 }))
 
-jest.mock('./ASC2WaterfallPlot', () => ({
+jest.mock('./AGBWaterfallPlot', () => ({
   __esModule: true,
   default: () => null,
 }))
 
 const getBrowserConfiguration = () => {
   jest.mocked(Browser).mockClear()
-  render(<ASC2Browser />)
+  render(<AGBBrowser />)
   return jest.mocked(Browser).mock.calls[0][0]
 }
 
@@ -35,7 +35,7 @@ const getGeneResultColumns = () => getBrowserConfiguration().geneResultColumns ?
 const getGeneResultColumn = (key: string) => {
   const column = getGeneResultColumns().find((candidate) => candidate.key === key)
   if (!column) {
-    throw new Error(`Missing ASC2 gene result column: ${key}`)
+    throw new Error(`Missing AGB gene result column: ${key}`)
   }
   return column
 }
@@ -59,7 +59,7 @@ const renderGeneResultsPage = () => {
   return render(
     <MemoryRouter>
       <GeneResultsPage
-        browserTitle="ASC2"
+        browserTitle="AGB"
         analysisGroupOptions={['meta']}
         defaultAnalysisGroup="meta"
         defaultColumnGroups={configuration.defaultGeneResultColumnGroups}
@@ -70,7 +70,7 @@ const renderGeneResultsPage = () => {
   )
 }
 
-describe('ASC2 all-genes table', () => {
+describe('AGB all-genes table', () => {
   it('centers formatted Bayes Factor, FDR, and Flag cells without changing sorting or CSV values', () => {
     const columns = getTableColumns(
       getGeneResultColumns().filter((column) =>
@@ -349,7 +349,7 @@ describe('ASC2 all-genes table', () => {
 const getVariantCountColumn = (key: string) => {
   const configuration = getBrowserConfiguration()
   const columns = getVariantTableColumns({
-    datasetId: 'ASC2',
+    datasetId: 'AGB',
     variantResultColumns: configuration.variantResultColumns ?? [],
     filter: {
       includeCategories: { lof: true, missense: true, synonymous: true, other: true },
@@ -359,7 +359,7 @@ const getVariantCountColumn = (key: string) => {
   })
   const column = columns.find((candidate) => candidate.key === key)
   if (!column) {
-    throw new Error(`Missing ASC2 variant count column: ${key}`)
+    throw new Error(`Missing AGB variant count column: ${key}`)
   }
   return column
 }
@@ -375,7 +375,7 @@ const countVariant: VariantRow = {
   info: {},
 }
 
-describe('ASC2 variant sorting', () => {
+describe('AGB variant sorting', () => {
   it('sorts every single-gene variant column in both directions without crashing', () => {
     const configuration = getBrowserConfiguration()
     const countFields = [
@@ -417,7 +417,7 @@ describe('ASC2 variant sorting', () => {
     }))
     const resultColumns = configuration.variantResultColumns ?? []
     const columns = getVariantTableColumns({
-      datasetId: 'ASC2',
+      datasetId: 'AGB',
       variantResultColumns: resultColumns,
       variantCategoryOptions: configuration.variantCategoryOptions,
       filter: { includeCategories: {}, searchText: '', custom: undefined },
@@ -426,7 +426,7 @@ describe('ASC2 variant sorting', () => {
       <MemoryRouter>
         <AutosizedRegionViewer regions={[{ start: 90, stop: 150, feature_type: 'exon' }]}>
           <VariantsInGene
-            datasetId="ASC2"
+            datasetId="AGB"
             gene={{ gene_id: 'ENSG1', reference_genome: 'GRCh38' }}
             variants={variants}
             variantAnalysisGroupOptions={['meta']}
@@ -480,7 +480,7 @@ describe('ASC2 variant sorting', () => {
   })
 })
 
-describe('ASC2 variant count alignment', () => {
+describe('AGB variant count alignment', () => {
   it.each([
     ['de_novo_ac_proband', 'Proband'],
     ['de_novo_ac_sibling', 'Sibling'],

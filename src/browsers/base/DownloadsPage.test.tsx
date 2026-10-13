@@ -42,6 +42,28 @@ const namesOfRenderedOtherStudies = (): string[] =>
     .filter((text): text is string => text !== null && text !== SCHEMA_LEGACY_HEADING)
 
 describe('DownloadsPage', () => {
+  it.each([
+    ['AGB gene results (TSV)', 'gene_results.tsv.bgz'],
+    ['AGB variant results (TSV)', 'variant_results.tsv.bgz'],
+    ['AGB variant results (VCF)', 'variant_results.vcf.bgz'],
+  ])('links %s to the renamed pipeline output', (label, filename) => {
+    renderDownloadsPageAsDataset('AGB')
+
+    expect(screen.getByRole('link', { name: label })).toHaveAttribute(
+      'href',
+      `https://storage.googleapis.com/exome-results-browsers-public/downloads/2026-10-12/AGB/AGB_${filename}`
+    )
+  })
+
+  it('preserves downloads for the original ASC dataset alongside AGB', () => {
+    renderDownloadsPageAsDataset('AGB')
+
+    expect(screen.getByRole('link', { name: 'ASC gene results (TSV)' })).toHaveAttribute(
+      'href',
+      'https://atgu-exome-browser-data.s3.amazonaws.com/ASC/ASC_gene_results.tsv.bgz'
+    )
+  })
+
   it('given SCHEMA is the current dataset, lists ASC, BipEx, and Epi25 as other studies', () => {
     const CURRENT_DATASET: DatasetId = 'SCHEMA'
 

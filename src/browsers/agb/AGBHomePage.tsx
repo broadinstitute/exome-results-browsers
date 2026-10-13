@@ -55,7 +55,7 @@ const HomePage = (): React.JSX.Element => {
         </div>
       </ReleaseDetails>
 
-      <Searchbox id="asc-search" width="100%" />
+      <Searchbox id="agb-search" width="100%" />
 
       <h2>Example</h2>
       <p style={{ marginTop: '0.5em' }}>

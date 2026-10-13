@@ -17,7 +17,7 @@ const toFloat = (value: InputData): number | null => {
 // notation is reserved for values over the threshold so everyday values stay
 // readable as plain decimals. Downloads keep the exact value; this is
 // display-only formatting.
-export const renderASC2BayesFactor = (value: InputData) => {
+export const renderAGBBayesFactor = (value: InputData) => {
   const floatValue = toFloat(value)
   if (floatValue === null) {
     return '-'
@@ -34,7 +34,7 @@ export const renderASC2BayesFactor = (value: InputData) => {
 // FDR values below this floor round to "0.00e+0" at 2 decimal places, which
 // reads as exactly zero; show a floor instead. Downloads keep the exact
 // value; this is display-only formatting.
-export const renderASC2FalseDiscoveryRate = (value: InputData) => {
+export const renderAGBFalseDiscoveryRate = (value: InputData) => {
   const floatValue = toFloat(value)
   if (floatValue === null) {
     return '-'

@@ -99,9 +99,9 @@ const getGridProps = (
   return gridElement.props
 }
 
-describe('ASC2 annotation row identities', () => {
+describe('AGB annotation row identities', () => {
   it('preserves both ANTXR1 rows with distinct grid keys and unchanged biological IDs and counts', () => {
-    const rows = decodeRows('ASC2')
+    const rows = decodeRows('AGB')
     const grid = getGridProps(rows)
 
     expect(grid.data).toHaveLength(2)
@@ -119,7 +119,7 @@ describe('ASC2 annotation row identities', () => {
   })
 
   it('assigns distinct keys even to exact duplicate annotations', () => {
-    const rows = decodeRows('ASC2', [...sourceRows, sourceRows[1]])
+    const rows = decodeRows('AGB', [...sourceRows, sourceRows[1]])
     const grid = getGridProps(rows)
 
     expect(rows).toHaveLength(3)
@@ -129,7 +129,7 @@ describe('ASC2 annotation row identities', () => {
   })
 
   it('keeps row identities attached through sorting, filtering, and analysis-group copies', () => {
-    const rows = decodeRows('ASC2')
+    const rows = decodeRows('AGB')
     const originalGrid = getGridProps(rows)
     const originalKeys = rows.map(originalGrid.rowKey)
     const sortedRows = [...rows].sort(
@@ -146,12 +146,12 @@ describe('ASC2 annotation row identities', () => {
   })
 
   it('passes the clicked annotation row with its own counts to the details callback', () => {
-    const rows = decodeRows('ASC2')
+    const rows = decodeRows('AGB')
     const onClickVariant = jest.fn()
     const grid = getGridProps(rows, onClickVariant)
 
     const [variantIdColumn] = getVariantTableColumns({
-      datasetId: 'ASC2',
+      datasetId: 'AGB',
       variantResultColumns: [],
       filter: {
         includeCategories: { lof: true, missense: true, synonymous: true, other: true },
@@ -177,9 +177,9 @@ describe('ASC2 annotation row identities', () => {
   })
 
   it('retains both annotations and counts in CSV column values', () => {
-    const rows = decodeRows('ASC2').map((row) => ({ ...row, group_result: row.group_results.meta }))
+    const rows = decodeRows('AGB').map((row) => ({ ...row, group_result: row.group_results.meta }))
     const columns = getVariantTableColumns({
-      datasetId: 'ASC2',
+      datasetId: 'AGB',
       variantResultColumns: [
         { key: 'info.variant_class', heading: 'Class' },
         { key: 'group_result.de_novo_ac_proband', heading: 'Proband' },
@@ -202,7 +202,7 @@ describe('ASC2 annotation row identities', () => {
   })
 
   it('keeps hover highlighting based on the biological variant ID', () => {
-    const rows = decodeRows('ASC2')
+    const rows = decodeRows('AGB')
     const onHoverVariant = jest.fn()
     const grid = getGridProps(rows, jest.fn(), onHoverVariant)
 

@@ -174,7 +174,7 @@ const defaultGP2IncludedColumns = {
   msa: true,
 }
 
-const defaultASC2IncludedColumns = {
+const defaultAGBIncludedColumns = {
   deNovo: true,
   transmittedUntransmitted: true,
   caseControl: true,
@@ -205,7 +205,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
       searchText: '',
       custom: (props.variantCustomFilter || {}).defaultFilter,
       gp2VariantColumnGroups: props.datasetId === 'GP2' ? defaultGP2IncludedColumns : undefined,
-      asc2VariantColumnGroups: props.datasetId === 'ASC2' ? defaultASC2IncludedColumns : undefined,
+      agbVariantColumnGroups: props.datasetId === 'AGB' ? defaultAGBIncludedColumns : undefined,
     }
 
     const renderedVariants = this.sortVariants(
@@ -506,8 +506,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
         {variantLollipopTrackGroups ? (
           variantLollipopTrackGroups
             .filter(
-              (group) =>
-                !filter.asc2VariantColumnGroups || filter.asc2VariantColumnGroups[group.key]
+              (group) => !filter.agbVariantColumnGroups || filter.agbVariantColumnGroups[group.key]
             )
             .flatMap((group) => {
               const maxAc = maxAcAcrossGroupTracks(renderedVariants, group)
@@ -718,7 +717,7 @@ interface VariantsInGeneContainerProps {
   variantDetailsSingleAnalysisGroup?: boolean
   // When provided, this determines each variant's category (and therefore how it's
   // colored and filtered) directly, instead of the default VEP-consequence-term lookup
-  // built from `variantConsequences` below. ASC2 uses this to categorize by its own
+  // built from `variantConsequences` below. AGB uses this to categorize by its own
   // Mis0/Mis1/Mis2/PTV/synonymous `info.variant_class`, which VEP terms don't capture.
   getVariantCategory?: (variant: any) => string
   [key: string]: any
@@ -813,7 +812,7 @@ const VariantsInGeneContainer = ({
             })
 
             variant.hgvs = variant.hgvsp || variant.hgvsc
-            if (datasetId === 'ASC2') {
+            if (datasetId === 'AGB') {
               variant.annotationRowId = `${gene.gene_id}:${variant.variant_id}:${sourceRowIndex}`
             }
 
