@@ -10,7 +10,7 @@ The Autism Genomics Browser (AGB) displays the results of our cross-consortia au
 
 ### ASC
 
-The [Autism Sequencing Consortium (ASC)](https://pubmed.ncbi.nlm.nih.gov/23259942/) is an international collaboration of research groups and clinical sites dedicated to the collection and analysis of sequencing data from autistic individuals. Founded in 2010, the ASC aggregates data from research, clinical, and population cohorts to empower the discovery of genes in which damaging variants are associated with autism. References to the ASC should note the 2012 Flagship paper ([Buxbaum et al., 2012](https://pubmed.ncbi.nlm.nih.gov/23259942/)).
+The [Autism Sequencing Consortium (ASC)](https://pubmed.ncbi.nlm.nih.gov/23259942/) is an international collaboration of research groups and clinical sites dedicated to the collection and analysis of sequencing data from autistic individuals. Founded in 2010, the ASC aggregates data from research, clinical, and population cohorts to empower the discovery of genes in which damaging variants are associated with autism. References to the ASC should note the 2012 Flagship paper ([Buxbaum et al., 2012](https://pubmed.ncbi.nlm.nih.gov/23259942/)). For questions about the ASC sample recruitment, data, or publications, please contact [Dr. Joseph Buxbaum](mailto:joseph.buxbaum@mssm.edu). For questions about ASC analyses and gene discovery methods, contact any of the ASC PIs: [Dr. Joseph Buxbaum](mailto:joseph.buxbaum@mssm.edu), [Dr. Mark Daly](mailto:mjdaly@broadinstitute.org), [Dr. Bernie Devlin](mailto:devlinbj@upmc.edu), [Dr. Kathryn Roeder](mailto:kathryn.roeder@gmail.com), [Dr. Stephan Sanders](mailto:stephan.sanders@paediatrics.ox.ac.uk), and [Dr. Michael Talkowski](mailto:talkowsk@broadinstitute.org).
 
 ### SPARK
 
@@ -133,5 +133,3 @@ Satterstrom, F. K., Auwerx, C., Fu, J. M., _et al._ Rare variation illuminates t
 ## AGB Contact
 
 For questions about data aggregation, analyses, and gene discovery in the AGB, please contact [Dr. Michael Talkowski](mailto:talkowsk@broadinstitute.org) and [Dr. Mark Daly](mailto:mjdaly@broadinstitute.org). For questions about analyses in Satterstrom et al., 2026, please contact [Dr. Kyle Satterstrom](mailto:satterst@broadinstitute.org) and [Dr. Chiara Auwerx](mailto:cauwerx@broadinstitute.org).
-
-For questions about the ASC data, publications, or sample recruitment, please contact [Dr. Joseph Buxbaum](mailto:joseph.buxbaum@mssm.edu). For questions about ASC analyses and gene discovery methods, contact any of the ASC PIs: [Dr. Joseph Buxbaum](mailto:joseph.buxbaum@mssm.edu), [Dr. Mark Daly](mailto:mjdaly@broadinstitute.org), [Dr. Bernie Devlin](mailto:devlinbj@upmc.edu), [Dr. Kathryn Roeder](mailto:kathryn.roeder@gmail.com), [Dr. Stephan Sanders](mailto:stephan.sanders@paediatrics.ox.ac.uk), and [Dr. Michael Talkowski](mailto:talkowsk@broadinstitute.org).
