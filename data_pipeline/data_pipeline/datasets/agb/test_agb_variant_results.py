@@ -5,13 +5,13 @@ from configparser import ConfigParser
 import hail as hl
 import pytest
 
-from data_pipeline.datasets.asc2 import asc2_variant_results
+from data_pipeline.datasets.agb import agb_variant_results
 from data_pipeline.validation import validate_variant_results_table
 
 
 @pytest.fixture(scope="module", autouse=True)
 def hail_backend(tmp_path_factory):
-    temporary_directory = tmp_path_factory.mktemp("hail_asc2_variant_results")
+    temporary_directory = tmp_path_factory.mktemp("hail_agb_variant_results")
     hl.init(master="local[2]", log=str(temporary_directory / "hail.log"), tmp_dir=str(temporary_directory))
     yield
     hl.stop()
@@ -20,9 +20,7 @@ def hail_backend(tmp_path_factory):
 @pytest.mark.parametrize("include_hgvsc_column", [True, False])
 def test_prepare_variant_results_requires_hgvsc_column(tmp_path, monkeypatch, include_hgvsc_column):
     source_path = tmp_path / "variants.tsv"
-    fields = [
-        field for field in asc2_variant_results.VARIANT_RESULTS_FIELDS if include_hgvsc_column or field != "HGVSc"
-    ]
+    fields = [field for field in agb_variant_results.VARIANT_RESULTS_FIELDS if include_hgvsc_column or field != "HGVSc"]
     common_fields = {
         "Gene": "GENE1",
         "Gene ID": "ENSG00000000001",
@@ -67,15 +65,15 @@ def test_prepare_variant_results_requires_hgvsc_column(tmp_path, monkeypatch, in
         writer.writerows({**common_fields, **variant} for variant in source_variants)
 
     config = ConfigParser()
-    config["ASC2"] = {"variant_results_path": str(source_path)}
-    monkeypatch.setattr(asc2_variant_results, "pipeline_config", config)
+    config["AGB"] = {"variant_results_path": str(source_path)}
+    monkeypatch.setattr(agb_variant_results, "pipeline_config", config)
 
     if not include_hgvsc_column:
         with pytest.raises(LookupError, match="no field 'HGVSc'"):
-            asc2_variant_results.prepare_variant_results(False, str(tmp_path))
+            agb_variant_results.prepare_variant_results(False, str(tmp_path))
         return
 
-    variants = asc2_variant_results.prepare_variant_results(False, str(tmp_path))
+    variants = agb_variant_results.prepare_variant_results(False, str(tmp_path))
     rows = {row.locus.position: row for row in variants.collect()}
 
     assert variants.hgvsc.dtype == hl.tstr
@@ -125,16 +123,16 @@ def test_prepare_variant_results_preserves_duplicate_annotation_rows(tmp_path, m
 
     with source_path.open("w", encoding="utf-8", newline="") as source_file:
         writer = csv.DictWriter(
-            source_file, fieldnames=list(asc2_variant_results.VARIANT_RESULTS_FIELDS), delimiter="\t"
+            source_file, fieldnames=list(agb_variant_results.VARIANT_RESULTS_FIELDS), delimiter="\t"
         )
         writer.writeheader()
         writer.writerows(source_rows)
 
     config = ConfigParser()
-    config["ASC2"] = {"variant_results_path": str(source_path)}
-    monkeypatch.setattr(asc2_variant_results, "pipeline_config", config)
+    config["AGB"] = {"variant_results_path": str(source_path)}
+    monkeypatch.setattr(agb_variant_results, "pipeline_config", config)
 
-    variants = asc2_variant_results.prepare_variant_results(False, str(tmp_path))
+    variants = agb_variant_results.prepare_variant_results(False, str(tmp_path))
     validate_variant_results_table(variants)
     rows = variants.collect()
 
@@ -146,7 +144,7 @@ def test_prepare_variant_results_preserves_duplicate_annotation_rows(tmp_path, m
         (
             row.info.variant_class,
             *(
-                row.group_results["meta"][asc2_variant_results.VARIANT_RESULTS_FIELDS[field][0]]
+                row.group_results["meta"][agb_variant_results.VARIANT_RESULTS_FIELDS[field][0]]
                 for field in count_fields
             ),
         )
