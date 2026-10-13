@@ -8,6 +8,7 @@ import rateLimit from 'express-rate-limit'
 import express, { Response, NextFunction } from 'express'
 import morgan from 'morgan'
 
+import getDemoPasswords from './demoPasswords'
 import { PrefixTrie } from './search'
 
 interface Request extends express.Request {
@@ -193,10 +194,7 @@ if (isDevelopment) {
 
 const PASSWORD_PROTECTED_DATASETS = ['AGB', 'BipEx2']
 
-const CORRECT_PASSWORD = process.env.DEMO_PASSWORD
-  ? // Remove the ""s from development env var with a regex
-    process.env.DEMO_PASSWORD.replace(/^"|"$/g, '') || 'password'
-  : 'password'
+const demoPasswords = getDemoPasswords(process.env.DEMO_PASSWORDS, process.env.DEMO_PASSWORD)
 
 const activeTokens = new Set()
 
@@ -216,7 +214,7 @@ app.post('/api/auth', (req: Request, res: Response) => {
     res.json({ success: true, token: 'not-required' })
   }
 
-  if (password === CORRECT_PASSWORD) {
+  if (demoPasswords.includes(password)) {
     const token = Math.random().toString(36).substring(2, 15)
     activeTokens.add(token)
     res.setHeader(
