@@ -6,7 +6,7 @@ import { ExternalLink, List, ListItem, Modal, TextButton } from '@gnomad/ui'
 
 import datasetConfig from '../../datasetConfig'
 import { IndividualGeneAPIResponse } from '../GeneResultsPage/geneResultTableColumns'
-import { datasetToSubdomainOverrideMap } from '../OtherStudies'
+import getDatasetBrowserUrl from '../datasetBrowserUrl'
 import { DatasetId } from '../Browser'
 
 interface GeneReferencesProps {
@@ -210,13 +210,8 @@ const GeneInfo = ({ gene, showManeSelectTranscript = false }: GeneInfoProps) => 
         <dd>
           {otherStudies
             .map(({ id }) => {
-              const subdomain = datasetToSubdomainOverrideMap[id] || id.toLowerCase()
-
               return (
-                <ExternalLink
-                  key={id}
-                  href={`https://${subdomain}.broadinstitute.org/gene/${gene.gene_id}`}
-                >
+                <ExternalLink key={id} href={getDatasetBrowserUrl(id, `/gene/${gene.gene_id}`)}>
                   {id}
                 </ExternalLink>
               )
