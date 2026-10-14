@@ -59,6 +59,19 @@ To manage deployments, run the following commands from the `gnomad-deployments` 
 
 Deployments are primarily updated by updating the docker image for any change in the app running in deployment, or by updating the persistent disk to update the data that serves the deployent.
 
+### Subdomain redirects
+
+Add lowercase source and target subdomain names to `SUBDOMAIN_REDIRECTS` in
+`src/server/subdomainRedirects.ts`, for example `asc: 'agb'`. The app sends a
+permanent HTTP 308 redirect to HTTPS on the target subdomain, preserving the
+remaining hostname, path, query string, and request method. Development mode and
+`/ready` bypass these redirects.
+
+Keep DNS, ingress routing, and TLS certificates for both hostnames so requests to
+the old hostname reach the app. Keep redirect targets out of the source entries
+to avoid redirect chains or loops. The separate `ibdseq: 'IBD'` dataset alias
+continues to serve IBD without changing the URL.
+
 ### Updating/Creating a demo deployment
 
 Demo deployments for exome results browsers are workload on the `exac-gnomad` kubernetes cluster that gnomAD exists on. Creating new demo deployments, or updating existing ones is done by creating or updating kustomization files with new resources, and applying the updates.

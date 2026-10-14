@@ -213,7 +213,7 @@ describe('AGB annotation row identities', () => {
     expect(onHoverVariant.mock.calls).toEqual([['2-69193415-G-A'], ['2-69193415-G-A'], [null]])
   })
 
-  it.each(['ASC', 'SCHEMA', 'BipEx', 'BipEx2', 'Epi25', 'GP2', 'IBD'])(
+  it.each(['SCHEMA', 'BipEx', 'BipEx2', 'Epi25', 'GP2', 'IBD'])(
     'keeps existing biological row keys for %s',
     (datasetId) => {
       const rows = decodeRows(datasetId)

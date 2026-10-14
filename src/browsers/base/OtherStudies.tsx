@@ -60,10 +60,10 @@ type DatasetLink = {
 
 const datasetLinks: DatasetLink[] = [
   {
-    id: 'ASC',
+    id: 'AGB',
     phenotype: 'Autism',
     description:
-      'Founded in 2010, the Autism Sequencing Consortium (ASC) is an international group of scientists who share autism spectrum disorder (ASD) samples and genetic data. This portal displays variant and gene-level data from the most recent ASC exome sequencing analysis.',
+      'The Autism Genomics Browser (AGB) displays variant and gene-level results from cross-consortia autism genomics data aggregation and gene discovery efforts.',
   },
   {
     id: 'BipEx',

@@ -5,10 +5,10 @@ const CopyPlugin = require('copy-webpack-plugin')
 const HtmlPlugin = require('html-webpack-plugin')
 const tsConfig = require('../../tsconfig.json')
 
-const BROWSERS = ['ASC', 'AGB', 'BipEx', 'Epi25', 'SCHEMA', 'IBD', 'GP2']
+const BROWSERS = ['AGB', 'BipEx', 'Epi25', 'SCHEMA', 'IBD', 'GP2']
 
 const GA_TRACKING_IDS = {
-  ASC: 'G-W7RRZ25H20',
+  AGB: 'G-W7RRZ25H20',
   BipEx: 'G-8KPV0Z1C7D',
   Epi25: 'G-QG9GFX2FDZ',
   SCHEMA: 'G-EEXQ7693E2',

@@ -6,7 +6,6 @@ steps:
       - |
         echo Epi25_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-1 > build.env && \
         echo SCHEMA_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-2 >> build.env && \
-        echo ASC_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-3 >> build.env && \
         echo BipEx_BROWSER_GA_TRACKING_ID=UA-$$ERB_GA_ID-4 >> build.env
     secretEnv:
       - 'ERB_GA_ID'
