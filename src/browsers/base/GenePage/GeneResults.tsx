@@ -10,6 +10,7 @@ import {
   IndividualGeneGeneResultsAPIResponse,
 } from '../GeneResultsPage/geneResultTableColumns'
 import { DatasetId } from '../Browser'
+import getDatasetBrowserUrl from '../datasetBrowserUrl'
 
 const DatasetGeneResultComponent = geneResultComponents[datasetConfig.datasetId]
 
@@ -60,11 +61,7 @@ const GeneResults = DatasetGeneResultComponent
                 {associatedOtherResults.map(({ dataset }) => (
                   <ListItem key={dataset}>
                     {studyPhenotypes[dataset]} -{' '}
-                    <ExternalLink
-                      href={`https://${dataset.toLowerCase()}.broadinstitute.org/gene/${
-                        gene.gene_id
-                      }`}
-                    >
+                    <ExternalLink href={getDatasetBrowserUrl(dataset, `/gene/${gene.gene_id}`)}>
                       see details in {dataset} browser
                     </ExternalLink>
                   </ListItem>

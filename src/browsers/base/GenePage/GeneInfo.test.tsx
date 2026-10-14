@@ -1,3 +1,5 @@
+/** @jest-environment-options {"url":"https://schema.the-tgg.dev/"} */
+
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 
@@ -65,7 +67,7 @@ describe('GeneInfo other studies', () => {
 
     expect(screen.getByRole('link', { name: 'AGB' })).toHaveAttribute(
       'href',
-      `https://agb.broadinstitute.org/gene/${gene.gene_id}`
+      `https://agb.the-tgg.dev/gene/${gene.gene_id}`
     )
     expect(screen.queryByRole('link', { name: 'ASC' })).not.toBeInTheDocument()
   })

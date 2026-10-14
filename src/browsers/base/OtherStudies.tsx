@@ -8,21 +8,15 @@ import { AGBDataDescription } from '../agb/AGBHomePage'
 import datasetConfig from '../datasetConfig'
 import Fetch from './Fetch'
 import { DatasetId } from './Browser'
-
-// TK: put this in a more central place, if it's needed elsewhere
-export const datasetToSubdomainOverrideMap: Partial<Record<DatasetId, string>> = {
-  IBD: 'ibdseq',
-}
+import getDatasetBrowserUrl from './datasetBrowserUrl'
 
 const BrowserLink = ({ datasetId }: { datasetId: DatasetId }) => {
-  const subdomain = datasetToSubdomainOverrideMap[datasetId] || datasetId.toLowerCase()
-
   return (
     <Switch>
       <Route
         path="/results"
         render={() => (
-          <ExternalLink href={`https://${subdomain}.broadinstitute.org/results`}>
+          <ExternalLink href={getDatasetBrowserUrl(datasetId, '/results')}>
             View results in {datasetId} browser
           </ExternalLink>
         )}
@@ -34,7 +28,7 @@ const BrowserLink = ({ datasetId }: { datasetId: DatasetId }) => {
             {({ data }) => {
               const label = data && data.gene ? data.gene.symbol : 'this gene'
               return (
-                <ExternalLink href={`https://${subdomain}.broadinstitute.org${location.pathname}`}>
+                <ExternalLink href={getDatasetBrowserUrl(datasetId, location.pathname)}>
                   View {label} in {datasetId} browser
                 </ExternalLink>
               )
@@ -44,7 +38,7 @@ const BrowserLink = ({ datasetId }: { datasetId: DatasetId }) => {
       />
       <Route
         render={() => (
-          <ExternalLink href={`https://${subdomain}.broadinstitute.org`}>
+          <ExternalLink href={getDatasetBrowserUrl(datasetId)}>
             Open {datasetId} browser
           </ExternalLink>
         )}
@@ -65,9 +59,9 @@ const datasetLinks: DatasetLink[] = [
     phenotype: 'Autism',
     description: (
       <AGBDataDescription
-        aboutLink={<ExternalLink href="https://agb.broadinstitute.org/about">here</ExternalLink>}
+        aboutLink={<ExternalLink href={getDatasetBrowserUrl('AGB', '/about')}>here</ExternalLink>}
         termsLink={
-          <ExternalLink href="https://agb.broadinstitute.org/terms">terms of use</ExternalLink>
+          <ExternalLink href={getDatasetBrowserUrl('AGB', '/terms')}>terms of use</ExternalLink>
         }
       />
     ),
@@ -125,13 +119,11 @@ const OtherStudies = () => (
     {datasetLinks
       .filter((ds) => ds.id !== datasetConfig.datasetId)
       .map((ds) => {
-        const subdomain = datasetToSubdomainOverrideMap[ds.id] || ds.id.toLowerCase()
-
         return (
           <>
             <h2>
               {ds.phenotype} -{' '}
-              <ExternalLink href={`https://${subdomain}.broadinstitute.org`}>{ds.id}</ExternalLink>
+              <ExternalLink href={getDatasetBrowserUrl(ds.id)}>{ds.id}</ExternalLink>
             </h2>
             <p>{ds.description}</p>
             <p>
