@@ -113,7 +113,7 @@ def test_get_test_gene_intervals_looks_up_genes():
 
 
 def test_get_test_gene_intervals_uses_requested_reference_genome():
-    intervals = get_test_gene_intervals("ASC", "PCSK9,CHD8", reference_genome="GRCh37")
+    intervals = get_test_gene_intervals("AGB", "PCSK9,CHD8", reference_genome="GRCh37")
     assert interval_contigs_and_positions(intervals) == [
         ("1", 55505221, 55530525),
         ("14", 21853353, 21924285),

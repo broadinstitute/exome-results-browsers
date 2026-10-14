@@ -1,6 +1,9 @@
+import React from 'react'
+import { render, screen } from '@testing-library/react'
+
 import { VariantColumnConfig } from '../Browser'
 import { FilterState } from './VariantFilterControls'
-import getVariantTableColumns from './variantTableColumns'
+import getVariantTableColumns, { VariantRow } from './variantTableColumns'
 
 const DEFAULT_FILTER: FilterState = {
   includeCategories: { lof: true, missense: true, synonymous: true, other: true },
@@ -66,11 +69,126 @@ describe('getVariantTableColumns', () => {
     expect(column.sortKey).toBe('info.severity_rank')
   })
 
+  it('keeps default grouped headers left-aligned and numeric cells unwrapped', () => {
+    const column = buildTableColumn([
+      {
+        key: 'info.score',
+        heading: 'Score',
+        group: { key: 'scores', geneTableLabel: 'Scores', variantTableLabel: 'Scores' },
+      },
+    ])
+    render(React.createElement(React.Fragment, null, column.heading))
+
+    expect(screen.getByText('Score')).toHaveStyle('text-align: left;')
+    expect(
+      column.render(
+        {
+          variant_id: '1-100-A-T',
+          pos: 100,
+          consequence: 'missense',
+          consequenceCategory: 'missense',
+          hgvsp: '',
+          hgvsc: '',
+          group_results: {},
+          info: { score: 123 },
+        },
+        column.key,
+        {}
+      )
+    ).toBe('123')
+  })
+
   it('honors isSortable: false', () => {
     const column = buildTableColumn([
       { key: 'info.severity', heading: 'Severity', isSortable: false },
     ])
 
     expect(column.isSortable).toBe(false)
+  })
+})
+
+describe('HGVS description columns', () => {
+  const variant: VariantRow = {
+    variant_id: '1-100-A-T',
+    pos: 100,
+    consequence: 'missense_variant',
+    consequenceCategory: 'missense',
+    hgvsp: 'p.Lys34Asn',
+    hgvsc: 'c.100A>T',
+    hgvs: 'p.Lys34Asn',
+    group_results: {},
+    info: {},
+  }
+
+  const buildDescriptionColumns = (datasetId: string) => {
+    return getVariantTableColumns({
+      datasetId,
+      variantResultColumns: [{ key: 'info.score', heading: 'Score' }],
+      filter: { ...DEFAULT_FILTER, gp2VariantColumnGroups: {} },
+    })
+  }
+
+  const getAgbHgvsColumn = () => {
+    const column = buildDescriptionColumns('AGB').find((candidate) => candidate.key === 'hgvs')
+    if (!column) {
+      throw new Error('Missing AGB column: hgvs')
+    }
+    return column
+  }
+
+  it('keeps the combined AGB column in its original position', () => {
+    const columns = buildDescriptionColumns('AGB')
+
+    expect(columns.map((column) => column.key)).toEqual([
+      'variant_id',
+      'hgvs',
+      'consequence',
+      'info.score',
+    ])
+    expect(columns[1].heading).toBe('HGVSp/c')
+  })
+
+  it.each(['AGB', 'BipEx', 'BipEx2', 'Epi25', 'GP2', 'IBD', 'SCHEMA'])(
+    'keeps the combined column for %s',
+    (datasetId) => {
+      const columns = buildDescriptionColumns(datasetId)
+
+      expect(columns.slice(0, 3).map((column) => column.key)).toEqual([
+        'variant_id',
+        'hgvs',
+        'consequence',
+      ])
+      expect(columns[1].heading).toBe('HGVSp/c')
+      expect(columns[1].renderForCSV(variant, 'hgvs')).toBe('p.Lys34Asn')
+    }
+  )
+
+  it.each([
+    { hgvsp: 'p.Lys34Asn', hgvsc: 'c.100A>T', expected: 'p.Lys34Asn' },
+    { hgvsp: '', hgvsc: 'c.100A>T', expected: 'c.100A>T' },
+  ])('renders and exports the combined HGVS value $expected', ({ hgvsp, hgvsc, expected }) => {
+    const column = getAgbHgvsColumn()
+    const normalizedVariant = { ...variant, hgvsp, hgvsc, hgvs: hgvsp || hgvsc }
+
+    render(React.createElement(React.Fragment, null, column.render(normalizedVariant, 'hgvs', {})))
+
+    expect(screen.getByText(expected)).toBeInTheDocument()
+    expect(column.renderForCSV(normalizedVariant, 'hgvs')).toBe(expected)
+    expect(column.sortKey).toBe('hgvs')
+    expect(column.isSortable).toBe(true)
+    expect(column.sortFunction('a', 'b')).toBeLessThan(0)
+    expect(column.sortFunction('b', 'a')).toBeGreaterThan(0)
+  })
+
+  it('leaves the combined column blank when both HGVS values are missing', () => {
+    const column = getAgbHgvsColumn()
+    const variantWithMissingHgvs = { ...variant, hgvsp: '', hgvsc: '', hgvs: '' }
+
+    const { container } = render(
+      React.createElement(React.Fragment, null, column.render(variantWithMissingHgvs, 'hgvs', {}))
+    )
+
+    expect(container.textContent).toBe('')
+    expect(column.renderForCSV(variantWithMissingHgvs, 'hgvs')).toBe('')
   })
 })

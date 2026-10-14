@@ -4,24 +4,19 @@ import { Route, Switch } from 'react-router-dom'
 // @ts-expect-error: no types in this @gnomad/ui version
 import { ExternalLink } from '@gnomad/ui'
 
+import { AGBDataDescription } from '../agb/AGBHomePage'
 import datasetConfig from '../datasetConfig'
 import Fetch from './Fetch'
 import { DatasetId } from './Browser'
-
-// TK: put this in a more central place, if it's needed elsewhere
-export const datasetToSubdomainOverrideMap: Partial<Record<DatasetId, string>> = {
-  IBD: 'ibdseq',
-}
+import getDatasetBrowserUrl from './datasetBrowserUrl'
 
 const BrowserLink = ({ datasetId }: { datasetId: DatasetId }) => {
-  const subdomain = datasetToSubdomainOverrideMap[datasetId] || datasetId.toLowerCase()
-
   return (
     <Switch>
       <Route
         path="/results"
         render={() => (
-          <ExternalLink href={`https://${subdomain}.broadinstitute.org/results`}>
+          <ExternalLink href={getDatasetBrowserUrl(datasetId, '/results')}>
             View results in {datasetId} browser
           </ExternalLink>
         )}
@@ -33,7 +28,7 @@ const BrowserLink = ({ datasetId }: { datasetId: DatasetId }) => {
             {({ data }) => {
               const label = data && data.gene ? data.gene.symbol : 'this gene'
               return (
-                <ExternalLink href={`https://${subdomain}.broadinstitute.org${location.pathname}`}>
+                <ExternalLink href={getDatasetBrowserUrl(datasetId, location.pathname)}>
                   View {label} in {datasetId} browser
                 </ExternalLink>
               )
@@ -43,7 +38,7 @@ const BrowserLink = ({ datasetId }: { datasetId: DatasetId }) => {
       />
       <Route
         render={() => (
-          <ExternalLink href={`https://${subdomain}.broadinstitute.org`}>
+          <ExternalLink href={getDatasetBrowserUrl(datasetId)}>
             Open {datasetId} browser
           </ExternalLink>
         )}
@@ -60,10 +55,16 @@ type DatasetLink = {
 
 const datasetLinks: DatasetLink[] = [
   {
-    id: 'ASC',
+    id: 'AGB',
     phenotype: 'Autism',
-    description:
-      'Founded in 2010, the Autism Sequencing Consortium (ASC) is an international group of scientists who share autism spectrum disorder (ASD) samples and genetic data. This portal displays variant and gene-level data from the most recent ASC exome sequencing analysis.',
+    description: (
+      <AGBDataDescription
+        aboutLink={<ExternalLink href={getDatasetBrowserUrl('AGB', '/about')}>here</ExternalLink>}
+        termsLink={
+          <ExternalLink href={getDatasetBrowserUrl('AGB', '/terms')}>terms of use</ExternalLink>
+        }
+      />
+    ),
   },
   {
     id: 'BipEx',
@@ -118,13 +119,11 @@ const OtherStudies = () => (
     {datasetLinks
       .filter((ds) => ds.id !== datasetConfig.datasetId)
       .map((ds) => {
-        const subdomain = datasetToSubdomainOverrideMap[ds.id] || ds.id.toLowerCase()
-
         return (
           <>
             <h2>
               {ds.phenotype} -{' '}
-              <ExternalLink href={`https://${subdomain}.broadinstitute.org`}>{ds.id}</ExternalLink>
+              <ExternalLink href={getDatasetBrowserUrl(ds.id)}>{ds.id}</ExternalLink>
             </h2>
             <p>{ds.description}</p>
             <p>

@@ -8,7 +8,8 @@ import datasetConfig from '../datasetConfig'
 import InfoPage from './InfoPage'
 import { DatasetId } from './Browser'
 
-const BASE_GCS_DOWNLOAD_PATH = 'https://storage.googleapis.com/exome-results-browsers-public/downloads'
+const BASE_GCS_DOWNLOAD_PATH =
+  'https://storage.googleapis.com/exome-results-browsers-public/downloads'
 const BASE_AWS_DOWNLOAD_PATH = 'https://atgu-exome-browser-data.s3.amazonaws.com'
 
 type LegacyDatasetId = 'BipEx_v1' | 'SCHEMA_v1'
@@ -18,14 +19,12 @@ type ClinVarAnnotationDatasetId = 'ClinVarGRCh38'
 type DownloadDatasetId = DatasetId | LegacyDatasetId | ClinVarAnnotationDatasetId
 
 type DownloadConfig = {
-  baseUrl: string;
+  baseUrl: string
   filePrefix: string
 }
 
-
 const DOWNLOAD_URLS: Partial<Record<DownloadDatasetId, DownloadConfig>> = {
-  ASC: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/ASC`, filePrefix: 'ASC' },
-  ASC2: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-09-17/ASC2`, filePrefix: 'ASC2' },
+  AGB: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-10-12/AGB`, filePrefix: 'AGB' },
   BipEx: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-08-07/BipEx`, filePrefix: 'BipEx_v2' },
   Epi25: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2022-12-01/Epi25`, filePrefix: 'Epi25' },
   SCHEMA: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-08-21/SCHEMA`, filePrefix: 'SCHEMA_v2' },

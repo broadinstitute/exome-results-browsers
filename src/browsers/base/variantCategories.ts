@@ -1,6 +1,6 @@
 // Kept in its own leaf module, deliberately with no other project imports: `Browser.tsx`
 // re-exports everything here, but several files (`variantTableColumns.tsx`,
-// `VariantsInGene.tsx`, `ASC2Browser.tsx`, ...) need the value-level exports
+// `VariantsInGene.tsx`, `AGBBrowser.tsx`, ...) need the value-level exports
 // (`defineVariantCategoryOptions`, `DEFAULT_VARIANT_CATEGORY_OPTIONS`) without pulling in
 // Browser.tsx's full import graph, which runs dataset-config-dependent module-level code
 // (`DownloadsPage.tsx`) that throws outside a fully configured `window.datasetConfig`
@@ -16,7 +16,7 @@ export interface VariantConsequence {
 
 export type VariantConsequenceCategoryLabels = Record<ConsequenceCategory, string>
 
-// The id of a variant category is dataset-specific (e.g. ASC2 uses its own
+// The id of a variant category is dataset-specific (e.g. AGB uses its own
 // Mis0/Mis1/Mis2/PTV/synonymous classes instead of lof/missense/synonymous/other),
 // so it's typed as `string` here where components must stay dataset-agnostic.
 // Datasets that want compile-time exhaustiveness over their own closed set of

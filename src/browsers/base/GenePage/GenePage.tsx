@@ -52,6 +52,7 @@ interface GenePageProps {
   datasetId: DatasetId
   browserTitle: string
   gene: IndividualGeneAPIResponse
+  showManeSelectTranscript?: boolean
   defaultVariantAnalysisGroup: string
   variantAnalysisGroupLabels?: Record<string, string>
   variantAnalysisGroupOptions: readonly string[]
@@ -66,6 +67,7 @@ interface GenePageProps {
   renderVariantAttributes?: RenderVariantAttributes
   additionalVariantDetailSummaryColumns?: VariantTableColumn[]
   variantDetailColumns?: VariantTableColumn[]
+  variantDetailsSingleAnalysisGroup?: boolean
   renderVariantTranscriptConsequences?: boolean
   variantAlleleFrequencyOverride?: number
   variantExportNote?: string
@@ -76,6 +78,7 @@ const GenePage = ({
   datasetId,
   browserTitle,
   gene,
+  showManeSelectTranscript = false,
   defaultVariantAnalysisGroup,
   variantAnalysisGroupLabels = undefined,
   variantAnalysisGroupOptions,
@@ -90,6 +93,7 @@ const GenePage = ({
   additionalVariantDetailSummaryColumns = undefined,
   renderVariantAttributes = undefined,
   variantDetailColumns = undefined,
+  variantDetailsSingleAnalysisGroup = false,
   renderVariantTranscriptConsequences = false,
   variantAlleleFrequencyOverride = undefined,
   variantExportNote = undefined,
@@ -103,7 +107,7 @@ const GenePage = ({
           {gene.symbol} <GeneName>{gene.name}</GeneName>
         </PageHeading>
 
-        <GeneInfo gene={gene} />
+        <GeneInfo gene={gene} showManeSelectTranscript={showManeSelectTranscript} />
 
         <TablesWrapper>
           <div>
@@ -164,7 +168,7 @@ const GenePage = ({
                       <p>ExAC constraint is not available for this gene.</p>
                     ),
                 },
-              ]}
+              ].filter((tab) => datasetId !== 'AGB' || tab.id !== 'exac')}
             />
           </ConstraintWrapper>
         </TablesWrapper>
@@ -187,6 +191,7 @@ const GenePage = ({
           renderVariantAttributes={renderVariantAttributes}
           additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
           variantDetailColumns={variantDetailColumns}
+          variantDetailsSingleAnalysisGroup={variantDetailsSingleAnalysisGroup}
           renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
           variantAnalysisGroupLabels={variantAnalysisGroupLabels}
           variantAnalysisGroupOptions={variantAnalysisGroupOptions}
@@ -209,6 +214,7 @@ const GenePage = ({
 interface GenePageContainerProps {
   datasetId: DatasetId
   geneIdOrSymbol: string
+  showManeSelectTranscript?: boolean
   browserTitle: string
   defaultVariantAnalysisGroup: string
   variantAnalysisGroupOptions: readonly string[]
@@ -222,6 +228,7 @@ interface GenePageContainerProps {
 const GenePageContainer = ({
   datasetId,
   geneIdOrSymbol,
+  showManeSelectTranscript = false,
   defaultVariantAnalysisGroup,
   variantAnalysisGroupOptions,
   variantConsequences,
@@ -251,6 +258,7 @@ const GenePageContainer = ({
           <GenePage
             datasetId={datasetId}
             gene={geneData.gene}
+            showManeSelectTranscript={showManeSelectTranscript}
             defaultVariantAnalysisGroup={defaultVariantAnalysisGroup}
             variantAnalysisGroupOptions={variantAnalysisGroupOptions}
             variantConsequences={variantConsequences}

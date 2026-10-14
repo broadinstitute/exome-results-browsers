@@ -42,20 +42,39 @@ const namesOfRenderedOtherStudies = (): string[] =>
     .filter((text): text is string => text !== null && text !== SCHEMA_LEGACY_HEADING)
 
 describe('DownloadsPage', () => {
-  it('given SCHEMA is the current dataset, lists ASC, BipEx, and Epi25 as other studies', () => {
+  it.each([
+    ['AGB gene results (TSV)', 'gene_results.tsv.bgz'],
+    ['AGB variant results (TSV)', 'variant_results.tsv.bgz'],
+    ['AGB variant results (VCF)', 'variant_results.vcf.bgz'],
+  ])('links %s to the renamed pipeline output', (label, filename) => {
+    renderDownloadsPageAsDataset('AGB')
+
+    expect(screen.getByRole('link', { name: label })).toHaveAttribute(
+      'href',
+      `https://storage.googleapis.com/exome-results-browsers-public/downloads/2026-10-12/AGB/AGB_${filename}`
+    )
+  })
+
+  it('omits downloads for the retired ASC dataset', () => {
+    renderDownloadsPageAsDataset('AGB')
+
+    expect(screen.queryByRole('link', { name: /ASC/ })).not.toBeInTheDocument()
+  })
+
+  it('given SCHEMA is the current dataset, lists AGB, BipEx, and Epi25 as other studies', () => {
     const CURRENT_DATASET: DatasetId = 'SCHEMA'
 
     renderDownloadsPageAsDataset(CURRENT_DATASET)
 
-    expect(namesOfRenderedOtherStudies()).toEqual(['ASC', 'BipEx', 'Epi25'])
+    expect(namesOfRenderedOtherStudies()).toEqual(['AGB', 'BipEx', 'Epi25'])
   })
 
-  it('given Epi25 is the current dataset, lists ASC, BipEx, and SCHEMA as other studies', () => {
+  it('given Epi25 is the current dataset, lists AGB, BipEx, and SCHEMA as other studies', () => {
     const CURRENT_DATASET: DatasetId = 'Epi25'
 
     renderDownloadsPageAsDataset(CURRENT_DATASET)
 
-    expect(namesOfRenderedOtherStudies()).toEqual(['ASC', 'BipEx', 'SCHEMA'])
+    expect(namesOfRenderedOtherStudies()).toEqual(['AGB', 'BipEx', 'SCHEMA'])
   })
 
   it('given SCHEMA is the current dataset, also renders the legacy SCHEMA 1.0 downloads', () => {

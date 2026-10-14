@@ -16,10 +16,17 @@ const isLoggedIn = (): boolean => {
   return loggedIn !== null && loggedIn !== false
 }
 
-const logout = (e: React.MouseEvent<HTMLElement>) => {
-  e.preventDefault()
+const logout = (e?: React.MouseEvent<HTMLElement>) => {
+  e?.preventDefault()
   document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
   window.location.replace('/login')
+}
+
+const handleUnauthorizedResponse = (response: Pick<Response, 'status'>): void => {
+  if (response.status === 401) {
+    logout()
+    throw new Error('Authentication required')
+  }
 }
 
 const addAuthHeader = (options: any = {}) => {
@@ -36,4 +43,4 @@ const addAuthHeader = (options: any = {}) => {
   return options
 }
 
-export { isLoggedIn, addAuthHeader, logout, userHasBearerCookie }
+export { isLoggedIn, addAuthHeader, logout, userHasBearerCookie, handleUnauthorizedResponse }

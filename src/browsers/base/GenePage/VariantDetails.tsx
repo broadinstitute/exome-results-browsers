@@ -7,7 +7,12 @@ import { BaseTable, ExternalLink, ListItem } from '@gnomad/ui'
 
 import { VariantAttribute, VariantAttributeList } from './VariantAttributes'
 import { renderExponentialIfSmall, VariantRow } from './variantTableColumns'
-import { ReferenceGenome, RenderVariantAttributes, VariantColumnConfig } from '../Browser'
+import {
+  GeneResultColumnGroup,
+  ReferenceGenome,
+  RenderVariantAttributes,
+  VariantColumnConfig,
+} from '../Browser'
 import { FilterState } from './VariantFilterControls'
 
 const VariantContainer = styled.div`
@@ -32,6 +37,22 @@ const Columns = styled.div`
     ${Column} {
       flex-basis: 100%;
     }
+  }
+`
+
+const VariantSummaryGroup = styled.div`
+  margin-bottom: 1em;
+
+  > dt {
+    font-weight: bold;
+  }
+
+  > dd {
+    margin-left: 1em;
+  }
+
+  > dd > dl {
+    margin: 0.5em 0 0;
   }
 `
 
@@ -356,6 +377,7 @@ interface VariantDetailsProps {
   renderVariantAttributes: RenderVariantAttributes
   additionalVariantDetailSummaryColumns: VariantColumnConfig[] | undefined
   variantDetailColumns: VariantColumnConfig[] | undefined
+  variantDetailsSingleAnalysisGroup?: boolean
   renderVariantTranscriptConsequences: boolean
   filter: FilterState
 }
@@ -371,6 +393,7 @@ const VariantDetails = ({
   renderVariantAttributes,
   additionalVariantDetailSummaryColumns,
   variantDetailColumns,
+  variantDetailsSingleAnalysisGroup = false,
   renderVariantTranscriptConsequences,
   filter,
 }: VariantDetailsProps) => {
@@ -384,6 +407,24 @@ const VariantDetails = ({
     ...variantResultColumns,
     ...(additionalVariantDetailSummaryColumns || []),
   ]
+
+  const variantSummarySections: {
+    group?: GeneResultColumnGroup
+    columns: VariantColumnConfig[]
+  }[] = []
+
+  renderedVariantSummaryRows.forEach((column) => {
+    const group = datasetId === 'AGB' ? column.group : undefined
+    const existingSection = group
+      ? variantSummarySections.find((section) => section.group?.key === group.key)
+      : undefined
+
+    if (existingSection) {
+      existingSection.columns.push(column)
+    } else {
+      variantSummarySections.push({ group, columns: [column] })
+    }
+  })
 
   const standardColumns: VariantColumnConfig[] = [
     { key: 'group_result.ac_case', heading: 'AC Case', render: (value: number) => value },
@@ -532,12 +573,12 @@ const VariantDetails = ({
   })
 
   const datasetColumns =
-    datasetId === 'GP2' ? renderedGP2Columns : datasetId === 'ASC2' ? [] : standardColumns
+    datasetId === 'GP2' ? renderedGP2Columns : datasetId === 'AGB' ? [] : standardColumns
 
   const filteredVariantResultColumns =
-    datasetId === 'ASC2' && filter.asc2VariantColumnGroups
+    datasetId === 'AGB' && filter.agbVariantColumnGroups
       ? variantResultColumns.filter(
-          (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
+          (column) => !column.group || filter.agbVariantColumnGroups![column.group.key]
         )
       : variantResultColumns
 
@@ -558,6 +599,10 @@ const VariantDetails = ({
     variant.group_results = parsedGroupResults
   }
 
+  const analysisLabel = variantDetailsSingleAnalysisGroup
+    ? 'Analysis'
+    : `Analysis (${defaultVariantAnalysisGroup})`
+
   return (
     <VariantContainer>
       <div>
@@ -571,8 +616,8 @@ const VariantDetails = ({
       <Columns>
         {datasetId !== 'GP2' && defaultGroupResult && (
           <Column>
-            <VariantAttributeList label={`Analysis (${defaultVariantAnalysisGroup})`}>
-              {datasetId !== 'ASC2' && (
+            <VariantAttributeList label={analysisLabel}>
+              {datasetId !== 'AGB' && (
                 <>
                   <VariantAttribute label="Cases">
                     {defaultGroupResult.ac_case} / {defaultGroupResult.an_case} (
@@ -584,13 +629,28 @@ const VariantDetails = ({
                   </VariantAttribute>
                 </>
               )}
-              {renderedVariantSummaryRows.map((c) => (
-                <VariantAttribute key={c.key} label={c.heading || ''}>
-                  {get(variant, c.key) === null
-                    ? null
-                    : (c.render || renderNumber)(get(variant, c.key))}
-                </VariantAttribute>
-              ))}
+              {variantSummarySections.map(({ group, columns }) => {
+                const attributes = columns.map((column) => (
+                  <VariantAttribute key={column.key} label={column.heading || ''}>
+                    {get(variant, column.key) === null
+                      ? null
+                      : (column.render || renderNumber)(get(variant, column.key))}
+                  </VariantAttribute>
+                ))
+
+                if (!group) {
+                  return attributes
+                }
+
+                return (
+                  <VariantSummaryGroup key={group.key}>
+                    <dt>{group.variantTableLabel}</dt>
+                    <dd>
+                      <dl>{attributes}</dl>
+                    </dd>
+                  </VariantSummaryGroup>
+                )
+              })}
             </VariantAttributeList>
           </Column>
         )}
@@ -615,54 +675,58 @@ const VariantDetails = ({
         </Column>
       </Columns>
 
-      <h2>Analysis Groups</h2>
-      <TableWrapper>
-        <BaseTable>
-          <thead>
-            <tr>
-              <th scope="col">Group</th>
-              {renderedVariantColumns.map((c) => (
-                <th key={c.key} scope="col">
-                  {c.heading}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Object.keys(variant.group_results)
-              .sort((g1, g2) => {
-                if (g1 === defaultVariantAnalysisGroup) {
-                  return -1
-                }
-                if (g2 === defaultVariantAnalysisGroup) {
-                  return 1
-                }
-                return (variantAnalysisGroupLabels[g1] || g1).localeCompare(
-                  variantAnalysisGroupLabels[g2] || g2
-                )
-              })
-              .map((analysisGroup) => {
-                const groupResult = variant.group_results[analysisGroup]
-                const rowVariant = { ...variant, group_result: groupResult }
-
-                return (
-                  <tr key={analysisGroup}>
-                    <th scope="row">
-                      {variantAnalysisGroupLabels[analysisGroup] || analysisGroup}
+      {!variantDetailsSingleAnalysisGroup && (
+        <>
+          <h2>Analysis Groups</h2>
+          <TableWrapper>
+            <BaseTable>
+              <thead>
+                <tr>
+                  <th scope="col">Group</th>
+                  {renderedVariantColumns.map((c) => (
+                    <th key={c.key} scope="col">
+                      {c.heading}
                     </th>
-                    {renderedVariantColumns.map((c) => (
-                      <td key={c.key}>
-                        {get(rowVariant, c.key) === null
-                          ? ''
-                          : (c.render || renderNumber)(get(rowVariant, c.key))}
-                      </td>
-                    ))}
-                  </tr>
-                )
-              })}
-          </tbody>
-        </BaseTable>
-      </TableWrapper>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Object.keys(variant.group_results)
+                  .sort((g1, g2) => {
+                    if (g1 === defaultVariantAnalysisGroup) {
+                      return -1
+                    }
+                    if (g2 === defaultVariantAnalysisGroup) {
+                      return 1
+                    }
+                    return (variantAnalysisGroupLabels[g1] || g1).localeCompare(
+                      variantAnalysisGroupLabels[g2] || g2
+                    )
+                  })
+                  .map((analysisGroup) => {
+                    const groupResult = variant.group_results[analysisGroup]
+                    const rowVariant = { ...variant, group_result: groupResult }
+
+                    return (
+                      <tr key={analysisGroup}>
+                        <th scope="row">
+                          {variantAnalysisGroupLabels[analysisGroup] || analysisGroup}
+                        </th>
+                        {renderedVariantColumns.map((c) => (
+                          <td key={c.key}>
+                            {get(rowVariant, c.key) === null
+                              ? ''
+                              : (c.render || renderNumber)(get(rowVariant, c.key))}
+                          </td>
+                        ))}
+                      </tr>
+                    )
+                  })}
+              </tbody>
+            </BaseTable>
+          </TableWrapper>
+        </>
+      )}
 
       {renderVariantTranscriptConsequences && variant.info && variant.info.transcript_consequences && (
         <>

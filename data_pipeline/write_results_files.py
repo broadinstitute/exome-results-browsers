@@ -19,8 +19,7 @@ RESULT_FILE_MODE = 0o644
 VARIANT_THRESHOLD = 200_000
 VARIANT_CHUNK_SIZE = 10_000
 EXPECTED_DATASETS = [
-    "ASC",
-    "ASC2",
+    "AGB",
     "BipEx",
     "Epi25",
     "GP2",
@@ -415,6 +414,8 @@ def write_data_files(table_path, output_directory, genes=None):
     if output_directory.startswith("gs://"):
         raise ValueError("Google Storage paths are not supported for output_directory")
 
+    os.makedirs(output_directory, exist_ok=True)
+
     print(f"\n\n === Reading combined hail table from {table_path}", flush=True)
     ds = hl.read_table(table_path)
 
@@ -439,8 +440,7 @@ def write_data_files(table_path, output_directory, genes=None):
 
     ds = ds.annotate(
         total_variants=(
-            ds.variant_counts.ASC
-            + ds.variant_counts.ASC2
+            ds.variant_counts.AGB
             + ds.variant_counts.BipEx
             + ds.variant_counts.Epi25
             + ds.variant_counts.GP2

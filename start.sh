@@ -4,7 +4,7 @@ set -eu
 
 # Explicitly declare what env vars we want to pull in
 #   we don't include GA Tracking IDs as that would add false traffic
-development_environment_variables=("DEMO_PASSWORD")
+development_environment_variables=("DEMO_PASSWORD" "DEMO_PASSWORDS")
 
 if [ -f "build.env" ]; then
   while IFS= read -r line; do

@@ -101,6 +101,17 @@ def load_canonical_transcripts(canonical_transcripts_path):
     return canonical_transcripts
 
 
+def load_mane_select_transcripts(gtf_path):
+    # Read raw attributes because Hail's GTF importer collapses repeated tag keys.
+    transcripts = hl.import_table(gtf_path, comment="#", no_header=True, min_partitions=100)
+    transcripts = transcripts.filter((transcripts.f2 == "transcript") & transcripts.f8.contains('tag "MANE_Select";'))
+    transcripts = transcripts.select(
+        gene_id=transcripts.f8.first_match_in('gene_id "([^"]+)"')[0].split("\\.")[0],
+        mane_select_transcript_id=transcripts.f8.first_match_in('transcript_id "([^"]+)"')[0].split("\\.")[0],
+    )
+    return transcripts.key_by("gene_id")
+
+
 def load_hgnc(hgnc_path):
     hgnc = hl.import_table(hgnc_path, min_partitions=100, missing="")
     hgnc = hgnc.select(
@@ -131,6 +142,8 @@ def prepare_gene_models_helper(reference_genome):
     # Annotate genes with canonical transcript
     canonical_transcripts = load_canonical_transcripts(canonical_transcripts_path)
     genes = genes.annotate(canonical_transcript_id=canonical_transcripts[genes.gene_id].transcript_id)
+    mane_select_transcripts = load_mane_select_transcripts(gencode_path)
+    genes = genes.annotate(mane_select_transcript_id=mane_select_transcripts[genes.gene_id].mane_select_transcript_id)
 
     # Drop transcripts except for canonical
     genes = genes.annotate(
@@ -200,6 +213,8 @@ def prepare_gnomad_v2_constraint(gnomad_v2_constraint_path):
         obs_syn=ds.obs_syn,
         # Observed/Expected
         oe_lof=ds.oe_lof,
+        oe_lof_lower=ds.oe_lof_lower,
+        oe_lof_upper=ds.oe_lof_upper,
         oe_mis=ds.oe_mis,
         oe_syn=ds.oe_syn,
         # Z
@@ -233,6 +248,8 @@ def prepare_gnomad_v4_constraint(gnomad_v4_constraint_path):
         obs_syn=ds.syn.obs,
         # Observed/Expected
         oe_lof=ds.lof.oe,
+        oe_lof_lower=ds.lof.oe_ci.lower,
+        oe_lof_upper=ds.lof.oe_ci.upper,
         oe_mis=ds.mis.oe,
         oe_syn=ds.syn.oe,
         # Z

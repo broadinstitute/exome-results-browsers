@@ -1,7 +1,6 @@
 import React from 'react'
 
-import ASCGeneResults from './asc/ASCGeneResults'
-import ASC2GeneResults from './asc2/ASC2GeneResults'
+import AGBGeneResults from './agb/AGBGeneResults'
 import BipExGeneResults from './bipex/BipExGeneResults'
 import Epi25GeneResults from './epi25/Epi25GeneResults'
 import SCHEMAGeneResults from './schema/SCHEMAGeneResults'
@@ -10,8 +9,7 @@ import GP2GeneResults from './gp2/GP2GeneResults'
 import { DatasetId } from './base/Browser'
 
 const geneResultComponents: Partial<Record<DatasetId, React.ComponentType<any>>> = {
-  ASC: ASCGeneResults,
-  ASC2: ASC2GeneResults,
+  AGB: AGBGeneResults,
   BipEx: BipExGeneResults,
   Epi25: Epi25GeneResults,
   SCHEMA: SCHEMAGeneResults,

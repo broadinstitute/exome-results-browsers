@@ -15,11 +15,19 @@ file and fill in values for variables.
 
 ```
 cat <<EOF > build.env
-DEMO_PASSWORD=
+DEMO_PASSWORDS="ascdemo,agbdemo"
 EOF
 ```
 
-Note that the `DEMO_PASSWORD` should be a string with no `""`s, if quotes are included, the password will include the quotes. e.g. `DEMO_PASSWORD="password"` would require a user to type `"password"` into the box, as opposed to just `password`.
+Set `DEMO_PASSWORDS` to a comma-separated list of accepted demo passwords. Surrounding
+spaces and empty entries are ignored, and either password grants the same access.
+Restart the server after changing the configuration.
+
+Use `DEMO_PASSWORD` for an existing single-password deployment. A nonempty
+`DEMO_PASSWORDS` list takes precedence; an absent or empty list falls back to
+`DEMO_PASSWORD`. If neither provides a password, the existing default is `password`.
+Outer double quotes are removed from both variables, including quotes retained by
+`start.sh` when reading `build.env`. Use `DEMO_PASSWORD` if a password contains commas.
 
 GA tracking IDs are hardcoded in `src/browsers/webpack.config.js` and do not need to be set in `build.env`.
 
@@ -50,6 +58,19 @@ The [gnomad-deployments](https://github.com/broadinstitute/gnomad-deployments) r
 To manage deployments, run the following commands from the `gnomad-deployments` repository. You must be VPN'd into the broad to apply changes.
 
 Deployments are primarily updated by updating the docker image for any change in the app running in deployment, or by updating the persistent disk to update the data that serves the deployent.
+
+### Subdomain redirects
+
+Add lowercase source and target subdomain names to `SUBDOMAIN_REDIRECTS` in
+`src/server/subdomainRedirects.ts`, for example `asc: 'agb'`. The app sends a
+permanent HTTP 308 redirect to HTTPS on the target subdomain, preserving the
+remaining hostname, path, query string, and request method. Development mode and
+`/ready` bypass these redirects.
+
+Keep DNS, ingress routing, and TLS certificates for both hostnames so requests to
+the old hostname reach the app. Keep redirect targets out of the source entries
+to avoid redirect chains or loops. The separate `ibdseq: 'IBD'` dataset alias
+continues to serve IBD without changing the URL.
 
 ### Updating/Creating a demo deployment
 

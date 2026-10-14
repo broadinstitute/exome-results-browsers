@@ -1,0 +1,440 @@
+import React from 'react'
+
+// @ts-expect-error: no types in this @gnomad/ui version
+import { Badge } from '@gnomad/ui'
+
+import Browser, {
+  GeneResultColumnConfig,
+  GeneResultColumnGroup,
+  VariantConsequence,
+  VariantLollipopTrackGroup,
+} from '../base/Browser'
+import { renderCount, renderFloatAsScientific } from '../base/tableCells'
+import { defineVariantCategoryOptions } from '../base/variantCategories'
+
+import AGBAboutPage from './AGBAboutPage'
+import AGBHomePage from './AGBHomePage'
+import AGBTermsPage from './AGBTermsPage'
+import AGBVariantClassBadge, {
+  AGB_VARIANT_CLASS_COLORS,
+  compareAGBVariantClassSeverity,
+} from './AGBVariantClassBadge'
+import { renderAGBBayesFactor, renderAGBFalseDiscoveryRate } from './agbNumberFormatting'
+import {
+  AGB_VARIANT_CLASS_CATEGORIES,
+  AGBGeneResult,
+  AGBVariantClass,
+  AGBVariantClassCategory,
+  AGBVariantInfo,
+  describeVariantClass,
+} from './agbTypes'
+
+export type AGBVariantColumnGroup = 'deNovo' | 'transmittedUntransmitted' | 'caseControl'
+
+const renderMissing = (value: any) => (value === null || value === undefined ? '\u2013' : value)
+
+const renderBoolean = (value: boolean | null) =>
+  value === null || value === undefined ? '\u2013' : value ? 'yes' : 'no'
+
+import AGBWaterfallPlot from './AGBWaterfallPlot'
+
+const geneCountColumn = (
+  key: keyof AGBGeneResult,
+  heading: string,
+  tooltip: string,
+  minWidth = 70,
+  group?: GeneResultColumnGroup
+): GeneResultColumnConfig => ({
+  key,
+  heading,
+  tooltip,
+  minWidth,
+  group,
+  render: renderCount,
+})
+
+export const agbAnalysisGroups = ['meta'] as const
+export type AGBAnalysisGroup = typeof agbAnalysisGroups[number]
+export const agbDefaultAnalysisGroup: AGBAnalysisGroup = 'meta'
+
+export const agbVariantConsequences: VariantConsequence[] = [
+  { term: 'frameshift', label: 'frameshift', category: 'lof' },
+  { term: 'splice acceptor', label: 'splice acceptor', category: 'lof' },
+  { term: 'splice donor', label: 'splice donor', category: 'lof' },
+  { term: 'stop gained', label: 'stop gained', category: 'lof' },
+  { term: 'start lost', label: 'start lost', category: 'missense' },
+  { term: 'missense', label: 'missense', category: 'missense' },
+  { term: 'synonymous', label: 'synonymous', category: 'synonymous' },
+  { term: 'stop retained', label: 'stop retained', category: 'other' },
+  { term: 'splice region', label: 'splice region', category: 'other' },
+  { term: 'intron', label: 'intron', category: 'other' },
+  { term: 'upstream gene', label: 'upstream gene', category: 'other' },
+  { term: 'downstream gene', label: 'downstream gene', category: 'other' },
+]
+
+export const agbVariantCategoryOptions = defineVariantCategoryOptions<AGBVariantClass>({
+  PTV: { label: 'PTV', color: AGB_VARIANT_CLASS_COLORS.PTV, keyboardShortcut: 'p' },
+  Mis2: { label: 'Mis2', color: AGB_VARIANT_CLASS_COLORS.Mis2, keyboardShortcut: '2' },
+  Mis1: { label: 'Mis1', color: AGB_VARIANT_CLASS_COLORS.Mis1, keyboardShortcut: '1' },
+  Mis0: { label: 'Mis0', color: AGB_VARIANT_CLASS_COLORS.Mis0, keyboardShortcut: '0' },
+  synonymous: {
+    label: 'Synonymous',
+    color: AGB_VARIANT_CLASS_COLORS.synonymous,
+    keyboardShortcut: 's',
+  },
+})
+
+const getAGBVariantCategory = (variant: { info: AGBVariantInfo }): AGBVariantClass =>
+  variant.info.variant_class
+
+const COLUMN_GROUP_COLOR_A = '#e8e9ed'
+const COLUMN_GROUP_COLOR_B = '#f0f1f3'
+const COLUMN_GROUP_COLOR_C = '#dfe1e6'
+
+const deNovoColumnGroup: GeneResultColumnGroup = {
+  key: 'deNovo',
+  geneTableLabel: 'De\u00a0novo',
+  variantTableLabel: 'De\u00a0novo AC',
+  color: COLUMN_GROUP_COLOR_A,
+}
+const deNovoProbandVisibilityGroup: GeneResultColumnGroup = {
+  ...deNovoColumnGroup,
+  key: 'deNovoProband',
+  geneTableLabel: 'De\u00a0novo (proband)',
+}
+const deNovoSiblingVisibilityGroup: GeneResultColumnGroup = {
+  ...deNovoColumnGroup,
+  key: 'deNovoSibling',
+  geneTableLabel: 'De\u00a0novo (sibling)',
+}
+const transmittedUntransmittedColumnGroup: GeneResultColumnGroup = {
+  key: 'transmittedUntransmitted',
+  geneTableLabel: 'Inherited (proband)',
+  variantTableLabel: 'Inherited proband AC',
+  color: COLUMN_GROUP_COLOR_B,
+}
+const caseControlColumnGroup: GeneResultColumnGroup = {
+  key: 'caseControl',
+  geneTableLabel: 'Case-Control',
+  variantTableLabel: 'Case-Control AC',
+  color: COLUMN_GROUP_COLOR_C,
+}
+
+// Dot size on each track is proportional to AC relative to the largest AC
+// across both tracks in its group, not a fixed/global scale.
+const variantLollipopTrackGroups: VariantLollipopTrackGroup[] = [
+  {
+    key: deNovoColumnGroup.key,
+    label: deNovoColumnGroup.geneTableLabel,
+    color: deNovoColumnGroup.color,
+    tooltip:
+      'We expect a 4:1 allele count ratio based on a 4:1 proband:sibling ratio. Dot size is scaled to the largest AC of the observed variants in the De novo group.',
+    tracks: [
+      { key: 'de_novo_proband', title: 'Proband', acField: 'group_result.de_novo_ac_proband' },
+      { key: 'de_novo_sibling', title: 'Sibling', acField: 'group_result.de_novo_ac_sibling' },
+    ],
+  },
+  {
+    key: transmittedUntransmittedColumnGroup.key,
+    label: transmittedUntransmittedColumnGroup.geneTableLabel,
+    color: transmittedUntransmittedColumnGroup.color,
+    tooltip:
+      'We expect a 1:1 allele count ratio based on a 50% Mendelian inheritance rate. Dot size is scaled to the largest AC of the observed variants in the Inherited (proband) group.',
+    tracks: [
+      {
+        key: 'transmitted_proband',
+        title: 'Transmitted',
+        acField: 'group_result.transmitted_ac_proband',
+      },
+      {
+        key: 'untransmitted_proband',
+        title: 'Untransmitted',
+        acField: 'group_result.untransmitted_ac_proband',
+      },
+    ],
+  },
+  {
+    key: caseControlColumnGroup.key,
+    label: caseControlColumnGroup.geneTableLabel,
+    color: caseControlColumnGroup.color,
+    tooltip:
+      'We expect a 1:1 allele count ratio based on a 1:1 case:control ratio. Dot size is scaled to the largest AC of the observed variants in the Case-Control group.',
+    tracks: [
+      { key: 'case', title: 'Case', acField: 'group_result.ac_case' },
+      { key: 'control', title: 'Control', acField: 'group_result.ac_ctrl' },
+    ],
+  },
+]
+
+interface VariantClassColumnSpec {
+  visibilityGroup?: GeneResultColumnGroup
+  key: (category: AGBVariantClassCategory) => keyof AGBGeneResult
+  heading: (category: AGBVariantClassCategory) => string
+  tooltip: (category: AGBVariantClassCategory) => string
+}
+
+const variantClassCategoryColumns = (
+  group: GeneResultColumnGroup,
+  minWidth: number,
+  columnsPerRole: VariantClassColumnSpec[]
+): GeneResultColumnConfig[] =>
+  AGB_VARIANT_CLASS_CATEGORIES.filter((category) => !category.isExcludedFromAnalysis).flatMap(
+    (category) =>
+      columnsPerRole.map(({ key, heading, tooltip, visibilityGroup }) => ({
+        ...geneCountColumn(key(category), heading(category), tooltip(category), minWidth, group),
+        visibilityGroup,
+      }))
+  )
+
+const deNovoColumns = variantClassCategoryColumns(deNovoColumnGroup, 70, [
+  {
+    key: ({ suffix }) => `de_novo_${suffix}_proband`,
+    visibilityGroup: deNovoProbandVisibilityGroup,
+    heading: ({ label }) => `${label} Proband`,
+    tooltip: (category) => `De\u00a0novo ${describeVariantClass(category)} in probands.`,
+  },
+  {
+    key: ({ suffix }) => `de_novo_${suffix}_sibling`,
+    visibilityGroup: deNovoSiblingVisibilityGroup,
+    heading: ({ label }) => `${label} Sibling`,
+    tooltip: (category) => `De\u00a0novo ${describeVariantClass(category)} in siblings.`,
+  },
+])
+
+const transmittedUntransmittedColumns = variantClassCategoryColumns(
+  transmittedUntransmittedColumnGroup,
+  110,
+  [
+    {
+      key: ({ suffix }) => `transmitted_${suffix}_proband`,
+      heading: ({ label }) => `Transmitted ${label}`,
+      tooltip: (category) => `${describeVariantClass(category)} transmitted to probands.`,
+    },
+    {
+      key: ({ suffix }) => `untransmitted_${suffix}_proband`,
+      heading: ({ label }) => `Untransmitted ${label}`,
+      tooltip: (category) => `${describeVariantClass(category)} not transmitted to probands.`,
+    },
+  ]
+)
+
+const caseControlColumns = variantClassCategoryColumns(caseControlColumnGroup, 70, [
+  {
+    key: ({ suffix }) => `${suffix}_case`,
+    heading: ({ label }) => `${label} Case`,
+    tooltip: (category) =>
+      `${describeVariantClass(category)} in case/control burden analysis, cases.`,
+  },
+  {
+    key: ({ suffix }) => `${suffix}_control`,
+    heading: ({ label }) => `${label} Control`,
+    tooltip: (category) =>
+      `${describeVariantClass(category)} in case/control burden analysis, controls.`,
+  },
+])
+
+const AGBBrowser = () => (
+  <Browser
+    showManeSelectTranscript
+    browserTitle="DEMO; Autism Genomics Browser"
+    navBarBackgroundColor="#23509c"
+    homePage={AGBHomePage}
+    extraPages={[
+      {
+        path: '/about',
+        label: 'About',
+        component: AGBAboutPage,
+      },
+      {
+        path: '/terms',
+        label: 'Terms',
+        component: AGBTermsPage,
+      },
+    ]}
+    geneResultsPageHeading="Results"
+    geneResultAnalysisGroupOptions={agbAnalysisGroups}
+    defaultGeneResultAnalysisGroup={agbDefaultAnalysisGroup}
+    defaultGeneResultSortKey="bayes_factor"
+    defaultGeneResultSortOrder="descending"
+    defaultGeneResultColumnGroups={{
+      deNovoProband: true,
+      deNovoSibling: true,
+      transmittedUntransmitted: false,
+      caseControl: false,
+    }}
+    geneResultColumns={[
+      {
+        key: 'bayes_factor',
+        heading: 'Bayes Factor',
+        centerHeading: true,
+        centerNumericValues: true,
+        minWidth: 140,
+        render: (value) => renderAGBBayesFactor(value),
+      },
+      {
+        key: 'false_discovery_rate',
+        heading: 'FDR',
+        centerHeading: true,
+        centerNumericValues: true,
+        tooltip: 'False discovery rate.',
+        minWidth: 140,
+        render: (value) => renderAGBFalseDiscoveryRate(value),
+      },
+      {
+        key: 'qc_flagged',
+        heading: 'Flag',
+        centerHeading: true,
+        centerCellContent: true,
+        tooltip: 'Gene flagged in analysis.',
+        minWidth: 90,
+        render: (value) => {
+          const flaggedBadge = (
+            <Badge
+              level="error"
+              tooltip="Concern that the association is driven by clonal expansion in spermatogonia or mapping errors (see manuscript Methods for details)."
+            >
+              Flag
+            </Badge>
+          )
+          return value === true ? flaggedBadge : ''
+        },
+      },
+      ...deNovoColumns,
+      ...transmittedUntransmittedColumns,
+      ...caseControlColumns,
+    ]}
+    geneResultTabs={[
+      {
+        id: 'waterfall-plot',
+        label: 'Waterfall Plot',
+        render: () => <AGBWaterfallPlot />,
+      },
+    ]}
+    renderVariantAttributes={(info: AGBVariantInfo) => [
+      { label: 'MPC', content: info.mpc === null ? '–' : info.mpc },
+      { label: 'AlphaMissense', content: info.alpha_missense === null ? '–' : info.alpha_missense },
+      { label: 'gnomAD AF', content: info.gnomad_af === null ? '–' : info.gnomad_af },
+    ]}
+    variantAnalysisGroupOptions={agbAnalysisGroups}
+    defaultVariantAnalysisGroup={agbDefaultAnalysisGroup}
+    variantDetailsSingleAnalysisGroup
+    variantResultColumns={[
+      {
+        key: 'info.variant_class',
+        heading: 'Class',
+        tooltip:
+          'PTV/Mis2/Mis1/Mis0/synonymous, by MPC/AlphaMissense pathogenicity for missense variants',
+        minWidth: 90,
+        render: (value) =>
+          value ? <AGBVariantClassBadge variantClass={value} /> : renderMissing(value),
+        sortFunction: compareAGBVariantClassSeverity,
+      },
+      {
+        key: 'group_result.de_novo_ac_proband',
+        heading: 'Proband',
+        centerHeading: true,
+        centerNumericValues: true,
+        tooltip: 'De\u00a0novo allele count in probands',
+        minWidth: 110,
+        group: deNovoColumnGroup,
+      },
+      {
+        key: 'group_result.de_novo_ac_sibling',
+        heading: 'Sibling',
+        centerHeading: true,
+        centerNumericValues: true,
+        tooltip: 'De\u00a0novo allele count in siblings',
+        minWidth: 110,
+        group: deNovoColumnGroup,
+      },
+
+      {
+        key: 'group_result.transmitted_ac_proband',
+        heading: 'Transmitted',
+        centerHeading: true,
+        centerNumericValues: true,
+        tooltip: 'Allele count transmitted to probands',
+        minWidth: 110,
+        group: transmittedUntransmittedColumnGroup,
+      },
+      {
+        key: 'group_result.untransmitted_ac_proband',
+        heading: 'Untransmitted',
+        centerHeading: true,
+        centerNumericValues: true,
+        tooltip: 'Allele count not transmitted to probands',
+        minWidth: 110,
+        group: transmittedUntransmittedColumnGroup,
+      },
+
+      {
+        key: 'group_result.ac_case',
+        heading: 'Case',
+        centerHeading: true,
+        centerNumericValues: true,
+        tooltip: 'Allele count in cases (case/control burden)',
+        minWidth: 110,
+        group: caseControlColumnGroup,
+      },
+      {
+        key: 'group_result.ac_ctrl',
+        heading: 'Control',
+        centerHeading: true,
+        centerNumericValues: true,
+        tooltip: 'Allele count in controls (case/control burden)',
+        minWidth: 110,
+        group: caseControlColumnGroup,
+      },
+      {
+        key: 'info.gnomad_af',
+        heading: 'gnomAD AF',
+        minWidth: 110,
+        render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 2 }),
+        tooltip: 'Allele Frequency (AF) of this variant in the "non-neuro" subset of gnomAD v2.1.1',
+      },
+      {
+        key: 'info.transcript_id',
+        heading: 'Transcript ID',
+        sortFunction: (a: string, b: string) => a.localeCompare(b),
+        minWidth: 160,
+        tooltip: 'Ensembl transcript ID',
+        render: (value) => renderMissing(value),
+      },
+
+      {
+        key: 'info.mpc',
+        heading: 'MPC',
+        centerHeading: true,
+        centerCellContent: true,
+        tooltip: 'Missense deleteriousness Prediction by Constraint',
+        minWidth: 110,
+        render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 3 }),
+      },
+      {
+        key: 'info.alpha_missense',
+        heading: 'AlphaMissense',
+        centerHeading: true,
+        centerCellContent: true,
+        tooltip: 'AlphaMissense pathogenicity score',
+        minWidth: 110,
+        render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 3 }),
+      },
+      {
+        key: 'info.is_other_splice',
+        heading: 'Other splice',
+        centerHeading: true,
+        centerCellContent: true,
+        tooltip: 'LOFTEE other splice (OS) annotation',
+        minWidth: 130,
+        render: (value) => renderBoolean(value),
+      },
+    ]}
+    variantConsequences={agbVariantConsequences}
+    variantCategoryOptions={agbVariantCategoryOptions}
+    getVariantCategory={getAGBVariantCategory}
+    variantExportNote="Only SNVs, and not CNVs, are displayed below. All variants except for Mis0 and synonymous variants were included in our gene discovery framework."
+    variantLollipopTrackGroups={variantLollipopTrackGroups}
+  />
+)
+
+export default AGBBrowser

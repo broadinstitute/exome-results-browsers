@@ -65,20 +65,30 @@ export const GeneResultsPage = ({
   geneResults,
   tabs = [],
 }: GeneResultsPageProps) => {
+  const columnGroups = useMemo(
+    () =>
+      getColumnGroups(
+        geneResultColumns.map((column) => ({
+          group: column.visibilityGroup ?? column.group,
+          key: column.key,
+        }))
+      ),
+    [geneResultColumns]
+  )
   const [includedColumnGroups, setIncludedColumnGroups] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(
-      getColumnGroups(geneResultColumns).map((group) => [
+      columnGroups.map((group) => [
         group.key,
         defaultColumnGroups ? defaultColumnGroups[group.key] === true : true,
       ])
     )
   )
-  const columnGroups = useMemo(() => getColumnGroups(geneResultColumns), [geneResultColumns])
   const filteredGeneResultColumns = useMemo(
     () =>
-      geneResultColumns.filter(
-        (column) => !column.group || includedColumnGroups[column.group.key] !== false
-      ),
+      geneResultColumns.filter((column) => {
+        const visibilityGroup = column.visibilityGroup ?? column.group
+        return !visibilityGroup || includedColumnGroups[visibilityGroup.key] !== false
+      }),
     [geneResultColumns, includedColumnGroups]
   )
   const tableColumns = useMemo(() => getTableColumns(filteredGeneResultColumns), [

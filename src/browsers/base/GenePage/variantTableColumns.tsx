@@ -5,14 +5,17 @@ import styled from 'styled-components'
 
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { TextButton } from '@gnomad/ui'
-import { VariantColumnConfig } from '../Browser'
-import { applyColumnGroupHeadings } from '../columnGroupHeadings'
+import { GeneResultColumnGroup, VariantColumnConfig } from '../Browser'
 import {
   DEFAULT_VARIANT_CATEGORY_COLOR,
   DEFAULT_VARIANT_CATEGORY_OPTIONS,
   VariantCategoryOption,
 } from '../variantCategories'
 import { FilterState } from './VariantFilterControls'
+
+const ColumnHeadingLabel = styled.div<{ $isCentered?: boolean }>`
+  text-align: ${({ $isCentered }) => ($isCentered ? 'center' : 'left')};
+`
 
 const VariantIdButton = styled(TextButton)`
   overflow: hidden;
@@ -52,6 +55,7 @@ interface GroupResult {
 
 export interface VariantRow {
   variant_id: string
+  annotationRowId?: string
   pos: number
   consequence: string
   consequenceCategory: string
@@ -120,10 +124,11 @@ interface RenderContext {
 }
 
 export interface VariantTableColumn {
+  centerCellContent?: boolean
+  centerNumericValues?: boolean
+  group?: GeneResultColumnGroup
   key: string
   heading: React.ReactNode
-  // Plain-text heading for CSV export; differs from `heading` when the latter has been
-  // replaced with a column-group banner.
   csvHeading?: string
   tooltip?: string
   isRowHeader?: boolean
@@ -138,62 +143,74 @@ export interface VariantTableColumn {
 
 const buildVariantDescriptionColumns = (
   categoryColors: Record<string, string>
-): VariantTableColumn[] => [
-  {
-    key: 'variant_id',
-    heading: 'Variant ID',
-    tooltip: 'Chromosome-position-reference-alternate',
-    isRowHeader: true,
-    isSortable: true,
-    sortFunction: (a, b) => a - b,
-    sortKey: 'pos',
-    minWidth: 130,
-    grow: 2,
-    render: (row, key, { highlightWords = [], onClickVariant }) => (
-      <VariantIdButton onClick={() => onClickVariant?.(row)} tabIndex={-1}>
-        <Highlighter searchWords={highlightWords} textToHighlight={row[key]} />
-      </VariantIdButton>
-    ),
-    renderForCSV: get,
-  },
-  {
-    key: 'hgvs',
-    heading: 'HGVSp/c',
-    tooltip: 'HGVS protein (if available) or coding sequence',
-    isSortable: true,
-    sortFunction: (a, b) => a.localeCompare(b),
-    sortKey: 'hgvs',
-    minWidth: 130,
-    grow: 2,
-    render: (row, key, { highlightWords = [] }) => (
-      <Highlighter
-        className="grid-cell-content"
-        searchWords={highlightWords}
-        textToHighlight={row[key] || ''}
-      />
-    ),
-    renderForCSV: get,
-  },
-  {
-    key: 'consequence',
-    heading: 'Consequence',
-    tooltip: 'Predicted functional consequence',
-    isSortable: true,
-    sortFunction: (a, b) => a.localeCompare(b),
-    sortKey: 'consequence',
-    minWidth: 180,
-    render: (row, _key, { highlightWords = [] }) =>
-      row.consequence && (
-        <span className="grid-cell-content">
-          <VariantCategoryMarker
-            color={categoryColors[row.consequenceCategory] || DEFAULT_VARIANT_CATEGORY_COLOR}
-          />
-          <Highlighter searchWords={highlightWords} textToHighlight={row.consequence || ''} />
-        </span>
+): VariantTableColumn[] => {
+  const hgvsColumnDefinitions = [
+    {
+      key: 'hgvs',
+      heading: 'HGVSp/c',
+      tooltip: 'HGVS protein (if available) or coding sequence',
+    },
+  ]
+
+  return [
+    {
+      key: 'variant_id',
+      heading: 'Variant ID',
+      tooltip: 'Chromosome-position-reference-alternate',
+      isRowHeader: true,
+      isSortable: true,
+      sortFunction: (a, b) => a - b,
+      sortKey: 'pos',
+      minWidth: 150,
+      grow: 2,
+      render: (row, key, { highlightWords = [], onClickVariant }) => (
+        <VariantIdButton onClick={() => onClickVariant?.(row)} tabIndex={-1}>
+          <Highlighter searchWords={highlightWords} textToHighlight={row[key]} />
+        </VariantIdButton>
       ),
-    renderForCSV: get,
-  },
-]
+      renderForCSV: get,
+    },
+    ...hgvsColumnDefinitions.map(
+      ({ key, heading, tooltip }): VariantTableColumn => ({
+        key,
+        heading,
+        tooltip,
+        isSortable: true,
+        sortFunction: (a, b) => a.localeCompare(b),
+        sortKey: key,
+        minWidth: 130,
+        grow: 2,
+        render: (row, columnKey, { highlightWords = [] }) => (
+          <Highlighter
+            className="grid-cell-content"
+            searchWords={highlightWords}
+            textToHighlight={row[columnKey] || ''}
+          />
+        ),
+        renderForCSV: get,
+      })
+    ),
+    {
+      key: 'consequence',
+      heading: 'Consequence',
+      tooltip: 'Predicted functional consequence',
+      isSortable: true,
+      sortFunction: (a, b) => a.localeCompare(b),
+      sortKey: 'consequence',
+      minWidth: 180,
+      render: (row, _key, { highlightWords = [] }) =>
+        row.consequence && (
+          <span className="grid-cell-content">
+            <VariantCategoryMarker
+              color={categoryColors[row.consequenceCategory] || DEFAULT_VARIANT_CATEGORY_COLOR}
+            />
+            <Highlighter searchWords={highlightWords} textToHighlight={row.consequence || ''} />
+          </span>
+        ),
+      renderForCSV: get,
+    },
+  ]
+}
 
 const statColumns: VariantTableColumn[] = [
   {
@@ -542,27 +559,32 @@ const getVariantTableColumns = ({
     })
 
     datasetColumns.push(...renderedGP2Columns)
-  } else if (datasetId !== 'ASC2') {
+  } else if (datasetId !== 'AGB') {
     datasetColumns.push(...statColumns)
   }
 
   const filteredVariantResultColumns =
-    datasetId === 'ASC2' && filter.asc2VariantColumnGroups
+    datasetId === 'AGB' && filter.agbVariantColumnGroups
       ? variantResultColumns.filter(
-          (column) => !column.group || filter.asc2VariantColumnGroups![column.group.key]
+          (column) => !column.group || filter.agbVariantColumnGroups![column.group.key]
         )
       : variantResultColumns
 
-  const resultColumns: VariantTableColumn[] = applyColumnGroupHeadings(
-    filteredVariantResultColumns,
-    (group) => group.variantTableLabel
-  ).map((column, index) => {
+  const resultColumns: VariantTableColumn[] = filteredVariantResultColumns.map((column) => {
     const getValue = column.accessor ?? ((row: any) => get(row, column.key))
+
+    const plainHeading = column.heading || column.key
+    const alignedHeading = (
+      <ColumnHeadingLabel $isCentered={column.centerHeading}>{plainHeading}</ColumnHeadingLabel>
+    )
 
     return {
       key: column.key,
-      heading: column.heading || column.key,
-      csvHeading: filteredVariantResultColumns[index].heading || column.key,
+      group: column.group,
+      heading: column.group || column.centerHeading ? alignedHeading : plainHeading,
+      csvHeading: plainHeading,
+      centerCellContent: column.centerCellContent,
+      centerNumericValues: column.centerNumericValues,
       tooltip: column.tooltip,
       isSortable: column.isSortable !== false,
       sortFunction: column.sortFunction || ((a, b) => a - b),

@@ -122,7 +122,7 @@ export interface FilterState {
   searchText: string
   custom: any // TK: TODO: fixme: any!!,
   gp2VariantColumnGroups?: Record<string, boolean>
-  asc2VariantColumnGroups?: Record<string, boolean>
+  agbVariantColumnGroups?: Record<string, boolean>
 }
 
 interface VariantFilterControlProps {
@@ -163,7 +163,7 @@ const VariantFilterControls = ({
     { key: 'msa', label: 'MSA' },
   ]
 
-  const asc2Checkboxes = [
+  const agbCheckboxes = [
     { key: 'deNovo', label: 'De novo' },
     { key: 'transmittedUntransmitted', label: 'Transmitted / Untransmitted' },
     { key: 'caseControl', label: 'Case / Control' },
@@ -287,23 +287,23 @@ const VariantFilterControls = ({
             </div>
           )}
 
-          {datasetId === 'ASC2' && filter.asc2VariantColumnGroups && (
+          {datasetId === 'AGB' && filter.agbVariantColumnGroups && (
             <div style={{ marginTop: CustomFilterComponent ? '1em' : '0' }}>
               <span style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5em' }}>
                 AC columns included in table
               </span>
               <VariantColumnGroupCheckboxes>
-                {asc2Checkboxes.map(({ key, label }) => (
+                {agbCheckboxes.map(({ key, label }) => (
                   <Checkbox
                     key={key}
-                    id={`asc2-group-checkbox-${key}`}
+                    id={`agb-group-checkbox-${key}`}
                     label={label}
-                    checked={filter.asc2VariantColumnGroups![key]}
+                    checked={filter.agbVariantColumnGroups![key]}
                     onChange={(isChecked: boolean) => {
                       onChangeFilter({
                         ...filter,
-                        asc2VariantColumnGroups: {
-                          ...filter.asc2VariantColumnGroups,
+                        agbVariantColumnGroups: {
+                          ...filter.agbVariantColumnGroups,
                           [key]: isChecked,
                         },
                       })

@@ -29,7 +29,7 @@ import {
   DEFAULT_VARIANT_CATEGORY_OPTIONS,
 } from './variantCategories'
 
-export type DatasetId = 'ASC' | 'ASC2' | 'BipEx' | 'Epi25' | 'GP2' | 'IBD' | 'SCHEMA'
+export type DatasetId = 'AGB' | 'BipEx' | 'Epi25' | 'GP2' | 'IBD' | 'SCHEMA'
 
 export type ReferenceGenome = 'GRCh37' | 'GRCh38'
 
@@ -71,7 +71,7 @@ declare global {
   }
 }
 
-const PASSWORD_PROTECTED_DATASETS: DatasetId[] = ['ASC2']
+const PASSWORD_PROTECTED_DATASETS: DatasetId[] = ['AGB']
 
 interface ProtectedRouteExtraProps {
   datasetId: DatasetId
@@ -147,12 +147,16 @@ export type GeneResultColumnGroup = {
 }
 
 export type GeneResultColumnConfig<RowType = any, ValueType = any> = {
+  centerCellContent?: boolean
+  centerNumericValues?: boolean
+  centerHeading?: boolean
   // `key` is both for labeling the CSV export column, and for use in a lodash get call when not using the optional `accessor` prop to get data
   key: string
   heading?: React.ReactNode
   minWidth?: number
   tooltip?: string
   group?: GeneResultColumnGroup
+  visibilityGroup?: GeneResultColumnGroup
   accessor?: (row: RowType) => ValueType
   render?: (value: ValueType, row?: RowType) => React.ReactNode
   renderForCSV?: (value: ValueType, row?: RowType) => string | number
@@ -165,6 +169,10 @@ export type GeneResultTabConfig = {
 }
 
 export type VariantColumnConfig<RowType = any, ValueType = any> = {
+  centerCellContent?: boolean
+  centerHeading?: boolean
+  // Require a plain-text renderer to measure centered numeric values.
+  centerNumericValues?: boolean
   // `key` is both for labeling the CSV export column, and for use in a lodash get call when not using the optional `accessor` prop to get data
   key: string
   heading?: string
@@ -226,6 +234,7 @@ type BrowserProps = {
   defaultGeneResultColumnGroups?: Record<string, boolean>
   geneResultColumns?: GeneResultColumnConfig[]
   geneResultTabs?: GeneResultTabConfig[]
+  showManeSelectTranscript?: boolean
 
   variantAnalysisGroupOptions: readonly string[]
   defaultVariantAnalysisGroup: string
@@ -239,6 +248,7 @@ type BrowserProps = {
   getVariantCategory?: (variant: any) => string
   variantCustomFilter?: VariantCustomFilter
   variantDetailColumns?: VariantColumnConfig[]
+  variantDetailsSingleAnalysisGroup?: boolean
   renderVariantAttributes?: RenderVariantAttributes
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
   renderVariantTranscriptConsequences?: boolean
@@ -262,6 +272,7 @@ const Browser = ({
   defaultGeneResultColumnGroups = undefined,
   geneResultColumns = [],
   geneResultTabs = [],
+  showManeSelectTranscript = false,
   // Variant results
   defaultVariantAnalysisGroup,
   variantAnalysisGroupOptions,
@@ -282,6 +293,7 @@ const Browser = ({
   renderVariantAttributes = undefined,
   additionalVariantDetailSummaryColumns = undefined,
   variantDetailColumns = undefined,
+  variantDetailsSingleAnalysisGroup = false,
   renderVariantTranscriptConsequences = false,
   variantAlleleFrequencyOverride = undefined,
   variantExportNote = undefined,
@@ -360,6 +372,7 @@ const Browser = ({
             path="/gene/:gene"
             render={({ match }) => (
               <GenePage
+                showManeSelectTranscript={showManeSelectTranscript}
                 datasetId={datasetId}
                 geneIdOrSymbol={match.params.gene}
                 browserTitle={browserTitle}
@@ -377,6 +390,7 @@ const Browser = ({
                 renderVariantAttributes={renderVariantAttributes}
                 additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
                 variantDetailColumns={variantDetailColumns}
+                variantDetailsSingleAnalysisGroup={variantDetailsSingleAnalysisGroup}
                 renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
                 variantAlleleFrequencyOverride={variantAlleleFrequencyOverride}
                 variantExportNote={variantExportNote}

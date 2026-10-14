@@ -48,7 +48,10 @@ const buildVariantColor = (variantCategoryOptions: VariantCategoryOption[]) => {
     variantCategoryOptions.map((option) => [option.id, option.color])
   )
   return (variant: VariantRow) =>
-    withAlpha(colorsByCategory[variant.consequenceCategory] || DEFAULT_VARIANT_CATEGORY_COLOR, DOT_COLOR_ALPHA)
+    withAlpha(
+      colorsByCategory[variant.consequenceCategory] || DEFAULT_VARIANT_CATEGORY_COLOR,
+      DOT_COLOR_ALPHA
+    )
 }
 
 const ModalStyles = createGlobalStyle`
@@ -63,13 +66,17 @@ const selectGroupResult = (variants: VariantRow[], group: string) => {
     .map((v) => ({ ...v, group_result: v.group_results[group] }))
 }
 
-const acFieldValue = (variant: VariantRow, acField: string): number => Number(get(variant, acField)) || 0
+const acFieldValue = (variant: VariantRow, acField: string): number =>
+  Number(get(variant, acField)) || 0
 
 export const maxAcAcrossGroupTracks = (
   variants: VariantRow[],
   group: VariantLollipopTrackGroup
 ): number =>
-  Math.max(0, ...variants.flatMap((v) => group.tracks.map((track) => acFieldValue(v, track.acField))))
+  Math.max(
+    0,
+    ...variants.flatMap((v) => group.tracks.map((track) => acFieldValue(v, track.acField)))
+  )
 
 export const lollipopTrackVariants = (
   variants: VariantRow[],
@@ -139,6 +146,7 @@ interface VariantsInGeneProps {
   additionalVariantDetailSummaryColumns?: VariantColumnConfig[]
   renderVariantAttributes: RenderVariantAttributes
   variantDetailColumns?: VariantColumnConfig[]
+  variantDetailsSingleAnalysisGroup?: boolean
   renderVariantTranscriptConsequences: boolean
   variantExportNote?: string
   variantLollipopTrackGroups?: VariantLollipopTrackGroup[]
@@ -166,7 +174,7 @@ const defaultGP2IncludedColumns = {
   msa: true,
 }
 
-const defaultASC2IncludedColumns = {
+const defaultAGBIncludedColumns = {
   deNovo: true,
   transmittedUntransmitted: true,
   caseControl: true,
@@ -181,6 +189,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
     renderVariantAttributes: undefined,
     additionalVariantDetailSummaryColumns: undefined,
     variantDetailColumns: undefined,
+    variantDetailsSingleAnalysisGroup: false,
     renderVariantTranscriptConsequences: false,
     variantExportNote: undefined,
     variantLollipopTrackGroups: undefined,
@@ -196,7 +205,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
       searchText: '',
       custom: (props.variantCustomFilter || {}).defaultFilter,
       gp2VariantColumnGroups: props.datasetId === 'GP2' ? defaultGP2IncludedColumns : undefined,
-      asc2VariantColumnGroups: props.datasetId === 'ASC2' ? defaultASC2IncludedColumns : undefined,
+      agbVariantColumnGroups: props.datasetId === 'AGB' ? defaultAGBIncludedColumns : undefined,
     }
 
     const renderedVariants = this.sortVariants(
@@ -428,13 +437,11 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
       const sortValue1 = get(variant1, column.sortKey)
       const sortValue2 = get(variant2, column.sortKey)
 
-      // Always sort null values to end of list
-      if (sortValue1 === undefined || sortValue1 === null || sortValue1 === '') {
-        return 1
-      }
-      if (sortValue2 === undefined || sortValue2 === null || sortValue2 === '') {
-        return -1
-      }
+      const isMissing1 = sortValue1 === undefined || sortValue1 === null || sortValue1 === ''
+      const isMissing2 = sortValue2 === undefined || sortValue2 === null || sortValue2 === ''
+      if (isMissing1 && isMissing2) return 0
+      if (isMissing1) return 1
+      if (isMissing2) return -1
       return sortFunction(sortValue1, sortValue2)
     })
   }
@@ -451,6 +458,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
       renderVariantAttributes,
       additionalVariantDetailSummaryColumns,
       variantDetailColumns,
+      variantDetailsSingleAnalysisGroup,
       renderVariantTranscriptConsequences,
       variantExportNote,
       variantLollipopTrackGroups,
@@ -474,15 +482,15 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
       datasetId === 'GP2'
         ? renderedVariants
         : renderedVariants
-          .filter((v) => v.group_result.ac_case > 0)
-          .map((v) => ({ ...v, allele_freq: v.group_result.af_case }))
+            .filter((v) => v.group_result.ac_case > 0)
+            .map((v) => ({ ...v, allele_freq: v.group_result.af_case }))
 
     const controls =
       datasetId === 'GP2'
         ? renderedVariants
         : renderedVariants
-          .filter((v) => v.group_result.ac_ctrl > 0)
-          .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
+            .filter((v) => v.group_result.ac_ctrl > 0)
+            .map((v) => ({ ...v, allele_freq: v.group_result.af_ctrl }))
 
     const currentTableColumns = getVariantTableColumns({
       datasetId,
@@ -498,8 +506,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
         {variantLollipopTrackGroups ? (
           variantLollipopTrackGroups
             .filter(
-              (group) =>
-                !filter.asc2VariantColumnGroups || filter.asc2VariantColumnGroups[group.key]
+              (group) => !filter.agbVariantColumnGroups || filter.agbVariantColumnGroups[group.key]
             )
             .flatMap((group) => {
               const maxAc = maxAcAcrossGroupTracks(renderedVariants, group)
@@ -599,6 +606,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
               renderVariantAttributes={renderVariantAttributes}
               additionalVariantDetailSummaryColumns={additionalVariantDetailSummaryColumns}
               variantDetailColumns={variantDetailColumns}
+              variantDetailsSingleAnalysisGroup={variantDetailsSingleAnalysisGroup}
               renderVariantTranscriptConsequences={renderVariantTranscriptConsequences}
               filter={filter}
             />
@@ -706,9 +714,10 @@ interface VariantsInGeneContainerProps {
   defaultVariantAnalysisGroup?: string
   variantResultColumns: VariantColumnConfig[]
   variantAlleleFrequencyOverride?: number
+  variantDetailsSingleAnalysisGroup?: boolean
   // When provided, this determines each variant's category (and therefore how it's
   // colored and filtered) directly, instead of the default VEP-consequence-term lookup
-  // built from `variantConsequences` below. ASC2 uses this to categorize by its own
+  // built from `variantConsequences` below. AGB uses this to categorize by its own
   // Mis0/Mis1/Mis2/PTV/synonymous `info.variant_class`, which VEP terms don't capture.
   getVariantCategory?: (variant: any) => string
   [key: string]: any
@@ -722,6 +731,7 @@ const VariantsInGeneContainer = ({
   defaultVariantAnalysisGroup = undefined,
   variantResultColumns,
   variantAlleleFrequencyOverride = undefined,
+  variantDetailsSingleAnalysisGroup = false,
   getVariantCategory = undefined,
   ...otherProps
 }: VariantsInGeneContainerProps) => {
@@ -744,74 +754,80 @@ const VariantsInGeneContainer = ({
           }
         })
 
-        const variants = data.variants.map((variantValues: VariantRow[]) => {
-          const variant: {
-            info: Record<string, any>
-            group_results: Record<string, any>
-            [key: string]: any
-          } = {
-            info: {},
-            group_results: {},
-          }
-
-          datasetConfig.variant_fields.forEach((field, fieldIndex) => {
-            if (field === 'info') {
-              datasetConfig.variant_info_field_names.forEach((infoField, infoFieldIndex) => {
-                variant.info[infoField] = variantValues[fieldIndex][infoFieldIndex]
-              })
-            } else if (field === 'group_results') {
-              datasetConfig.variant_result_analysis_groups.forEach((group, groupIndex) => {
-                const groupResultValues = variantValues[fieldIndex][groupIndex]
-
-                if (groupResultValues) {
-                  const groupResult: { [key: string]: string | number } = {}
-                  datasetConfig.variant_group_result_field_names.forEach(
-                    (groupResultField, groupResultFieldIndex) => {
-                      groupResult[groupResultField] = groupResultValues[groupResultFieldIndex]
-                    }
-                  )
-
-                  if (variantAlleleFrequencyOverride !== undefined) {
-                    groupResult.af = variantAlleleFrequencyOverride
-                    groupResult.af_case = variantAlleleFrequencyOverride
-                    groupResult.af_ctrl = variantAlleleFrequencyOverride
-                  } else if (datasetId !== 'GP2') {
-                    addSingleAF({ groupResult, prefix: '', suffix: 'case' })
-                    addSingleAF({ groupResult, prefix: '', suffix: 'ctrl' })
-                    addOverallAF({ groupResult })
-                  }
-
-                  if (datasetId === 'GP2') {
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'pd' })
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'psp' })
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'dlb' })
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'msa' })
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'ctrl' })
-                    addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'other' })
-                    addSingleAF({ groupResult, prefix: 'ces_', suffix: 'pd' })
-                    addOverallAFForGP2({ groupResult })
-                  }
-
-                  variant.group_results[group] = groupResult
-                }
-              })
-            } else {
-              variant[field] = variantValues[fieldIndex]
+        const variants = data.variants.map(
+          (variantValues: VariantRow[], sourceRowIndex: number) => {
+            const variant: {
+              info: Record<string, any>
+              group_results: Record<string, any>
+              [key: string]: any
+            } = {
+              info: {},
+              group_results: {},
             }
-          })
 
-          variant.hgvs = variant.hgvsp || variant.hgvsc
+            datasetConfig.variant_fields.forEach((field, fieldIndex) => {
+              if (field === 'info') {
+                datasetConfig.variant_info_field_names.forEach((infoField, infoFieldIndex) => {
+                  variant.info[infoField] = variantValues[fieldIndex][infoFieldIndex]
+                })
+              } else if (field === 'group_results') {
+                datasetConfig.variant_result_analysis_groups.forEach((group, groupIndex) => {
+                  const groupResultValues = variantValues[fieldIndex][groupIndex]
 
-          const rawConsequenceTerm = variant.consequence
-          variant.consequenceCategory = getVariantCategory
-            ? getVariantCategory(variant)
-            : (rawConsequenceTerm && (consequences[rawConsequenceTerm] || {}).category) || 'other'
-          if (rawConsequenceTerm) {
-            variant.consequence = (consequences[rawConsequenceTerm] || {}).label || rawConsequenceTerm
+                  if (groupResultValues) {
+                    const groupResult: { [key: string]: string | number } = {}
+                    datasetConfig.variant_group_result_field_names.forEach(
+                      (groupResultField, groupResultFieldIndex) => {
+                        groupResult[groupResultField] = groupResultValues[groupResultFieldIndex]
+                      }
+                    )
+
+                    if (variantAlleleFrequencyOverride !== undefined) {
+                      groupResult.af = variantAlleleFrequencyOverride
+                      groupResult.af_case = variantAlleleFrequencyOverride
+                      groupResult.af_ctrl = variantAlleleFrequencyOverride
+                    } else if (datasetId !== 'GP2') {
+                      addSingleAF({ groupResult, prefix: '', suffix: 'case' })
+                      addSingleAF({ groupResult, prefix: '', suffix: 'ctrl' })
+                      addOverallAF({ groupResult })
+                    }
+
+                    if (datasetId === 'GP2') {
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'pd' })
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'psp' })
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'dlb' })
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'msa' })
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'ctrl' })
+                      addSingleAF({ groupResult, prefix: 'wgs_', suffix: 'other' })
+                      addSingleAF({ groupResult, prefix: 'ces_', suffix: 'pd' })
+                      addOverallAFForGP2({ groupResult })
+                    }
+
+                    variant.group_results[group] = groupResult
+                  }
+                })
+              } else {
+                variant[field] = variantValues[fieldIndex]
+              }
+            })
+
+            variant.hgvs = variant.hgvsp || variant.hgvsc
+            if (datasetId === 'AGB') {
+              variant.annotationRowId = `${gene.gene_id}:${variant.variant_id}:${sourceRowIndex}`
+            }
+
+            const rawConsequenceTerm = variant.consequence
+            variant.consequenceCategory = getVariantCategory
+              ? getVariantCategory(variant)
+              : (rawConsequenceTerm && (consequences[rawConsequenceTerm] || {}).category) || 'other'
+            if (rawConsequenceTerm) {
+              variant.consequence =
+                (consequences[rawConsequenceTerm] || {}).label || rawConsequenceTerm
+            }
+
+            return variant
           }
-
-          return variant
-        })
+        )
 
         return (
           <VariantsInGene
@@ -826,6 +842,7 @@ const VariantsInGeneContainer = ({
             variants={variants}
             datasetId={datasetId}
             variantResultColumns={variantResultColumns}
+            variantDetailsSingleAnalysisGroup={variantDetailsSingleAnalysisGroup}
           />
         )
       }}

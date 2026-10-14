@@ -22,7 +22,7 @@ IBD_GENE_ID=ENSG00000167207
 SMOKE_GENES=("$PCSK9_GENE_ID" "$IBD_GENE_ID")
 SMOKE_DIR=data/smoke
 
-DATASETS=(ASC BipEx Epi25 SCHEMA IBD GP2 ClinVarGRCh38)
+DATASETS=(AGB BipEx Epi25 SCHEMA IBD GP2 ClinVarGRCh38)
 
 while [ "$#" -gt 0 ]; do
   arg="$1"
@@ -54,7 +54,7 @@ done
 
 for dataset in "${DATASETS[@]}"; do
   case "$dataset" in
-    ASC|ASC2|BipEx|Epi25|SCHEMA|IBD|GP2|ClinVarGRCh38) ;;
+    AGB|BipEx|Epi25|SCHEMA|IBD|GP2|ClinVarGRCh38) ;;
     *)
       echo "error: unknown dataset: $dataset" >&2
       exit 1

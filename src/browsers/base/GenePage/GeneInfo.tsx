@@ -6,7 +6,7 @@ import { ExternalLink, List, ListItem, Modal, TextButton } from '@gnomad/ui'
 
 import datasetConfig from '../../datasetConfig'
 import { IndividualGeneAPIResponse } from '../GeneResultsPage/geneResultTableColumns'
-import { datasetToSubdomainOverrideMap } from '../OtherStudies'
+import getDatasetBrowserUrl from '../datasetBrowserUrl'
 import { DatasetId } from '../Browser'
 
 interface GeneReferencesProps {
@@ -19,8 +19,9 @@ const GeneReferences = ({ gene }: GeneReferencesProps) => {
   const gnomadDataset = gene.reference_genome === 'GRCh37' ? 'gnomad_r2_1' : 'gnomad_r4'
   const gnomadGeneUrl = `https://gnomad.broadinstitute.org/gene/${gene.gene_id}?dataset=${gnomadDataset}`
 
-  const ensemblGeneUrl = `https://${gene.reference_genome === 'GRCh37' ? 'grch37.' : ''
-    }ensembl.org/Homo_sapiens/Gene/Summary?g=${gene.gene_id}`
+  const ensemblGeneUrl = `https://${
+    gene.reference_genome === 'GRCh37' ? 'grch37.' : ''
+  }ensembl.org/Homo_sapiens/Gene/Summary?g=${gene.gene_id}`
 
   const ucscReferenceGenomeId = gene.reference_genome === 'GRCh37' ? 'hg19' : 'hg38'
   const ucscUrl = `https://genome.ucsc.edu/cgi-bin/hgTracks?db=${ucscReferenceGenomeId}&position=chr${gene.chrom}%3A${gene.start}-${gene.stop}`
@@ -43,7 +44,7 @@ const GeneReferences = ({ gene }: GeneReferencesProps) => {
           onRequestClose={() => {
             setIsExpanded(false)
           }}
-          title={`References for ${gene.symbol}`}
+          title={`Gene resources for ${gene.symbol}`}
         >
           <List>
             <ListItem>
@@ -149,12 +150,13 @@ const AlternateGeneSymbolRows = ({ gene }: { gene: IndividualGeneAPIResponse }) 
 
 interface GeneInfoProps {
   gene: IndividualGeneAPIResponse
+  showManeSelectTranscript?: boolean
 }
-const GeneInfo = ({ gene }: GeneInfoProps) => {
+const GeneInfo = ({ gene, showManeSelectTranscript = false }: GeneInfoProps) => {
   const ucscReferenceGenomeId = gene.reference_genome === 'GRCh38' ? 'hg38' : 'hg19'
 
   const allOtherStudies: { id: DatasetId }[] = [
-    { id: 'ASC' },
+    { id: 'AGB' },
     { id: 'BipEx' },
     { id: 'Epi25' },
     { id: 'GP2' },
@@ -187,12 +189,18 @@ const GeneInfo = ({ gene }: GeneInfoProps) => {
           <dd>{gene.canonical_transcript_id}</dd>
         </DescriptionListItem>
       )}
+      {showManeSelectTranscript && gene.mane_select_transcript_id && (
+        <DescriptionListItem>
+          <dt>MANE Select transcript</dt>
+          <dd>{gene.mane_select_transcript_id}</dd>
+        </DescriptionListItem>
+      )}
       <DescriptionListItem>
         <dt>Region</dt>
         <dd>{`Chr${gene.chrom}:${gene.start}-${gene.stop}`}</dd>
       </DescriptionListItem>
       <DescriptionListItem>
-        <dt>References</dt>
+        <dt>Gene resources</dt>
         <dd>
           <GeneReferences gene={gene} />
         </dd>
@@ -202,13 +210,8 @@ const GeneInfo = ({ gene }: GeneInfoProps) => {
         <dd>
           {otherStudies
             .map(({ id }) => {
-              const subdomain = datasetToSubdomainOverrideMap[id] || id.toLowerCase()
-
               return (
-                <ExternalLink
-                  key={id}
-                  href={`https://${subdomain}.broadinstitute.org/gene/${gene.gene_id}`}
-                >
+                <ExternalLink key={id} href={getDatasetBrowserUrl(id, `/gene/${gene.gene_id}`)}>
                   {id}
                 </ExternalLink>
               )

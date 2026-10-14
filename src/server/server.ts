@@ -8,7 +8,9 @@ import rateLimit from 'express-rate-limit'
 import express, { Response, NextFunction } from 'express'
 import morgan from 'morgan'
 
+import getDemoPasswords from './demoPasswords'
 import { PrefixTrie } from './search'
+import redirectSubdomain from './subdomainRedirects'
 
 interface Request extends express.Request {
   dataset?: string
@@ -82,6 +84,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/ready', (_request: Request, response: Response) => {
   response.send('true')
 })
+
+if (!isDevelopment) {
+  app.use(redirectSubdomain)
+}
 
 // ================================================================================================
 // Logging
@@ -191,12 +197,9 @@ if (isDevelopment) {
 // Authentication Endpoints
 // ================================================================================================
 
-const PASSWORD_PROTECTED_DATASETS = ['ASC2', 'BipEx2']
+const PASSWORD_PROTECTED_DATASETS = ['AGB', 'BipEx2']
 
-const CORRECT_PASSWORD = process.env.DEMO_PASSWORD
-  ? // Remove the ""s from development env var with a regex
-  process.env.DEMO_PASSWORD.replace(/^"|"$/g, '') || 'password'
-  : 'password'
+const demoPasswords = getDemoPasswords(process.env.DEMO_PASSWORDS, process.env.DEMO_PASSWORD)
 
 const activeTokens = new Set()
 
@@ -206,7 +209,7 @@ app.post('/api/auth', (req: Request, res: Response) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) { } // eslint-disable-line no-empty
+  } catch (err) {} // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -216,7 +219,7 @@ app.post('/api/auth', (req: Request, res: Response) => {
     res.json({ success: true, token: 'not-required' })
   }
 
-  if (password === CORRECT_PASSWORD) {
+  if (demoPasswords.includes(password)) {
     const token = Math.random().toString(36).substring(2, 15)
     activeTokens.add(token)
     res.setHeader(
@@ -244,7 +247,7 @@ app.post('/api/check-auth', (req: Request, res: Response) => {
   let dataset: any
   try {
     dataset = getDatasetForRequest(req)
-  } catch (err) { } // eslint-disable-line no-empty
+  } catch (err) {} // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })
@@ -280,7 +283,7 @@ app.use('/', (req: Request, res: Response, next: NextFunction) => {
     } else {
       dataset = getDatasetForRequest(req)
     }
-  } catch (err) { } // eslint-disable-line no-empty
+  } catch (err) {} // eslint-disable-line no-empty
 
   if (!dataset) {
     res.status(500).json({ message: 'Unknown dataset' })

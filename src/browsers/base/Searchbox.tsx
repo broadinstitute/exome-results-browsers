@@ -4,9 +4,12 @@ import { withRouter, RouteComponentProps } from 'react-router-dom'
 // @ts-expect-error: no types from @gnomad/ui in this version
 import { Searchbox } from '@gnomad/ui'
 
-const fetchSearchResults = (query: string) =>
+import { handleUnauthorizedResponse } from './auth'
+
+const fetchSearchResults = (query: string): Promise<{ label: string; value: string }[]> =>
   fetch(`/api/search?q=${query}`)
     .then((response) => {
+      handleUnauthorizedResponse(response)
       const isOk = response.ok
       return response.json().then((data) => {
         if (!isOk) {
@@ -43,5 +46,7 @@ const BrowserSearchbox = (props: SearchboxProps) => {
     />
   )
 }
+
+export { fetchSearchResults }
 
 export default withRouter(BrowserSearchbox)
