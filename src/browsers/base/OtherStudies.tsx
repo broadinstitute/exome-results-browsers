@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router-dom'
 // @ts-expect-error: no types in this @gnomad/ui version
 import { ExternalLink } from '@gnomad/ui'
 
+import { AGBDataDescription } from '../agb/AGBHomePage'
 import datasetConfig from '../datasetConfig'
 import Fetch from './Fetch'
 import { DatasetId } from './Browser'
@@ -62,8 +63,14 @@ const datasetLinks: DatasetLink[] = [
   {
     id: 'AGB',
     phenotype: 'Autism',
-    description:
-      'The Autism Genomics Browser (AGB) displays variant and gene-level results from cross-consortia autism genomics data aggregation and gene discovery efforts.',
+    description: (
+      <AGBDataDescription
+        aboutLink={<ExternalLink href="https://agb.broadinstitute.org/about">here</ExternalLink>}
+        termsLink={
+          <ExternalLink href="https://agb.broadinstitute.org/terms">terms of use</ExternalLink>
+        }
+      />
+    ),
   },
   {
     id: 'BipEx',
