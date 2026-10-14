@@ -4,7 +4,7 @@ import { DatasetId } from '../base/Browser'
 // (GP2's variant pages depend on it), regardless of which dataset is current.
 // It's not a DatasetId and never has downloadable files of its own.
 const PRODUCTION_WINDOW_DATASETS: (DatasetId | 'ClinVarGRCh38')[] = [
-  'ASC',
+  'AGB',
   'BipEx',
   'Epi25',
   'GP2',

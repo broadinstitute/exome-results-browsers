@@ -148,7 +148,7 @@ describe('HGVS description columns', () => {
     expect(columns[1].heading).toBe('HGVSp/c')
   })
 
-  it.each(['ASC', 'AGB', 'BipEx', 'BipEx2', 'Epi25', 'GP2', 'IBD', 'SCHEMA'])(
+  it.each(['AGB', 'BipEx', 'BipEx2', 'Epi25', 'GP2', 'IBD', 'SCHEMA'])(
     'keeps the combined column for %s',
     (datasetId) => {
       const columns = buildDescriptionColumns(datasetId)

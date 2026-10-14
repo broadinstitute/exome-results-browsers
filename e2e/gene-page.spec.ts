@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test'
 
+import getDemoPasswords from '../src/server/demoPasswords'
+
 interface GeneFixture {
   id: string
   symbol: string
@@ -13,11 +15,11 @@ const DATASET_GENE_OVERRIDES: Partial<Record<string, GeneFixture>> = {
   IBD: NOD2,
 }
 
-const DEMO_PASSWORD = process.env.DEMO_PASSWORD?.replace(/^"|"$/g, '') || 'password'
+const [demoPassword] = getDemoPasswords(process.env.DEMO_PASSWORDS, process.env.DEMO_PASSWORD)
 
 test.beforeEach(async ({ page }, testInfo) => {
-  if (testInfo.project.name === 'BipEx2') {
-    await page.request.post('/api/auth', { data: { password: DEMO_PASSWORD } })
+  if (['AGB', 'BipEx2'].includes(testInfo.project.name)) {
+    await page.request.post('/api/auth', { data: { password: demoPassword } })
   }
 })
 

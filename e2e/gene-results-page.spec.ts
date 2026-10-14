@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test'
 
-const DEMO_PASSWORD = process.env.DEMO_PASSWORD?.replace(/^"|"$/g, '') || 'password'
+import getDemoPasswords from '../src/server/demoPasswords'
+
+const [demoPassword] = getDemoPasswords(process.env.DEMO_PASSWORDS, process.env.DEMO_PASSWORD)
 
 test.beforeEach(async ({ page }, testInfo) => {
-  if (testInfo.project.name === 'BipEx2') {
-    await page.request.post('/api/auth', { data: { password: DEMO_PASSWORD } })
+  if (['AGB', 'BipEx2'].includes(testInfo.project.name)) {
+    await page.request.post('/api/auth', { data: { password: demoPassword } })
   }
 })
 

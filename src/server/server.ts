@@ -10,6 +10,7 @@ import morgan from 'morgan'
 
 import getDemoPasswords from './demoPasswords'
 import { PrefixTrie } from './search'
+import redirectSubdomain from './subdomainRedirects'
 
 interface Request extends express.Request {
   dataset?: string
@@ -83,6 +84,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/ready', (_request: Request, response: Response) => {
   response.send('true')
 })
+
+if (!isDevelopment) {
+  app.use(redirectSubdomain)
+}
 
 // ================================================================================================
 // Logging

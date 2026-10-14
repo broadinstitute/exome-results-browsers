@@ -55,29 +55,26 @@ describe('DownloadsPage', () => {
     )
   })
 
-  it('preserves downloads for the original ASC dataset alongside AGB', () => {
+  it('omits downloads for the retired ASC dataset', () => {
     renderDownloadsPageAsDataset('AGB')
 
-    expect(screen.getByRole('link', { name: 'ASC gene results (TSV)' })).toHaveAttribute(
-      'href',
-      'https://atgu-exome-browser-data.s3.amazonaws.com/ASC/ASC_gene_results.tsv.bgz'
-    )
+    expect(screen.queryByRole('link', { name: /ASC/ })).not.toBeInTheDocument()
   })
 
-  it('given SCHEMA is the current dataset, lists ASC, BipEx, and Epi25 as other studies', () => {
+  it('given SCHEMA is the current dataset, lists AGB, BipEx, and Epi25 as other studies', () => {
     const CURRENT_DATASET: DatasetId = 'SCHEMA'
 
     renderDownloadsPageAsDataset(CURRENT_DATASET)
 
-    expect(namesOfRenderedOtherStudies()).toEqual(['ASC', 'BipEx', 'Epi25'])
+    expect(namesOfRenderedOtherStudies()).toEqual(['AGB', 'BipEx', 'Epi25'])
   })
 
-  it('given Epi25 is the current dataset, lists ASC, BipEx, and SCHEMA as other studies', () => {
+  it('given Epi25 is the current dataset, lists AGB, BipEx, and SCHEMA as other studies', () => {
     const CURRENT_DATASET: DatasetId = 'Epi25'
 
     renderDownloadsPageAsDataset(CURRENT_DATASET)
 
-    expect(namesOfRenderedOtherStudies()).toEqual(['ASC', 'BipEx', 'SCHEMA'])
+    expect(namesOfRenderedOtherStudies()).toEqual(['AGB', 'BipEx', 'SCHEMA'])
   })
 
   it('given SCHEMA is the current dataset, also renders the legacy SCHEMA 1.0 downloads', () => {

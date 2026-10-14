@@ -14,7 +14,6 @@ import { DatasetId } from '../Browser'
 const DatasetGeneResultComponent = geneResultComponents[datasetConfig.datasetId]
 
 const studyPhenotypes: Partial<Record<DatasetId, string>> = {
-  ASC: 'Autism',
   AGB: 'Autism',
   BipEx: 'Bipolar disorder',
   Epi25: 'Epilepsy',
@@ -43,9 +42,6 @@ const GeneResults = DatasetGeneResultComponent
           // TK: TODO: fixme: make proper types for all of the different studies parsed results
           //   you KNOW this from the pipeline. Can these be generated somehow?
           if (dataset === 'SCHEMA' && (result.meta as any)['P meta'] <= 7.9e-5) {
-            return true
-          }
-          if (dataset === 'ASC' && (result.All as any).qval <= 0.1) {
             return true
           }
           return false
