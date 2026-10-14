@@ -38,6 +38,48 @@ const ReleaseDetails = styled.div`
   line-height: 1.5;
 `
 
+interface AGBDataDescriptionProps {
+  aboutLink?: React.ReactNode
+  termsLink?: React.ReactNode
+}
+
+export const AGBDataDescription = ({
+  aboutLink = <Link to="/about">here</Link>,
+  termsLink = <Link to="/terms">terms of use</Link>,
+}: AGBDataDescriptionProps): React.JSX.Element => {
+  return (
+    <>
+      The Autism Genomics Browser (AGB) displays the results of our cross-consortia autism
+      genomics data aggregation and gene discovery efforts. The most recent data freeze (
+      <ExternalLink href="https://www.medrxiv.org/content/10.64898/2026.08.24.26360398v1">
+        Satterstrom, Auwerx, Fu et al., 2026
+      </ExternalLink>
+      , <em>medRxiv</em>) encompasses data from 62,429 individuals with recorded autism (38,680
+      probands and 23,749 cases) and 33,316 individuals without recorded autism (9,567 siblings
+      and 23,749 controls). The data were aggregated and analyzed as part of an initiative that
+      includes investigators and samples from the{' '}
+      <ExternalLink href="https://pubmed.ncbi.nlm.nih.gov/23259942/">
+        Autism Sequencing Consortium (ASC)
+      </ExternalLink>
+      , the{' '}
+      <ExternalLink href="https://www.sfari.org/">
+        Simons Foundation Autism Research Initiative (SFARI)
+      </ExternalLink>
+      , the{' '}
+      <ExternalLink href="https://sparkforautism.org/">
+        Simons Foundation Powering Autism Research (SPARK) initiaive
+      </ExternalLink>
+      , our clinical diagnostic laboratory partner{' '}
+      <ExternalLink href="https://www.genedx.com/">GeneDx</ExternalLink>, the Danish{' '}
+      <ExternalLink href="https://ipsych.dk/en/about-ipsych">iPSYCH</ExternalLink> project, and
+      other collaborators dedicated to advancing our understanding of the genetic basis of autism.
+      More information on data collection and generation can be found{' '}
+      {aboutLink}. All data are released for the benefit of the biomedical
+      community (see the {termsLink}).
+    </>
+  )
+}
+
 const HomePage = (): React.JSX.Element => {
   return (
     <HomePageWrapper>
@@ -66,33 +108,7 @@ const HomePage = (): React.JSX.Element => {
 
       <h2>The data</h2>
       <p>
-        The Autism Genomics Browser (AGB) displays the results of our cross-consortia autism
-        genomics data aggregation and gene discovery efforts. The most recent data freeze (
-        <ExternalLink href="https://www.medrxiv.org/content/10.64898/2026.08.24.26360398v1">
-          Satterstrom, Auwerx, Fu et al., 2026
-        </ExternalLink>
-        , <em>medRxiv</em>) encompasses data from 62,429 individuals with recorded autism (38,680
-        probands and 23,749 cases) and 33,316 individuals without recorded autism (9,567 siblings
-        and 23,749 controls). The data were aggregated and analyzed as part of an initiative that
-        includes investigators and samples from the{' '}
-        <ExternalLink href="https://pubmed.ncbi.nlm.nih.gov/23259942/">
-          Autism Sequencing Consortium (ASC)
-        </ExternalLink>
-        , the{' '}
-        <ExternalLink href="https://www.sfari.org/">
-          Simons Foundation Autism Research Initiative (SFARI)
-        </ExternalLink>
-        , the{' '}
-        <ExternalLink href="https://sparkforautism.org/">
-          Simons Foundation Powering Autism Research (SPARK) initiaive
-        </ExternalLink>
-        , our clinical diagnostic laboratory partner{' '}
-        <ExternalLink href="https://www.genedx.com/">GeneDx</ExternalLink>, the Danish{' '}
-        <ExternalLink href="https://ipsych.dk/en/about-ipsych">iPSYCH</ExternalLink> project, and
-        other collaborators dedicated to advancing our understanding of the genetic basis of autism.
-        More information on data collection and generation can be found{' '}
-        <Link to="/about">here</Link>. All data are released for the benefit of the biomedical
-        community (see the <Link to="/terms">terms of use</Link>).
+        <AGBDataDescription />
       </p>
     </HomePageWrapper>
   )
