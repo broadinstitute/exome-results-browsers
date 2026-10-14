@@ -4,12 +4,10 @@ Exome-centric variant frequency browsers for case-control studies of psychiatric
 
 ## Websites
 
-- [Autism - ASC](https://asc.broadinstitute.org)
+- [Autism - AGB](https://agb.broadinstitute.org)
 
-  Founded in 2010, the Autism Sequencing Consortium (ASC) is an international group
-  of scientists who share autism spectrum disorder (ASD) samples and genetic data.
-  This portal displays variant and gene-level data from the most recent ASC exome
-  sequencing analysis.
+  The Autism Genomics Browser (AGB) displays variant and gene-level results from
+  cross-consortia autism genomics data aggregation and gene discovery efforts.
 
 - [Bipolar Disorder - BipEx](https://bipex.broadinstitute.org)
 

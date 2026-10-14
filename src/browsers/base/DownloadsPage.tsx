@@ -24,7 +24,6 @@ type DownloadConfig = {
 }
 
 const DOWNLOAD_URLS: Partial<Record<DownloadDatasetId, DownloadConfig>> = {
-  ASC: { baseUrl: `${BASE_AWS_DOWNLOAD_PATH}/ASC`, filePrefix: 'ASC' },
   AGB: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-10-12/AGB`, filePrefix: 'AGB' },
   BipEx: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2026-08-07/BipEx`, filePrefix: 'BipEx_v2' },
   Epi25: { baseUrl: `${BASE_GCS_DOWNLOAD_PATH}/2022-12-01/Epi25`, filePrefix: 'Epi25' },

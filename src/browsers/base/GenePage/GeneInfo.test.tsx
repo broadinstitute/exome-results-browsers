@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 
+import datasetConfig from '../../datasetConfig'
 import { IndividualGeneAPIResponse } from '../GeneResultsPage/geneResultTableColumns'
 import { Constraint } from './Constraint'
 import GeneInfo from './GeneInfo'
@@ -50,6 +51,33 @@ const gene: IndividualGeneAPIResponse = {
   },
   mane_select_transcript_id: 'ENST00000000002',
 }
+
+describe('GeneInfo other studies', () => {
+  const originalDatasetId = datasetConfig.datasetId
+
+  afterEach(() => {
+    datasetConfig.datasetId = originalDatasetId
+  })
+
+  it('links to AGB instead of the retired ASC browser', () => {
+    datasetConfig.datasetId = 'SCHEMA'
+    render(<GeneInfo gene={gene} />)
+
+    expect(screen.getByRole('link', { name: 'AGB' })).toHaveAttribute(
+      'href',
+      `https://agb.broadinstitute.org/gene/${gene.gene_id}`
+    )
+    expect(screen.queryByRole('link', { name: 'ASC' })).not.toBeInTheDocument()
+  })
+
+  it('omits AGB from other studies when viewing AGB', () => {
+    datasetConfig.datasetId = 'AGB'
+    render(<GeneInfo gene={gene} />)
+
+    expect(screen.queryByRole('link', { name: 'AGB' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'ASC' })).not.toBeInTheDocument()
+  })
+})
 
 describe('GeneInfo MANE Select transcript', () => {
   it.each([undefined, false])('hides the MANE Select row when the option is %s', (option) => {

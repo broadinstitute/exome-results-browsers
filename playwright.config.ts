@@ -1,6 +1,6 @@
 import { defineConfig } from '@playwright/test'
 
-const BROWSERS = ['ASC', 'BipEx', 'BipEx2', 'Epi25', 'SCHEMA', 'IBD', 'GP2'] as const
+const BROWSERS = ['AGB', 'BipEx', 'BipEx2', 'Epi25', 'SCHEMA', 'IBD', 'GP2'] as const
 
 const BASE_PORT = 8101
 
