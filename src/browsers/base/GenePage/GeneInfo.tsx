@@ -189,10 +189,10 @@ const GeneInfo = ({ gene, showManeSelectTranscript = false }: GeneInfoProps) => 
           <dd>{gene.canonical_transcript_id}</dd>
         </DescriptionListItem>
       )}
-      {showManeSelectTranscript && gene.mane_select_transcript_id && (
+      {showManeSelectTranscript && (
         <DescriptionListItem>
           <dt>MANE Select transcript</dt>
-          <dd>{gene.mane_select_transcript_id}</dd>
+          <dd>{gene.mane_select_transcript_id ?? '-'}</dd>
         </DescriptionListItem>
       )}
       <DescriptionListItem>
