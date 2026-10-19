@@ -117,7 +117,7 @@ describe('GeneInfo MANE Select transcript', () => {
     expect(screen.getByText('Ensembl transcript ID')).toBeInTheDocument()
   })
 
-  it.each([null, undefined])('omits the row when the MANE Select ID is %s', (transcriptId) => {
+  it.each([null, undefined])('shows a dash when the MANE Select ID is %s', (transcriptId) => {
     render(
       <GeneInfo
         gene={{ ...gene, mane_select_transcript_id: transcriptId }}
@@ -125,7 +125,7 @@ describe('GeneInfo MANE Select transcript', () => {
       />
     )
 
-    expect(screen.queryByText('MANE Select transcript')).not.toBeInTheDocument()
+    expect(screen.getByText('MANE Select transcript').nextElementSibling).toHaveTextContent(/^-$/)
     expect(screen.getByText('ENST00000000001')).toBeInTheDocument()
   })
 })
