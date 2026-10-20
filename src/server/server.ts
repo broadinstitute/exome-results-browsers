@@ -197,7 +197,7 @@ if (isDevelopment) {
 // Authentication Endpoints
 // ================================================================================================
 
-const PASSWORD_PROTECTED_DATASETS = ['AGB']
+const PASSWORD_PROTECTED_DATASETS: string[] = []
 
 const demoPasswords = getDemoPasswords(process.env.DEMO_PASSWORDS, process.env.DEMO_PASSWORD)
 
