@@ -7,10 +7,12 @@ import hail as hl
 import hailtop.fs as hfs
 
 from data_pipeline.config import OutputLocation, get_output_root, pipeline_config
+from data_pipeline.input_validation import preflight_dataset_inputs
 from data_pipeline.validation import validate_gene_results_table, validate_variant_results_table
 
 
 def prepare_dataset(dataset_id, test_genes, output_root):
+    preflight_dataset_inputs(dataset_id, pipeline_config)
     update_date = pipeline_config.get(dataset_id, "output_last_updated")
     output_path = f"{output_root}/{dataset_id.lower()}/{update_date}"
 
@@ -136,6 +138,12 @@ def main():
         help="Only process a few genes to test the pipelines quickly",
     )
 
+    parser.add_argument(
+        "--preflight-only",
+        action="store_true",
+        help="Validate configured input contracts without preparing or writing datasets",
+    )
+
     args = parser.parse_args()
 
     if args.datasets != ["all"]:
@@ -155,7 +163,10 @@ def main():
 
     output_root = get_output_root(args.output_location)
     for dataset in datasets_to_prepare:
-        prepare_dataset(dataset, args.test_genes, output_root)
+        if args.preflight_only:
+            preflight_dataset_inputs(dataset, pipeline_config)
+        else:
+            prepare_dataset(dataset, args.test_genes, output_root)
 
 
 if __name__ == "__main__":

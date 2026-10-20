@@ -276,6 +276,32 @@ If you are unsure, update all the datasets. All of the datasets are listed in th
 
 The datasets `all` argument uses the `datasets.datasets` option from `pipeline_config.ini`. The pipeline will output which datasets it is running for.
 
+#### Validate input contracts
+
+Run IBD preflight against the paths in `pipeline_config.ini` before processing a new handoff:
+
+```bash
+uv run ./data_pipeline/run_pipeline.py prepare_datasets --datasets IBD --preflight-only
+```
+
+Add `--environment dataproc` before `prepare_datasets` to run the check on the cluster.
+`prepare_datasets` also runs preflight automatically before processing each dataset with a contract.
+Check the full inputs even with `--test-genes`; label validation and row counts require a full-table scan.
+All schema checks run before any row scans. Fail on added, missing, or changed fields, changed keys or
+reference genomes, and added, missing, or renamed categorical values, including nulls. Ignore struct
+field order. Print row-count differences as warnings without changing the baseline or blocking processing.
+
+Maintain the IBD baseline in `data_pipeline/datasets/ibd/input_contract.py`, relative to this directory.
+Review schema and label changes before updating their expectations; update `row_count` after confirming
+an expected size change. The initial contract matches the existing handoff, including string-typed betas.
+No annotation row-count baseline is available yet; set one when measured if desired.
+
+To enable another dataset, create a Python module exporting `INPUT_CONTRACT`, mapping input-path config
+option names to `InputTableContract` instances from `data_pipeline.input_validation`. Set that dataset's
+`input_contract` config option to the module's dotted import path. Use Python modules so the existing
+Dataproc runner includes contracts in its code archive. Leave datasets without a contract unchanged.
+Leave existing intermediate-cache behavior unchanged; passing preflight does not invalidate old caches.
+
 #### Combine datasets
 
 For production, all the datasets should be combined, as the files that get written to a persistent disk based on this combined hail table will serve every dataset.
