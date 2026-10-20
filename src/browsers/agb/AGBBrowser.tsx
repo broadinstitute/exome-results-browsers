@@ -236,7 +236,7 @@ const caseControlColumns = variantClassCategoryColumns(caseControlColumnGroup, 7
 const AGBBrowser = () => (
   <Browser
     showManeSelectTranscript
-    browserTitle="DEMO; Autism Genomics Browser"
+    browserTitle="Autism Genomics Browser"
     navBarBackgroundColor="#23509c"
     homePage={AGBHomePage}
     extraPages={[
