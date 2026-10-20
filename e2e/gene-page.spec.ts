@@ -18,7 +18,7 @@ const DATASET_GENE_OVERRIDES: Partial<Record<string, GeneFixture>> = {
 const [demoPassword] = getDemoPasswords(process.env.DEMO_PASSWORDS, process.env.DEMO_PASSWORD)
 
 test.beforeEach(async ({ page }, testInfo) => {
-  if (['AGB', 'BipEx2'].includes(testInfo.project.name)) {
+  if (testInfo.project.name === 'AGB') {
     await page.request.post('/api/auth', { data: { password: demoPassword } })
   }
 })
