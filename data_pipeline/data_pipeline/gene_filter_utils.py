@@ -23,6 +23,7 @@ TEST_GENE_INTERVALS: dict[str, dict[str, str]] = {
         # gene table and DNAI4 on the single gene page.
         "WDR78": "chr1:66812885-66924856",  # ENSG00000152763
         "NOD2": "chr16:50693588-50734041",
+        "RNF186": "chr1:19814029-19815283",  # ENSG00000178828
         "GBA1": "chr1:155234452-155244699",  # ENSG00000177628
         "IL17RA": "chr22:17084954-17115694",  # ENSG00000177663
         "CHD8": "chr14:21385194-21456126",  # ENSG00000100888
