@@ -1,7 +1,5 @@
 import { test, expect } from '@playwright/test'
 
-import getDemoPasswords from '../src/server/demoPasswords'
-
 interface GeneFixture {
   id: string
   symbol: string
@@ -14,14 +12,6 @@ const DEFAULT_GENE = PCSK9
 const DATASET_GENE_OVERRIDES: Partial<Record<string, GeneFixture>> = {
   IBD: NOD2,
 }
-
-const [demoPassword] = getDemoPasswords(process.env.DEMO_PASSWORDS, process.env.DEMO_PASSWORD)
-
-test.beforeEach(async ({ page }, testInfo) => {
-  if (testInfo.project.name === 'AGB') {
-    await page.request.post('/api/auth', { data: { password: demoPassword } })
-  }
-})
 
 test('renders the gene page and opens the variant modal', async ({ page }, testInfo) => {
   const gene = DATASET_GENE_OVERRIDES[testInfo.project.name] ?? DEFAULT_GENE
