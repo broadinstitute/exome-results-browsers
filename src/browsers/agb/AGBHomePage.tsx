@@ -31,7 +31,7 @@ const Logo = styled.img`
   width: 220px;
   max-width: 100%;
   height: auto;
-  margin: 0 auto 1.5em;
+  margin: 2em auto 1.5em;
 `
 
 const InstitutionLogoRow = styled.div`
