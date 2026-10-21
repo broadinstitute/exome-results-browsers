@@ -22,7 +22,7 @@ The [Simons Simplex Collection](https://www.sfari.org/resource/simons-simplex-co
 
 ### GeneDx
 
-[GeneDx](https://www.genedx.com/), LLC is a genomics and biotechnology company that provides genetic testing, clinical interpretation, and related information to support diagnosis, treatment decisions, and research for rare and inherited conditions. Through our partnership with GeneDx, we have accessed anonymized genetic and phenotypic data from individuals with a recorded autism diagnosis who have been referred for clinical genetic testing.
+[GeneDx](https://www.genedx.com/), LLC is a genomics and biotechnology company that provides genetic testing, clinical interpretation, and related information to support diagnosis, treatment decisions, and research for rare and inherited conditions. Through our partnership with GeneDx, we have accessed anonymized genetic and phenotypic data from individuals with a phenotype including autism per submitted clinical notes, who have been referred for clinical genetic testing.
 
 ### DDD and global studies of developmental disorders
 
