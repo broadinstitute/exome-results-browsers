@@ -61,20 +61,20 @@ describe('DownloadsPage', () => {
     expect(screen.queryByRole('link', { name: /ASC/ })).not.toBeInTheDocument()
   })
 
-  it('given SCHEMA is the current dataset, lists AGB, BipEx, and Epi25 as other studies', () => {
+  it('given SCHEMA is the current dataset, lists AGB, BipEx, Epi25, and IBD as other studies', () => {
     const CURRENT_DATASET: DatasetId = 'SCHEMA'
 
     renderDownloadsPageAsDataset(CURRENT_DATASET)
 
-    expect(namesOfRenderedOtherStudies()).toEqual(['AGB', 'BipEx', 'Epi25'])
+    expect(namesOfRenderedOtherStudies()).toEqual(['AGB', 'BipEx', 'Epi25', 'IBD'])
   })
 
-  it('given Epi25 is the current dataset, lists AGB, BipEx, and SCHEMA as other studies', () => {
+  it('given Epi25 is the current dataset, lists AGB, BipEx, IBD, and SCHEMA as other studies', () => {
     const CURRENT_DATASET: DatasetId = 'Epi25'
 
     renderDownloadsPageAsDataset(CURRENT_DATASET)
 
-    expect(namesOfRenderedOtherStudies()).toEqual(['AGB', 'BipEx', 'SCHEMA'])
+    expect(namesOfRenderedOtherStudies()).toEqual(['AGB', 'BipEx', 'IBD', 'SCHEMA'])
   })
 
   it('given SCHEMA is the current dataset, also renders the legacy SCHEMA 1.0 downloads', () => {
@@ -85,12 +85,16 @@ describe('DownloadsPage', () => {
     expect(screen.getByText('SCHEMA 1.0 gene results (TSV)')).toBeInTheDocument()
   })
 
-  it('never renders an IBD download section, even though it is always on window.datasetConfig', () => {
-    const CURRENT_DATASET: DatasetId = 'SCHEMA'
+  it('renders IBD download links when IBD is the current dataset', () => {
+    renderDownloadsPageAsDataset('IBD')
 
-    renderDownloadsPageAsDataset(CURRENT_DATASET)
-
-    expect(screen.queryByText(/IBD/)).not.toBeInTheDocument()
+    for (const label of [
+      'IBD gene results (TSV)',
+      'IBD variant results (TSV)',
+      'IBD variant results (VCF)',
+    ]) {
+      expect(screen.getByRole('link', { name: label })).toBeInTheDocument()
+    }
   })
 
   it('never renders a GP2 download section, even though it is always on window.datasetConfig', () => {
