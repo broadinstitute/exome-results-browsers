@@ -17,6 +17,20 @@ VARIANT_FIELDS = [
 ]
 
 
+def coalesce_combine_input(table, dataset_id, result_type):
+    option = f"combine_{result_type}_max_partitions"
+    maximum = pipeline_config.getint(dataset_id, option, fallback=None)
+    if maximum is None:
+        return table
+    if maximum < 1:
+        raise ValueError(f"{dataset_id}.{option} must be a positive integer, got {maximum}")
+    current = table.n_partitions()
+    if current <= maximum:
+        return table
+    print(f"{dataset_id} {result_type} results: coalescing {current:,} -> {maximum:,} partitions", flush=True)
+    return table.naive_coalesce(maximum)
+
+
 def combine_datasets(dataset_ids, output_root):
     gene_models_last_updated = pipeline_config.get("reference_data", "output_last_updated")
     gene_models_path = f"{output_root}/gene_models/{gene_models_last_updated}/gene_models.ht"
@@ -32,6 +46,7 @@ def combine_datasets(dataset_ids, output_root):
 
         print(f"\n\n === Combining {dataset_id} gene results", flush=True)
         gene_results = hl.read_table(os.path.join(dataset_path, "gene_results.ht"))
+        gene_results = coalesce_combine_input(gene_results, dataset_id, "gene")
 
         gene_group_result_field_names = gene_results.group_results.dtype.value_type.fields
         gene_group_result_field_types = [
@@ -54,6 +69,7 @@ def combine_datasets(dataset_ids, output_root):
 
         print(f"\n\n === Combining {dataset_id} variant results", flush=True)
         variant_results = hl.read_table(os.path.join(dataset_path, "variant_results.ht"))
+        variant_results = coalesce_combine_input(variant_results, dataset_id, "variant")
 
         reference_genome = variant_results.locus.dtype.reference_genome.name
         variant_info_field_names = variant_results.info.dtype.fields
