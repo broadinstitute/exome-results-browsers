@@ -306,6 +306,14 @@ Leave existing intermediate-cache behavior unchanged; passing preflight does not
 
 For production, all the datasets should be combined, as the files that get written to a persistent disk based on this combined hail table will serve every dataset.
 
+Set optional `combine_gene_max_partitions` and `combine_variant_max_partitions` positive integers in each
+dataset's `pipeline_config.ini` section to reduce fragmented inputs during combine. Apply naive coalescing
+immediately after reading each table, before analysis-group scans and gene aggregation. Leave smaller
+inputs unchanged; omit an option to preserve the input's partition count. Log each reduction without
+rewriting prepared tables. Start with Epi25 genes at 8 partitions, Epi25 variants at 128, BipEx variants
+at 256, and SCHEMA variants at 128. Benchmark these caps on the production cluster before tuning further.
+Coalescing still reads the existing files and does not rebalance uneven partitions.
+
 ```bash
 ./data_pipeline/run_pipeline.py \
   --environment dataproc \
