@@ -9,6 +9,8 @@ import Link from '../base/Link'
 import Searchbox from '../base/Searchbox'
 
 import AgbLogo from './content/agb_logo.png'
+import BroadInstituteLogo from './content/broad_institute_logo.png'
+import StanleyCenterLogo from './content/stanley_center_logo.png'
 
 const HomePageHeading = styled(PageHeading)`
   margin: 3em 0 1em;
@@ -32,6 +34,29 @@ const Logo = styled.img`
   margin: 0 auto 1.5em;
 `
 
+const InstitutionLogoRow = styled.div`
+  --institution-logo-width: 75%;
+  --institution-logo-top-spacing: 3em;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 2em;
+  max-width: 640px;
+  margin: var(--institution-logo-top-spacing) auto 1.5em;
+`
+
+const InstitutionLogo = styled.img`
+  display: block;
+  justify-self: start;
+  width: var(--institution-logo-width);
+  height: auto;
+
+  &:first-child {
+    justify-self: end;
+  }
+`
+
 const ReleaseDetails = styled.div`
   margin: 0 0 1.5em;
   text-align: center;
@@ -49,15 +74,15 @@ export const AGBDataDescription = ({
 }: AGBDataDescriptionProps): React.JSX.Element => {
   return (
     <>
-      The Autism Genomics Browser (AGB) displays the results of our cross-consortia autism
-      genomics data aggregation and gene discovery efforts. The most recent data freeze (
+      The Autism Genomics Browser (AGB) displays the results of our cross-consortia autism genomics
+      data aggregation and gene discovery efforts. The most recent data freeze (
       <ExternalLink href="https://www.medrxiv.org/content/10.64898/2026.08.24.26360398v1">
         Satterstrom, Auwerx, Fu et al., 2026
       </ExternalLink>
       , <em>medRxiv</em>) encompasses data from 62,429 individuals with recorded autism (38,680
-      probands and 23,749 cases) and 33,316 individuals without recorded autism (9,567 siblings
-      and 23,749 controls). The data were aggregated and analyzed as part of an initiative that
-      includes investigators and samples from the{' '}
+      probands and 23,749 cases) and 33,316 individuals without recorded autism (9,567 siblings and
+      23,749 controls). The data were aggregated and analyzed as part of an initiative that includes
+      investigators and samples from the{' '}
       <ExternalLink href="https://pubmed.ncbi.nlm.nih.gov/23259942/">
         Autism Sequencing Consortium (ASC)
       </ExternalLink>
@@ -73,9 +98,8 @@ export const AGBDataDescription = ({
       <ExternalLink href="https://www.genedx.com/">GeneDx</ExternalLink>, the Danish{' '}
       <ExternalLink href="https://ipsych.dk/en/about-ipsych">iPSYCH</ExternalLink> project, and
       other collaborators dedicated to advancing our understanding of the genetic basis of autism.
-      More information on data collection and generation can be found{' '}
-      {aboutLink}. All data are released for the benefit of the biomedical
-      community (see the {termsLink}).
+      More information on data collection and generation can be found {aboutLink}. All data are
+      released for the benefit of the biomedical community (see the {termsLink}).
     </>
   )
 }
@@ -110,6 +134,24 @@ const HomePage = (): React.JSX.Element => {
       <p>
         <AGBDataDescription />
       </p>
+      <p>
+        The AGB is hosted by the Broad Institute. For questions about datasets, analyses, and gene
+        discovery in the AGB, please contact{' '}
+        <ExternalLink href="mailto:talkowsk@broadinstitute.org">Dr. Michael Talkowski</ExternalLink>
+        {' and '}
+        <ExternalLink href="mailto:mjdaly@broadinstitute.org">Dr. Mark Daly</ExternalLink>. For
+        questions about analyses in Satterstrom et al., 2026, please contact{' '}
+        <ExternalLink href="mailto:satterst@broadinstitute.org">Dr. Kyle Satterstrom</ExternalLink>
+        {' and '}
+        <ExternalLink href="mailto:cauwerx@broadinstitute.org">Dr. Chiara Auwerx</ExternalLink>.
+      </p>
+      <InstitutionLogoRow>
+        <InstitutionLogo alt="Broad Institute logo" src={BroadInstituteLogo} />
+        <InstitutionLogo
+          alt="Stanley Center for Psychiatric Research logo"
+          src={StanleyCenterLogo}
+        />
+      </InstitutionLogoRow>
     </HomePageWrapper>
   )
 }

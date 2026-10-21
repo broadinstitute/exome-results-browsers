@@ -19,7 +19,6 @@ describe('AGB Home page', () => {
 
     expect(document.title).toBe('AGB: Autism Genomics Browser')
     expect(screen.getByRole('heading', { name: 'The Autism Genomics Browser' })).toBeInTheDocument()
-    expect(screen.getAllByRole('img')).toHaveLength(1)
     expect(screen.getByRole('img', { name: 'Autism Genomics Browser logo' })).toHaveAttribute(
       'src',
       AgbLogo
