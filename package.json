@@ -14,7 +14,7 @@
   "scripts": {
     "start": "./start.sh",
     "build": "rm -rf src/server/public && webpack --config=src/browsers/webpack.config.js",
-    "lint:js": "eslint .",
+    "lint:js": "eslint --ext .js,.ts,.tsx .",
     "lint:css": "stylelint 'src/**/*.js'",
     "typecheck": "yarn tsc --noEmit",
     "typecheck:watch": "yarn tsc -w --noEmit",
@@ -45,6 +45,8 @@
     "@types/react-highlight-words": "^0.20.1",
     "@types/react-router-dom": "^5.3.3",
     "@types/styled-components": "^5.1.36",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "babel-plugin-styled-components": "^1.10.6",
