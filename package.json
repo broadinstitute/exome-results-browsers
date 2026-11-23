@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "./start.sh",
-    "build": "webpack --config=src/browsers/webpack.config.js",
+    "build": "rm -rf src/server/public && webpack --config=src/browsers/webpack.config.js",
     "lint:js": "eslint .",
     "lint:css": "stylelint 'src/**/*.js'",
     "typecheck": "yarn tsc --noEmit",
