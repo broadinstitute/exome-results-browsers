@@ -1,0 +1,43 @@
+name: Docker
+on:
+  pull_request:
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - package.json
+      - src/browsers/package.json
+      - src/server/package.json
+      - yarn.lock
+      - tsconfig.json
+      - babel.config.js
+      - .tool-versions
+      - src/browsers/webpack.config.js
+      - src/browsers/browsers.js
+      - src/server/**
+      - scripts/check-served-browsers.sh
+      - e2e/fixtures/results/**
+      - .github/workflows/docker.yml
+  workflow_dispatch:
+jobs:
+  docker-smoke:
+    name: Build and smoke-test image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      # Cloud Build writes build.env before building; the Dockerfile requires it to exist.
+      - name: Create empty build.env
+        run: touch build.env
+      - name: Build image
+        run: docker build -t exome-results-browsers:ci .
+      - name: Start container
+        run: >
+          docker run -d --name erb -p 8000:8000
+          -v "$PWD/e2e/fixtures/results:/data:ro"
+          -e RESULTS_DATA_DIRECTORY=/data
+          exome-results-browsers:ci
+      - name: Check every browser is served
+        run: ./scripts/check-served-browsers.sh http://localhost:8000
+      - name: Container logs
+        if: always()
+        run: docker logs erb
