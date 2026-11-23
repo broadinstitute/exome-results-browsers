@@ -17,7 +17,7 @@ export default defineConfig({
       ...process.env,
       NODE_ENV: 'development',
       BROWSER: browser,
-      RESULTS_DATA_DIRECTORY: 'data/smoke',
+      RESULTS_DATA_DIRECTORY: process.env.E2E_RESULTS_DATA_DIRECTORY ?? 'data/smoke',
       PORT: String(BASE_PORT + i),
     },
   })),
