@@ -1,7 +1,10 @@
 import React from 'react'
 
 import Browser from '../base/Browser'
-import { renderStringOrFloatAsDecimal, renderStringOrFloatPvalueAsScientific } from '../base/tableCells'
+import {
+  renderStringOrFloatAsDecimal,
+  renderStringOrFloatPvalueAsScientific,
+} from '../base/tableCells'
 
 import IBDAboutPage from './IBDAboutPage'
 import IBDHomePage from './IBDHomePage'
@@ -44,43 +47,55 @@ const IBDBrowser = () => {
           key: 'variant_p_meta',
           heading: 'Variant P-val',
           minWidth: 110,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdPValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdPValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'variant_beta_meta',
           heading: 'Variant Beta',
           minWidth: 110,
-          render: (value) => renderStringOrFloatAsDecimal({ value: value }),
+          render: (value) => renderStringOrFloatAsDecimal({ value }),
         },
         {
           key: 'variant_af_case',
           heading: 'Variant AF Case',
           minWidth: 110,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: '0' }),
+          render: (value) => renderStringOrFloatPvalueAsScientific({ value, zeroValue: '0' }),
         },
         {
           key: 'ptv_0_001_P_meta',
           heading: 'PTV 0.001 P-val',
           minWidth: 110,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdPValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdPValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'ptv_0_001_beta_meta',
           heading: 'PTV 0.001 Beta',
           minWidth: 110,
-          render: (value) => renderStringOrFloatAsDecimal({ value: value }),
+          render: (value) => renderStringOrFloatAsDecimal({ value }),
         },
         {
           key: 'nsyn_0_001_P_meta',
           heading: 'Nsyn 0.001 P-val',
           minWidth: 110,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdPValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdPValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'nsyn_0_001_beta_meta',
           heading: 'Nsyn 0.001 Beta',
           minWidth: 110,
-          render: (value) => renderStringOrFloatAsDecimal({ value: value }),
+          render: (value) => renderStringOrFloatAsDecimal({ value }),
         },
       ]}
       variantAnalysisGroupOptions={ibdAnalysisGroups}
@@ -92,13 +107,17 @@ const IBDBrowser = () => {
           key: 'group_result.P_meta',
           heading: 'P\u2011Value',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdPValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdPValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.BETA_meta',
           heading: 'Beta',
           minWidth: 65,
-          render: (value) => renderStringOrFloatAsDecimal({ value: value }),
+          render: (value) => renderStringOrFloatAsDecimal({ value }),
         },
       ]}
       variantConsequences={variantConsequences}
@@ -114,7 +133,11 @@ const IBDBrowser = () => {
           key: 'group_result.HetP',
           heading: 'Het P\u2011Value',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdPValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdPValueOfZeroPlaceholder,
+            }),
         },
       ]}
       variantDetailColumns={[
@@ -122,73 +145,121 @@ const IBDBrowser = () => {
           key: 'group_result.P_Twist',
           heading: 'P (Twist)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdPValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdPValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.BETA_Twist',
           heading: 'Beta (Twist)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdBetaValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdBetaValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.P_Nextera',
           heading: 'P (Nextera)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdPValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdPValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.BETA_Nextera',
           heading: 'Beta (Nextera)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdBetaValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdBetaValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.P_Sanger_WES',
           heading: 'P (Sanger WES)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdPValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdPValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.BETA_Sanger_WES',
           heading: 'Beta (Sanger WES)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdBetaValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdBetaValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.P_UKBB',
           heading: 'P (UKBB)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdPValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdPValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.BETA_UKBB',
           heading: 'Beta (UKBB)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdBetaValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdBetaValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.P_Sanger_WGS',
           heading: 'P (Sanger WGS)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdPValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdPValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.BETA_Sanger_WGS',
           heading: 'Beta (Sanger WGS)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdBetaValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdBetaValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.P_regeneron',
           heading: 'P (Regeneron)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdPValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdPValueOfZeroPlaceholder,
+            }),
         },
         {
           key: 'group_result.BETA_regeneron',
           heading: 'Beta (Regeneron)',
           minWidth: 85,
-          render: (value) => renderStringOrFloatPvalueAsScientific({ value: value, zeroValue: ibdBetaValueOfZeroPlaceholder }),
+          render: (value) =>
+            renderStringOrFloatPvalueAsScientific({
+              value,
+              zeroValue: ibdBetaValueOfZeroPlaceholder,
+            }),
         },
       ]}
       renderVariantTranscriptConsequences

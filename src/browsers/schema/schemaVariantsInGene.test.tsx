@@ -14,6 +14,10 @@ import {
   schemaVariantCustomFilter,
   schemaVariantResultColumns,
 } from './SCHEMABrowser'
+import {
+  schemaVariantGroupResultFactory,
+  schemaVariantRowFactory,
+} from './schemaVariantTypes.factory'
 
 const schemaVariantCategoryOptions = defineVariantCategoryOptions({
   lof: { label: 'PTV', color: '#FF583F' },
@@ -21,10 +25,6 @@ const schemaVariantCategoryOptions = defineVariantCategoryOptions({
   synonymous: { label: 'Synonymous', color: '#008000' },
   other: { label: 'Other', color: '#757575' },
 })
-import {
-  schemaVariantGroupResultFactory,
-  schemaVariantRowFactory,
-} from './schemaVariantTypes.factory'
 
 type VariantsInGeneProps = ComponentProps<typeof VariantsInGene>
 

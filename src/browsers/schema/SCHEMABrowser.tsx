@@ -84,7 +84,7 @@ const schemaCaseControlPValueColumn: GeneResultColumnConfig<SchemaGeneRow, numbe
     'SCHEMA p-value of the CMH p-value from PTV burden and the CMH p-value from PTV + missense burden.',
   minWidth: 100,
   accessor: (row) => row.schema_case_control_p_value,
-  render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
+  render: (value) => renderStringOrFloatPvalueAsScientific({ value }),
 }
 
 const ptvCaseCarrierColumn: GeneResultColumnConfig<SchemaGeneRow, number> = {
@@ -152,7 +152,7 @@ const caseControlPlusDeNovoPValueColumn: GeneResultColumnConfig<SchemaGeneRow, n
     'Weighted meta-analysis p-value combining the Case-Control SCHEMA p-value with the De Novo pvalue',
   minWidth: 100,
   accessor: (row) => row.case_control_plus_de_novo_p_value,
-  render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
+  render: (value) => renderStringOrFloatPvalueAsScientific({ value }),
 }
 
 const ptvOddsRatioColumn: GeneResultColumnConfig<SchemaGeneRow, string> = {
@@ -161,7 +161,7 @@ const ptvOddsRatioColumn: GeneResultColumnConfig<SchemaGeneRow, string> = {
   tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
   minWidth: 110,
   accessor: (row) => row.ptv_odds_ratio,
-  render: (value) => renderOddsRatio({ value: value }),
+  render: (value) => renderOddsRatio({ value }),
 }
 
 const ptvMisOddsRatioColumn: GeneResultColumnConfig<SchemaGeneRow, string> = {
@@ -171,7 +171,7 @@ const ptvMisOddsRatioColumn: GeneResultColumnConfig<SchemaGeneRow, string> = {
     'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs + missense variants predicted to be damaging.',
   minWidth: 110,
   accessor: (row) => row.ptv_mis_odds_ratio,
-  render: (value) => renderOddsRatio({ value: value }),
+  render: (value) => renderOddsRatio({ value }),
 }
 
 const misCaseCarrierColumn: GeneResultColumnConfig<SchemaGeneRow, number> = {
@@ -218,7 +218,7 @@ const misOddsRatioColumn: GeneResultColumnConfig<SchemaGeneRow, string> = {
   tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
   minWidth: 110,
   accessor: (row) => row.mis_odds_ratio,
-  render: (value) => renderOddsRatio({ value: value }),
+  render: (value) => renderOddsRatio({ value }),
 }
 
 const synOddsRatioColumn: GeneResultColumnConfig<SchemaGeneRow, string> = {
@@ -227,7 +227,7 @@ const synOddsRatioColumn: GeneResultColumnConfig<SchemaGeneRow, string> = {
   tooltip: 'Odds Ratio: The relative increase in schizophrenia risk associated with PTVs.',
   minWidth: 110,
   accessor: (row) => row.syn_odds_ratio,
-  render: (value) => renderOddsRatio({ value: value }),
+  render: (value) => renderOddsRatio({ value }),
 }
 
 export const schemaGeneResultColumns: GeneResultColumnConfig<SchemaGeneRow, any>[] = [

@@ -23,8 +23,8 @@ const fetchSearchResults = (query: string): Promise<{ label: string; value: stri
     )
 
 interface SearchboxOwnProps {
-  id: string,
-  width: string,
+  id: string
+  width: string
 }
 
 type SearchboxProps = SearchboxOwnProps & RouteComponentProps

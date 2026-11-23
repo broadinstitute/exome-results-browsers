@@ -23,7 +23,7 @@ type CsvData = any[]
 type CsvColumn = {
   key: string
   heading: string
-  //TK:  TODO: more strictly type 'renderForCSV' this in all places
+  // TK:  TODO: more strictly type 'renderForCSV' this in all places
   //   should really be something like: [(a: string, b: string) -> string | number]
   //   but its inconsistent sometimes, some browsers use only 1 arg in a few places
   renderForCSV: (...args: any) => any

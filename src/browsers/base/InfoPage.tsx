@@ -16,16 +16,11 @@ const InfoPageWrapper = styled(Page)`
 `
 
 type InfoPageProps = {
-  title: string,
-  children: React.ReactNode,
+  title: string
+  children: React.ReactNode
 }
 
-const InfoPage = ({
-  title,
-  children = undefined
-}:
-  InfoPageProps
-) => (
+const InfoPage = ({ title, children = undefined }: InfoPageProps) => (
   <InfoPageWrapper>
     <DocumentTitle title={title} />
     <PageHeading>{title}</PageHeading>

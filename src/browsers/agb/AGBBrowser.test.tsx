@@ -5,8 +5,8 @@ import { MemoryRouter } from 'react-router-dom'
 import Browser from '../base/Browser'
 import { GeneResultsPage } from '../base/GeneResultsPage/GeneResultsPage'
 import GeneResultsTable from '../base/GeneResultsPage/GeneResultsTable'
-import getTableColumns from '../base/GeneResultsPage/geneResultTableColumns'
-import { GeneRow } from '../base/GeneResultsPage/geneResultTableColumns'
+import getTableColumns, { GeneRow } from '../base/GeneResultsPage/geneResultTableColumns'
+
 import getVariantTableColumns, { VariantRow } from '../base/GenePage/variantTableColumns'
 import VariantTable from '../base/GenePage/VariantTable'
 import AutosizedRegionViewer from '../base/GenePage/AutosizedRegionViewer'
@@ -445,10 +445,10 @@ describe('AGB variant sorting', () => {
         .getAllByRole('row')
         .slice(1)
         .map((row) => row.querySelector('[aria-colindex="1"]')?.textContent)
-    const high = '1-103-A-T',
-      low = '1-102-A-T',
-      zero = '1-101-A-T',
-      missing = '1-104-A-T'
+    const high = '1-103-A-T'
+    const low = '1-102-A-T'
+    const zero = '1-101-A-T'
+    const missing = '1-104-A-T'
     for (const [columnIndex, column] of columns.entries()) {
       const button = within(grid).getAllByRole('columnheader')[columnIndex]?.querySelector('button')
       if (!button) throw new Error(`Missing sortable variant header ${column.key}`)

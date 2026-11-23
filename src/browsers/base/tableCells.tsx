@@ -112,15 +112,15 @@ export const renderStringOrFloatPvalueAsScientific = ({
     decimalPlaces = 0
   }
 
-  const floatValue = typeof value == 'string' ? parseFloat(value) : value
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
   if (Number.isNaN(floatValue)) {
     return value
   }
 
   return renderFloatAsScientific({
     value: floatValue,
-    zeroValue: zeroValue,
-    decimalPlaces: decimalPlaces,
+    zeroValue,
+    decimalPlaces,
   })
 }
 
@@ -137,7 +137,7 @@ export const renderFloatAsScientific = ({
     return '-'
   }
 
-  const floatValue = typeof value == 'string' ? parseFloat(value) : value
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
   if (Number.isNaN(floatValue)) {
     return value
   }

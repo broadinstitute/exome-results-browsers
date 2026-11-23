@@ -82,7 +82,7 @@ const GP2Browser = () => {
       minWidth: 85,
       render: (value) =>
         renderStringOrFloatPvalueAsScientific({
-          value: value,
+          value,
           zeroValue: gp2PValueOfZeroPlaceholder,
         }),
     },
@@ -110,7 +110,7 @@ const GP2Browser = () => {
       minWidth: 85,
       render: (value) =>
         renderStringOrFloatPvalueAsScientific({
-          value: value,
+          value,
           zeroValue: gp2PValueOfZeroPlaceholder,
         }),
     },
