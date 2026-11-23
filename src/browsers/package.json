@@ -10,6 +10,7 @@
     "@gnomad/track-variants": "^1.0.0",
     "@gnomad/ui": "^1.0.0",
     "core-js": "^3.0.1",
+    "d3-scale": "^2.2.2",
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
     "prop-types": "^15.7.2",
