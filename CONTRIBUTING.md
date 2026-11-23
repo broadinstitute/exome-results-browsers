@@ -52,7 +52,6 @@ and browser interface based on the request hostname.
     - geneResultComponents.js - Browser specific components for gene-level results
   - server - API code
 
-
 ## Development
 
 ### Data
