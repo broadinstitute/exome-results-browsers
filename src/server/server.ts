@@ -327,7 +327,7 @@ const getDatasetConfigJs = (dataset: string) => {
     const datasetsWithClinvar = ['GP2']
     const thisDatasetRequestsClinvar = datasetsWithClinvar.includes(dataset)
 
-    const clinVarData = metadata.datasets?.['ClinVarGRCh38']
+    const clinVarData = metadata.datasets?.ClinVarGRCh38
 
     const datasetMetadata = {
       datasetId: dataset,

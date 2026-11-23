@@ -64,7 +64,7 @@ const Epi25Browser = () => (
         minWidth: 85,
         render: (value) =>
           renderStringOrFloatPvalueAsScientific({
-            value: value,
+            value,
             zeroValue: epi25PValueOfZeroPlaceholder,
           }),
       },
@@ -72,7 +72,7 @@ const Epi25Browser = () => (
         key: 'ptv_OR',
         heading: 'PTV odds ratio',
         minWidth: 85,
-        render: (value) => renderOddsRatio({ value: value }),
+        render: (value) => renderOddsRatio({ value }),
       },
       {
         key: 'damaging_missense_case_count',
@@ -95,7 +95,7 @@ const Epi25Browser = () => (
         key: 'damaging_missense_OR',
         heading: 'Damaging Missense odds ratio',
         minWidth: 85,
-        render: (value) => renderOddsRatio({ value: value }),
+        render: (value) => renderOddsRatio({ value }),
       },
     ]}
     variantAnalysisGroupOptions={epi25AnalysisGroups}
@@ -115,7 +115,7 @@ const Epi25Browser = () => (
         key: 'group_result.p_value',
         heading: 'P\u2011Value',
         minWidth: 65,
-        render: (value) => renderStringOrFloatPvalueAsScientific({ value: value }),
+        render: (value) => renderStringOrFloatPvalueAsScientific({ value }),
       },
       {
         key: 'group_result.in_analysis',

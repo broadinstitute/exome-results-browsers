@@ -1,15 +1,17 @@
-
 import React, { useContext, useState } from 'react'
 import styled from 'styled-components'
-import Fetch from '../Fetch'
-import StatusMessage from '../StatusMessage'
-import { ConsequenceCategory, DatasetId, VariantConsequence, VariantConsequenceCategoryLabels } from '../Browser'
-
 // @ts-expect-error: no types in this version of @gnomad/ui
 import { CategoryFilterControl, KeyboardShortcut, List, ListItem } from '@gnomad/ui'
-
 // @ts-expect-error: no types in this version of @gnomad/region-viewer
 import { RegionViewerContext } from '@gnomad/region-viewer'
+import Fetch from '../Fetch'
+import StatusMessage from '../StatusMessage'
+import {
+  ConsequenceCategory,
+  DatasetId,
+  VariantConsequence,
+  VariantConsequenceCategoryLabels,
+} from '../Browser'
 
 import BinnedVariantsPlot from './BinnedVariantsPlot'
 
@@ -61,55 +63,54 @@ const formatTooltip = (bin: any, includedClinicalSignificanceCategories: Include
     <TooltipContent>
       This bin contains:
       <List>
-        {CLINICAL_SIGNIFICANCE_CATEGORIES.filter((category) => includedClinicalSignificanceCategories[category]).map(
-          (category) => {
-            return (
-              <ListItem key={category}>
-                {/* @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message */}
-                {bin[category]} {CLINICAL_SIGNIFICANCE_CATEGORY_LABELS[category].toLowerCase()}{' '}
-                variant{bin[category] !== 1 ? 's' : ''}
-              </ListItem>
-            )
-          }
-        )}
+        {CLINICAL_SIGNIFICANCE_CATEGORIES.filter(
+          (category) => includedClinicalSignificanceCategories[category]
+        ).map((category) => {
+          return (
+            <ListItem key={category}>
+              {/* @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message */}
+              {bin[category]} {CLINICAL_SIGNIFICANCE_CATEGORY_LABELS[category].toLowerCase()}{' '}
+              variant{bin[category] !== 1 ? 's' : ''}
+            </ListItem>
+          )
+        })}
       </List>
     </TooltipContent>
   )
 }
 
 type ClinVarVariant = {
-  variant_id: string,
-  clinical_variation_id: string,
-  rsid: string,
+  variant_id: string
+  clinical_variation_id: string
+  rsid: string
 
-  pos: number,
+  pos: number
 
-  clinical_significance: string,
-  consequence: string,
-  consequenceCategory: string,
-  review_status: string,
+  clinical_significance: string
+  consequence: string
+  consequenceCategory: string
+  review_status: string
 
-  gold_stars: number,
-  last_evaluated: string,
-  major_consequence: string,
+  gold_stars: number
+  last_evaluated: string
+  major_consequence: string
 
-  gene_id: string,
-  gene_symbol: string,
-  transcript_id: string,
-  hgvs: string,
-  hgvsc: string | null,
-  hgvsp: string | null,
+  gene_id: string
+  gene_symbol: string
+  transcript_id: string
+  hgvs: string
+  hgvsc: string | null
+  hgvsp: string | null
 
   [key: string]: any
 }
 
 type ClinVarBinnedVariantsInGeneProps = {
-  centerPanelWidth: number,
-  scalePosition: ScalePosition,
+  centerPanelWidth: number
+  scalePosition: ScalePosition
   clinvarVariants: ClinVarVariant[]
   includedClinicalSignificanceCategories: IncludedCategories
 }
-
 
 const ClinVarBinnedVariantsInGene = ({
   centerPanelWidth,
@@ -117,13 +118,14 @@ const ClinVarBinnedVariantsInGene = ({
   clinvarVariants,
   includedClinicalSignificanceCategories,
 }: ClinVarBinnedVariantsInGeneProps) => {
-
   return (
     <BinnedVariantsPlot
       width={centerPanelWidth}
       scalePosition={scalePosition}
       variants={clinvarVariants}
-      categoryColor={(category: ClinicalSignificance) => CLINICAL_SIGNIFICANCE_CATEGORY_COLORS[category]}
+      categoryColor={(category: ClinicalSignificance) =>
+        CLINICAL_SIGNIFICANCE_CATEGORY_COLORS[category]
+      }
       formatTooltip={(bin: any) => formatTooltip(bin, includedClinicalSignificanceCategories)}
       variantCategory={clinvarVariantClinicalSignificanceCategory}
       variantCategories={CLINICAL_SIGNIFICANCE_CATEGORIES}
@@ -140,10 +142,10 @@ interface ClinVarFilterControlsProps {
 }
 
 const defaultClinicalSignificanceCategoryLables: ClinicalSignificanceConsequenceCategoryLabels = {
-  "pathogenic": "Pathogenic / likely pathogenic",
-  "uncertain": "Uncertain significance / conflicting",
-  "benign": "Benign / likely benign",
-  "other": "Other",
+  pathogenic: 'Pathogenic / likely pathogenic',
+  uncertain: 'Uncertain significance / conflicting',
+  benign: 'Benign / likely benign',
+  other: 'Other',
 }
 
 const ClinVarFilterControls = ({
@@ -158,7 +160,8 @@ const ClinVarFilterControls = ({
           <CategoryFilterControl
             categories={CLINICAL_SIGNIFICANCE_CATEGORIES.map((category) => ({
               id: category,
-              label: clinicalSignificanceCategoryLabels[category as ClinicalSignificance] || category,
+              label:
+                clinicalSignificanceCategoryLabels[category as ClinicalSignificance] || category,
               className: 'category',
               color: CLINICAL_SIGNIFICANCE_CATEGORY_COLORS[category as ClinicalSignificance],
             }))}
@@ -167,7 +170,7 @@ const ClinVarFilterControls = ({
             onChange={(includeCategories: Record<ClinicalSignificance, boolean>) => {
               setFilter({
                 ...filter,
-                includedClinicalSignificanceCategories: includeCategories
+                includedClinicalSignificanceCategories: includeCategories,
               })
             }}
           />
@@ -178,18 +181,17 @@ const ClinVarFilterControls = ({
 }
 
 interface ClinVarVariantsInGeneProps {
-  leftPanelWidth: number,
-  centerPanelWidth: number,
-  scalePosition: ScalePosition,
-  clinvarVariants: ClinVarVariant[],
-  consequenceCategoryLabels: VariantConsequenceCategoryLabels,
+  leftPanelWidth: number
+  centerPanelWidth: number
+  scalePosition: ScalePosition
+  clinvarVariants: ClinVarVariant[]
+  consequenceCategoryLabels: VariantConsequenceCategoryLabels
 }
 
 interface ClinVarVariantsInGeneFilter {
   includedConsequenceCategories: Record<ConsequenceCategory, boolean>
   includedClinicalSignificanceCategories: Record<ClinicalSignificance, boolean>
 }
-
 
 // TK: this is more or less a copy-pasta of gnomAD browser's
 //     'ClinVarBinnedVariantsPlots.tsx' file, with some small modifications
@@ -220,30 +222,30 @@ const ClinVarVariantsInGene = ({
 
   const [filter, setFilter] = useState<ClinVarVariantsInGeneFilter>(defaultFilterState)
 
-  const includedClinicalSignificanceCategories = filter.includedClinicalSignificanceCategories
-  const includedClinicalSignificanceCategoriesArray = Object.keys(includedClinicalSignificanceCategories)
-    .filter((key) => includedClinicalSignificanceCategories[key as ClinicalSignificance]);
+  const { includedClinicalSignificanceCategories } = filter
+  const includedClinicalSignificanceCategoriesArray = Object.keys(
+    includedClinicalSignificanceCategories
+  ).filter((key) => includedClinicalSignificanceCategories[key as ClinicalSignificance])
   const filteredClinvarVariants: ClinVarVariant[] = clinvarVariants.filter((clinvarVariant) => {
-    return (
-      includedClinicalSignificanceCategoriesArray.includes(clinvarVariantClinicalSignificanceCategory(clinvarVariant))
+    return includedClinicalSignificanceCategoriesArray.includes(
+      clinvarVariantClinicalSignificanceCategory(clinvarVariant)
     )
   })
 
-  const clinVarReleaseDate = "June 6, 2026"
+  const clinVarReleaseDate = 'June 6, 2026'
 
   return (
     <>
       <div style={{ marginBottom: '1em' }}>
         <div style={{ marginLeft: leftPanelWidth }}>
-          <ClinVarFilterControls
-            filter={filter}
-            setFilter={setFilter}
-          />
+          <ClinVarFilterControls filter={filter} setFilter={setFilter} />
         </div>
 
         <InnerWrapper>
           <div style={{ width: leftPanelWidth, display: 'flex', alignItems: 'center' }}>
-            <p style={{ marginLeft: 0 }}>{`ClinVar variants (${filteredClinvarVariants.length})`}</p>
+            <p
+              style={{ marginLeft: 0 }}
+            >{`ClinVar variants (${filteredClinvarVariants.length})`}</p>
           </div>
           <div>
             <ClinVarBinnedVariantsInGene
@@ -255,31 +257,30 @@ const ClinVarVariantsInGene = ({
             <p>Data displayed here is from ClinVar's {clinVarReleaseDate} release.</p>
           </div>
         </InnerWrapper>
-      </div >
+      </div>
     </>
   )
 }
 
 const defaultConsequenceCategoryLabels: VariantConsequenceCategoryLabels = {
-  "other": "Other",
-  "lof": "LoF",
-  "missense": "Missense",
-  "synonymous": "Synonymous",
+  other: 'Other',
+  lof: 'LoF',
+  missense: 'Missense',
+  synonymous: 'Synonymous',
 }
 
 interface ClinVarVariantsInGeneContainerProps {
   datasetId: DatasetId
   gene: Gene
   variantConsequences: VariantConsequence[]
-  consequenceCategoryLabels?: VariantConsequenceCategoryLabels,
+  consequenceCategoryLabels?: VariantConsequenceCategoryLabels
 }
 
-
 const InnerWrapper = styled.div`
-        display: flex;
-        flex-direction: row;
-        align-items: stretch;
-        `
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+`
 
 const ClinVarVariantsInGeneContainer = ({
   datasetId,
@@ -298,11 +299,7 @@ const ClinVarVariantsInGeneContainer = ({
 
   return (
     <Fetch path={`/gene/${gene.gene_id}/variants?dataset=ClinVarGRCh38`}>
-      {({
-        data: clinvarData,
-        error: clinvarError,
-        loading: clinvarLoading }) => {
-
+      {({ data: clinvarData, error: clinvarError, loading: clinvarLoading }) => {
         if (clinvarLoading) {
           return <StatusMessage>Loading variants...</StatusMessage>
         }
@@ -321,23 +318,23 @@ const ClinVarVariantsInGeneContainer = ({
 
         const windowObjectHasClinvarMetadata = datasetConfig.clinvar
         if (!windowObjectHasClinvarMetadata) {
-          return (
-            <>No ClinVar variants found</>
-          )
-        } else {
-          const clinvarVariants: ClinVarVariant[] = clinvarData.variants.map((rawClinvarVariant: VariantRow[]) => {
+          return <>No ClinVar variants found</>
+        }
+        const clinvarVariants: ClinVarVariant[] = clinvarData.variants.map(
+          (rawClinvarVariant: VariantRow[]) => {
             const clinvarVariant: {
               [key: string]: any
             } = {}
 
-            datasetConfig.clinvar!.variant_fields
-              .filter((field) => ['group_results'].indexOf(field) === -1)
+            datasetConfig
+              .clinvar!.variant_fields.filter((field) => ['group_results'].indexOf(field) === -1)
               .forEach((field, fieldIndex) => {
                 if (field === 'info') {
-                  datasetConfig.clinvar!.variant_info_field_names
-                    .forEach((infoField, infoFieldIndex) => {
+                  datasetConfig.clinvar!.variant_info_field_names.forEach(
+                    (infoField, infoFieldIndex) => {
                       clinvarVariant[infoField] = rawClinvarVariant[fieldIndex][infoFieldIndex]
-                    })
+                    }
+                  )
                 } else {
                   clinvarVariant[field] = rawClinvarVariant[fieldIndex]
                 }
@@ -355,20 +352,18 @@ const ClinVarVariantsInGeneContainer = ({
             }
 
             return clinvarVariant
-          })
+          }
+        )
 
-
-          return (
-            <ClinVarVariantsInGene
-              leftPanelWidth={leftPanelWidth}
-              centerPanelWidth={centerPanelWidth}
-              scalePosition={scalePosition}
-              clinvarVariants={clinvarVariants}
-              consequenceCategoryLabels={consequenceCategoryLabels}
-            />
-          )
-        }
-
+        return (
+          <ClinVarVariantsInGene
+            leftPanelWidth={leftPanelWidth}
+            centerPanelWidth={centerPanelWidth}
+            scalePosition={scalePosition}
+            clinvarVariants={clinvarVariants}
+            consequenceCategoryLabels={consequenceCategoryLabels}
+          />
+        )
       }}
     </Fetch>
   )

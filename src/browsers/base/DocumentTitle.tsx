@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 type DocumentTitleProps = {
-  title: string,
+  title: string
 }
 
 const DocumentTitle = ({ title }: DocumentTitleProps) => {

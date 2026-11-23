@@ -73,7 +73,8 @@ const renderBipexGeneFlags = (flags: string) => {
         a range making it Bonferroni significant
       </>
     )
-  } else if (flagsArray.indexOf('fdr_five_percent_significant') !== -1) {
+  }
+  if (flagsArray.indexOf('fdr_five_percent_significant') !== -1) {
     return (
       <>
         <Badge level="info">Note</Badge> This gene's missense + protein truncating P-value fell into

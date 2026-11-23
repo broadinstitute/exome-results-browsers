@@ -59,7 +59,7 @@ export const applyColumnGroupHeadings = <Column extends ColumnWithOptionalGroup>
     return {
       ...column,
       heading: (
-        <React.Fragment>
+        <>
           <ColumnGroupBanner
             $color={color}
             $hasLabel={isFirstInGroupRun}
@@ -72,7 +72,7 @@ export const applyColumnGroupHeadings = <Column extends ColumnWithOptionalGroup>
           <ColumnHeadingLabel $isCentered={column.centerHeading}>
             {column.heading || column.key}
           </ColumnHeadingLabel>
-        </React.Fragment>
+        </>
       ),
     }
   })

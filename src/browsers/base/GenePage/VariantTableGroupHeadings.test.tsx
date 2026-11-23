@@ -80,8 +80,11 @@ beforeEach(() => {
     constructor(callback: ResizeObserverCallback) {
       resizeCallbacks.push(() => callback([], this))
     }
+
     observe() {}
+
     unobserve() {}
+
     disconnect() {
       disconnect()
     }

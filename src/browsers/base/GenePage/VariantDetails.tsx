@@ -273,13 +273,11 @@ const TranscriptDetails = ({ transcript }: { transcript: NestedParsedTranscript 
   return (
     <ListItem>
       <div>
-        {
-          <ExternalLink
-            href={`https://gnomad.broadinstitute.org/transcript/${transcript.transcriptId}`}
-          >
-            {transcript.transcriptId}
-          </ExternalLink>
-        }
+        <ExternalLink
+          href={`https://gnomad.broadinstitute.org/transcript/${transcript.transcriptId}`}
+        >
+          {transcript.transcriptId}
+        </ExternalLink>
         {transcript.isManeSelect && <div>Mane Select transcript</div>}
         {transcript.isCanonical && <div>Canonical transcript</div>}
         {transcript.hgvsp && <div>{`HGVSp: ${transcript.hgvsp}`}</div>}

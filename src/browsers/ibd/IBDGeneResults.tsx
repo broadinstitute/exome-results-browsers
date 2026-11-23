@@ -27,17 +27,17 @@ const columnOptions = {
     schemaName: 'P_meta',
     renderFunction: (value: InputData) =>
       renderStringOrFloatPvalueAsScientific({
-        value: value,
+        value,
         zeroValue: ibdPValueOfZeroPlaceholder,
       }),
   },
   Beta: {
     schemaName: 'beta_meta',
-    renderFunction: (value: InputData) => renderStringOrFloatAsDecimal({ value: value }),
+    renderFunction: (value: InputData) => renderStringOrFloatAsDecimal({ value }),
   },
   'Het P': {
     schemaName: 'het_P_meta',
-    renderFunction: (value: InputData) => renderStringOrFloatAsDecimal({ value: value }),
+    renderFunction: (value: InputData) => renderStringOrFloatAsDecimal({ value }),
   },
 }
 

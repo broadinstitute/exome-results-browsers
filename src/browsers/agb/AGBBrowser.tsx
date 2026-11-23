@@ -29,14 +29,14 @@ import {
   describeVariantClass,
 } from './agbTypes'
 
+import AGBWaterfallPlot from './AGBWaterfallPlot'
+
 export type AGBVariantColumnGroup = 'deNovo' | 'transmittedUntransmitted' | 'caseControl'
 
 const renderMissing = (value: any) => (value === null || value === undefined ? '\u2013' : value)
 
 const renderBoolean = (value: boolean | null) =>
   value === null || value === undefined ? '\u2013' : value ? 'yes' : 'no'
-
-import AGBWaterfallPlot from './AGBWaterfallPlot'
 
 const geneCountColumn = (
   key: keyof AGBGeneResult,
@@ -389,7 +389,7 @@ const AGBBrowser = () => (
         key: 'info.gnomad_af',
         heading: 'gnomAD AF',
         minWidth: 110,
-        render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 2 }),
+        render: (value) => renderFloatAsScientific({ value, decimalPlaces: 2 }),
         tooltip: 'Allele Frequency (AF) of this variant in the "non-neuro" subset of gnomAD v2.1.1',
       },
       {
@@ -408,7 +408,7 @@ const AGBBrowser = () => (
         centerCellContent: true,
         tooltip: 'Missense deleteriousness Prediction by Constraint',
         minWidth: 110,
-        render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 3 }),
+        render: (value) => renderFloatAsScientific({ value, decimalPlaces: 3 }),
       },
       {
         key: 'info.alpha_missense',
@@ -417,7 +417,7 @@ const AGBBrowser = () => (
         centerCellContent: true,
         tooltip: 'AlphaMissense pathogenicity score',
         minWidth: 110,
-        render: (value) => renderFloatAsScientific({ value: value, decimalPlaces: 3 }),
+        render: (value) => renderFloatAsScientific({ value, decimalPlaces: 3 }),
       },
       {
         key: 'info.is_other_splice',

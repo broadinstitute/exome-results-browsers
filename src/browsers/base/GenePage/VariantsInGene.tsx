@@ -418,7 +418,7 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
   ): VariantRow[] => {
     const tableColumns = getVariantTableColumns({
       datasetId: this.props.datasetId,
-      variantResultColumns: variantResultColumns,
+      variantResultColumns,
       filter: currentFilter,
       variantCategoryOptions: this.props.variantCategoryOptions,
     })

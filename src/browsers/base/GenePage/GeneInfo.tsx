@@ -139,10 +139,10 @@ const AlternateGeneSymbolRows = ({ gene }: { gene: IndividualGeneAPIResponse }) 
   return (
     <>
       {gene.previous_symbols && (
-        <SymbolArrayAsDescriptionListItem label={'Prior'} symbolArray={gene.previous_symbols} />
+        <SymbolArrayAsDescriptionListItem label="Prior" symbolArray={gene.previous_symbols} />
       )}
       {gene.alias_symbols && (
-        <SymbolArrayAsDescriptionListItem label={'Alias'} symbolArray={gene.alias_symbols} />
+        <SymbolArrayAsDescriptionListItem label="Alias" symbolArray={gene.alias_symbols} />
       )}
     </>
   )

@@ -90,7 +90,7 @@ const DatasetDownloads = ({ datasetId, isMainDataset = false }: DatasetDownloads
           <p style={{ marginTop: '0rem' }}>
             The prior SCHEMA (SCHEMA 1.0) analysis and dataset was released September 10th, 2020.
           </p>
-          <DatasetDownloadLinkList datasetId={'SCHEMA_v1'} label="SCHEMA 1.0" />
+          <DatasetDownloadLinkList datasetId="SCHEMA_v1" label="SCHEMA 1.0" />
         </>
       )}
 
@@ -100,7 +100,7 @@ const DatasetDownloads = ({ datasetId, isMainDataset = false }: DatasetDownloads
           <p style={{ marginTop: '0rem' }}>
             The prior BipEx analysis and dataset was released November 2022.
           </p>
-          <DatasetDownloadLinkList datasetId={'BipEx_v1'} label="BipEx 1.0" />
+          <DatasetDownloadLinkList datasetId="BipEx_v1" label="BipEx 1.0" />
         </>
       )}
     </>
@@ -112,7 +112,7 @@ const datasetsWithDownloadsById = new Set(Object.keys(DOWNLOAD_URLS))
 export default () => {
   return (
     <InfoPage title="Downloads">
-      <DatasetDownloads datasetId={datasetConfig.datasetId} isMainDataset={true} />
+      <DatasetDownloads datasetId={datasetConfig.datasetId} isMainDataset />
 
       <h2>Other Studies</h2>
       {otherDatasets

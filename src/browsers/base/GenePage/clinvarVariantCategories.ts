@@ -1,4 +1,4 @@
-import { getCategoryFromConsequence } from '../../base/vepConsequences'
+import { getCategoryFromConsequence } from '../vepConsequences'
 
 export const CLINICAL_SIGNIFICANCE_CATEGORIES = ['pathogenic', 'uncertain', 'benign', 'other']
 

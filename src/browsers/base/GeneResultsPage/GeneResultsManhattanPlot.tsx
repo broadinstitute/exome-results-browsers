@@ -7,14 +7,14 @@ import { ManhattanPlot } from '@gnomad/manhattan-plot'
 import { GeneRow } from './geneResultTableColumns'
 
 interface AutosizedGeneResultsManhattanPlotProps {
-  pValueColumn?: string,
-  results: GeneRow[],
-  [key: string]: any,
+  pValueColumn?: string
+  results: GeneRow[]
+  [key: string]: any
 }
 
 interface GeneResultsManhattanPlotProps extends AutosizedGeneResultsManhattanPlotProps {
-  height: number,
-  width: number,
+  height: number
+  width: number
 }
 
 const VALID_MANHATTAN_PACKAGE_CHROMOSOMES = new Set(
@@ -30,12 +30,7 @@ const GeneResultsManhattanPlot = ({
 }: GeneResultsManhattanPlotProps) => {
   const renderedDataPoints = results
     .filter((r) => {
-      return (
-        r.chrom &&
-        r.pos &&
-        r[pValueColumn] &&
-        VALID_MANHATTAN_PACKAGE_CHROMOSOMES.has(r.chrom)
-      )
+      return r.chrom && r.pos && r[pValueColumn] && VALID_MANHATTAN_PACKAGE_CHROMOSOMES.has(r.chrom)
     })
     .map((r) => ({ ...r, pval: r[pValueColumn] }))
 
@@ -68,6 +63,7 @@ const AutosizedGeneResultsManhattanPlot = withSize()(
         )}
       </Wrapper>
     )
-  })
+  }
+)
 
 export default AutosizedGeneResultsManhattanPlot

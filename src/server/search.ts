@@ -1,17 +1,20 @@
 /* eslint-disable max-classes-per-file */
 
 type Results<T> = {
-  word: string,
-  docs: T[],
+  word: string
+  docs: T[]
 }[]
 
 type NodeEntry<T> = [string, PrefixTrieNode<T>]
 
 class PrefixTrieNode<T> {
-  key: string | undefined;
-  parent: PrefixTrieNode<T> | null;
-  children: Map<string, PrefixTrieNode<T>>;
-  docs: T[];
+  key: string | undefined
+
+  parent: PrefixTrieNode<T> | null
+
+  children: Map<string, PrefixTrieNode<T>>
+
+  docs: T[]
 
   constructor(key?: string) {
     this.key = key
@@ -26,7 +29,7 @@ class PrefixTrieNode<T> {
 }
 
 export class PrefixTrie<T> {
-  private root: PrefixTrieNode<T>;
+  private root: PrefixTrieNode<T>
 
   constructor() {
     this.root = new PrefixTrieNode()
@@ -40,9 +43,7 @@ export class PrefixTrie<T> {
       } else {
         const newNode = new PrefixTrieNode<T>(char)
         const entries = [...node.children.entries(), [char, newNode] as NodeEntry<T>]
-        node.children = new Map(
-          entries.sort((a, b) => a[0].localeCompare(b[0]))
-        )
+        node.children = new Map(entries.sort((a, b) => a[0].localeCompare(b[0])))
         newNode.parent = node
         node = newNode
       }
@@ -80,7 +81,6 @@ export class PrefixTrie<T> {
     return results
   }
 
-
   private searchHelper(word: string, node: PrefixTrieNode<T>, results: Results<T>): void {
     if (node.isLeaf()) {
       results.push({
@@ -90,8 +90,7 @@ export class PrefixTrie<T> {
     }
 
     for (const [childKey, childNode] of node.children.entries()) {
-      this.searchHelper(word + childKey, childNode, results);
+      this.searchHelper(word + childKey, childNode, results)
     }
-
   }
 }
