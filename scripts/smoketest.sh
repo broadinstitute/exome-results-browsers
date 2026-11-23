@@ -48,7 +48,7 @@ if [ "$clean_install" = true ]; then
   echo "==> Clean install: .venv"
   rm -rf .venv
   uv sync --locked --group dev
-  echo "Re-run .llm_nb/install-gcs-connector.py now if the pipeline fails to read gs:// paths."
+  echo "Reinstall the GCS connector now (see data_pipeline/README.md) if the pipeline fails to read gs:// paths."
 
   trap - EXIT
 fi
