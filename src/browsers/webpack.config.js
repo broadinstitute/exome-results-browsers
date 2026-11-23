@@ -4,8 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 const HtmlPlugin = require('html-webpack-plugin')
 const tsConfig = require('../../tsconfig.json')
-
-const BROWSERS = ['AGB', 'BipEx', 'Epi25', 'SCHEMA', 'IBD', 'GP2']
+const BROWSERS = require('./browsers')
 
 const GA_TRACKING_IDS = {
   AGB: 'G-W7RRZ25H20',

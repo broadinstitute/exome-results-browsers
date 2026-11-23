@@ -166,7 +166,8 @@ to the production environment.
 
     Add this component to `src/browsers/geneResultComponents.js`.
 
-  - Add the dataset name to list of browsers in `src/browsers/webpack.config.js`.
+  - Add the dataset name to the list of browsers in `src/browsers/browsers.js`. The webpack
+    build and the Playwright projects both read this list.
 
 ## Browser configuration
 
