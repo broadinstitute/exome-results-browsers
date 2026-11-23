@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:16.13.1-bullseye-slim AS build
+FROM --platform=linux/amd64 node:24.22.3-bookworm-slim AS build
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 WORKDIR /home/node/app
@@ -30,7 +30,7 @@ COPY --chown=node:node src/globals.d.ts ./src/globals.d.ts
 RUN npx tsc
 
 ###############################################################################
-FROM --platform=linux/amd64 node:16.13.1-bullseye-slim
+FROM --platform=linux/amd64 node:24.22.3-bookworm-slim
 
 RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
 WORKDIR /home/node/app

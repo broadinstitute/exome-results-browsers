@@ -84,13 +84,16 @@ fi
 
 export NODE_ENV="development"
 
+# webpack 4 hashes with md4, which OpenSSL 3 only provides through its legacy provider.
+WEBPACK_NODE_OPTIONS="--openssl-legacy-provider"
+
 if [ "${USE_REMOTE_API:-false}" = "true" ]; then
-  yarn run webpack-dev-server --config=./src/browsers/webpack.config.js --hot --port "$WDS_PORT"
+  NODE_OPTIONS="$WEBPACK_NODE_OPTIONS" yarn run webpack-dev-server --config=./src/browsers/webpack.config.js --hot --port "$WDS_PORT"
 else
   yarn run nodemon src/server/server.ts &
   SERVER_PID=$!
 
-  yarn run webpack-dev-server --config=./src/browsers/webpack.config.js --hot --port "$WDS_PORT" &
+  NODE_OPTIONS="$WEBPACK_NODE_OPTIONS" yarn run webpack-dev-server --config=./src/browsers/webpack.config.js --hot --port "$WDS_PORT" &
   WDS_PID=$!
 
   trap "kill $SERVER_PID $WDS_PID; exit 1" INT
