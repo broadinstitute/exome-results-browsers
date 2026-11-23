@@ -7,7 +7,8 @@ on:
 jobs:
   browser-checks:
     name: Browser Checks
-    runs-on: ubuntu-latest
+    # Playwright 1.44, the last release supporting Node 16, installs browser dependencies only up to Ubuntu 22.04.
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
