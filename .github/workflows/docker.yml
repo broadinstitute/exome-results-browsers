@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       # Cloud Build writes build.env before building; the Dockerfile requires it to exist.
       - name: Create empty build.env
         run: touch build.env

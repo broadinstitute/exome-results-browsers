@@ -11,21 +11,12 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v7
         with:
           node-version: 16.13.1
-      - name: Get yarn cache
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: Use yarn cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            yarn-
+          cache: yarn
       - name: Install dependencies
         run: yarn install --frozen-lockfile --non-interactive --no-progress
       - name: Run ESLint
@@ -49,7 +40,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
       - name: Install Java 11 for Hail
         uses: actions/setup-java@v4
         with:
