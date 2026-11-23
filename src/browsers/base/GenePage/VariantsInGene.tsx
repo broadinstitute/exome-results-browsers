@@ -416,11 +416,12 @@ export class VariantsInGene extends Component<VariantsInGeneProps, VariantsInGen
     variantResultColumns: VariantColumnConfig[],
     currentFilter: FilterState
   ): VariantRow[] => {
+    const { datasetId, variantCategoryOptions } = this.props
     const tableColumns = getVariantTableColumns({
-      datasetId: this.props.datasetId,
+      datasetId,
       variantResultColumns,
       filter: currentFilter,
-      variantCategoryOptions: this.props.variantCategoryOptions,
+      variantCategoryOptions,
     })
 
     const column = tableColumns.find((c) => c.key === sortKey)

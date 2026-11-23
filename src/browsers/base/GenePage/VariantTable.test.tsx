@@ -1,10 +1,10 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import React from 'react'
 
 import { VariantColumnConfig } from '../Browser'
 
 import VariantTable from './VariantTable'
-import getVariantTableColumns, { VariantRow, VariantTableColumn } from './variantTableColumns'
+import getVariantTableColumns, { VariantRow } from './variantTableColumns'
 
 const buildVariants = (counts: (number | null | undefined)[]): VariantRow[] => {
   return counts.map((count, index) => ({
@@ -104,7 +104,12 @@ describe('centered numeric variant columns', () => {
         key: 'info.count',
         heading: 'Other splice',
         centerCellContent: true,
-        render: (value) => (value === null ? '–' : value ? 'yes' : 'no'),
+        render: (value) => {
+          if (value === null) {
+            return '–'
+          }
+          return value ? 'yes' : 'no'
+        },
       },
     ])
     const variants = buildVariants([1, 0, null])

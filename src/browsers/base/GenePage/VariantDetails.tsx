@@ -570,8 +570,16 @@ const VariantDetails = ({
     return true
   })
 
-  const datasetColumns =
-    datasetId === 'GP2' ? renderedGP2Columns : datasetId === 'AGB' ? [] : standardColumns
+  const getDatasetColumns = () => {
+    if (datasetId === 'GP2') {
+      return renderedGP2Columns
+    }
+    if (datasetId === 'AGB') {
+      return []
+    }
+    return standardColumns
+  }
+  const datasetColumns = getDatasetColumns()
 
   const filteredVariantResultColumns =
     datasetId === 'AGB' && filter.agbVariantColumnGroups
@@ -664,6 +672,8 @@ const VariantDetails = ({
                   { label, content }: { label: React.ReactNode; content: React.ReactNode },
                   index
                 ) => (
+                  // Labels are ReactNodes, and renderVariantAttributes returns a fixed order.
+                  // eslint-disable-next-line react/no-array-index-key
                   <VariantAttribute key={index} label={label}>
                     {content}
                   </VariantAttribute>

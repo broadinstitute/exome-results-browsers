@@ -59,6 +59,7 @@ const VariantTableGroupHeadings = ({
     if (!container || !hasGroups) return undefined
 
     const observedHeaders = new Set<Element>()
+    let resizeObserver: ResizeObserver | null = null
     const measureGroups = () => {
       // Match the toolkit's column indices rather than its generated styled-component classes.
       const headers = columns.map((_, index) =>
@@ -110,7 +111,7 @@ const VariantTableGroupHeadings = ({
         setMeasuredGroups(nextGroups)
       }
     }
-    const resizeObserver =
+    resizeObserver =
       typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measureGroups)
     const mutationObserver = new MutationObserver(measureGroups)
     resizeObserver?.observe(container)

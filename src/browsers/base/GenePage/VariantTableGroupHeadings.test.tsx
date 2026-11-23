@@ -91,7 +91,7 @@ beforeEach(() => {
   }
   jest
     .spyOn(HTMLElement.prototype, 'getBoundingClientRect')
-    .mockImplementation(function (this: HTMLElement) {
+    .mockImplementation(function getBoundingClientRect(this: HTMLElement) {
       if (this.getAttribute('role') !== 'columnheader') return rectangle(50, 800)
       const index = Number(this.getAttribute('aria-colindex')) - 1
       const left =

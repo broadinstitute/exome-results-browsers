@@ -35,8 +35,12 @@ export type AGBVariantColumnGroup = 'deNovo' | 'transmittedUntransmitted' | 'cas
 
 const renderMissing = (value: any) => (value === null || value === undefined ? '\u2013' : value)
 
-const renderBoolean = (value: boolean | null) =>
-  value === null || value === undefined ? '\u2013' : value ? 'yes' : 'no'
+const renderBoolean = (value: boolean | null) => {
+  if (value === null || value === undefined) {
+    return '\u2013'
+  }
+  return value ? 'yes' : 'no'
+}
 
 const geneCountColumn = (
   key: keyof AGBGeneResult,

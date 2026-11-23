@@ -9,7 +9,7 @@ import express, { Response, NextFunction } from 'express'
 import morgan from 'morgan'
 
 import getDemoPasswords from './demoPasswords'
-import { PrefixTrie } from './search'
+import PrefixTrie from './search'
 import redirectSubdomain from './subdomainRedirects'
 
 interface Request extends express.Request {
@@ -489,7 +489,7 @@ app.use(fileSystemRateLimiter, (req: Request, res: Response) => {
     return res.status(400).json({ error: 'invalid dataset' })
   }
 
-  res.sendFile(path.resolve(__dirname, 'public', req.dataset!, 'index.html'))
+  return res.sendFile(path.resolve(__dirname, 'public', req.dataset!, 'index.html'))
 })
 
 // ================================================================================================

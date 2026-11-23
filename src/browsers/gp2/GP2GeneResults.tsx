@@ -27,6 +27,8 @@ interface GP2GeneResultProps {
   result: Gp2GeneResult
 }
 
+// Unused until GP2 gene burden results are released.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const GP2GeneResult = ({ result }: GP2GeneResultProps) => (
   <div>
     <Table>
@@ -88,7 +90,7 @@ interface GP2GeneResultsProps {
   results: Record<GP2AnalysisGroup, Gp2GeneResult>
 }
 
-const GP2GeneResults = ({ results }: GP2GeneResultsProps) => (
+const GP2GeneResults = (_props: GP2GeneResultsProps) => (
   <>
     <h2>Gene Results </h2>
     <p>Gene burden results will be released in the future.</p>

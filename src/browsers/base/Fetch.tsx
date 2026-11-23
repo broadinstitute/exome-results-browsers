@@ -64,8 +64,6 @@ type FetchProps = {
 }
 
 class Fetch extends Component<FetchProps, FetchState> {
-  private currentRequest: { promise: Promise<any>; cancel: () => void } | null = null
-
   constructor(props: FetchProps) {
     super(props)
     this.state = {
@@ -80,7 +78,8 @@ class Fetch extends Component<FetchProps, FetchState> {
   }
 
   componentDidUpdate(prevProps: FetchProps) {
-    if (this.props.path !== prevProps.path) {
+    const { path } = this.props
+    if (path !== prevProps.path) {
       this.loadData()
     }
   }
@@ -91,7 +90,11 @@ class Fetch extends Component<FetchProps, FetchState> {
     }
   }
 
+  private currentRequest: { promise: Promise<any>; cancel: () => void } | null = null
+
   loadData() {
+    const { path } = this.props
+
     this.setState({
       loading: true,
       error: null,
@@ -101,7 +104,7 @@ class Fetch extends Component<FetchProps, FetchState> {
       this.currentRequest.cancel()
     }
 
-    this.currentRequest = cancelable(fetchApi(this.props.path))
+    this.currentRequest = cancelable(fetchApi(path))
     this.currentRequest.promise.then(
       (data) => {
         this.setState({
@@ -124,7 +127,8 @@ class Fetch extends Component<FetchProps, FetchState> {
   }
 
   render() {
-    return this.props.children(this.state)
+    const { children } = this.props
+    return children(this.state)
   }
 }
 

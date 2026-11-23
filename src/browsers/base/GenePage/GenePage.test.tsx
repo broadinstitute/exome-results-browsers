@@ -8,29 +8,6 @@ import { IndividualGeneAPIResponse } from '../GeneResultsPage/geneResultTableCol
 import { Constraint } from './Constraint'
 import GenePage from './GenePage'
 
-jest.mock('../Fetch', () => ({
-  __esModule: true,
-  default: ({
-    children,
-  }: {
-    children: (response: {
-      data: { gene: IndividualGeneAPIResponse }
-      error: null
-      loading: false
-    }) => ReactNode
-  }) => children({ data: { gene: mockGene }, error: null, loading: false }),
-}))
-
-jest.mock('./AutosizedRegionViewer', () => ({
-  __esModule: true,
-  default: () => null,
-}))
-
-jest.mock('./GeneResults', () => ({
-  __esModule: true,
-  default: () => null,
-}))
-
 const constraint: Constraint = {
   exp_lof: null,
   exp_mis: null,
@@ -75,6 +52,29 @@ const mockGene: IndividualGeneAPIResponse = {
     exons: [],
   },
 }
+
+jest.mock('../Fetch', () => ({
+  __esModule: true,
+  default: ({
+    children,
+  }: {
+    children: (response: {
+      data: { gene: IndividualGeneAPIResponse }
+      error: null
+      loading: false
+    }) => ReactNode
+  }) => children({ data: { gene: mockGene }, error: null, loading: false }),
+}))
+
+jest.mock('./AutosizedRegionViewer', () => ({
+  __esModule: true,
+  default: () => null,
+}))
+
+jest.mock('./GeneResults', () => ({
+  __esModule: true,
+  default: () => null,
+}))
 
 const renderGenePage = (datasetId: DatasetId) => {
   return render(

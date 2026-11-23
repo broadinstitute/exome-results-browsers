@@ -66,11 +66,6 @@ export interface VariantRow {
   [key: string]: any
 }
 
-// TK: TODO: fixme, use variant row! type with all these things
-interface Variant {
-  variant_id: string
-}
-
 const formatNumberCell = (number: any): string => {
   if (number === null || number === undefined) {
     return ''
@@ -81,8 +76,6 @@ const formatNumberCell = (number: any): string => {
   }
   return truncated.toString()
 }
-
-const renderNumberCell = (row: VariantRow, key: string): string => formatNumberCell(get(row, key))
 
 const renderExponentialNumberCell = (row: VariantRow, key: string): string => {
   const number = get(row, key)
