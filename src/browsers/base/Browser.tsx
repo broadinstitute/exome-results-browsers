@@ -22,7 +22,6 @@ import LoginPage from './LoginPage'
 import { userHasBearerCookie } from './auth'
 import { GeneRow } from './GeneResultsPage/geneResultTableColumns'
 import {
-  ConsequenceCategory,
   VariantCategoryOption,
   VariantConsequence,
   VariantConsequenceCategoryLabels,

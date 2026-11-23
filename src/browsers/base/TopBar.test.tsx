@@ -2,7 +2,7 @@ import React from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { Link, MemoryRouter } from 'react-router-dom'
 
-import { buildWindowDatasetConfig } from '../testUtils/buildWindowDatasetConfig'
+import buildWindowDatasetConfig from '../testUtils/buildWindowDatasetConfig'
 import TopBar from './TopBar'
 
 jest.mock('./Searchbox', () => ({

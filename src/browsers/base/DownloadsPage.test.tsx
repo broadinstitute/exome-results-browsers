@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react'
 
 import { DatasetId } from './Browser'
-import { buildWindowDatasetConfig } from '../testUtils/buildWindowDatasetConfig'
+import buildWindowDatasetConfig from '../testUtils/buildWindowDatasetConfig'
 
 // manually re-require all modules to have fresh window object per test
 afterEach(() => {

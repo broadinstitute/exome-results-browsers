@@ -95,35 +95,6 @@ export const renderOddsRatioCI = ({
   return `(${confidenceInterval})`
 }
 
-export const renderStringOrFloatPvalueAsScientific = ({
-  value,
-  zeroValue = '0',
-  decimalPlaces = 3,
-}: {
-  value: InputData
-  zeroValue?: string
-  decimalPlaces?: number
-}) => {
-  if (value === null || value == undefined) {
-    return '-'
-  }
-
-  if (value === 0) {
-    decimalPlaces = 0
-  }
-
-  const floatValue = typeof value === 'string' ? parseFloat(value) : value
-  if (Number.isNaN(floatValue)) {
-    return value
-  }
-
-  return renderFloatAsScientific({
-    value: floatValue,
-    zeroValue,
-    decimalPlaces,
-  })
-}
-
 export const renderFloatAsScientific = ({
   value,
   zeroValue = '0',
@@ -146,6 +117,31 @@ export const renderFloatAsScientific = ({
     return <NumberCell>{zeroValue}</NumberCell>
   }
   return <NumberCell>{floatValue.toExponential(decimalPlaces)} </NumberCell>
+}
+
+export const renderStringOrFloatPvalueAsScientific = ({
+  value,
+  zeroValue = '0',
+  decimalPlaces = 3,
+}: {
+  value: InputData
+  zeroValue?: string
+  decimalPlaces?: number
+}) => {
+  if (value === null || value === undefined) {
+    return '-'
+  }
+
+  const floatValue = typeof value === 'string' ? parseFloat(value) : value
+  if (Number.isNaN(floatValue)) {
+    return value
+  }
+
+  return renderFloatAsScientific({
+    value: floatValue,
+    zeroValue,
+    decimalPlaces: value === 0 ? 0 : decimalPlaces,
+  })
 }
 
 export const renderStringOrFloatAsDecimal = ({

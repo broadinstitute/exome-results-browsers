@@ -28,7 +28,7 @@ const buildDatasetFields = () => ({
 // Minimally valid window.datasetConfig, covering every field the shared
 // Browser.tsx/DownloadsPage.tsx module-level code reads on import — not a
 // fixture for any dataset's actual field lists.
-export const buildWindowDatasetConfig = (datasetId: DatasetId): Window['datasetConfig'] => ({
+const buildWindowDatasetConfig = (datasetId: DatasetId): Window['datasetConfig'] => ({
   datasetId,
   reference_genome: 'GRCh37',
   datasets: (Object.fromEntries(
@@ -44,3 +44,5 @@ export const buildWindowDatasetConfig = (datasetId: DatasetId): Window['datasetC
   variant_info_field_names: [],
   variant_info_field_types: [],
 })
+
+export default buildWindowDatasetConfig

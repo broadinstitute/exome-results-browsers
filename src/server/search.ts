@@ -28,7 +28,7 @@ class PrefixTrieNode<T> {
   }
 }
 
-export class PrefixTrie<T> {
+class PrefixTrie<T> {
   private root: PrefixTrieNode<T>
 
   constructor() {
@@ -94,3 +94,5 @@ export class PrefixTrie<T> {
     }
   }
 }
+
+export default PrefixTrie

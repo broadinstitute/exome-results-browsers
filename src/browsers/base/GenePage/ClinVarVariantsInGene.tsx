@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import styled from 'styled-components'
 // @ts-expect-error: no types in this version of @gnomad/ui
-import { CategoryFilterControl, KeyboardShortcut, List, ListItem } from '@gnomad/ui'
+import { CategoryFilterControl, List, ListItem } from '@gnomad/ui'
 // @ts-expect-error: no types in this version of @gnomad/region-viewer
 import { RegionViewerContext } from '@gnomad/region-viewer'
 import Fetch from '../Fetch'
@@ -22,7 +22,6 @@ import {
   clinvarVariantClinicalSignificanceCategory,
   ClinicalSignificance,
 } from './clinvarVariantCategories'
-import { TrackPageSection } from './TrackPage'
 import { FiltersFirstColumn, FiltersWrapper, SettingsWrapper } from './VariantFilterControls'
 import { Gene } from './VariantsInGene'
 import { VariantRow } from './variantTableColumns'
@@ -148,6 +147,12 @@ const defaultClinicalSignificanceCategoryLables: ClinicalSignificanceConsequence
   other: 'Other',
 }
 
+const InnerWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+`
+
 const ClinVarFilterControls = ({
   filter,
   setFilter,
@@ -254,7 +259,7 @@ const ClinVarVariantsInGene = ({
               clinvarVariants={filteredClinvarVariants}
               includedClinicalSignificanceCategories={filter.includedClinicalSignificanceCategories}
             />
-            <p>Data displayed here is from ClinVar's {clinVarReleaseDate} release.</p>
+            <p>Data displayed here is from ClinVar&apos;s {clinVarReleaseDate} release.</p>
           </div>
         </InnerWrapper>
       </div>
@@ -275,12 +280,6 @@ interface ClinVarVariantsInGeneContainerProps {
   variantConsequences: VariantConsequence[]
   consequenceCategoryLabels?: VariantConsequenceCategoryLabels
 }
-
-const InnerWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-`
 
 const ClinVarVariantsInGeneContainer = ({
   datasetId,
