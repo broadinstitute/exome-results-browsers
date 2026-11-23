@@ -90,6 +90,21 @@ to the production environment.
 ./start.sh $BROWSER_NAME --proxy-api
 ```
 
+### End-to-end tests
+
+`yarn smoketest:complete` runs the data pipeline on the smoke genes, builds every browser, and
+runs the Playwright tests in `e2e/` against `data/smoke`. It needs GCS access to the pipeline
+inputs.
+
+CI cannot reach those inputs, so it runs the same Playwright tests against
+`e2e/fixtures/results`, a trimmed copy of `data/smoke`. Regenerate it after a pipeline or
+dataset change that the browsers depend on, and commit the result:
+
+```
+yarn smoketest:complete
+node scripts/build-e2e-fixture.js data/smoke e2e/fixtures/results
+```
+
 ## Adding a new browser
 
 - Create a data preparation pipeline for the dataset.

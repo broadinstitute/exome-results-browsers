@@ -37,6 +37,12 @@ jobs:
         run: yarn run test
       - name: Build browsers
         run: yarn run build
+      - name: Install Playwright browser
+        run: yarn playwright install --with-deps chromium
+      - name: Run end-to-end tests
+        run: yarn run smoketest:frontend
+        env:
+          E2E_RESULTS_DATA_DIRECTORY: e2e/fixtures/results
   data-pipeline-checks:
     name: Data pipeline checks
     runs-on: ubuntu-latest
