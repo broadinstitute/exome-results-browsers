@@ -133,6 +133,19 @@ The pipelines accept arguments for which environment to run the pipeline in (dat
 
 To run data pipelines locally, use the flags: `--environment local`, `--output-local`, and `--test-genes` to subset the input data for fast iteration on the real input data. The dataset files themselves are reponsible for determining which gene intervals to subset the input data to.
 
+#### Reading `gs://` inputs locally
+
+Local runs read their inputs from GCS, which needs the Hadoop GCS connector installed into the
+pyspark that `uv sync` puts in `.venv`. Install it with
+[broadinstitute/install-gcs-connector](https://github.com/broadinstitute/install-gcs-connector),
+run through `uv run` from the repository root so it finds `.venv`'s pyspark, after
+`gcloud auth application-default login`.
+
+- The connector lives inside `.venv`, so reinstall it whenever `.venv` is recreated.
+- The upstream script installs the newest connector, which is built for Java 17. Hail needs
+  Java 11, so if Spark fails with `UnsupportedClassVersionError`, install the newest connector
+  release that targets Java 11 instead.
+
 #### Smoke selected datasets
 
 Select the datasets to prepare and combine with pipeline-style arguments:
