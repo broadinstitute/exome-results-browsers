@@ -48,7 +48,7 @@ jobs:
         with:
           python-version: 3.12.9
           enable-cache: true
-          cache-dependency-glob: "uv.lock"
+          cache-dependency-glob: 'uv.lock'
       - name: Install dependencies
         run: uv sync --group dev
       - name: Run Ruff (lint)
